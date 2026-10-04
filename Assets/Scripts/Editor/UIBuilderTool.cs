@@ -19,6 +19,8 @@ public class UIBuilderTool
         CultivationManager cultivationManager = managers.GetComponent<CultivationManager>();
         if (cultivationManager == null) cultivationManager = managers.AddComponent<CultivationManager>();
         
+        if (!managers.GetComponent<GameLogger>()) managers.AddComponent<GameLogger>();
+        
         // Load Stages
         string[] stageGuids = AssetDatabase.FindAssets("t:CultivationStageData", new[] { "Assets/ScriptableObjects/Stages" });
         System.Collections.Generic.List<CultivationStageData> stages = new System.Collections.Generic.List<CultivationStageData>();
