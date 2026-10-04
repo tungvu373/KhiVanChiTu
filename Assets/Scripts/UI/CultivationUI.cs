@@ -38,6 +38,7 @@ public class CultivationUI : MonoBehaviour
 
     private void Update()
     {
+#if UNITY_EDITOR
         // CHEAT TEST
         if (UnityEngine.InputSystem.Keyboard.current != null)
         {
@@ -56,5 +57,6 @@ public class CultivationUI : MonoBehaviour
                 }
             }
         }
+#endif
     }
 }

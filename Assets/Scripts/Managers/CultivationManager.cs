@@ -95,9 +95,13 @@ public class CultivationManager : MonoBehaviour
         }
     }
 
+    private bool isBreakthroughInProgress = false;
+
     public void Breakthrough()
     {
         if (currentStageIndex >= allStages.Length) return;
+        if (isBreakthroughInProgress) return; // Chống double-call
+        isBreakthroughInProgress = true;
 
         CultivationStageData currentStageData = allStages[currentStageIndex];
         
@@ -171,5 +175,26 @@ public class CultivationManager : MonoBehaviour
         {
             GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
         }
+        isBreakthroughInProgress = false; // Mở lại sau 2s
+    }
+
+    public void HandlePlayerDeath()
+    {
+        if (currentStageIndex > 0)
+        {
+            currentStageIndex--;
+        }
+        currentTuVi = 0; // Reset tu vi để tránh kẹt trạng thái Boss
+
+        if (allStages != null && currentStageIndex < allStages.Length)
+        {
+            CultivationStageData currentStageData = allStages[currentStageIndex];
+            UpdateDashboardUI(currentStageData);
+            OnTuViChanged?.Invoke(currentTuVi, currentStageData.requiredTuVi);
+            OnStageChanged?.Invoke(currentStageData);
+        }
+
+        Debug.Log("💀 BẠN ĐÃ TỬ TRẬN! Rớt Cảnh giới hoặc Tổn thất Tu Vi.");
+        if (GameLogger.Instance != null) GameLogger.Instance.Log("TỬ TRẬN! Tổn thất Tu Vi", Color.red);
     }
 }

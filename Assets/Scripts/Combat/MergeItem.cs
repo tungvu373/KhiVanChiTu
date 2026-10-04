@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
     public int level = 1;
     public int currentPieces = 1; // Số lượng mảnh/phôi đang gộp
@@ -93,5 +93,76 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
         
         if (MergeManager.Instance != null) MergeManager.Instance.OnEquipChanged();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // Nhấn chuột phải để trang bị/tháo gỡ nhanh
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            if (MergeManager.Instance == null) return;
+            
+            bool isEquipped = transform.parent.name.StartsWith("Equip");
+            if (!isEquipped)
+            {
+                // TÌM Ô EQUIP TRỐNG
+                foreach (Transform slot in MergeManager.Instance.equipPanel)
+                {
+                    if (slot.childCount == 0)
+                    {
+                        transform.SetParent(slot, false);
+                        rectTransform.anchoredPosition = Vector2.zero;
+                        MergeManager.Instance.OnEquipChanged();
+                        return;
+                    }
+                }
+                
+                // NẾU KHÔNG CÓ Ô TRỐNG, TÌM KIẾM CẤP THẤP NHẤT ĐỂ THAY THẾ (Nếu kiếm này cao cấp hơn)
+                Transform lowestSlot = null;
+                int lowestLevel = int.MaxValue;
+                foreach (Transform slot in MergeManager.Instance.equipPanel)
+                {
+                    MergeItem equipItem = slot.GetComponentInChildren<MergeItem>();
+                    if (equipItem != null && equipItem.level < lowestLevel)
+                    {
+                        lowestLevel = equipItem.level;
+                        lowestSlot = slot;
+                    }
+                }
+                
+                if (lowestSlot != null && lowestLevel < this.level)
+                {
+                    MergeItem oldItem = lowestSlot.GetComponentInChildren<MergeItem>();
+                    Transform myOldSlot = transform.parent; // Ô ở kho đồ
+                    
+                    // Đổi chỗ
+                    transform.SetParent(lowestSlot, false);
+                    rectTransform.anchoredPosition = Vector2.zero;
+                    
+                    oldItem.transform.SetParent(myOldSlot, false);
+                    oldItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                    
+                    MergeManager.Instance.OnEquipChanged();
+                }
+            }
+            else
+            {
+                // NẾU ĐANG TRANG BỊ -> THÁO GỠ XUỐNG KHO ĐỒ
+                foreach (Transform page in MergeManager.Instance.inventoryPages)
+                {
+                    foreach (Transform slot in page)
+                    {
+                        if (slot.childCount == 0)
+                        {
+                            transform.SetParent(slot, false);
+                            rectTransform.anchoredPosition = Vector2.zero;
+                            MergeManager.Instance.OnEquipChanged();
+                            return;
+                        }
+                    }
+                }
+                Debug.LogWarning("Kho đồ đã đầy, không thể tháo kiếm xuống!");
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ public class CombatManager : MonoBehaviour
     public float spawnInterval = 2f; // Cứ 2s đẻ 1 con
     
     private List<Enemy> activeEnemies = new List<Enemy>();
+    private const int MAX_ENEMIES = 15;
 
     public float playerMaxHp = 1000f;
     public float playerCurrentHp = 1000f;
@@ -89,6 +90,13 @@ public class CombatManager : MonoBehaviour
         {
             GameManager.Instance.OnStateChanged += HandleStateChanged;
         }
+        if (CultivationManager.Instance != null)
+        {
+            CultivationManager.Instance.OnStageChanged += HandleStageChanged;
+            
+            // Tính toán lần đầu
+            HandleStageChanged(null);
+        }
     }
 
     private void OnDestroy()
@@ -96,6 +104,28 @@ public class CombatManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnStateChanged -= HandleStateChanged;
+        }
+        if (CultivationManager.Instance != null)
+        {
+            CultivationManager.Instance.OnStageChanged -= HandleStageChanged;
+        }
+    }
+
+    private void HandleStageChanged(CultivationStageData stageData)
+    {
+        if (CultivationManager.Instance != null)
+        {
+            int stage = CultivationManager.Instance.currentStageIndex;
+            float oldMaxHp = playerMaxHp;
+            playerMaxHp = 1000f * Mathf.Pow(1.2f, stage); // Máu tăng 20% mỗi cảnh giới
+            
+            // Hồi phục lượng máu chênh lệch khi lên cấp
+            if (playerCurrentHp > 0)
+            {
+                playerCurrentHp += (playerMaxHp - oldMaxHp);
+            }
+            
+            UpdatePlayerHPUI();
         }
     }
 
@@ -178,7 +208,8 @@ public class CombatManager : MonoBehaviour
         }
 
         spawnTimer -= Time.deltaTime;
-        if (spawnTimer <= 0 && playerTransform != null)
+        activeEnemies.RemoveAll(e => e == null);
+        if (spawnTimer <= 0 && playerTransform != null && activeEnemies.Count < MAX_ENEMIES)
         {
             SpawnEnemy();
             spawnTimer = spawnInterval;
@@ -231,14 +262,18 @@ public class CombatManager : MonoBehaviour
         if (playerCurrentHp <= 0)
         {
             playerCurrentHp = 0;
-            // Xử lý chết: Lùi 1 stage và hồi máu
-            if (CultivationManager.Instance != null && CultivationManager.Instance.currentStageIndex > 0)
+            
+            if (CultivationManager.Instance != null)
             {
-                CultivationManager.Instance.currentStageIndex--;
-                Debug.Log("💀 BẠN ĐÃ TỬ TRẬN! Bị rớt 1 Cảnh giới.");
-                if (GameLogger.Instance != null) GameLogger.Instance.Log("TỬ TRẬN! Rớt 1 Cảnh giới", Color.red);
-                if (GameManager.Instance != null) GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
+                CultivationManager.Instance.HandlePlayerDeath();
             }
+            
+            // Xóa boss đang hiện diện khi player thua
+            ClearAllEnemies();
+            currentBoss = null;
+
+            if (GameManager.Instance != null) GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
+
             playerCurrentHp = playerMaxHp;
         }
         UpdatePlayerHPUI();
@@ -422,8 +457,13 @@ public class CombatManager : MonoBehaviour
         }
     }
 
+    private bool isPhanThanActive = false;
+
     public void CastPhanThan()
     {
+        if (isPhanThanActive) return;
+        isPhanThanActive = true;
+
         // Hiệu ứng Phân Thân: Trận pháp xoay dưới chân
         GameObject aura = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         aura.transform.position = playerTransform.position + Vector3.up * 0.05f;
@@ -456,6 +496,7 @@ public class CombatManager : MonoBehaviour
 
     private void EndPhanThan()
     {
+        isPhanThanActive = false;
         foreach (var sword in activeSwords)
         {
             if (sword != null && sword.gameObject.activeSelf)

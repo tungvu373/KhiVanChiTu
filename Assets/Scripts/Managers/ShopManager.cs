@@ -110,8 +110,9 @@ public class ShopManager : MonoBehaviour
 
     public void BuyItem(int itemIndex)
     {
-        float cost = 500f; 
-        if (itemIndex == 4) cost = 1000f; // Tĩnh Tâm Đan
+        int stage = CultivationManager.Instance != null ? CultivationManager.Instance.currentStageIndex : 0;
+        float baseCost = (itemIndex == 4) ? 1000f : 500f; // Tĩnh Tâm Đan
+        float cost = baseCost * Mathf.Pow(1.2f, stage);
 
         // Check giới hạn 150s (10 viên * 15s)
         float currentTimer = GetTimerByIndex(itemIndex);
@@ -167,9 +168,15 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    // Helper functions for other managers to read buff states (Đã giảm hệ số theo yêu cầu: +5%)
-    public float GetManaRegenMultiplier() => manaRegenBuffTimer > 0 ? 1.05f : 1f;
-    public float GetSpeedMultiplier() => speedBuffTimer > 0 ? 1.05f : 1f;
-    public float GetDamageMultiplier() => damageBuffTimer > 0 ? 1.05f : 1f;
-    public float GetSpiritMultiplier() => spiritBuffTimer > 0 ? 1.05f : 1f;
+    // Helper functions for other managers to read buff states
+    private float GetScaledBuff()
+    {
+        int stage = CultivationManager.Instance != null ? CultivationManager.Instance.currentStageIndex : 0;
+        return 1f + 0.05f + (stage * 0.005f);
+    }
+
+    public float GetManaRegenMultiplier() => manaRegenBuffTimer > 0 ? GetScaledBuff() : 1f;
+    public float GetSpeedMultiplier() => speedBuffTimer > 0 ? GetScaledBuff() : 1f;
+    public float GetDamageMultiplier() => damageBuffTimer > 0 ? GetScaledBuff() : 1f;
+    public float GetSpiritMultiplier() => spiritBuffTimer > 0 ? GetScaledBuff() : 1f;
 }
