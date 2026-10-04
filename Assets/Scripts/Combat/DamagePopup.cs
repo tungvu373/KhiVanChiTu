@@ -7,6 +7,7 @@ public class DamagePopup : MonoBehaviour
     private float disappearTimer;
     private float disappearTimerMax = 0.8f;
     private Color textColor;
+    private Camera mainCamera;
 
     public void Setup(float damageAmount, bool isCritical)
     {
@@ -28,6 +29,7 @@ public class DamagePopup : MonoBehaviour
         
         textMesh.color = textColor;
         disappearTimer = disappearTimerMax;
+        mainCamera = Camera.main;
     }
 
     private void Update()
@@ -35,9 +37,9 @@ public class DamagePopup : MonoBehaviour
         transform.position += new Vector3(0, moveYSpeed) * Time.deltaTime;
         
         // Luôn xoay mặt về Camera (Billboarding)
-        if (Camera.main != null)
+        if (mainCamera != null)
         {
-            transform.LookAt(transform.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
+            transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);
         }
         
         disappearTimer -= Time.deltaTime;

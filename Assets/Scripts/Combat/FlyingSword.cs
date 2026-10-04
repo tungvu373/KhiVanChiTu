@@ -16,8 +16,9 @@ public class FlyingSword : MonoBehaviour
 
     private void Update()
     {
-        if (targetEnemy == null)
+        if (targetEnemy == null || !targetEnemy.gameObject.activeInHierarchy)
         {
+            targetEnemy = null;
             searchTimer -= Time.deltaTime;
             if (searchTimer <= 0)
             {
@@ -56,6 +57,7 @@ public class FlyingSword : MonoBehaviour
         float finalSpeed = baseSpeed + thanThuc;
         if (ShopManager.Instance != null) finalSpeed *= ShopManager.Instance.GetSpeedMultiplier();
         
+        if (targetEnemy == null) return;
         transform.position = Vector3.MoveTowards(transform.position, targetEnemy.transform.position, finalSpeed * Time.deltaTime);
         
         // Chĩa mũi kiếm (trục Z) về phía quái vật

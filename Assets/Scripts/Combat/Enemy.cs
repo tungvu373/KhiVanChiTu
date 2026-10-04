@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour
     private Material mat;
     private Color originalColor;
     private float flashTimer;
+    private Camera mainCamera;
 
     public void Init(float health, Transform target, bool boss = false)
     {
@@ -38,6 +39,7 @@ public class Enemy : MonoBehaviour
             mat = r.material;
             originalColor = mat.color;
         }
+        mainCamera = Camera.main;
     }
 
     private void CreateHPBar()
@@ -86,7 +88,10 @@ public class Enemy : MonoBehaviour
             fillRt.anchorMax = new Vector2(fillRatio, 1f);
             
             // Xoay thanh máu luôn nhìn về Camera chính
-            hpFill.transform.parent.parent.LookAt(hpFill.transform.parent.parent.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
+            if (mainCamera != null)
+            {
+                hpFill.transform.parent.parent.LookAt(hpFill.transform.parent.parent.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);
+            }
         }
 
         // Đổi màu giật cục (Flash)
@@ -175,5 +180,15 @@ public class Enemy : MonoBehaviour
             CombatManager.Instance.OnEnemyDied(this);
         }
         Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        if (mat != null) Destroy(mat);
+        if (hpFill != null)
+        {
+            Transform hpCanvas = hpFill.transform.parent?.parent;
+            if (hpCanvas != null) Destroy(hpCanvas.gameObject);
+        }
     }
 }

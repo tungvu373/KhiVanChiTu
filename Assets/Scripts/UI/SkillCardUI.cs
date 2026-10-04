@@ -9,6 +9,14 @@ public class SkillCardUI : MonoBehaviour
     public Button unlockButton;
     public Text unlockBtnText;
 
+    private void Start()
+    {
+        if (unlockButton != null)
+        {
+            unlockButton.onClick.AddListener(OnUnlockClicked);
+        }
+    }
+
     private void Update()
     {
         if (SkillManager.Instance == null || EconomyManager.Instance == null || CultivationManager.Instance == null) return;
