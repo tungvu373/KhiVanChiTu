@@ -100,7 +100,8 @@ public class SkillManager : MonoBehaviour
             // 1. Tự động hồi Linh Lực
             if (currentLinhLuc < maxLinhLuc)
             {
-                currentLinhLuc += linhLucRegenRate * Time.deltaTime;
+                float regenBuff = ShopManager.Instance != null ? ShopManager.Instance.GetManaRegenMultiplier() : 1f;
+                currentLinhLuc += linhLucRegenRate * regenBuff * Time.deltaTime;
                 currentLinhLuc = Mathf.Min(currentLinhLuc, maxLinhLuc);
             }
 
@@ -171,12 +172,15 @@ public class SkillManager : MonoBehaviour
         {
             case SkillType.AnChuong:
                 if (CombatManager.Instance != null) CombatManager.Instance.CastAnChuong(damage);
+                if (GameLogger.Instance != null) GameLogger.Instance.Log("Thi triển: Ấn Chưởng", new Color(1f, 0.5f, 0f));
                 break;
             case SkillType.LoiPhat:
                 if (CombatManager.Instance != null) CombatManager.Instance.CastLoiPhat(damage);
+                if (GameLogger.Instance != null) GameLogger.Instance.Log("Thi triển: Lôi Phạt", new Color(0.8f, 0f, 1f));
                 break;
             case SkillType.PhanThan:
                 if (CombatManager.Instance != null) CombatManager.Instance.CastPhanThan();
+                if (GameLogger.Instance != null) GameLogger.Instance.Log("Thi triển: Phân Thân", Color.cyan);
                 break;
         }
     }
@@ -194,6 +198,7 @@ public class SkillManager : MonoBehaviour
         if (CombatManager.Instance != null)
         {
             CombatManager.Instance.ActivateVanKiemQuyTong(finalDamage);
+            if (GameLogger.Instance != null) GameLogger.Instance.Log("Thi triển: VẠN KIẾM QUY TÔNG!", Color.yellow);
         }
     }
     

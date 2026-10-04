@@ -74,6 +74,7 @@ public class LightningVFX : MonoBehaviour
         GameObject sparkObj = new GameObject("Sparks");
         sparkObj.transform.position = end;
         ParticleSystem sparkPs = sparkObj.AddComponent<ParticleSystem>();
+        sparkPs.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         var main = sparkPs.main;
         main.duration = 0.5f;
         main.startLifetime = new ParticleSystem.MinMaxCurve(0.2f, 0.5f);
@@ -93,6 +94,7 @@ public class LightningVFX : MonoBehaviour
         renderer.renderMode = ParticleSystemRenderMode.Stretch;
         renderer.lengthScale = 2f; // Tia lửa dãn dài ra
         
+        sparkPs.Play();
         Destroy(sparkObj, 1f);
     }
 
@@ -238,6 +240,7 @@ public class GiantHandVFX : MonoBehaviour
         GameObject dustObj = new GameObject("DustParticles");
         dustObj.transform.position = transform.position;
         ParticleSystem dustPs = dustObj.AddComponent<ParticleSystem>();
+        dustPs.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         var dustMain = dustPs.main;
         dustMain.duration = 1f;
         dustMain.startLifetime = 1f;
@@ -257,12 +260,14 @@ public class GiantHandVFX : MonoBehaviour
         var dustRenderer = dustPs.GetComponent<ParticleSystemRenderer>();
         dustRenderer.material = new Material(Shader.Find("Sprites/Default"));
         
+        dustPs.Play();
         Destroy(dustObj, 2f);
 
         // 2. Hiệu ứng Nứt Đất (Cracks - dùng Stretched Billboard màu đen chĩa ra nhiều hướng)
         GameObject crackObj = new GameObject("CrackParticles");
         crackObj.transform.position = transform.position + Vector3.up * 0.05f;
         ParticleSystem crackPs = crackObj.AddComponent<ParticleSystem>();
+        crackPs.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         var crackMain = crackPs.main;
         crackMain.duration = 1f;
         crackMain.startLifetime = 2f;
@@ -296,6 +301,7 @@ public class GiantHandVFX : MonoBehaviour
         crackRenderer.alignment = ParticleSystemRenderSpace.Local;
         crackObj.transform.rotation = Quaternion.Euler(90, 0, 0); 
         
+        crackPs.Play();
         Destroy(crackObj, 3f);
     }
 }

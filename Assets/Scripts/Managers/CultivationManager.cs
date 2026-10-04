@@ -145,6 +145,11 @@ public class CultivationManager : MonoBehaviour
         currentStageIndex++;
         Debug.Log($"✨ ĐỘT PHÁ THÀNH CÔNG! Thưởng: {coDuyenBonus} Cơ Duyên. Hệ số SM: {permanentStatMultiplier:F2}");
 
+        if (GameLogger.Instance != null && currentStageIndex < allStages.Length)
+        {
+            GameLogger.Instance.Log($"Đột phá: {allStages[currentStageIndex].stageName}!", Color.cyan);
+        }
+
         if (currentStageIndex < allStages.Length)
         {
             OnStageChanged?.Invoke(allStages[currentStageIndex]);

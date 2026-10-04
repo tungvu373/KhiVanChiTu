@@ -1,28 +1,127 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
+    public float maxHp = 50f;
     public float hp = 50f;
     public float moveSpeed = 2f;
-    private Transform playerTarget;
+    
+    public bool isBoss = false;
+    public float damage = 10f;
+    public float attackSpeed = 1f; // Tấn công mỗi giây
+    private float attackTimer = 0f;
 
-    public void Init(float health, Transform target)
+    private Transform playerTarget;
+    
+    // UI & Game Feel
+    private Image hpFill;
+    private float visualHp;
+    private Material mat;
+    private Color originalColor;
+    private float flashTimer;
+
+    public void Init(float health, Transform target, bool boss = false)
     {
+        maxHp = health;
         hp = health;
+        visualHp = health;
         playerTarget = target;
+        isBoss = boss;
+        damage = boss ? health * 0.2f : health * 0.05f; // Sát thương tỉ lệ theo máu
+
+        CreateHPBar();
+
+        Renderer r = GetComponent<Renderer>();
+        if (r != null)
+        {
+            mat = r.material;
+            originalColor = mat.color;
+        }
+    }
+
+    private void CreateHPBar()
+    {
+        // Tạo Canvas World Space trên đầu quái
+        GameObject canvasObj = new GameObject("HPCanvas", typeof(RectTransform), typeof(Canvas));
+        canvasObj.transform.SetParent(transform, false);
+        canvasObj.transform.localPosition = new Vector3(0, 1.2f, 0);
+        
+        Canvas canvas = canvasObj.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+        canvas.sortingOrder = 10;
+        RectTransform cRt = canvasObj.GetComponent<RectTransform>();
+        cRt.sizeDelta = new Vector2(1.5f, 0.2f); // Kích thước thanh máu
+
+        // Background
+        GameObject bgObj = new GameObject("HP_BG", typeof(RectTransform), typeof(Image));
+        bgObj.transform.SetParent(canvasObj.transform, false);
+        Image bgImg = bgObj.GetComponent<Image>();
+        bgImg.color = Color.black;
+        RectTransform bgRt = bgObj.GetComponent<RectTransform>();
+        bgRt.anchorMin = Vector2.zero; bgRt.anchorMax = Vector2.one;
+        bgRt.offsetMin = Vector2.zero; bgRt.offsetMax = Vector2.zero;
+
+        // Fill
+        GameObject fillObj = new GameObject("HP_Fill", typeof(RectTransform), typeof(Image));
+        fillObj.transform.SetParent(bgObj.transform, false);
+        hpFill = fillObj.GetComponent<Image>();
+        hpFill.color = isBoss ? Color.magenta : Color.red;
+        // Không dùng Filled vì thiếu Sprite gốc sẽ lỗi, dùng Anchor thay thế
+        RectTransform fillRt = fillObj.GetComponent<RectTransform>();
+        fillRt.anchorMin = Vector2.zero; 
+        fillRt.anchorMax = Vector2.one;
+        fillRt.offsetMin = Vector2.zero; 
+        fillRt.offsetMax = Vector2.zero;
     }
 
     private void Update()
     {
+        // Smooth HP Bar (Game Feel)
+        if (hpFill != null)
+        {
+            visualHp = Mathf.Lerp(visualHp, hp, Time.deltaTime * 10f);
+            float fillRatio = Mathf.Clamp01(visualHp / maxHp);
+            RectTransform fillRt = hpFill.GetComponent<RectTransform>();
+            fillRt.anchorMax = new Vector2(fillRatio, 1f);
+            
+            // Xoay thanh máu luôn nhìn về Camera chính
+            hpFill.transform.parent.parent.LookAt(hpFill.transform.parent.parent.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
+        }
+
+        // Đổi màu giật cục (Flash)
+        if (flashTimer > 0 && mat != null)
+        {
+            flashTimer -= Time.deltaTime;
+            if (flashTimer <= 0) mat.color = originalColor;
+        }
+
         if (playerTarget != null)
         {
-            // Tiến về phía người chơi (bỏ qua khác biệt độ cao y)
-            Vector3 targetPos = new Vector3(playerTarget.position.x, transform.position.y, playerTarget.position.z);
-            
-            // Luôn quay mặt về phía người chơi (cần thiết cho Model 3D sau này)
-            transform.LookAt(targetPos);
-            
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            float dist = Vector3.Distance(transform.position, playerTarget.position);
+            if (dist > 1.5f)
+            {
+                // Di chuyển
+                Vector3 targetPos = new Vector3(playerTarget.position.x, transform.position.y, playerTarget.position.z);
+                transform.LookAt(targetPos);
+                transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            }
+            else
+            {
+                // Tấn công Player
+                if (attackTimer > 0)
+                {
+                    attackTimer -= Time.deltaTime;
+                }
+                else
+                {
+                    attackTimer = 1f / attackSpeed;
+                    if (CombatManager.Instance != null)
+                    {
+                        CombatManager.Instance.DamagePlayer(damage);
+                    }
+                }
+            }
         }
     }
 
@@ -30,7 +129,13 @@ public class Enemy : MonoBehaviour
     {
         hp -= amount;
         
-        // Hiện số máu bay lên (Cam = sát thương nhỏ, Đỏ = Sát thương Ulti)
+        // Game Feel: Flash trắng
+        if (mat != null)
+        {
+            mat.color = Color.white;
+            flashTimer = 0.1f;
+        }
+        
         if (CombatManager.Instance != null && CombatManager.Instance.damagePopupPrefab != null)
         {
             GameObject popup = Instantiate(CombatManager.Instance.damagePopupPrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
@@ -48,29 +153,23 @@ public class Enemy : MonoBehaviour
         int stageIndex = 1;
         if (CultivationManager.Instance != null) stageIndex = CultivationManager.Instance.currentStageIndex;
 
-        // Tính Linh Thạch rớt ra = Base (10) * 1.3^Stage + Bonus từ Tụ Linh
         float baseDrop = 10f * Mathf.Pow(1.3f, stageIndex);
-        float tuLinhBonus = 0f;
+        if (isBoss) baseDrop *= 5f; // Boss rớt nhiều gấp 5
+
+        float tuLinhBonus = UpgradeManager.Instance != null ? UpgradeManager.Instance.GetTuLinhValue() : 0;
         
-        if (UpgradeManager.Instance != null)
-        {
-            tuLinhBonus = UpgradeManager.Instance.GetTuLinhValue();
-        }
-        
-        float dropAmount = baseDrop + tuLinhBonus;
         if (EconomyManager.Instance != null)
         {
-            EconomyManager.Instance.AddLinhThach(dropAmount);
+            EconomyManager.Instance.AddLinhThach(baseDrop + tuLinhBonus);
         }
         
-        // Thưởng Tu Vi khi giết quái (Giúp đột phá nhanh hơn)
         if (CultivationManager.Instance != null)
         {
-            float tuViBonus = 5f * Mathf.Pow(1.2f, stageIndex); // Tăng dần theo cấp độ
+            float tuViBonus = 5f * Mathf.Pow(1.2f, stageIndex);
+            if (isBoss) tuViBonus *= 5f;
             CultivationManager.Instance.AddTuVi(tuViBonus);
         }
         
-        // Gửi sự kiện cho CombatManager và hủy quái
         if (CombatManager.Instance != null)
         {
             CombatManager.Instance.OnEnemyDied(this);
