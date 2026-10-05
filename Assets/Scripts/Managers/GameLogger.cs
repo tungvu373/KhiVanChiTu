@@ -7,8 +7,10 @@ public class GameLogger : MonoBehaviour
     public static GameLogger Instance { get; private set; }
 
     private GameObject logPanel;
+    private Transform logContent;
+    private ScrollRect scrollRect;
     private List<GameObject> activeLogs = new List<GameObject>();
-    private const int MAX_LOGS = 6;
+    private const int MAX_LOGS = 50; // Cho phép giữ tới 50 dòng log để cuộn
     private Font defaultFont;
 
     private void Awake()
@@ -25,6 +27,7 @@ public class GameLogger : MonoBehaviour
     private void Start()
     {
         CreateLogUI();
+        Log("Hệ thống Nhật ký (Combat Log) đã khởi động!", Color.green);
     }
 
     private void CreateLogUI()
@@ -32,49 +35,45 @@ public class GameLogger : MonoBehaviour
         GameObject canvas = GameObject.Find("Canvas");
         if (canvas == null) return;
 
-        // Xóa log cũ nếu có
-        Transform oldLog = canvas.transform.Find("CombatLogPanel");
-        if (oldLog != null) Destroy(oldLog.gameObject);
-
-        // Tạo Panel (góc dưới bên phải của màn hình Combat - tức là X=0.55)
-        logPanel = new GameObject("CombatLogPanel", typeof(RectTransform));
-        logPanel.transform.SetParent(canvas.transform, false);
-        
-        RectTransform rt = logPanel.GetComponent<RectTransform>();
-        rt.anchorMin = new Vector2(0.54f, 0); // Sát viền RightPanel
-        rt.anchorMax = new Vector2(0.54f, 0);
-        rt.pivot = new Vector2(1, 0); // Góc dưới phải
-        rt.anchoredPosition = new Vector2(-10, 10);
-        rt.sizeDelta = new Vector2(400, 200);
-
-        // Layout để các text xếp chồng lên nhau từ dưới lên
-        VerticalLayoutGroup vlg = logPanel.AddComponent<VerticalLayoutGroup>();
-        vlg.childAlignment = TextAnchor.LowerRight;
-        vlg.childControlHeight = true;
-        vlg.childControlWidth = true;
-        vlg.childForceExpandHeight = false;
-        vlg.childForceExpandWidth = false;
-        vlg.spacing = 5;
-
-        // Cố định size bằng ContentSizeFitter
-        ContentSizeFitter csf = logPanel.AddComponent<ContentSizeFitter>();
-        csf.verticalFit = ContentSizeFitter.FitMode.MinSize;
+        // Tìm Panel đã được tạo từ Editor Tool
+        Transform logPanelTransform = canvas.transform.Find("CombatLogPanel");
+        if (logPanelTransform != null)
+        {
+            logPanel = logPanelTransform.gameObject;
+            scrollRect = logPanel.GetComponent<ScrollRect>();
+            Transform viewport = logPanelTransform.Find("Viewport");
+            if (viewport != null)
+            {
+                logContent = viewport.Find("Content");
+            }
+        }
+        else
+        {
+            Debug.LogError("Không tìm thấy CombatLogPanel! Vui lòng chạy tool TuTien -> Fix -> Create Combat Log UI");
+        }
     }
 
     public void Log(string message, Color color)
     {
-        if (logPanel == null) return;
+        // Vẫn in ra Console để đảm bảo log có chạy
+        Debug.Log($"[GameLogger] {message}");
+
+        if (logPanel == null || logContent == null) 
+        {
+            Debug.LogWarning("[GameLogger] UI chưa được gán! Hãy chắc chắn GameLogger có trên Managers và CombatLogPanel tồn tại.");
+            return;
+        }
 
         // Tạo Text
         GameObject txtObj = new GameObject("LogText", typeof(RectTransform), typeof(Text), typeof(Outline));
-        txtObj.transform.SetParent(logPanel.transform, false);
+        txtObj.transform.SetParent(logContent, false); // Gắn vào Content của ScrollView
         txtObj.transform.SetAsLastSibling();
 
         Text txt = txtObj.GetComponent<Text>();
         txt.font = defaultFont;
         txt.text = message;
-        txt.fontSize = 16;
-        txt.alignment = TextAnchor.MiddleRight;
+        txt.fontSize = 14; // Chữ nhỏ lại một chút để hiển thị được nhiều hơn
+        txt.alignment = TextAnchor.MiddleLeft;
         txt.color = color;
 
         Outline outline = txtObj.GetComponent<Outline>();
@@ -91,8 +90,12 @@ public class GameLogger : MonoBehaviour
             Destroy(oldest);
         }
 
-        // Tự động xóa sau 5 giây
-        Destroy(txtObj, 5f);
+        // Tự động cuộn xuống dưới cùng sau khi thêm log (chờ hết frame)
+        Canvas.ForceUpdateCanvases();
+        if (scrollRect != null)
+        {
+            scrollRect.verticalNormalizedPosition = 0f;
+        }
     }
 
     private void Update()

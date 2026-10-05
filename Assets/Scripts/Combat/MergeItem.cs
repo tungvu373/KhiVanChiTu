@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
+public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public int level = 1;
     public int currentPieces = 1; // Số lượng mảnh/phôi đang gộp
@@ -23,6 +23,13 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             levelText.horizontalOverflow = HorizontalWrapMode.Overflow;
             levelText.verticalOverflow = VerticalWrapMode.Overflow;
         }
+    }
+
+    private void Start()
+    {
+        // Khi object được kích hoạt (hoặc chuyển trang), đảm bảo UI cập nhật lại 
+        // để phòng trường hợp nó được Instantiate ở trang (page) đang ẩn (inactive)
+        UpdateUI();
     }
 
     public int GetRequiredPieces()
@@ -163,6 +170,25 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                 }
                 Debug.LogWarning("Kho đồ đã đầy, không thể tháo kiếm xuống!");
             }
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (TooltipManager.Instance != null)
+        {
+            float dmg = FlyingSword.CalculateBaseDamage(level);
+            float spd = FlyingSword.CalculateBaseSpeed(level);
+            string info = $"<color=#00FF00>Kiếm Phôi Cấp {level}</color>\nSát thương: {dmg:F0}\nTốc độ: {spd:F0}\n\n<i>[Trái] Kéo thả để ghép\n[Phải] Trang bị nhanh</i>";
+            TooltipManager.Instance.ShowTooltip(info);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (TooltipManager.Instance != null)
+        {
+            TooltipManager.Instance.HideTooltip();
         }
     }
 }

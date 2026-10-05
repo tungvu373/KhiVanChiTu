@@ -66,10 +66,44 @@ public class AddQuickMergeButtonTool
 
         // Đẩy nút này lên TRƯỚC nút Sort (để nó nằm bên trái theo Horizontal Layout Group)
         btnObj.transform.SetSiblingIndex(btnSort.transform.GetSiblingIndex());
+        
+        // --- Nút Tế Kiếm (Sacrifice) ---
+        Transform oldTeKiem = navBar.Find("btn_TeKiem");
+        if (oldTeKiem != null) GameObject.DestroyImmediate(oldTeKiem.gameObject);
+
+        GameObject btnTeObj = new GameObject("btn_TeKiem", typeof(RectTransform), typeof(Image), typeof(Button));
+        btnTeObj.transform.SetParent(navBar, false);
+        btnTeObj.GetComponent<Image>().color = new Color(0.8f, 0.2f, 0.8f); // Màu tím (Magenta)
+        
+        GameObject txtTeObj = new GameObject("Text", typeof(RectTransform), typeof(Text));
+        txtTeObj.transform.SetParent(btnTeObj.transform, false);
+        RectTransform txtTeRt = txtTeObj.GetComponent<RectTransform>();
+        txtTeRt.anchorMin = Vector2.zero; txtTeRt.anchorMax = Vector2.one;
+        txtTeRt.offsetMin = Vector2.zero; txtTeRt.offsetMax = Vector2.zero;
+        
+        Text txtTe = txtTeObj.GetComponent<Text>();
+        txtTe.text = "Tế Kiếm (Lv8)";
+        txtTe.font = font;
+        txtTe.alignment = TextAnchor.MiddleCenter;
+        txtTe.color = Color.white;
+        txtTe.fontSize = 18; 
+        
+        LayoutElement leTe = btnTeObj.AddComponent<LayoutElement>();
+        leTe.preferredWidth = 140;
+        leTe.preferredHeight = 30;
+
+        if (mergeMgr != null)
+        {
+            Button btnTe = btnTeObj.GetComponent<Button>();
+            UnityEditor.Events.UnityEventTools.AddPersistentListener(btnTe.onClick, mergeMgr.SacrificeLevel8Swords);
+        }
+
+        // Đẩy nút Tế Kiếm lên TRƯỚC nút Ghép Nhanh
+        btnTeObj.transform.SetSiblingIndex(btnObj.transform.GetSiblingIndex());
 
         // Đánh dấu Scene đã thay đổi để lưu lại
         UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene());
         
-        Debug.Log("[Tool] Đã thêm nút Ghép Nhanh vào bên trái nút Sắp Xếp!");
+        Debug.Log("[Tool] Đã thêm nút Ghép Nhanh và Tế Kiếm vào bên trái nút Sắp Xếp!");
     }
 }

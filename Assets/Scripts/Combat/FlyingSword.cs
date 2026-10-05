@@ -79,6 +79,7 @@ public class FlyingSword : MonoBehaviour
         float kiemY = UpgradeManager.Instance != null ? UpgradeManager.Instance.GetKiemYValue() : 0;
         float bonusMultiplier = CultivationManager.Instance != null ? CultivationManager.Instance.permanentStatMultiplier : 1f;
         if (ShopManager.Instance != null) bonusMultiplier *= ShopManager.Instance.GetDamageMultiplier();
+        if (EconomyManager.Instance != null) bonusMultiplier *= (1f + EconomyManager.Instance.currentKiemY * 0.5f); // +50% Sát thương mỗi điểm Kiếm Ý (Tế kiếm)
         
         // baseDamage đã được set trực tiếp bởi CombatManager (dựa vào Level kiếm)
         float finalDamage = (baseDamage + kiemY) * bonusMultiplier;
