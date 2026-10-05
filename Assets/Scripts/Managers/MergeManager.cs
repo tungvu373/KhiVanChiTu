@@ -94,7 +94,8 @@ public class MergeManager : MonoBehaviour
         foreach (var item in allItems)
         {
             counts[item.level] += item.currentPieces;
-            Destroy(item.gameObject); // Xóa hết item cũ
+            item.transform.SetParent(null); // Rời khỏi slot ngay lập tức để tạo chỗ trống
+            Destroy(item.gameObject); // Xóa hết item cũ (sẽ thực thi cuối frame)
         }
 
         // 3. Xử lý gộp từ cấp thấp lên cấp cao
@@ -122,12 +123,56 @@ public class MergeManager : MonoBehaviour
         Debug.Log("[Merge] Đã ghép nhanh tuân thủ tỷ lệ thành công!");
     }
 
+    public void SacrificeLevel8Swords()
+    {
+        if (inventoryPages == null) return;
+        
+        int sacrificedCount = 0;
+        
+        // Chỉ quét kho đồ, KHÔNG quét ô trang bị
+        foreach (Transform page in inventoryPages)
+        {
+            foreach (Transform slot in page)
+            {
+                MergeItem item = slot.GetComponentInChildren<MergeItem>();
+                if (item != null && item.level == 8) // Giới hạn là kiếm cấp 8
+                {
+                    // Mỗi 1 phôi kiếm cấp 8 = 1 điểm Kiếm Ý
+                    sacrificedCount += item.currentPieces;
+                    Destroy(item.gameObject);
+                }
+            }
+        }
+        
+        if (sacrificedCount > 0)
+        {
+            if (EconomyManager.Instance != null)
+            {
+                EconomyManager.Instance.AddKiemY(sacrificedCount);
+            }
+            if (GameLogger.Instance != null)
+            {
+                GameLogger.Instance.Log($"Tế Kiếm: Nhận {sacrificedCount} điểm Kiếm Ý (+{sacrificedCount * 50}% ST)!", Color.magenta);
+            }
+            Debug.Log($"[Sacrifice] Đã Tế {sacrificedCount} kiếm Lv8 thành công!");
+        }
+        else
+        {
+            if (GameLogger.Instance != null)
+            {
+                GameLogger.Instance.Log("Không có kiếm Lv8 nào trong kho để Tế!", Color.red);
+            }
+        }
+        
+        SortInventory();
+    }
+
     private int GetRequiredPiecesForLevel(int level)
     {
-        if (level < 3) return 2;
-        if (level < 5) return 3;
-        if (level < 7) return 4;
-        return 5;
+        if (level == 1) return 2;
+        if (level == 2) return 2;
+        if (level >= 8) return 9999;
+        return level;
     }
 
     private void TryAddSwordWithPieces(int level, int pieces)

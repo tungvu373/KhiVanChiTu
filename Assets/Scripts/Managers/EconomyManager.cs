@@ -7,9 +7,11 @@ public class EconomyManager : MonoBehaviour
 
     public float currentLinhThach;
     public int currentCoDuyen;
+    public int currentKiemY;
 
     public event Action<float> OnLinhThachChanged;
     public event Action<int> OnCoDuyenChanged;
+    public event Action<int> OnKiemYChanged;
 
     private void Awake()
     {
@@ -53,5 +55,11 @@ public class EconomyManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void AddKiemY(int amount)
+    {
+        currentKiemY += amount;
+        OnKiemYChanged?.Invoke(currentKiemY);
     }
 }
