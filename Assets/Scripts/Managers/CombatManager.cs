@@ -13,6 +13,13 @@ public class CombatManager : MonoBehaviour
     public float spawnInterval = 2f; // Cứ 2s đẻ 1 con
     
     private List<Enemy> activeEnemies = new List<Enemy>();
+    private const int MAX_ENEMIES = 15;
+
+    public float playerMaxHp = 1000f;
+    public float playerCurrentHp = 1000f;
+    private float playerVisualHp = 1000f; // Dùng để trượt mượt mà
+    private UnityEngine.UI.Image playerHpFill;
+    private UnityEngine.UI.Text playerHpText;
 
     private void Awake()
     {
@@ -22,6 +29,59 @@ public class CombatManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        playerMaxHp = 1000f;
+        playerCurrentHp = 1000f;
+        playerVisualHp = 1000f;
+        CreatePlayerHPUI();
+    }
+
+    private void CreatePlayerHPUI()
+    {
+        GameObject canvas = GameObject.Find("Canvas");
+        if (canvas == null) return;
+        
+        GameObject hpObj = new GameObject("PlayerHPBar", typeof(RectTransform));
+        hpObj.transform.SetParent(canvas.transform, false);
+        RectTransform rt = hpObj.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 0);
+        rt.anchorMax = new Vector2(0.5f, 0);
+        rt.pivot = new Vector2(0.5f, 0);
+        rt.anchoredPosition = new Vector2(-150, 150); // Ở giữa dưới cùng, phía trên skill bar một chút
+        rt.sizeDelta = new Vector2(300, 30);
+
+        GameObject bg = new GameObject("BG", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+        bg.transform.SetParent(hpObj.transform, false);
+        bg.GetComponent<UnityEngine.UI.Image>().color = new Color(0,0,0, 0.7f);
+        RectTransform bgRt = bg.GetComponent<RectTransform>();
+        bgRt.anchorMin = Vector2.zero; bgRt.anchorMax = Vector2.one;
+        bgRt.offsetMin = Vector2.zero; bgRt.offsetMax = Vector2.zero;
+
+        GameObject fill = new GameObject("Fill", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+        fill.transform.SetParent(bg.transform, false);
+        playerHpFill = fill.GetComponent<UnityEngine.UI.Image>();
+        playerHpFill.color = Color.green;
+        // KHÔNG dùng Filled Type vì không có Sprite sẽ không hoạt động, dùng Anchor.
+        RectTransform fillRt = fill.GetComponent<RectTransform>();
+        fillRt.anchorMin = Vector2.zero; 
+        fillRt.anchorMax = Vector2.one;
+        fillRt.offsetMin = Vector2.zero; 
+        fillRt.offsetMax = Vector2.zero;
+
+        GameObject txt = new GameObject("Text", typeof(RectTransform), typeof(UnityEngine.UI.Text), typeof(UnityEngine.UI.Outline));
+        txt.transform.SetParent(hpObj.transform, false);
+        playerHpText = txt.GetComponent<UnityEngine.UI.Text>();
+        playerHpText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        playerHpText.alignment = TextAnchor.MiddleCenter;
+        playerHpText.color = Color.white;
+        playerHpText.fontSize = 16;
+        playerHpText.fontStyle = FontStyle.Bold;
+        txt.GetComponent<UnityEngine.UI.Outline>().effectColor = Color.black;
+        RectTransform txtRt = txt.GetComponent<RectTransform>();
+        txtRt.anchorMin = Vector2.zero; txtRt.anchorMax = Vector2.one;
+        txtRt.offsetMin = Vector2.zero; txtRt.offsetMax = Vector2.zero;
+        
+        UpdatePlayerHPUI();
     }
 
     private void Start()
@@ -30,6 +90,13 @@ public class CombatManager : MonoBehaviour
         {
             GameManager.Instance.OnStateChanged += HandleStateChanged;
         }
+        if (CultivationManager.Instance != null)
+        {
+            CultivationManager.Instance.OnStageChanged += HandleStageChanged;
+            
+            // Tính toán lần đầu
+            HandleStageChanged(null);
+        }
     }
 
     private void OnDestroy()
@@ -37,6 +104,28 @@ public class CombatManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnStateChanged -= HandleStateChanged;
+        }
+        if (CultivationManager.Instance != null)
+        {
+            CultivationManager.Instance.OnStageChanged -= HandleStageChanged;
+        }
+    }
+
+    private void HandleStageChanged(CultivationStageData stageData)
+    {
+        if (CultivationManager.Instance != null)
+        {
+            int stage = CultivationManager.Instance.currentStageIndex;
+            float oldMaxHp = playerMaxHp;
+            playerMaxHp = 1000f * Mathf.Pow(1.2f, stage); // Máu tăng 20% mỗi cảnh giới
+            
+            // Hồi phục lượng máu chênh lệch khi lên cấp
+            if (playerCurrentHp > 0)
+            {
+                playerCurrentHp += (playerMaxHp - oldMaxHp);
+            }
+            
+            UpdatePlayerHPUI();
         }
     }
 
@@ -64,7 +153,8 @@ public class CombatManager : MonoBehaviour
     {
         if (enemyPrefab == null || playerTransform == null) return;
         
-        Vector3 spawnPos = playerTransform.position + new Vector3(8f, 0, 0); // Đứng đối diện
+        // Sinh Boss trên trục Z (phía trước) và ép cứng tọa độ Y bằng với Nhân vật
+        Vector3 spawnPos = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 8f);
         GameObject go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
         go.transform.localScale = Vector3.one * 3f; // Boss to gấp 3
         
@@ -73,7 +163,7 @@ public class CombatManager : MonoBehaviour
         int stageIndex = CultivationManager.Instance != null ? CultivationManager.Instance.currentStageIndex : 1;
         float bossHealth = 500f * Mathf.Pow(1.5f, stageIndex); // Máu boss tăng theo hàm mũ
         
-        currentBoss.Init(bossHealth, playerTransform);
+        currentBoss.Init(bossHealth, playerTransform, true);
         activeEnemies.Add(currentBoss);
         
         // Đổi màu Boss thành Đỏ nguy hiểm
@@ -86,9 +176,31 @@ public class CombatManager : MonoBehaviour
 
     private void Update()
     {
-        // Tạm ngưng sinh quái nếu đang ở trạng thái khác (Đánh Boss/Đột phá)
+        // Trượt thanh máu mượt mà (Game Feel) - Xử lý ngay cả khi đánh Boss
+        if (playerHpFill != null)
+        {
+            playerVisualHp = Mathf.Lerp(playerVisualHp, playerCurrentHp, Time.deltaTime * 10f);
+            float fillRatio = Mathf.Clamp01(playerVisualHp / playerMaxHp);
+            RectTransform fillRt = playerHpFill.GetComponent<RectTransform>();
+            fillRt.anchorMax = new Vector2(fillRatio, 1f);
+        }
+
+        // Tạm ngưng sinh quái và hồi máu thụ động nếu đang ở trạng thái khác (Đánh Boss/Đột phá)
+        // (Lưu ý: Game Feel HP trượt vẫn chạy ở trên)
         if (GameManager.Instance == null || GameManager.Instance.currentState != GameManager.GameState.IdleFarm)
             return;
+
+        // Hồi máu thụ động mặc định của game (1% mỗi giây)
+        if (playerCurrentHp > 0 && playerCurrentHp < playerMaxHp)
+        {
+            HealPlayer(playerMaxHp * 0.01f * Time.deltaTime);
+        }
+
+        // Hồi máu từ Shop (Hồi Huyết Đan: 5% mỗi giây)
+        if (ShopManager.Instance != null && ShopManager.Instance.hpRegenVisualTimer > 0)
+        {
+            HealPlayer(playerMaxHp * 0.05f * Time.deltaTime);
+        }
 
         if (enemyPrefab == null)
         {
@@ -97,7 +209,8 @@ public class CombatManager : MonoBehaviour
         }
 
         spawnTimer -= Time.deltaTime;
-        if (spawnTimer <= 0 && playerTransform != null)
+        activeEnemies.RemoveAll(e => e == null);
+        if (spawnTimer <= 0 && playerTransform != null && activeEnemies.Count < MAX_ENEMIES)
         {
             SpawnEnemy();
             spawnTimer = spawnInterval;
@@ -106,16 +219,17 @@ public class CombatManager : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        // Sinh quái ngẫu nhiên trên mặt phẳng 3D XZ (cách player 5 unit để dễ nhìn thấy ngay)
-        Vector2 randomDir = Random.insideUnitCircle.normalized;
-        Vector3 spawnPos = playerTransform.position + new Vector3(randomDir.x, 0, randomDir.y) * 5f; 
+        // Sinh quái xuất hiện dọc theo trục Z của thế giới (tránh lỗi xoay trục của Model 3D)
+        // Sinh quái xuất hiện dọc theo trục Z, ép cứng Y luôn luôn bằng Y của Nhân vật
+        float randomX = Random.Range(-2f, 2f);
+        Vector3 spawnPos = new Vector3(playerTransform.position.x + randomX, playerTransform.position.y, playerTransform.position.z + 15f); 
         
         GameObject go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
         Enemy enemy = go.GetComponent<Enemy>();
         
         int stageIndex = CultivationManager.Instance != null ? CultivationManager.Instance.currentStageIndex : 1;
         float health = 50f * Mathf.Pow(1.5f, stageIndex); // Máu quái thường tăng theo hàm mũ
-        enemy.Init(health, playerTransform);
+        enemy.Init(health, playerTransform, false);
         
         activeEnemies.Add(enemy);
         Debug.Log($"[Combat] 😈 Sinh một Yêu Thú 3D tại tọa độ {spawnPos}");
@@ -139,8 +253,43 @@ public class CombatManager : MonoBehaviour
             if (MergeManager.Instance != null && Random.value <= 0.2f)
             {
                 MergeManager.Instance.TryAddSword(1);
+                if (GameLogger.Instance != null) GameLogger.Instance.Log("Nhặt được: Kiếm Phôi Lv1", Color.yellow);
             }
         }
+    }
+
+    public void DamagePlayer(float amount)
+    {
+        playerCurrentHp -= amount;
+        if (playerCurrentHp <= 0)
+        {
+            playerCurrentHp = 0;
+            
+            if (CultivationManager.Instance != null)
+            {
+                CultivationManager.Instance.HandlePlayerDeath();
+            }
+            
+            // Xóa boss đang hiện diện khi player thua
+            ClearAllEnemies();
+            currentBoss = null;
+
+            if (GameManager.Instance != null) GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
+
+            playerCurrentHp = playerMaxHp;
+        }
+        UpdatePlayerHPUI();
+    }
+
+    public void HealPlayer(float amount)
+    {
+        playerCurrentHp = Mathf.Min(playerCurrentHp + amount, playerMaxHp);
+        UpdatePlayerHPUI();
+    }
+
+    private void UpdatePlayerHPUI()
+    {
+        if (playerHpText != null) playerHpText.text = $"HP: {Mathf.Ceil(playerCurrentHp)} / {playerMaxHp}";
     }
 
     public GameObject swordPrefab;
@@ -310,8 +459,13 @@ public class CombatManager : MonoBehaviour
         }
     }
 
+    private bool isPhanThanActive = false;
+
     public void CastPhanThan()
     {
+        if (isPhanThanActive) return;
+        isPhanThanActive = true;
+
         // Hiệu ứng Phân Thân: Trận pháp xoay dưới chân
         GameObject aura = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         aura.transform.position = playerTransform.position + Vector3.up * 0.05f;
@@ -344,6 +498,7 @@ public class CombatManager : MonoBehaviour
 
     private void EndPhanThan()
     {
+        isPhanThanActive = false;
         foreach (var sword in activeSwords)
         {
             if (sword != null && sword.gameObject.activeSelf)

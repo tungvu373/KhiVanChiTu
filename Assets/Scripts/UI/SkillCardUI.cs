@@ -1,13 +1,22 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class SkillCardUI : MonoBehaviour
+public class SkillCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public int skillIndex; // 0: Vạn Kiếm, 1: Ấn Chưởng, 2: Lôi Phạt, 3: Phân Thân
     public Text titleText;
     public Text condText;
     public Button unlockButton;
     public Text unlockBtnText;
+
+    private void Start()
+    {
+        if (unlockButton != null)
+        {
+            unlockButton.onClick.AddListener(OnUnlockClicked);
+        }
+    }
 
     private void Update()
     {
@@ -70,6 +79,34 @@ public class SkillCardUI : MonoBehaviour
         {
             skill.isUnlocked = true;
             Debug.Log($"[Skill] Đã dùng Cơ Duyên để lĩnh ngộ {skill.skillName}!");
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (TooltipManager.Instance != null && SkillManager.Instance != null)
+        {
+            SkillData skill = (skillIndex == 0) ? SkillManager.Instance.activeSkill : SkillManager.Instance.normalSkills[skillIndex - 1];
+            if (skill != null)
+            {
+                string info = $"<color=#00FFFF>{skill.skillName}</color>\n";
+                info += $"<color=#FFD700>Sát thương:</color> {skill.baseDamage:F0}\n";
+                info += $"<color=#FFD700>Hồi chiêu:</color> {skill.baseCooldown}s\n";
+                info += $"<color=#FFD700>Tiêu hao:</color> {skill.manaCost} Linh Lực";
+                
+                if (skillIndex == 0) info += "\n\n<i>Chiêu cuối chủ động (Bấm Space)</i>";
+                else info += "\n\n<i>Kỹ năng tự động xuất chiêu</i>";
+
+                TooltipManager.Instance.ShowTooltip(info);
+            }
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (TooltipManager.Instance != null)
+        {
+            TooltipManager.Instance.HideTooltip();
         }
     }
 }

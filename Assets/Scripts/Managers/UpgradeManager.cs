@@ -93,6 +93,10 @@ public class UpgradeManager : MonoBehaviour
             SkillManager.Instance.maxLinhLuc = manaValue;
             SkillManager.Instance.linhLucRegenRate = manaValue * 0.1f; // Tốc độ hồi bằng 10% mana tối đa
         }
+
+        // Push cập nhật kiếm đang trang bị ngay khi upgrade Kiếm Ý / Thần Thức
+        if (MergeManager.Instance != null)
+            MergeManager.Instance.OnEquipChanged();
     }
 
     // Các hàm cung cấp chỉ số cho các hệ thống khác (Combat, Phi Kiếm, Drop rates)

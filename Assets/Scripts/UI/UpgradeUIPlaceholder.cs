@@ -55,11 +55,14 @@ public class UpgradeUIPlaceholder : MonoBehaviour
 
     private void Update()
     {
+#if UNITY_EDITOR
         // NÚT CHEAT ĐỂ TEST: Bấm phím Space để nhận 100 Linh Thạch
         if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             if (EconomyManager.Instance != null) EconomyManager.Instance.AddLinhThach(100);
+            Debug.Log("[CHEAT] +100 Linh Thạch (Editor Only)");
         }
+#endif
     }
 
     private void UpdateEconomyUI(float linhThach)

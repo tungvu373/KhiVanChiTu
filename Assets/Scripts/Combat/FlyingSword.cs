@@ -16,8 +16,9 @@ public class FlyingSword : MonoBehaviour
 
     private void Update()
     {
-        if (targetEnemy == null)
+        if (targetEnemy == null || !targetEnemy.gameObject.activeInHierarchy)
         {
+            targetEnemy = null;
             searchTimer -= Time.deltaTime;
             if (searchTimer <= 0)
             {
@@ -49,10 +50,14 @@ public class FlyingSword : MonoBehaviour
             return;
         }
 
-        // Sát thương và Tốc độ = Base (Từ Phi Kiếm) + Buff (Từ Upgrade)
+        // Sát thương và Tốc độ = Base (Từ Phi Kiếm) + Buff (Từ Upgrade) + Buff (Từ Shop)
         float thanThuc = UpgradeManager.Instance != null ? UpgradeManager.Instance.GetThanThucValue() : 0;
-        float finalSpeed = baseSpeed + thanThuc;
+        if (ShopManager.Instance != null) thanThuc *= ShopManager.Instance.GetSpiritMultiplier();
         
+        float finalSpeed = baseSpeed + thanThuc;
+        if (ShopManager.Instance != null) finalSpeed *= ShopManager.Instance.GetSpeedMultiplier();
+        
+        if (targetEnemy == null) return;
         transform.position = Vector3.MoveTowards(transform.position, targetEnemy.transform.position, finalSpeed * Time.deltaTime);
         
         // Chĩa mũi kiếm (trục Z) về phía quái vật
@@ -73,6 +78,8 @@ public class FlyingSword : MonoBehaviour
     {
         float kiemY = UpgradeManager.Instance != null ? UpgradeManager.Instance.GetKiemYValue() : 0;
         float bonusMultiplier = CultivationManager.Instance != null ? CultivationManager.Instance.permanentStatMultiplier : 1f;
+        if (ShopManager.Instance != null) bonusMultiplier *= ShopManager.Instance.GetDamageMultiplier();
+        if (EconomyManager.Instance != null) bonusMultiplier *= (1f + EconomyManager.Instance.currentKiemY * 0.5f); // +50% Sát thương mỗi điểm Kiếm Ý (Tế kiếm)
         
         // baseDamage đã được set trực tiếp bởi CombatManager (dựa vào Level kiếm)
         float finalDamage = (baseDamage + kiemY) * bonusMultiplier;
