@@ -153,7 +153,8 @@ public class CombatManager : MonoBehaviour
     {
         if (enemyPrefab == null || playerTransform == null) return;
         
-        Vector3 spawnPos = playerTransform.position + new Vector3(8f, 0, 0); // Đứng đối diện
+        // Sinh Boss trên trục Z (phía trước) và ép cứng tọa độ Y bằng với Nhân vật
+        Vector3 spawnPos = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 8f);
         GameObject go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
         go.transform.localScale = Vector3.one * 3f; // Boss to gấp 3
         
@@ -218,9 +219,10 @@ public class CombatManager : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        // Sinh quái ngẫu nhiên trên mặt phẳng 3D XZ (cách player 5 unit để dễ nhìn thấy ngay)
-        Vector2 randomDir = Random.insideUnitCircle.normalized;
-        Vector3 spawnPos = playerTransform.position + new Vector3(randomDir.x, 0, randomDir.y) * 5f; 
+        // Sinh quái xuất hiện dọc theo trục Z của thế giới (tránh lỗi xoay trục của Model 3D)
+        // Sinh quái xuất hiện dọc theo trục Z, ép cứng Y luôn luôn bằng Y của Nhân vật
+        float randomX = Random.Range(-2f, 2f);
+        Vector3 spawnPos = new Vector3(playerTransform.position.x + randomX, playerTransform.position.y, playerTransform.position.z + 15f); 
         
         GameObject go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
         Enemy enemy = go.GetComponent<Enemy>();
