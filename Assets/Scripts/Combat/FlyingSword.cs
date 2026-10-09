@@ -7,6 +7,9 @@ public class FlyingSword : MonoBehaviour
     public int swordIndex = 0; // Biến phân bổ vị trí bay
     public bool isUltimateClone = false; // Đánh dấu đây là kiếm của Ultimate
     
+    [Header("Sprites cho từng Level (1-8)")]
+    public Sprite[] levelSprites;
+    
     // Tách biệt rạch ròi Data của Kiếm và Data Nâng cấp (Upgrade)
     public static float CalculateBaseDamage(int level) { return level * level * 10f; }
     public static float CalculateBaseSpeed(int level) { return 5f + (level * 2f); }
@@ -88,5 +91,16 @@ public class FlyingSword : MonoBehaviour
         
         // Hủy mục tiêu để frame tiếp theo tìm con mới
         targetEnemy = null; 
+    }
+
+    public void SetLevelVisual(int level)
+    {
+        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
+        if (sr != null && levelSprites != null && levelSprites.Length > 0)
+        {
+            // Level 1 -> index 0. Dùng Clamp để không bị lỗi quá mảng
+            int index = Mathf.Clamp(level - 1, 0, levelSprites.Length - 1);
+            sr.sprite = levelSprites[index];
+        }
     }
 }

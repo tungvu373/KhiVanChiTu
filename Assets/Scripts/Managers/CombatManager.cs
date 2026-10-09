@@ -329,15 +329,12 @@ public class CombatManager : MonoBehaviour
                     activeSwords[i].baseDamage = FlyingSword.CalculateBaseDamage(levels[i]); 
                     activeSwords[i].baseSpeed = FlyingSword.CalculateBaseSpeed(levels[i]); 
                     
-                    // Đổi màu kiếm 3D khớp với màu UI
+                    // Đổi hình ảnh kiếm 2D khớp với Level
+                    activeSwords[i].SetLevelVisual(levels[i]);
+                    
+                    // Đổi màu đuôi sáng bay theo level cho đẹp
                     float hue = (levels[i] * 0.15f) % 1f;
                     Color swordColor = Color.HSVToRGB(hue, 0.7f, 0.9f);
-                    
-                    MaterialPropertyBlock block = new MaterialPropertyBlock();
-                    block.SetColor("_BaseColor", swordColor);
-                    block.SetColor("_Color", swordColor);
-                    activeSwords[i].GetComponent<Renderer>().SetPropertyBlock(block);
-                    
                     TrailRenderer trail = activeSwords[i].GetComponent<TrailRenderer>();
                     if (trail != null) trail.startColor = swordColor;
                 }

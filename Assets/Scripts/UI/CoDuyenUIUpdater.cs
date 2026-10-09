@@ -27,7 +27,7 @@ public class CoDuyenUIUpdater : MonoBehaviour
     {
         if (txt != null)
         {
-            txt.text = $"Cơ Duyên: {coDuyen}";
+            txt.text = coDuyen.ToString();
         }
     }
 }

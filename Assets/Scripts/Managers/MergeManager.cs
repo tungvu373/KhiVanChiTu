@@ -37,41 +37,6 @@ public class MergeManager : MonoBehaviour
             // Cập nhật lên môi trường 3D
             OnEquipChanged();
         }
-
-        // Tạo nút Ghép Nhanh
-        CreateQuickMergeButton();
-    }
-
-    private void CreateQuickMergeButton()
-    {
-        if (pageText == null) return;
-        Transform parentPanel = pageText.transform.parent; // Lấy cha của pageText (thường là InventoryPanel)
-        
-        GameObject btnObj = new GameObject("Btn_QuickMerge", typeof(RectTransform), typeof(Image), typeof(Button));
-        btnObj.transform.SetParent(parentPanel, false);
-        RectTransform rt = btnObj.GetComponent<RectTransform>();
-        rt.anchorMin = new Vector2(1, 0); // Góc dưới phải
-        rt.anchorMax = new Vector2(1, 0);
-        rt.pivot = new Vector2(1, 0);
-        rt.anchoredPosition = new Vector2(-10, 10);
-        rt.sizeDelta = new Vector2(100, 30);
-        
-        btnObj.GetComponent<Image>().color = new Color(0.2f, 0.6f, 0.2f);
-        Button btn = btnObj.GetComponent<Button>();
-        btn.onClick.AddListener(QuickMerge);
-        
-        GameObject txtObj = new GameObject("Text", typeof(RectTransform), typeof(Text));
-        txtObj.transform.SetParent(btnObj.transform, false);
-        RectTransform txtRt = txtObj.GetComponent<RectTransform>();
-        txtRt.anchorMin = Vector2.zero; txtRt.anchorMax = Vector2.one;
-        txtRt.sizeDelta = Vector2.zero;
-        
-        Text txt = txtObj.GetComponent<Text>();
-        txt.text = "Ghép Nhanh";
-        txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        txt.alignment = TextAnchor.MiddleCenter;
-        txt.color = Color.white;
-        txt.fontSize = 14;
     }
 
     public void QuickMerge()
@@ -271,11 +236,19 @@ public class MergeManager : MonoBehaviour
         foreach (var item in allItems)
             item.transform.SetParent(transform); // Detach tạm về MergeManager
 
-        // 4. Dọn sạch slot (đảm bảo không còn orphan)
+        // 4. Dọn sạch slot (đảm bảo không còn orphan) và TẨY MÀU ô cũ
         foreach (Transform page in inventoryPages)
+        {
             foreach (Transform slot in page)
+            {
+                // Tẩy màu ô về mặc định
+                Image slotImg = slot.GetComponent<Image>();
+                if (slotImg != null) slotImg.color = new Color(0.1f, 0.1f, 0.1f, 0.8f);
+
                 foreach (Transform child in slot)
                     Destroy(child.gameObject); // Xóa bất kỳ thứ gì còn sót
+            }
+        }
 
         // 5. Gán lại theo thứ tự
         int idx = 0;
@@ -287,6 +260,7 @@ public class MergeManager : MonoBehaviour
                 {
                     allItems[idx].transform.SetParent(slot);
                     allItems[idx].GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                    allItems[idx].UpdateUI(); // Tô lại màu cho ô mới
                     idx++;
                 }
             }
