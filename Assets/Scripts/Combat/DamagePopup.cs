@@ -48,7 +48,7 @@ public class DamagePopup : MonoBehaviour
             float disappearSpeed = 3f;
             textColor.a -= disappearSpeed * Time.deltaTime;
             if (textMesh != null) textMesh.color = textColor;
-            if (textColor.a < 0) Destroy(gameObject);
+            if (textColor.a < 0) gameObject.SetActive(false);
         }
     }
 }

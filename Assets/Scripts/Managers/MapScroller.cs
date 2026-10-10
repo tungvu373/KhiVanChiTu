@@ -11,6 +11,18 @@ public class MapScroller : MonoBehaviour
     public List<Transform> mapChunks; // Bỏ 3 chunk map giống nhau vào đây
     public float chunkLength = 20f;   // Chiều dài của mỗi chunk
 
+    public static MapScroller Instance { get; private set; }
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     void Start()
     {
         // Tự động nhận diện kích thước nếu người dùng thay chunk map bằng Unity Terrain
@@ -73,5 +85,20 @@ public class MapScroller : MonoBehaviour
     {
         isMoving = true;
         // Gắn logic đổi Animation nhân vật sang trạng thái Run/Walk ở đây
+    }
+
+    public void RandomizeBiomeColor()
+    {
+        // Simple color tinting for terrains or meshes
+        Color randomColor = new Color(Random.Range(0.6f, 1f), Random.Range(0.6f, 1f), Random.Range(0.6f, 1f));
+        foreach (Transform chunk in mapChunks)
+        {
+            if (chunk == null) continue;
+            Renderer r = chunk.GetComponentInChildren<Renderer>();
+            if (r != null && r.material != null)
+            {
+                r.material.color = randomColor;
+            }
+        }
     }
 }

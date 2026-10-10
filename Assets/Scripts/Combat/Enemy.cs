@@ -17,10 +17,17 @@ public class Enemy : MonoBehaviour
     // UI & Game Feel
     private Image hpFill;
     private float visualHp;
-    private Material mat;
-    private Color originalColor;
+    private Renderer[] renderers; // Hỗ trợ Model 3D có nhiều bộ phận
+    private Color[] originalColors;
     private float flashTimer;
     private Camera mainCamera;
+    
+    // Animation
+    public Animator animator;
+    private bool isDead = false;
+    
+    [Header("Settings")]
+    public float hpBarHeight = 2.5f; // Chiều cao thanh máu (tùy chỉnh trên Inspector)
 
     public void Init(float health, Transform target, bool boss = false)
     {
@@ -30,15 +37,25 @@ public class Enemy : MonoBehaviour
         playerTarget = target;
         isBoss = boss;
         damage = boss ? health * 0.2f : health * 0.05f; // Sát thương tỉ lệ theo máu
+        isDead = false;
 
         CreateHPBar();
 
-        Renderer r = GetComponent<Renderer>();
-        if (r != null)
+        // Lấy tất cả SkinnedMeshRenderer/MeshRenderer trên Model 3D
+        renderers = GetComponentsInChildren<Renderer>();
+        originalColors = new Color[renderers.Length];
+        for (int i = 0; i < renderers.Length; i++)
         {
-            mat = r.material;
-            originalColor = mat.color;
+            if (renderers[i].material.HasProperty("_Color"))
+                originalColors[i] = renderers[i].material.color;
+            else if (renderers[i].material.HasProperty("_BaseColor"))
+                originalColors[i] = renderers[i].material.GetColor("_BaseColor");
+            else
+                originalColors[i] = Color.white;
         }
+        
+        if (animator == null) animator = GetComponentInChildren<Animator>();
+        
         mainCamera = Camera.main;
     }
 
@@ -47,7 +64,7 @@ public class Enemy : MonoBehaviour
         // Tạo Canvas World Space trên đầu quái
         GameObject canvasObj = new GameObject("HPCanvas", typeof(RectTransform), typeof(Canvas));
         canvasObj.transform.SetParent(transform, false);
-        canvasObj.transform.localPosition = new Vector3(0, 1.2f, 0);
+        canvasObj.transform.localPosition = new Vector3(0, hpBarHeight, 0);
         
         Canvas canvas = canvasObj.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
@@ -95,13 +112,26 @@ public class Enemy : MonoBehaviour
         }
 
         // Đổi màu giật cục (Flash)
-        if (flashTimer > 0 && mat != null)
+        if (flashTimer > 0)
         {
             flashTimer -= Time.deltaTime;
-            if (flashTimer <= 0) mat.color = originalColor;
+            if (flashTimer <= 0)
+            {
+                // Trả lại màu gốc
+                for (int i = 0; i < renderers.Length; i++)
+                {
+                    if (renderers[i] != null)
+                    {
+                        if (renderers[i].material.HasProperty("_Color"))
+                            renderers[i].material.color = originalColors[i];
+                        else if (renderers[i].material.HasProperty("_BaseColor"))
+                            renderers[i].material.SetColor("_BaseColor", originalColors[i]);
+                    }
+                }
+            }
         }
 
-        if (playerTarget != null)
+        if (playerTarget != null && !isDead)
         {
             float dist = Vector3.Distance(transform.position, playerTarget.position);
             if (dist > 1.5f)
@@ -110,10 +140,14 @@ public class Enemy : MonoBehaviour
                 Vector3 targetPos = new Vector3(playerTarget.position.x, transform.position.y, playerTarget.position.z);
                 transform.LookAt(targetPos);
                 transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+                
+                if (animator != null) animator.SetBool("IsMoving", true);
             }
             else
             {
                 // Tấn công Player
+                if (animator != null) animator.SetBool("IsMoving", false);
+                
                 if (attackTimer > 0)
                 {
                     attackTimer -= Time.deltaTime;
@@ -121,6 +155,9 @@ public class Enemy : MonoBehaviour
                 else
                 {
                     attackTimer = 1f / attackSpeed;
+                    
+                    if (animator != null) animator.SetTrigger("Attack"); // Kích hoạt Anim Đánh
+                    
                     if (CombatManager.Instance != null)
                     {
                         CombatManager.Instance.DamagePlayer(damage);
@@ -130,26 +167,47 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, bool isCrit = false)
     {
         hp -= amount;
         
-        // Game Feel: Flash trắng
-        if (mat != null)
+        // Game Feel: Flash trắng cho toàn bộ Model 3D
+        flashTimer = 0.1f;
+        foreach (var r in renderers)
         {
-            mat.color = Color.white;
-            flashTimer = 0.1f;
+            if (r != null)
+            {
+                if (r.material.HasProperty("_Color"))
+                    r.material.color = Color.white;
+                else if (r.material.HasProperty("_BaseColor"))
+                    r.material.SetColor("_BaseColor", Color.white);
+            }
         }
         
         if (CombatManager.Instance != null && CombatManager.Instance.damagePopupPrefab != null)
         {
-            GameObject popup = Instantiate(CombatManager.Instance.damagePopupPrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
-            popup.GetComponent<DamagePopup>().Setup(amount, amount >= 400); 
+            if (SimplePool.Instance != null)
+            {
+                GameObject popup = SimplePool.Instance.SpawnFromPool("DamagePopup", transform.position + Vector3.up * (hpBarHeight + 0.3f), Quaternion.identity);
+                if (popup != null) popup.GetComponent<DamagePopup>().Setup(amount, isCrit || amount >= 400);
+            }
+            else
+            {
+                GameObject popup = Instantiate(CombatManager.Instance.damagePopupPrefab, transform.position + Vector3.up * (hpBarHeight + 0.3f), Quaternion.identity);
+                popup.GetComponent<DamagePopup>().Setup(amount, isCrit || amount >= 400); 
+            }
         }
 
-        if (hp <= 0)
+        if (hp <= 0 && !isDead)
         {
-            Die();
+            isDead = true;
+            if (animator != null) animator.SetTrigger("Die");
+            
+            // Xóa Canvas máu ngay khi chết
+            if (hpFill != null) hpFill.transform.parent.parent.gameObject.SetActive(false);
+            
+            // Đợi Animation chết chạy xong mới gọi Die()
+            Invoke(nameof(Die), 1.5f); // Chờ 1.5s
         }
     }
 
@@ -179,12 +237,32 @@ public class Enemy : MonoBehaviour
         {
             CombatManager.Instance.OnEnemyDied(this);
         }
-        Destroy(gameObject);
+        
+        if (StageManager.Instance != null)
+        {
+            StageManager.Instance.OnEnemyKilled(isBoss);
+        }
+        
+        // Spawn Flying VFX (Game Feel)
+        if (VFXHelper.Instance != null)
+        {
+            VFXHelper.Instance.SpawnFlyingLoot(transform.position, isBoss ? 5 : 1);
+        }
+
+        gameObject.SetActive(false); // Pooling thay vì Destroy
     }
 
     private void OnDestroy()
     {
-        if (mat != null) Destroy(mat);
+        // Cleanup vật liệu để tránh rò rỉ bộ nhớ
+        if (renderers != null)
+        {
+            foreach (var r in renderers)
+            {
+                if (r != null && r.material != null) Destroy(r.material);
+            }
+        }
+        
         if (hpFill != null)
         {
             Transform hpCanvas = hpFill.transform.parent?.parent;

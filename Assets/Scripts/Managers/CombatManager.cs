@@ -5,15 +5,16 @@ public class CombatManager : MonoBehaviour
 {
     public static CombatManager Instance { get; private set; }
 
-    public GameObject enemyPrefab;
+    public GameObject[] normalEnemyPrefabs;
+    public GameObject[] bossEnemyPrefabs;
     public GameObject damagePopupPrefab; // Hiển thị số sát thương
     public Transform playerTransform;
 
     private float spawnTimer;
-    public float spawnInterval = 2f; // Cứ 2s đẻ 1 con
+    public float spawnInterval = 0.2f; // Spawn nhanh hơn (0.2s)
     
     private List<Enemy> activeEnemies = new List<Enemy>();
-    private const int MAX_ENEMIES = 15;
+    private const int MAX_ENEMIES = 50;
 
     public float playerMaxHp = 1000f;
     public float playerCurrentHp = 1000f;
@@ -97,6 +98,29 @@ public class CombatManager : MonoBehaviour
             // Tính toán lần đầu
             HandleStageChanged(null);
         }
+
+        if (SimplePool.Instance != null)
+        {
+            // Pool toàn bộ quái thường
+            if (normalEnemyPrefabs != null && normalEnemyPrefabs.Length > 0)
+            {
+                foreach (var prefab in normalEnemyPrefabs)
+                {
+                    if (prefab != null) SimplePool.Instance.AddPool(prefab.name, prefab, 20);
+                }
+            }
+            
+            // Pool toàn bộ boss
+            if (bossEnemyPrefabs != null && bossEnemyPrefabs.Length > 0)
+            {
+                foreach (var prefab in bossEnemyPrefabs)
+                {
+                    if (prefab != null) SimplePool.Instance.AddPool(prefab.name, prefab, 5);
+                }
+            }
+
+            if (damagePopupPrefab != null) SimplePool.Instance.AddPool("DamagePopup", damagePopupPrefab, 50);
+        }
     }
 
     private void OnDestroy()
@@ -142,7 +166,7 @@ public class CombatManager : MonoBehaviour
     {
         foreach (var e in activeEnemies)
         {
-            if (e != null) Destroy(e.gameObject);
+            if (e != null) e.gameObject.SetActive(false);
         }
         activeEnemies.Clear();
     }
@@ -151,11 +175,16 @@ public class CombatManager : MonoBehaviour
 
     private void SpawnBoss()
     {
-        if (enemyPrefab == null || playerTransform == null) return;
+        if (bossEnemyPrefabs == null || bossEnemyPrefabs.Length == 0 || playerTransform == null) return;
+        
+        GameObject bossPrefab = bossEnemyPrefabs[Random.Range(0, bossEnemyPrefabs.Length)];
         
         // Sinh Boss trên trục Z (phía trước) và ép cứng tọa độ Y bằng với Nhân vật
         Vector3 spawnPos = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 8f);
-        GameObject go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+        GameObject go = null;
+        if (SimplePool.Instance != null) go = SimplePool.Instance.SpawnFromPool(bossPrefab.name, spawnPos, Quaternion.identity);
+        else go = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
+        
         go.transform.localScale = Vector3.one * 3f; // Boss to gấp 3
         
         currentBoss = go.GetComponent<Enemy>();
@@ -166,10 +195,7 @@ public class CombatManager : MonoBehaviour
         currentBoss.Init(bossHealth, playerTransform, true);
         activeEnemies.Add(currentBoss);
         
-        // Đổi màu Boss thành Đỏ nguy hiểm
-        MaterialPropertyBlock block = new MaterialPropertyBlock();
-        block.SetColor("_BaseColor", Color.red);
-        go.GetComponent<Renderer>().SetPropertyBlock(block);
+        // Bỏ logic đổi màu đỏ thủ công vì giờ dùng Asset 3D thật (Boss có màu riêng)
         
         Debug.Log($"[Combat] 👹 BOSS LÔI KIẾP XUẤT HIỆN! HP: {bossHealth:F0}");
     }
@@ -187,7 +213,7 @@ public class CombatManager : MonoBehaviour
 
         // Tạm ngưng sinh quái và hồi máu thụ động nếu đang ở trạng thái khác (Đánh Boss/Đột phá)
         // (Lưu ý: Game Feel HP trượt vẫn chạy ở trên)
-        if (GameManager.Instance == null || GameManager.Instance.currentState != GameManager.GameState.IdleFarm)
+        if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm)
             return;
 
         // Hồi máu thụ động mặc định của game (1% mỗi giây)
@@ -202,9 +228,9 @@ public class CombatManager : MonoBehaviour
             HealPlayer(playerMaxHp * 0.05f * Time.deltaTime);
         }
 
-        if (enemyPrefab == null)
+        if (normalEnemyPrefabs == null || normalEnemyPrefabs.Length == 0)
         {
-            Debug.LogWarning("⚠️ CombatManager: Chưa có Enemy Prefab! Bạn cần chạy menu TuTien -> Tạo hệ thống Combat 3D.");
+            Debug.LogWarning("⚠️ CombatManager: Chưa có Normal Enemy Prefabs! Hãy kéo Asset 3D Quái vào Inspector.");
             return;
         }
 
@@ -219,20 +245,30 @@ public class CombatManager : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        // Sinh quái xuất hiện dọc theo trục Z của thế giới (tránh lỗi xoay trục của Model 3D)
-        // Sinh quái xuất hiện dọc theo trục Z, ép cứng Y luôn luôn bằng Y của Nhân vật
+        GameObject enemyPrefab = normalEnemyPrefabs[Random.Range(0, normalEnemyPrefabs.Length)];
+        
+        // Sinh quái xuất hiện dọc theo trục Z của thế giới
         float randomX = Random.Range(-2f, 2f);
         Vector3 spawnPos = new Vector3(playerTransform.position.x + randomX, playerTransform.position.y, playerTransform.position.z + 15f); 
         
-        GameObject go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-        Enemy enemy = go.GetComponent<Enemy>();
+        GameObject go = null;
+        if (SimplePool.Instance != null) go = SimplePool.Instance.SpawnFromPool(enemyPrefab.name, spawnPos, Quaternion.identity);
+        else go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
         
-        int stageIndex = CultivationManager.Instance != null ? CultivationManager.Instance.currentStageIndex : 1;
-        float health = 50f * Mathf.Pow(1.5f, stageIndex); // Máu quái thường tăng theo hàm mũ
+        go.transform.localScale = Vector3.one; // Reset scale (vì có thể tái sử dụng từ Boss)
+        
+        Enemy enemy = go.GetComponent<Enemy>();
+        if (enemy == null)
+        {
+            Debug.LogError($"[LỖI] Prefab '{enemyPrefab.name}' của bạn CHƯA ĐƯỢC GẮN script 'Enemy.cs'! Hãy mở Prefab đó lên và Add Component -> Enemy.");
+            return;
+        }
+        
+        int stageIndex = StageManager.Instance != null ? StageManager.Instance.currentStage : 1;
+        float health = 50f * Mathf.Pow(1.5f, stageIndex); // Tăng theo Stage
         enemy.Init(health, playerTransform, false);
         
         activeEnemies.Add(enemy);
-        Debug.Log($"[Combat] 😈 Sinh một Yêu Thú 3D tại tọa độ {spawnPos}");
     }
 
     public void OnEnemyDied(Enemy enemy)
@@ -290,6 +326,20 @@ public class CombatManager : MonoBehaviour
     private void UpdatePlayerHPUI()
     {
         if (playerHpText != null) playerHpText.text = $"HP: {Mathf.Ceil(playerCurrentHp)} / {playerMaxHp}";
+    }
+
+    public void ChangeToBossState()
+    {
+        ClearAllEnemies();
+        SpawnBoss();
+        if (MapScroller.Instance != null) MapScroller.Instance.StopMoving();
+    }
+
+    public void ChangeToIdleState()
+    {
+        ClearAllEnemies();
+        currentBoss = null;
+        if (MapScroller.Instance != null) MapScroller.Instance.ResumeMoving();
     }
 
     public GameObject swordPrefab;
@@ -410,6 +460,47 @@ public class CombatManager : MonoBehaviour
         return nearest;
     }
 
+    public Enemy GetOptimalTarget(FlyingSword seekingSword)
+    {
+        Enemy bestEnemy = null;
+        float minScore = float.MaxValue;
+        
+        foreach (Enemy e in activeEnemies)
+        {
+            if (e == null || e.hp <= 0) continue;
+            
+            // Tính toán lượng sát thương dự kiến quái sẽ phải nhận từ các kiếm khác
+            float incomingDmg = 0f;
+            foreach (var sword in activeSwords)
+            {
+                if (sword != null && sword != seekingSword && sword.gameObject.activeInHierarchy && sword.TargetEnemy == e)
+                {
+                    incomingDmg += sword.GetExpectedDamage();
+                }
+            }
+            foreach (var sword in ultimateSwords)
+            {
+                if (sword != null && sword != seekingSword && sword.gameObject.activeInHierarchy && sword.TargetEnemy == e)
+                {
+                    incomingDmg += sword.GetExpectedDamage();
+                }
+            }
+
+            // Nếu quái đã nhận đủ sát thương chí tử từ các kiếm khác, thì kiếm này bỏ qua tìm con khác.
+            if (e.hp - incomingDmg <= 0)
+                continue;
+
+            float dist = Vector3.Distance(seekingSword.transform.position, e.transform.position);
+            if (dist < minScore)
+            {
+                minScore = dist;
+                bestEnemy = e;
+            }
+        }
+        
+        return bestEnemy;
+    }
+
     // --- 3 KỸ NĂNG THƯỜNG ---
     public void CastAnChuong(float damage)
     {
@@ -445,7 +536,7 @@ public class CombatManager : MonoBehaviour
             GameObject shockwave = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             shockwave.transform.position = endPos + Vector3.up * 0.1f;
             shockwave.transform.localScale = new Vector3(0.1f, 0.05f, 0.1f);
-            Material swMat = new Material(Shader.Find("Standard"));
+            Material swMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
             swMat.SetFloat("_Mode", 3);
             swMat.SetColor("_Color", new Color(0.8f, 0.2f, 1f, 0.6f));
             shockwave.GetComponent<Renderer>().material = swMat;
@@ -468,7 +559,7 @@ public class CombatManager : MonoBehaviour
         aura.transform.position = playerTransform.position + Vector3.up * 0.05f;
         aura.transform.localScale = new Vector3(6, 0.01f, 6);
         
-        Material mat = new Material(Shader.Find("Standard"));
+        Material mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
         mat.SetFloat("_Mode", 3);
         mat.SetColor("_Color", new Color(0, 1f, 0, 0.5f)); // Xanh lá
         mat.EnableKeyword("_EMISSION");
