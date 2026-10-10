@@ -24,7 +24,7 @@ public class UpgradeManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Instance = this;
@@ -103,4 +103,24 @@ public class UpgradeManager : MonoBehaviour
     public float GetKiemYValue() => kiemYData != null ? kiemYData.GetValue(kiemYLevel) : 0;
     public float GetThanThucValue() => thanThucData != null ? thanThucData.GetValue(thanThucLevel) : 0;
     public float GetTuLinhValue() => tuLinhData != null ? tuLinhData.GetValue(tuLinhLevel) : 0;
+
+    // ── SAVE / LOAD ─────────────────────────────────────────────────────────
+    public void SaveToSlot(CharacterSaveData slot)
+    {
+        slot.linhLucLevel = linhLucLevel;
+        slot.kiemYLevel = kiemYLevel;
+        slot.thanThucLevel = thanThucLevel;
+        slot.tuLinhLevel = tuLinhLevel;
+    }
+
+    public void LoadFromSlot(CharacterSaveData slot)
+    {
+        linhLucLevel = Mathf.Max(1, slot.linhLucLevel);
+        kiemYLevel = Mathf.Max(1, slot.kiemYLevel);
+        thanThucLevel = Mathf.Max(1, slot.thanThucLevel);
+        tuLinhLevel = Mathf.Max(1, slot.tuLinhLevel);
+        ApplyUpgradeEffects();
+        OnUpgradesChanged?.Invoke();
+    }
 }
+

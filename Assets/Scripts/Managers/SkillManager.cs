@@ -12,7 +12,7 @@ public class SkillManager : MonoBehaviour
     private float currentCooldown;
     public bool isSkillActive = false;
 
-    [Header("Các Kỹ Năng Thường")]
+    [Header("CÃ¡c Ká»¹ NÄƒng ThÆ°á»ng")]
     public SkillData[] normalSkills = new SkillData[3];
     private float[] normalCooldowns = new float[3];
 
@@ -22,42 +22,35 @@ public class SkillManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this) { Destroy(this); return; }
         Instance = this;
     }
     
     private void Start()
     {
-        CreatePlayerManaUI();
-
-        if (CultivationManager.Instance != null)
-        {
-            CultivationManager.Instance.OnStageChanged += HandleStageChanged;
-            HandleStageChanged(null);
-        }
         if (activeSkill == null)
         {
             activeSkill = ScriptableObject.CreateInstance<SkillData>();
-            activeSkill.skillName = "Vạn Kiếm Quy Tông";
+            activeSkill.skillName = "Váº¡n Kiáº¿m Quy TÃ´ng";
             activeSkill.skillType = SkillType.VanKiemQuyTong;
             activeSkill.manaCost = 100f;
             activeSkill.baseCooldown = 3f;
             activeSkill.baseDamage = 500f;
             activeSkill.isUnlocked = false;
-            activeSkill.requiredStageIndex = 15; // Trúc Cơ Sơ Kỳ (Index 15)
-            activeSkill.unlockCost = 2; // 2 Cơ Duyên
+            activeSkill.requiredStageIndex = 15; // TrÃºc CÆ¡ SÆ¡ Ká»³ (Index 15)
+            activeSkill.unlockCost = 2; // 2 CÆ¡ DuyÃªn
         }
 
-        // Tự tạo 3 kỹ năng thường nếu chưa có
+        // Tá»± táº¡o 3 ká»¹ nÄƒng thÆ°á»ng náº¿u chÆ°a cÃ³
         if (normalSkills[0] == null)
         {
             normalSkills[0] = ScriptableObject.CreateInstance<SkillData>();
-            normalSkills[0].skillName = "Ấn Chưởng";
+            normalSkills[0].skillName = "áº¤n ChÆ°á»Ÿng";
             normalSkills[0].skillType = SkillType.AnChuong;
             normalSkills[0].baseCooldown = 8f;
             normalSkills[0].baseDamage = 150f;
             normalSkills[0].isUnlocked = false;
-            normalSkills[0].requiredStageIndex = 18; // Kết Đan Sơ Kỳ
+            normalSkills[0].requiredStageIndex = 18; // Káº¿t Äan SÆ¡ Ká»³
             normalSkills[0].unlockCost = 4;
 
             normalSkills[1] = ScriptableObject.CreateInstance<SkillData>();
@@ -66,89 +59,23 @@ public class SkillManager : MonoBehaviour
             normalSkills[1].baseCooldown = 12f;
             normalSkills[1].baseDamage = 800f;
             normalSkills[1].isUnlocked = false;
-            normalSkills[1].requiredStageIndex = 21; // Nguyên Anh Sơ Kỳ
+            normalSkills[1].requiredStageIndex = 21; // NguyÃªn Anh SÆ¡ Ká»³
             normalSkills[1].unlockCost = 8;
 
             normalSkills[2] = ScriptableObject.CreateInstance<SkillData>();
-            normalSkills[2].skillName = "Phân Thân";
-            normalSkills[2].skillType = SkillType.PhanThan;
+            normalSkills[2].skillName = "Âm Dương Trận";
+            normalSkills[2].skillType = SkillType.AmDuongTran;
             normalSkills[2].baseCooldown = 20f;
             normalSkills[2].baseDamage = 0f;
             normalSkills[2].isUnlocked = false;
             normalSkills[2].isUnlocked = false;
-            normalSkills[2].requiredStageIndex = 24; // Hóa Thần Sơ Kỳ
+            normalSkills[2].requiredStageIndex = 24; // HÃ³a Tháº§n SÆ¡ Ká»³
             normalSkills[2].unlockCost = 16;
         }
     }
 
     private void OnDestroy()
     {
-        if (CultivationManager.Instance != null)
-        {
-            CultivationManager.Instance.OnStageChanged -= HandleStageChanged;
-        }
-    }
-
-    private void HandleStageChanged(CultivationStageData stageData)
-    {
-        if (CultivationManager.Instance != null)
-        {
-            int stage = CultivationManager.Instance.currentStageIndex;
-            // Linh lực tăng 15% mỗi cảnh giới
-            maxLinhLuc = 100f * Mathf.Pow(1.15f, stage);
-            // Hồi 0.5% mỗi giây
-            linhLucRegenRate = maxLinhLuc * 0.005f;
-            
-            UpdateUI();
-        }
-    }
-
-    private void CreatePlayerManaUI()
-    {
-        GameObject canvas = GameObject.Find("Canvas");
-        if (canvas == null) return;
-        
-        GameObject manaObj = new GameObject("PlayerManaBar", typeof(RectTransform));
-        manaObj.transform.SetParent(canvas.transform, false);
-        RectTransform rt = manaObj.GetComponent<RectTransform>();
-        rt.anchorMin = new Vector2(0.5f, 0);
-        rt.anchorMax = new Vector2(0.5f, 0);
-        rt.pivot = new Vector2(0.5f, 0);
-        rt.anchoredPosition = new Vector2(-150, 115); // Nằm ngay dưới thanh HP (HP là 150)
-        rt.sizeDelta = new Vector2(300, 25); // Nhỏ hơn thanh HP 1 chút
-
-        GameObject bg = new GameObject("BG", typeof(RectTransform), typeof(UnityEngine.UI.Image));
-        bg.transform.SetParent(manaObj.transform, false);
-        bg.GetComponent<UnityEngine.UI.Image>().color = new Color(0, 0, 0, 0.7f);
-        RectTransform bgRt = bg.GetComponent<RectTransform>();
-        bgRt.anchorMin = Vector2.zero; bgRt.anchorMax = Vector2.one;
-        bgRt.offsetMin = Vector2.zero; bgRt.offsetMax = Vector2.zero;
-
-        GameObject fill = new GameObject("Fill", typeof(RectTransform), typeof(UnityEngine.UI.Image));
-        fill.transform.SetParent(bg.transform, false);
-        manaFill = fill.GetComponent<UnityEngine.UI.Image>();
-        manaFill.color = new Color(0.2f, 0.6f, 1f); // Màu xanh dương (Mana)
-        
-        RectTransform fillRt = fill.GetComponent<RectTransform>();
-        fillRt.anchorMin = Vector2.zero; 
-        fillRt.anchorMax = Vector2.one;
-        fillRt.offsetMin = Vector2.zero; 
-        fillRt.offsetMax = Vector2.zero;
-
-        GameObject txt = new GameObject("Text", typeof(RectTransform), typeof(UnityEngine.UI.Text), typeof(UnityEngine.UI.Outline));
-        txt.transform.SetParent(manaObj.transform, false);
-        skillText = txt.GetComponent<UnityEngine.UI.Text>();
-        skillText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        skillText.alignment = TextAnchor.MiddleCenter;
-        skillText.color = Color.white;
-        skillText.fontSize = 14;
-        skillText.fontStyle = FontStyle.Bold;
-        txt.GetComponent<UnityEngine.UI.Outline>().effectColor = Color.black;
-        RectTransform txtRt = txt.GetComponent<RectTransform>();
-        txtRt.anchorMin = Vector2.zero; txtRt.anchorMax = Vector2.one;
-        txtRt.offsetMin = Vector2.zero; txtRt.offsetMax = Vector2.zero;
-        
-        UpdateUI();
     }
 
     private void Update()
@@ -157,11 +84,11 @@ public class SkillManager : MonoBehaviour
 
         if (isSkillActive)
         {
-            // THUẬT TOÁN CÂN BẰNG GAME (SOFT-CAP)
-            // Nếu chỉ dùng 20f cố định, Ulti sẽ tồn tại vô tận về Late game.
-            // Công thức: BaseDrain (20) + Penalty (5% Max Mana).
-            // Kết quả: Thời gian Ulti = MaxMana / (20 + MaxMana * 0.05). 
-            // Giới hạn tiệm cận (Limit): Dù có Max Mana là 1 Tỷ, Ulti cũng KHÔNG BAO GIỜ vượt quá 20 giây! 
+            // THUáº¬T TOÃN CÃ‚N Báº°NG GAME (SOFT-CAP)
+            // Náº¿u chá»‰ dÃ¹ng 20f cá»‘ Ä‘á»‹nh, Ulti sáº½ tá»“n táº¡i vÃ´ táº­n vá» Late game.
+            // CÃ´ng thá»©c: BaseDrain (20) + Penalty (5% Max Mana).
+            // Káº¿t quáº£: Thá»i gian Ulti = MaxMana / (20 + MaxMana * 0.05). 
+            // Giá»›i háº¡n tiá»‡m cáº­n (Limit): DÃ¹ cÃ³ Max Mana lÃ  1 Tá»·, Ulti cÅ©ng KHÃ”NG BAO GIá»œ vÆ°á»£t quÃ¡ 20 giÃ¢y! 
             float drainRate = 20f + (maxLinhLuc * 0.05f); 
             currentLinhLuc -= drainRate * Time.deltaTime;
             
@@ -169,13 +96,13 @@ public class SkillManager : MonoBehaviour
             {
                 currentLinhLuc = 0;
                 isSkillActive = false;
-                currentCooldown = activeSkill.baseCooldown; // Bắt đầu tính hồi chiêu
+                currentCooldown = activeSkill.baseCooldown; // Báº¯t Ä‘áº§u tÃ­nh há»“i chiÃªu
                 if (CombatManager.Instance != null) CombatManager.Instance.DeactivateVanKiemQuyTong();
             }
         }
         else
         {
-            // 1. Tự động hồi Linh Lực
+            // 1. Tá»± Ä‘á»™ng há»“i Linh Lá»±c
             if (currentLinhLuc < maxLinhLuc)
             {
                 float regenBuff = ShopManager.Instance != null ? ShopManager.Instance.GetManaRegenMultiplier() : 1f;
@@ -183,13 +110,13 @@ public class SkillManager : MonoBehaviour
                 currentLinhLuc = Mathf.Min(currentLinhLuc, maxLinhLuc);
             }
 
-            // 2. Đếm ngược Cooldown
+            // 2. Äáº¿m ngÆ°á»£c Cooldown
             if (currentCooldown > 0)
             {
                 currentCooldown -= Time.deltaTime;
             }
 
-            // 3. Tự động kích hoạt khi Full Mana và hết CD (nếu đã học)
+            // 3. Tá»± Ä‘á»™ng kÃ­ch hoáº¡t khi Full Mana vÃ  háº¿t CD (náº¿u Ä‘Ã£ há»c)
             if (activeSkill != null && activeSkill.isUnlocked && currentCooldown <= 0 && currentLinhLuc >= maxLinhLuc)
             {
                 ActivateSkill();
@@ -203,8 +130,8 @@ public class SkillManager : MonoBehaviour
     private void CheckUnlocks()
     {
 #if UNITY_EDITOR
-        // Tính năng tự động unlock đã bỏ, giờ phải mua bằng Cơ Duyên.
-        // NHƯNG thêm CHEAT phím 'U' để mở khóa toàn bộ Skill cho việc test:
+        // TÃ­nh nÄƒng tá»± Ä‘á»™ng unlock Ä‘Ã£ bá», giá» pháº£i mua báº±ng CÆ¡ DuyÃªn.
+        // NHÆ¯NG thÃªm CHEAT phÃ­m 'U' Ä‘á»ƒ má»Ÿ khÃ³a toÃ n bá»™ Skill cho viá»‡c test:
         if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.uKey.wasPressedThisFrame)
         {
             if (activeSkill != null) activeSkill.isUnlocked = true;
@@ -212,33 +139,50 @@ public class SkillManager : MonoBehaviour
             {
                 if (normalSkills[i] != null) normalSkills[i].isUnlocked = true;
             }
-            Debug.Log("[CHEAT] Đã mở khóa toàn bộ Kỹ Năng!");
+            Debug.Log("[CHEAT] ÄÃ£ má»Ÿ khÃ³a toÃ n bá»™ Ká»¹ NÄƒng!");
         }
 #endif
     }
 
+    private float normalSkillGlobalCooldown = 0f;
+
     private void UpdateNormalSkills()
     {
         // Không cho Normal Skills tốn Mana khi Ulti đang active
+
         if (isSkillActive) return;
 
+        // Giảm hồi chiêu cho tất cả các kỹ năng trước
         for (int i = 0; i < 3; i++)
         {
-            if (normalSkills[i] == null || !normalSkills[i].isUnlocked) continue;
-
             if (normalCooldowns[i] > 0)
             {
                 normalCooldowns[i] -= Time.deltaTime;
             }
-            else
+        }
+
+        // Nếu đang trong thời gian chờ giữa 2 chiêu (Global Cooldown) thì không ra chiêu mới
+        if (normalSkillGlobalCooldown > 0)
+        {
+            normalSkillGlobalCooldown -= Time.deltaTime;
+            return;
+        }
+
+        // Tìm kỹ năng có thể thi triển
+        for (int i = 0; i < 3; i++)
+        {
+            if (normalSkills[i] == null || !normalSkills[i].isUnlocked) continue;
+
+            if (normalCooldowns[i] <= 0)
             {
-                // Thêm cơ chế tiêu hao Linh Lực (mỗi kỹ năng tiêu hao một lượng cố định)
-                float manaRequired = 10f * (i + 1); // Ấn chưởng: 10, Lôi Phạt: 20, Phân Thân: 30
+                float manaRequired = 10f * (i + 1); // Ấn chưởng: 10, Lôi Phạt: 20, Âm Dương Trận: 30
                 if (currentLinhLuc >= manaRequired)
                 {
                     currentLinhLuc -= manaRequired;
                     ExecuteNormalSkill(normalSkills[i]);
                     normalCooldowns[i] = normalSkills[i].baseCooldown;
+                    normalSkillGlobalCooldown = 1.5f; // Chờ 1.5s rồi mới ra chiêu tiếp theo để tránh spam
+                    break; // Chỉ dùng 1 chiêu tại 1 thời điểm
                 }
             }
         }
@@ -261,9 +205,9 @@ public class SkillManager : MonoBehaviour
                 if (CombatManager.Instance != null) CombatManager.Instance.CastLoiPhat(damage);
                 if (GameLogger.Instance != null) GameLogger.Instance.Log("Thi triển: Lôi Phạt", new Color(0.8f, 0f, 1f));
                 break;
-            case SkillType.PhanThan:
-                if (CombatManager.Instance != null) CombatManager.Instance.CastPhanThan();
-                if (GameLogger.Instance != null) GameLogger.Instance.Log("Thi triển: Phân Thân", Color.cyan);
+            case SkillType.AmDuongTran:
+                if (CombatManager.Instance != null) CombatManager.Instance.CastAmDuongTran();
+                if (GameLogger.Instance != null) GameLogger.Instance.Log("Thi triển: Âm Dương Trận", Color.cyan);
                 break;
         }
     }
@@ -303,4 +247,23 @@ public class SkillManager : MonoBehaviour
                 skillText.text = $"MP: {Mathf.FloorToInt(currentLinhLuc)}/{Mathf.FloorToInt(maxLinhLuc)}";
         }
     }
+
+    // â”€â”€ SAVE / LOAD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    public void SaveToSlot(CharacterSaveData slot)
+    {
+        slot.skillActiveUnlocked = activeSkill != null && activeSkill.isUnlocked;
+        slot.skillNormal0Unlocked = normalSkills[0] != null && normalSkills[0].isUnlocked;
+        slot.skillNormal1Unlocked = normalSkills[1] != null && normalSkills[1].isUnlocked;
+        slot.skillNormal2Unlocked = normalSkills[2] != null && normalSkills[2].isUnlocked;
+    }
+
+    public void LoadFromSlot(CharacterSaveData slot)
+    {
+        if (activeSkill != null) activeSkill.isUnlocked = slot.skillActiveUnlocked;
+        if (normalSkills[0] != null) normalSkills[0].isUnlocked = slot.skillNormal0Unlocked;
+        if (normalSkills[1] != null) normalSkills[1].isUnlocked = slot.skillNormal1Unlocked;
+        if (normalSkills[2] != null) normalSkills[2].isUnlocked = slot.skillNormal2Unlocked;
+    }
 }
+
+

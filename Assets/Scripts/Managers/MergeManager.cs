@@ -15,7 +15,7 @@ public class MergeManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Instance = this;
@@ -23,21 +23,37 @@ public class MergeManager : MonoBehaviour
     
     private void Start()
     {
-        // Khởi tạo 1 cây kiếm cấp 1 mặc định vào ô Equip đầu tiên (Tránh việc kẹt game không có damage)
-        if (equipPanel != null && equipPanel.childCount > 0)
+        // Kiểm tra trễ 0.5s. Nếu DataManager.LoadCurrentGame KHÔNG được gọi (do test trực tiếp Scene)
+        // hoặc load bị lỗi, thì chúng ta sẽ tự tạo 1 cây kiếm mặc định để không bị kẹt game.
+        Invoke(nameof(FailsafeCheckSword), 0.5f);
+        
+        OnEquipChanged();
+    }
+
+    private void FailsafeCheckSword()
+    {
+        if (equipPanel == null) return;
+        
+        bool hasSword = false;
+        foreach (Transform equipSlot in equipPanel)
         {
-            Transform firstEquipSlot = equipPanel.GetChild(0);
-            if (firstEquipSlot.childCount == 0 && mergeItemPrefab != null) // Nếu ô trống
+            if (equipSlot.childCount > 0)
             {
-                GameObject newItem = Instantiate(mergeItemPrefab, firstEquipSlot);
-                MergeItem item = newItem.GetComponent<MergeItem>();
-                item.SetLevel(1);
+                hasSword = true;
+                break;
             }
-            
-            // Cập nhật lên môi trường 3D
+        }
+
+        if (!hasSword && mergeItemPrefab != null && equipPanel.childCount > 0)
+        {
+            Debug.Log("[MergeManager] Failsafe: Không tìm thấy kiếm nào sau khi load. Tự động tạo 1 phôi kiếm cấp 1.");
+            Transform firstEquipSlot = equipPanel.GetChild(0);
+            GameObject newItem = Instantiate(mergeItemPrefab, firstEquipSlot);
+            newItem.GetComponent<MergeItem>().SetLevel(1);
             OnEquipChanged();
         }
     }
+
 
     public void QuickMerge()
     {
@@ -288,4 +304,107 @@ public class MergeManager : MonoBehaviour
             CombatManager.Instance.UpdateEquippedSwords(equipLevels);
         }
     }
+
+    // ── SAVE / LOAD ─────────────────────────────────────────────────────────
+    public void SaveToSlot(CharacterSaveData slot)
+    {
+        var swordList = new System.Collections.Generic.List<SwordSaveEntry>();
+
+        // 1. Quét ô trang bị (equip panel)
+        if (equipPanel != null)
+        {
+            int eIdx = 0;
+            foreach (Transform equipSlot in equipPanel)
+            {
+                MergeItem item = equipSlot.GetComponentInChildren<MergeItem>();
+                if (item != null)
+                {
+                    swordList.Add(new SwordSaveEntry
+                    {
+                        level = item.level,
+                        pieces = item.currentPieces,
+                        isEquipped = true,
+                        equipSlotIndex = eIdx
+                    });
+                }
+                eIdx++;
+            }
+        }
+
+        // 2. Quét kho đồ (inventory pages)
+        if (inventoryPages != null)
+        {
+            foreach (Transform page in inventoryPages)
+            {
+                foreach (Transform invSlot in page)
+                {
+                    MergeItem item = invSlot.GetComponentInChildren<MergeItem>();
+                    if (item != null)
+                    {
+                        swordList.Add(new SwordSaveEntry
+                        {
+                            level = item.level,
+                            pieces = item.currentPieces,
+                            isEquipped = false,
+                            equipSlotIndex = -1
+                        });
+                    }
+                }
+            }
+        }
+
+        slot.swords = swordList.ToArray();
+    }
+
+    public void LoadFromSlot(CharacterSaveData slot)
+    {
+        if (mergeItemPrefab == null) return;
+
+        // 1. Xóa sạch ô trang bị
+        if (equipPanel != null)
+            foreach (Transform equipSlot in equipPanel)
+                foreach (Transform child in equipSlot)
+                    Destroy(child.gameObject);
+
+        // 2. Xóa sạch kho đồ
+        if (inventoryPages != null)
+            foreach (Transform page in inventoryPages)
+                foreach (Transform invSlot in page)
+                    foreach (Transform child in invSlot)
+                        Destroy(child.gameObject);
+
+        if (slot.swords == null || slot.swords.Length == 0)
+        {
+            // Không có save kiếm → tạo kiếm mặc định cấp 1 vào ô đầu tiên
+            if (equipPanel != null && equipPanel.childCount > 0)
+            {
+                GameObject newItem = Instantiate(mergeItemPrefab, equipPanel.GetChild(0));
+                newItem.GetComponent<MergeItem>().SetLevel(1);
+            }
+            OnEquipChanged();
+            return;
+        }
+
+        // 3. Tái tạo kiếm trang bị
+        foreach (var entry in slot.swords)
+        {
+            if (entry.isEquipped && equipPanel != null && entry.equipSlotIndex < equipPanel.childCount)
+            {
+                Transform target = equipPanel.GetChild(entry.equipSlotIndex);
+                GameObject obj = Instantiate(mergeItemPrefab, target);
+                obj.GetComponent<MergeItem>().SetLevel(entry.level, entry.pieces);
+            }
+        }
+
+        // 4. Tái tạo kiếm kho đồ
+        foreach (var entry in slot.swords)
+        {
+            if (!entry.isEquipped)
+                TryAddSwordWithPieces(entry.level, entry.pieces);
+        }
+
+        // 5. Cập nhật phi kiếm 3D
+        OnEquipChanged();
+    }
 }
+

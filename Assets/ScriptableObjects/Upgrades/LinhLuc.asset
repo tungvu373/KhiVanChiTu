@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeId: LinhLuc
   upgradeName: "Linh L\u1EF1c"
-  baseCost: 10
-  costMultiplier: 1.2
+  baseCost: 500
+  costMultiplier: 1.35
   baseValue: 100
   valueIncrementPerLevel: 20

@@ -5,15 +5,15 @@ public class EncounterManager : MonoBehaviour
 {
     public static EncounterManager Instance { get; private set; }
 
-    public float spawnIntervalMin = 30f;
-    public float spawnIntervalMax = 60f; // Tần suất xuất hiện: 30-60s 1 lần
+    public float spawnIntervalMin = 15f;
+    public float spawnIntervalMax = 60f; // Tần suất xuất hiện: 15-60s
     private float timer;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this) { Destroy(this); return; }
         Instance = this;
-        timer = Random.Range(spawnIntervalMin, spawnIntervalMax);
+        timer = 15f; // Lần đầu tiên luôn là 15s để người chơi dễ tiếp cận
     }
 
     private void Update()
@@ -100,18 +100,29 @@ public class EncounterItem : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Nhận phần thưởng ngẫu nhiên
+        // Phân chia tỷ lệ cân bằng: 50% Kiếm, 40% Đan Dược (Thuốc), 10% Cơ Duyên
         float rng = Random.value;
-        if (rng < 0.6f) // 60% rớt kiếm cấp cao
+        if (rng < 0.5f) // 50% rớt kiếm
         {
             if (MergeManager.Instance != null)
             {
-                int lvl = Random.Range(3, 5); // Lv3 hoặc Lv4
+                int lvl = Random.Range(2, 5); // Lv2 - Lv4
                 MergeManager.Instance.TryAddSword(lvl);
                 if (GameLogger.Instance != null) GameLogger.Instance.Log($"Kỳ Ngộ: Đã nhặt được 1 Phôi Kiếm Lv{lvl}!", Color.yellow);
             }
         }
-        else // 40% rớt cơ duyên
+        else if (rng < 0.9f) // 40% rớt Đan Dược ngẫu nhiên trong Shop
+        {
+            if (ShopManager.Instance != null)
+            {
+                int randomBuff = Random.Range(0, 5); // 0 đến 4
+                ShopManager.Instance.ApplyBuff(randomBuff);
+                
+                string[] names = { "Hồi Linh Đan", "Tật Phong Đan", "Hồi Huyết Đan", "Cuồng Bạo Đan", "Ngưng Thần Đan" };
+                if (GameLogger.Instance != null) GameLogger.Instance.Log($"Kỳ Ngộ: Nhặt được 1 {names[randomBuff]}!", Color.green);
+            }
+        }
+        else // 10% rớt Cơ Duyên
         {
             if (EconomyManager.Instance != null)
             {

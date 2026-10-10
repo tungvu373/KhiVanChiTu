@@ -21,6 +21,9 @@ public class CultivationManager : MonoBehaviour
     [Header("Chỉ số cộng thêm (Buff vĩnh viễn)")]
     public float permanentStatMultiplier = 1f;
 
+    // Tên nhân vật (lấy từ DataManager khi vào game)
+    private string characterName = "Đạo Hữu";
+
     public event Action<float, float> OnTuViChanged; // current, max
     public event Action<CultivationStageData> OnStageChanged;
 
@@ -28,7 +31,7 @@ public class CultivationManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Instance = this;
@@ -74,8 +77,17 @@ public class CultivationManager : MonoBehaviour
 
         if (characterInfoText != null)
         {
-            characterInfoText.text = $"Tên: Đạo Hữu\nCảnh giới: {currentStageData.stageName}\nTu Vi: {Mathf.FloorToInt(currentTuVi)}/{currentStageData.requiredTuVi}\nLoại: Nhân Tộc";
+            characterInfoText.text = $"Tên: {characterName}\nCảnh giới: {currentStageData.stageName}\nTu Vi: {Mathf.FloorToInt(currentTuVi)}/{currentStageData.requiredTuVi}\nLoại: Nhân Tộc";
         }
+    }
+
+    /// <summary>Thiết lập tên nhân vật và cập nhật UI ngay lập tức.</summary>
+    public void SetCharacterName(string name)
+    {
+        characterName = string.IsNullOrEmpty(name) ? "Đạo Hữu" : name;
+        // Refresh UI ngay
+        if (allStages != null && currentStageIndex < allStages.Length)
+            UpdateDashboardUI(allStages[currentStageIndex]);
     }
 
     private void CheckBreakthrough()
@@ -197,4 +209,29 @@ public class CultivationManager : MonoBehaviour
         Debug.Log("💀 BẠN ĐÃ TỬ TRẬN! Rớt Cảnh giới hoặc Tổn thất Tu Vi.");
         if (GameLogger.Instance != null) GameLogger.Instance.Log("TỬ TRẬN! Tổn thất Tu Vi", Color.red);
     }
+
+    // ── SAVE / LOAD ─────────────────────────────────────────────────────────
+    public void SaveToSlot(CharacterSaveData slot)
+    {
+        slot.stageIndex = currentStageIndex;
+        slot.stageName = (allStages != null && currentStageIndex < allStages.Length)
+            ? allStages[currentStageIndex].stageName : "Luyện Khí Kỳ Tầng 1";
+        slot.currentTuVi = currentTuVi;
+        slot.permanentStatMultiplier = permanentStatMultiplier;
+    }
+
+    public void LoadFromSlot(CharacterSaveData slot)
+    {
+        currentStageIndex = Mathf.Clamp(slot.stageIndex, 0, allStages != null ? allStages.Length - 1 : 0);
+        currentTuVi = slot.currentTuVi;
+        permanentStatMultiplier = Mathf.Max(1f, slot.permanentStatMultiplier);
+
+        if (allStages != null && currentStageIndex < allStages.Length)
+        {
+            OnStageChanged?.Invoke(allStages[currentStageIndex]);
+            OnTuViChanged?.Invoke(currentTuVi, allStages[currentStageIndex].requiredTuVi);
+            UpdateDashboardUI(allStages[currentStageIndex]);
+        }
+    }
 }
+

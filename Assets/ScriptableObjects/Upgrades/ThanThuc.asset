@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeId: ThanThuc
   upgradeName: "Th\u1EA7n Th\u1EE9c"
-  baseCost: 20
-  costMultiplier: 1.25
+  baseCost: 500
+  costMultiplier: 1.35
   baseValue: 5
   valueIncrementPerLevel: 0.2

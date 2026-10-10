@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeId: TuLinh
   upgradeName: "T\u1EE5 Linh"
-  baseCost: 25
-  costMultiplier: 1.4
+  baseCost: 500
+  costMultiplier: 1.35
   baseValue: 1
   valueIncrementPerLevel: 0.5

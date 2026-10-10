@@ -6,17 +6,24 @@ public class LightningVFX : MonoBehaviour
     private LineRenderer lr;
     private float lifetime = 0.3f;
 
-    public void Setup(Vector3 start, Vector3 end, Color color)
+    public void Setup(Vector3 start, Vector3 end, Color color, Material customMat = null)
     {
         lr = gameObject.AddComponent<LineRenderer>();
         lr.positionCount = 5; // Tạm 5 khúc gấp khúc
         lr.startWidth = 0.5f;
         lr.endWidth = 0.1f;
         
-        // Dùng shader Unlit/Color để phát sáng
-        lr.material = new Material(Shader.Find("Sprites/Default")); 
-        lr.startColor = color;
-        lr.endColor = Color.white;
+        // Dùng shader Unlit/Color để phát sáng hoặc customMat
+        if (customMat != null)
+        {
+            lr.material = customMat;
+        }
+        else
+        {
+            lr.material = new Material(Shader.Find("Sprites/Default")); 
+            lr.startColor = color;
+            lr.endColor = Color.white;
+        }
 
         // Tạo đường gấp khúc ngẫu nhiên
         lr.SetPosition(0, start);

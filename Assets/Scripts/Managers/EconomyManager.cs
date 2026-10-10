@@ -17,7 +17,7 @@ public class EconomyManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Instance = this;
@@ -70,4 +70,23 @@ public class EconomyManager : MonoBehaviour
         if (number >= 1000) return (number / 1000f).ToString("0.##") + "k";
         return Mathf.FloorToInt(number).ToString();
     }
+
+    // ── SAVE / LOAD ─────────────────────────────────────────────────────────
+    public void SaveToSlot(CharacterSaveData slot)
+    {
+        slot.linhThach = currentLinhThach;
+        slot.coDuyen = currentCoDuyen;
+        slot.kiemY = currentKiemY;
+    }
+
+    public void LoadFromSlot(CharacterSaveData slot)
+    {
+        currentLinhThach = slot.linhThach;
+        currentCoDuyen = slot.coDuyen;
+        currentKiemY = slot.kiemY;
+        OnLinhThachChanged?.Invoke(currentLinhThach);
+        OnCoDuyenChanged?.Invoke(currentCoDuyen);
+        OnKiemYChanged?.Invoke(currentKiemY);
+    }
 }
+

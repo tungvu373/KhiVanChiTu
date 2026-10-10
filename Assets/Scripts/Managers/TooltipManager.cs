@@ -13,7 +13,7 @@ public class TooltipManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this) { Destroy(this); return; }
         Instance = this;
 
         CreateTooltipUI();
@@ -26,6 +26,12 @@ public class TooltipManager : MonoBehaviour
         AttachTooltip("btn_Sort", "Sắp xếp lại kho đồ từ cấp cao xuống thấp.");
         AttachTooltip("btn_TeKiem", "Xóa toàn bộ kiếm Lv8 trong kho.\nMỗi thanh +1 Kiếm Ý.\n(1 Kiếm Ý = +50% Sát thương vĩnh viễn)");
         AttachTooltip("btn_OpenShop", "Mở Tiệm Đan Dược\n(Mua các loại đan dược tăng sức mạnh tạm thời)");
+        
+        // Tooltip cho Đơn vị tiền tệ
+        AttachTooltip("txt_LinhThach", "Linh Thạch\nTiền tệ chính rớt ra từ quái vật.\nDùng để Nâng cấp thuộc tính và Đột Phá cảnh giới.");
+        AttachTooltip("txt_CoDuyen", "Cơ Duyên\nĐiểm may mắn quý hiếm rớt ra khi đánh Boss.\nDùng để quay Gacha hoặc mua đồ hiếm.");
+        AttachTooltip("Icon_LinhThach", "Linh Thạch\nTiền tệ chính rớt ra từ quái vật.\nDùng để Nâng cấp thuộc tính và Đột Phá cảnh giới.");
+        AttachTooltip("Icon_CoDuyen", "Cơ Duyên\nĐiểm may mắn quý hiếm rớt ra khi đánh Boss.\nDùng để quay Gacha hoặc mua đồ hiếm.");
     }
 
     private void CreateTooltipUI()

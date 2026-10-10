@@ -24,8 +24,6 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Character Creation")]
     public InputField nameInput;
-    public Toggle maleToggle;
-    public Toggle femaleToggle;
     public Button confirmCreateButton;
     public Button cancelCreateButton;
     private int currentSlotBeingCreated = -1;
@@ -152,14 +150,13 @@ public class MainMenuManager : MonoBehaviour
     public void OpenCharacterCreation(int slotIndex)
     {
         currentSlotBeingCreated = slotIndex;
-        if(nameInput) nameInput.text = "";
-        if(maleToggle) maleToggle.isOn = true; // Mặc định là nam
+        if (nameInput) nameInput.text = "";
         ShowPanel(characterCreatePanel);
     }
 
     private void OnConfirmCreateCharacter()
     {
-        string charName = nameInput != null ? nameInput.text.Trim() : "Đạo Hữu";
+        string charName = nameInput != null ? nameInput.text.Trim() : "";
         if (string.IsNullOrEmpty(charName))
         {
             Debug.LogWarning("Tên không được để trống!");
@@ -169,7 +166,6 @@ public class MainMenuManager : MonoBehaviour
         CharacterSaveData newData = new CharacterSaveData();
         newData.isSlotEmpty = false;
         newData.characterName = charName;
-        newData.gender = maleToggle != null && maleToggle.isOn ? 0 : 1;
         newData.stageName = "Luyện Khí Kỳ Tầng 1";
         newData.stageIndex = 0;
         newData.currentTuVi = 0f;
@@ -233,6 +229,9 @@ public class MainMenuManager : MonoBehaviour
         
         // 4. Ẩn toàn bộ hệ thống MainMenu để người chơi bắt đầu Idle Farm phía sau
         gameObject.SetActive(false);
+
+        // 5. Load dữ liệu nhân vật từ slot vào từng Manager (dùng Invoke để đợi 1 frame sau khi UI đã khởi tạo)
+        dataManager.Invoke(nameof(DataManager.LoadCurrentGame), 0.05f);
     }
 
     private void ConfirmQuitGame()

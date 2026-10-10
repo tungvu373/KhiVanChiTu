@@ -22,7 +22,7 @@ public class StageManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Instance = this;
@@ -58,7 +58,15 @@ public class StageManager : MonoBehaviour
             enemiesKilled++;
             if (enemiesKilled >= enemiesToBoss)
             {
-                TriggerBoss();
+                if (currentStage % 5 == 0) // Cứ 5 tầng mới gặp Boss 1 lần
+                {
+                    TriggerBoss();
+                }
+                else
+                {
+                    // Tầng thường thì qua màn luôn
+                    PassStage();
+                }
             }
             UpdateUI();
         }

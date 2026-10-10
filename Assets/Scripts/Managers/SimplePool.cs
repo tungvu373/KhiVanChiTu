@@ -20,7 +20,7 @@ public class SimplePool : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Instance = this;
@@ -70,15 +70,34 @@ public class SimplePool : MonoBehaviour
         }
 
         Queue<GameObject> objectPool = poolDictionary[tag];
+        GameObject objToSpawn = null;
+        
+        // Cố gắng tìm một object không active trong queue
+        int initialCount = objectPool.Count;
+        for (int i = 0; i < initialCount; i++)
+        {
+            GameObject go = objectPool.Dequeue();
+            if (go == null) continue; // Bỏ qua nếu đã bị Destroy ngoài ý muốn
 
-        if (objectPool.Count == 0 || objectPool.Peek().activeInHierarchy)
+            if (!go.activeInHierarchy)
+            {
+                objToSpawn = go;
+                break;
+            }
+            else
+            {
+                // Nếu đang active thì nhét lại vào cuối hàng
+                objectPool.Enqueue(go);
+            }
+        }
+
+        // Nếu không tìm thấy (tất cả đều đang active), ta phải tạo mới
+        if (objToSpawn == null)
         {
             Pool p = pools.Find(x => x.tag == tag);
             if (p != null)
             {
-                GameObject newObj = Instantiate(p.prefab, transform);
-                newObj.SetActive(false);
-                objectPool.Enqueue(newObj);
+                objToSpawn = Instantiate(p.prefab, transform);
             }
             else
             {
@@ -86,12 +105,11 @@ public class SimplePool : MonoBehaviour
             }
         }
 
-        GameObject objToSpawn = objectPool.Dequeue();
-
         objToSpawn.SetActive(true);
         objToSpawn.transform.position = position;
         objToSpawn.transform.rotation = rotation;
 
+        // Bỏ lại vào queue để tái sử dụng sau này
         objectPool.Enqueue(objToSpawn);
 
         return objToSpawn;

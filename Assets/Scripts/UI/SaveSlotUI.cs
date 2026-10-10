@@ -14,9 +14,6 @@ public class SaveSlotUI : MonoBehaviour
     public Text nameText;
     public Text cultivationText;
     public Text playTimeText;
-    public Image modelImage;       // Hiển thị Model nhân vật
-    public Sprite maleSprite;
-    public Sprite femaleSprite;
 
     [Header("Buttons")]
     public Button slotButton;      // Bao trùm cả ô để bắt sự kiện click
@@ -59,12 +56,6 @@ public class SaveSlotUI : MonoBehaviour
             if (dataPanel) dataPanel.SetActive(false);
             if (emptyPanel) emptyPanel.SetActive(true); 
             if (deleteButton) deleteButton.gameObject.SetActive(false);
-            
-            // Ẩn ảnh Model khi trống
-            if (modelImage != null)
-            {
-                modelImage.color = new Color(1, 1, 1, 0); 
-            }
         }
         else
         {
@@ -80,13 +71,6 @@ public class SaveSlotUI : MonoBehaviour
             {
                 TimeSpan time = TimeSpan.FromSeconds(currentData.playTime);
                 playTimeText.text = string.Format("Giờ chơi: {0:D2}h:{1:D2}m\nNgày: {2}", time.Hours, time.Minutes, currentData.lastPlayedDate);
-            }
-
-            // Gán ảnh nhân vật
-            if (modelImage != null)
-            {
-                modelImage.color = new Color(1, 1, 1, 1);
-                modelImage.sprite = (currentData.gender == 0) ? maleSprite : femaleSprite;
             }
         }
     }

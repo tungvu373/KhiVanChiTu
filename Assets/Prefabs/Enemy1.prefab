@@ -141,4 +141,12 @@ MonoBehaviour:
   isBoss: 0
   damage: 10
   attackSpeed: 1
-  animator: {fileID: 0}
+  animator: {fileID: 6918307206301395510}
+  isDead: 0
+  hpBarHeight: 2.5
+  attackRange: 3.5
+--- !u!95 &6918307206301395510 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 8cd9a76b3567b3e4183cbf6074bf8b00, type: 3}
+  m_PrefabInstance: {fileID: 3560190158686787495}
+  m_PrefabAsset: {fileID: 0}

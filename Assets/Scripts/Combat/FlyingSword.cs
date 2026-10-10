@@ -26,6 +26,21 @@ public class FlyingSword : MonoBehaviour
         return (baseDamage + kiemY) * bonusMultiplier;
     }
 
+    private void Start()
+    {
+        TrailRenderer tr = GetComponent<TrailRenderer>();
+        if (tr != null)
+        {
+            if (tr.sharedMaterial == null || tr.sharedMaterial.name == "Default-Material")
+            {
+                tr.material = new Material(Shader.Find("Sprites/Default"));
+            }
+            tr.startWidth = 0.4f;
+            tr.endWidth = 0f;
+            tr.time = 0.25f;
+        }
+    }
+
     private void Update()
     {
         if (TargetEnemy == null || !TargetEnemy.gameObject.activeInHierarchy || TargetEnemy.hp <= 0)
@@ -41,7 +56,7 @@ public class FlyingSword : MonoBehaviour
                 searchTimer = 0.2f; 
             }
             
-            Vector3 center = CombatManager.Instance != null ? CombatManager.Instance.playerTransform.position : Vector3.zero;
+            Vector3 center = CombatManager.Instance != null ? CombatManager.Instance.playerTransform.position + Vector3.up * 1.5f : Vector3.up * 1.5f;
             
             // Xếp đội hình quỹ đạo: Kiếm thường bay vòng trong (2m, 4 góc vuông). Kiếm Ultimate bay vòng ngoài (4m, 20 góc).
             float currentRadius = isUltimateClone ? 4f : 2f;
@@ -70,17 +85,18 @@ public class FlyingSword : MonoBehaviour
         if (ShopManager.Instance != null) finalSpeed *= ShopManager.Instance.GetSpeedMultiplier();
         
         if (TargetEnemy == null) return;
-        transform.position = Vector3.MoveTowards(transform.position, TargetEnemy.transform.position, finalSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, TargetEnemy.transform.position + Vector3.up * 1.5f, finalSpeed * Time.deltaTime);
         
         // Chĩa mũi kiếm (trục Z) về phía quái vật
-        Vector3 dir = TargetEnemy.transform.position - transform.position;
+        Vector3 targetPos = TargetEnemy.transform.position + Vector3.up * 1.5f;
+        Vector3 dir = targetPos - transform.position;
         if (dir != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(dir);
         }
 
         // Kiểm tra va chạm (khoảng cách < 0.5)
-        if (Vector3.Distance(transform.position, TargetEnemy.transform.position) < 0.5f)
+        if (Vector3.Distance(transform.position, targetPos) < 0.5f)
         {
             AttackTarget();
         }

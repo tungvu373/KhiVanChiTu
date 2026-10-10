@@ -10,7 +10,7 @@ public class CameraShake : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this) { Destroy(this); return; }
         Instance = this;
         originalPos = transform.localPosition;
     }

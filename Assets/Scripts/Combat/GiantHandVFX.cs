@@ -6,14 +6,14 @@ public class GiantHandVFX : MonoBehaviour
     private float fallSpeed = 30f;
     private bool hasHit = false;
 
-    public void Setup(Color color)
+    public void Setup(Color color, Material customMat = null)
     {
         // Tạo Lòng bàn tay (Palm)
         GameObject palm = GameObject.CreatePrimitive(PrimitiveType.Cube);
         palm.transform.SetParent(transform);
         palm.transform.localPosition = Vector3.zero;
         palm.transform.localScale = new Vector3(2f, 0.5f, 2f);
-        ApplyMaterial(palm, color);
+        ApplyMaterial(palm, color, customMat);
 
         // Tạo 4 Ngón tay (Fingers)
         for (int i = 0; i < 4; i++)
@@ -24,7 +24,7 @@ public class GiantHandVFX : MonoBehaviour
             finger.transform.localPosition = new Vector3(xOffset, 0, 1.25f);
             finger.transform.localScale = new Vector3(0.4f, 0.6f, 0.4f);
             finger.transform.localRotation = Quaternion.Euler(90, 0, 0); // Chỉ thẳng tới trước
-            ApplyMaterial(finger, color);
+            ApplyMaterial(finger, color, customMat);
         }
 
         // Tạo Ngón cái (Thumb)
@@ -33,21 +33,25 @@ public class GiantHandVFX : MonoBehaviour
         thumb.transform.localPosition = new Vector3(1.25f, 0, -0.2f);
         thumb.transform.localScale = new Vector3(0.4f, 0.5f, 0.4f);
         thumb.transform.localRotation = Quaternion.Euler(90, 45, 0);
-        ApplyMaterial(thumb, color);
+        ApplyMaterial(thumb, color, customMat);
 
         // Hơi nghiêng bàn tay chúi xuống đất
         transform.rotation = Quaternion.Euler(30, 0, 0);
     }
 
-    private void ApplyMaterial(GameObject obj, Color color)
+    private void ApplyMaterial(GameObject obj, Color color, Material customMat)
     {
         Destroy(obj.GetComponent<Collider>()); // Bỏ va chạm
-        Material mat = new Material(Shader.Find("Standard"));
-        mat.SetFloat("_Mode", 3); // Transparent
-        mat.SetColor("_Color", new Color(color.r, color.g, color.b, 0.8f));
-        mat.EnableKeyword("_EMISSION");
-        mat.SetColor("_EmissionColor", color * 1.5f);
-        obj.GetComponent<Renderer>().material = mat;
+        if (customMat != null)
+        {
+            obj.GetComponent<Renderer>().material = customMat;
+        }
+        else
+        {
+            Material mat = new Material(Shader.Find("Sprites/Default"));
+            mat.color = new Color(color.r, color.g, color.b, 0.8f);
+            obj.GetComponent<Renderer>().material = mat;
+        }
     }
 
     void Update()

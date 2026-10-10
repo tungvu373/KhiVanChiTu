@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Stage_22
   m_EditorClassIdentifier: Assembly-CSharp::CultivationStageData
   stageName: "Nguy\xEAn Anh S\u01A1 K\u1EF3"
-  requiredTuVi: 87747.84
+  requiredTuVi: 5120000
   hasTribulationBoss: 0
   statMultiplierBonus: 1.5

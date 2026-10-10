@@ -24,10 +24,12 @@ public class Enemy : MonoBehaviour
     
     // Animation
     public Animator animator;
-    private bool isDead = false;
+    public bool isDead = false;
     
     [Header("Settings")]
     public float hpBarHeight = 2.5f; // Chiều cao thanh máu (tùy chỉnh trên Inspector)
+
+    public float attackRange = 3.5f; // Khoảng cách đứng đánh (Viền pháp trận)
 
     public void Init(float health, Transform target, bool boss = false)
     {
@@ -85,7 +87,7 @@ public class Enemy : MonoBehaviour
         GameObject fillObj = new GameObject("HP_Fill", typeof(RectTransform), typeof(Image));
         fillObj.transform.SetParent(bgObj.transform, false);
         hpFill = fillObj.GetComponent<Image>();
-        hpFill.color = isBoss ? Color.magenta : Color.red;
+        hpFill.color = Color.red; // Đổi lại thành đỏ theo yêu cầu
         // Không dùng Filled vì thiếu Sprite gốc sẽ lỗi, dùng Anchor thay thế
         RectTransform fillRt = fillObj.GetComponent<RectTransform>();
         fillRt.anchorMin = Vector2.zero; 
@@ -133,19 +135,12 @@ public class Enemy : MonoBehaviour
 
         if (playerTarget != null && !isDead)
         {
-            float dist = Vector3.Distance(transform.position, playerTarget.position);
-            if (dist > 1.5f)
+            if (isBoss)
             {
-                // Di chuyển
+                // Boss KHÔNG di chuyển, chỉ xoay mặt về phía người chơi và tấn công
                 Vector3 targetPos = new Vector3(playerTarget.position.x, transform.position.y, playerTarget.position.z);
                 transform.LookAt(targetPos);
-                transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
                 
-                if (animator != null) animator.SetBool("IsMoving", true);
-            }
-            else
-            {
-                // Tấn công Player
                 if (animator != null) animator.SetBool("IsMoving", false);
                 
                 if (attackTimer > 0)
@@ -154,13 +149,49 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    attackTimer = 1f / attackSpeed;
+                    attackTimer = 1.5f; // Thời gian delay giữa 2 đòn đánh là 1.5s
                     
                     if (animator != null) animator.SetTrigger("Attack"); // Kích hoạt Anim Đánh
                     
                     if (CombatManager.Instance != null)
                     {
                         CombatManager.Instance.DamagePlayer(damage);
+                    }
+                }
+            }
+            else
+            {
+                // Quái thường: Di chuyển lại gần rồi mới đánh
+                // BỎ QUA TRỤC Y khi tính khoảng cách (để tránh lỗi quái không bao giờ tới gần vì độ cao 3D)
+                float dist = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(playerTarget.position.x, playerTarget.position.z));
+                if (dist > attackRange)
+                {
+                    // Di chuyển
+                    Vector3 targetPos = new Vector3(playerTarget.position.x, transform.position.y, playerTarget.position.z);
+                    transform.LookAt(targetPos);
+                    transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+                    
+                    if (animator != null) animator.SetBool("IsMoving", true);
+                }
+                else
+                {
+                    // Tấn công Player
+                    if (animator != null) animator.SetBool("IsMoving", false);
+                    
+                    if (attackTimer > 0)
+                    {
+                        attackTimer -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        attackTimer = 1f / attackSpeed;
+                        
+                        if (animator != null) animator.SetTrigger("Attack"); // Kích hoạt Anim Đánh
+                        
+                        if (CombatManager.Instance != null)
+                        {
+                            CombatManager.Instance.DamagePlayer(damage);
+                        }
                     }
                 }
             }
@@ -216,8 +247,8 @@ public class Enemy : MonoBehaviour
         int stageIndex = 1;
         if (CultivationManager.Instance != null) stageIndex = CultivationManager.Instance.currentStageIndex;
 
-        float baseDrop = 10f * Mathf.Pow(1.3f, stageIndex);
-        if (isBoss) baseDrop *= 5f; // Boss rớt nhiều gấp 5
+        float baseDrop = 100f * Mathf.Pow(2.0f, stageIndex); // Rớt rất nhiều Linh Thạch
+        if (isBoss) baseDrop *= 10f; // Boss rớt nhiều gấp 10 lần quái thường
 
         float tuLinhBonus = UpgradeManager.Instance != null ? UpgradeManager.Instance.GetTuLinhValue() : 0;
         
