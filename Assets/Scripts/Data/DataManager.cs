@@ -49,9 +49,13 @@ public class CharacterSaveData
 
     // ── SkillManager ────────────────────────────────────────────────────────
     public bool skillActiveUnlocked = false;
+    public int skillActiveLevel = 1;
     public bool skillNormal0Unlocked = false;
+    public int skillNormal0Level = 1;
     public bool skillNormal1Unlocked = false;
+    public int skillNormal1Level = 1;
     public bool skillNormal2Unlocked = false;
+    public int skillNormal2Level = 1;
 
     // ── CombatManager ───────────────────────────────────────────────────────
     public float playerMaxHp = 1000f;
@@ -59,6 +63,10 @@ public class CharacterSaveData
 
     // ── MergeManager ────────────────────────────────────────────────────────
     public SwordSaveEntry[] swords = new SwordSaveEntry[0];
+
+    // ── StageManager (Tầng Đánh Quái) ───────────────────────────────────
+    public int combatStage = 1;
+    public int enemiesKilled = 0;
 
     // ── Tiến trình ──────────────────────────────────────────────────────────
     public float playTime = 0f;
@@ -80,6 +88,16 @@ public class DataManager : MonoBehaviour
     // Cờ ngăn save trùng khi OnApplicationQuit và OnApplicationFocus(false) cùng kích hoạt
     private bool _isSaving = false;
 
+    // Cờ an toàn tuyệt đối: Chỉ cho phép lưu đè khi người chơi ĐÃ THỰC SỰ VÀO GAME (Session Active)
+    public bool isSessionActive { get; private set; } = false;
+
+    public void ActivateSession()
+    {
+        isSessionActive = true;
+    }
+
+    private string BackupFilePath => System.IO.Path.Combine(Application.persistentDataPath, "KhiVanChiTu_SaveData.json");
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -95,31 +113,33 @@ public class DataManager : MonoBehaviour
     private void Start()
     {
         sessionStartTime = Time.realtimeSinceStartup;
-        // Auto-Save định kỳ mỗi 30 giây (chạy cả trong Editor lẫn Build)
+        // Auto-Save định kỳ mỗi 30 giây (chỉ lưu khi đang thực sự chơi game)
         InvokeRepeating(nameof(AutoSave), 30f, 30f);
     }
 
     private void AutoSave()
     {
-        // Chỉ auto-save khi đang thực sự chơi (không phải đang ở Menu)
+        // Tuyệt đối không auto-save khi đang ở Main Menu
+        if (!isSessionActive) return;
         if (gameSaveData.lastPlayedSlotIndex < 0) return;
-        if (GameManager.Instance != null && GameManager.Instance.currentState == GameManager.GameState.IdleFarm
-            || GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm)
-        {
-            SaveCurrentGame(silent: true);
-        }
+        
+        SaveCurrentGame(silent: true);
     }
 
     // ── Bắt sự kiện tắt game đột ngột (Alt+F4, tắt cửa sổ, Task Manager) ──
     private void OnApplicationQuit()
     {
-        SaveCurrentGame(silent: true);
+        // Chỉ lưu khi đã vào game (tránh trường hợp mở lên rồi tắt ngay ở Menu làm đè trắng save)
+        if (isSessionActive)
+        {
+            SaveCurrentGame(silent: true);
+        }
     }
 
     // ── Bắt sự kiện mất focus (Alt+Tab, minimize) trên Windows Build ───────
     private void OnApplicationFocus(bool hasFocus)
     {
-        if (!hasFocus)
+        if (!hasFocus && isSessionActive)
         {
             SaveCurrentGame(silent: true);
         }
@@ -131,6 +151,13 @@ public class DataManager : MonoBehaviour
     public void SaveCurrentGame(bool silent = false)
     {
         if (_isSaving) return;
+
+        // CHỐT CHẶN AN TOÀN: Nếu chưa load nhân vật (đang ở Menu), TUYỆT ĐỐI KHÔNG GHI ĐÈ SAVE!
+        if (!isSessionActive)
+        {
+            return;
+        }
+
         _isSaving = true;
 
         int slotIdx = gameSaveData.lastPlayedSlotIndex;
@@ -158,12 +185,13 @@ public class DataManager : MonoBehaviour
         UpgradeManager.Instance?.SaveToSlot(slot);
         SkillManager.Instance?.SaveToSlot(slot);
         CombatManager.Instance?.SaveToSlot(slot);
+        StageManager.Instance?.SaveToSlot(slot);
         MergeManager.Instance?.SaveToSlot(slot);
 
-        SaveData(); // Ghi xuống PlayerPrefs
+        SaveData(); // Ghi xuống PlayerPrefs & File backup
 
         if (!silent)
-            Debug.Log($"✅ Đã lưu nhân vật [{slot.characterName}] - {slot.stageName}");
+            Debug.Log($"✅ Đã lưu nhân vật [{slot.characterName}] - {slot.stageName} (Tầng {slot.combatStage})");
 
         _isSaving = false;
     }
@@ -181,34 +209,79 @@ public class DataManager : MonoBehaviour
 
         sessionStartTime = Time.realtimeSinceStartup; // Reset bộ đếm session
 
-        // Load theo thứ tự phụ thuộc: Cultivation → Economy → Upgrade → Skill → Combat → Merge
+        // Load theo thứ tự phụ thuộc: Cultivation → Economy → Upgrade → Skill → Combat → Stage → Merge
         CultivationManager.Instance?.LoadFromSlot(slot);
         CultivationManager.Instance?.SetCharacterName(slot.characterName); // Truyền tên nhân vật
         EconomyManager.Instance?.LoadFromSlot(slot);
         UpgradeManager.Instance?.LoadFromSlot(slot);
         SkillManager.Instance?.LoadFromSlot(slot);
         CombatManager.Instance?.LoadFromSlot(slot);
+        StageManager.Instance?.LoadFromSlot(slot);
         MergeManager.Instance?.LoadFromSlot(slot); // Cuối cùng vì gọi CombatManager.UpdateEquippedSwords
 
-        Debug.Log($"✅ Đã load nhân vật [{slot.characterName}] - {slot.stageName} | PlayTime: {slot.playTime:F0}s");
+        // KÍCH HOẠT CỜ SESSION: Bây giờ game đã nạp dữ liệu xong, cho phép hệ thống auto-save hoạt động
+        isSessionActive = true;
+
+        Debug.Log($"✅ Đã load thành công [{slot.characterName}] - {slot.stageName} | Tầng {slot.combatStage} | PlayTime: {slot.playTime:F0}s");
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // LOW-LEVEL (đọc/ghi PlayerPrefs)
+    // LOW-LEVEL (PlayerPrefs + Sao lưu kép ra File JSON trên ổ cứng)
     // ─────────────────────────────────────────────────────────────────────────
     public void LoadData()
     {
         string json = PlayerPrefs.GetString(SAVE_KEY, "");
+
+        // Nếu PlayerPrefs rỗng (hoặc bị reset), thử tìm trong file JSON sao lưu dự phòng
+        if (string.IsNullOrEmpty(json) && System.IO.File.Exists(BackupFilePath))
+        {
+            try
+            {
+                json = System.IO.File.ReadAllText(BackupFilePath);
+                Debug.Log($"[DataManager] Đã phục hồi dữ liệu từ file sao lưu: {BackupFilePath}");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[DataManager] Lỗi đọc file sao lưu: {ex.Message}");
+            }
+        }
+
         if (string.IsNullOrEmpty(json))
+        {
             gameSaveData = new GameSaveData();
+        }
         else
-            gameSaveData = JsonUtility.FromJson<GameSaveData>(json);
+        {
+            try
+            {
+                gameSaveData = JsonUtility.FromJson<GameSaveData>(json);
+                if (gameSaveData == null || gameSaveData.slots == null || gameSaveData.slots.Length != 3)
+                {
+                    gameSaveData = new GameSaveData();
+                }
+            }
+            catch
+            {
+                gameSaveData = new GameSaveData();
+            }
+        }
     }
 
     public void SaveData()
     {
-        string json = JsonUtility.ToJson(gameSaveData);
-        PlayerPrefs.SetString(SAVE_KEY, json);
-        PlayerPrefs.Save();
+        try
+        {
+            string json = JsonUtility.ToJson(gameSaveData, true);
+            // 1. Lưu vào Windows Registry (PlayerPrefs)
+            PlayerPrefs.SetString(SAVE_KEY, json);
+            PlayerPrefs.Save();
+
+            // 2. Lưu kép vào file JSON ổ cứng (AppData) để đảm bảo không bao giờ mất
+            System.IO.File.WriteAllText(BackupFilePath, json);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[DataManager] Lỗi ghi dữ liệu lưu: {ex.Message}");
+        }
     }
 }

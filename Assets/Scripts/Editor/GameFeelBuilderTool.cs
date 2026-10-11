@@ -78,6 +78,8 @@ public class GameFeelBuilderTool
         var renderer = ps.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Stretch;
         renderer.velocityScale = 0.2f;
+        Material magicMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Materials/Mat_MagicArray.mat");
+        if (magicMat != null) renderer.material = magicMat;
 
         lightning.transform.rotation = Quaternion.Euler(90, 0, 0); // Bắn từ trên xuống (Trời đánh)
         

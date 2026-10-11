@@ -22,12 +22,29 @@ public class ApplyMagicMaterialTool : EditorWindow
             // Gán Material vào biến mới được thêm trong CombatManager
             combatManager.magicArrayMaterial = mat;
             EditorUtility.SetDirty(combatManager);
-            
-            Debug.Log("✅ Đã gán Material thành công! Bây giờ Lôi Phạt và Ấn Chưởng sẽ sử dụng chung Material này.");
         }
-        else
+
+        // Gán Material vào Prefab LightningVFX (Lôi Kiếp)
+        string vfxPath = "Assets/Prefabs/LightningVFX.prefab";
+        GameObject lightningPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(vfxPath);
+        if (lightningPrefab != null)
         {
-            Debug.LogError("❌ Không tìm thấy CombatManager trong Scene hiện tại! Bạn đã mở đúng Scene chứa game chưa?");
+            ParticleSystemRenderer psr = lightningPrefab.GetComponent<ParticleSystemRenderer>();
+            if (psr != null)
+            {
+                psr.material = mat;
+                EditorUtility.SetDirty(lightningPrefab);
+                AssetDatabase.SaveAssets();
+            }
         }
+
+        CultivationManager cult = FindObjectOfType<CultivationManager>();
+        if (cult != null && lightningPrefab != null)
+        {
+            cult.lightningVFXPrefab = lightningPrefab;
+            EditorUtility.SetDirty(cult);
+        }
+
+        Debug.Log("✅ Đã gán Mat_MagicArray thành công cho Lôi Kiếp, Lôi Phạt và Ấn Chưởng!");
     }
 }

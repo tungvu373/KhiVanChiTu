@@ -52,8 +52,8 @@ MonoBehaviour:
   attackSpeed: 1
   animator: {fileID: 5427849131259109029}
   isDead: 0
-  hpBarHeight: 2.5
-  attackRange: 3.5
+  hpBarHeight: 3.5
+  attackRange: 2.2
 --- !u!1001 &1889556564346151732
 PrefabInstance:
   m_ObjectHideFlags: 0

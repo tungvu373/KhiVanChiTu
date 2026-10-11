@@ -144,7 +144,7 @@ MonoBehaviour:
   animator: {fileID: 6918307206301395510}
   isDead: 0
   hpBarHeight: 2.5
-  attackRange: 3.5
+  attackRange: 1.8
 --- !u!95 &6918307206301395510 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 8cd9a76b3567b3e4183cbf6074bf8b00, type: 3}

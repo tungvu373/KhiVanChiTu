@@ -58,7 +58,7 @@ public class StageManager : MonoBehaviour
             enemiesKilled++;
             if (enemiesKilled >= enemiesToBoss)
             {
-                if (currentStage % 5 == 0) // Cứ 5 tầng mới gặp Boss 1 lần
+                if (currentStage % 10 == 0) // Cứ 10 tầng mới gặp Boss 1 lần
                 {
                     TriggerBoss();
                 }
@@ -104,23 +104,52 @@ public class StageManager : MonoBehaviour
         {
             MapScroller.Instance.RandomizeBiomeColor();
         }
+
+        // Tự động lưu tiến trình qua màn ngay lập tức
+        if (DataManager.Instance != null)
+        {
+            DataManager.Instance.SaveCurrentGame(silent: true);
+        }
     }
 
     public void FailBoss()
     {
-        isBossStage = false;
-        if (bossTimerUI != null) bossTimerUI.SetActive(false);
-        enemiesKilled = 0; // Đánh lại từ đầu stage hiện tại
+        ResetCurrentStageOnDeath();
         
-        UpdateUI();
-        
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
+        }
+
         if (CombatManager.Instance != null)
         {
             CombatManager.Instance.ChangeToIdleState();
         }
     }
 
-    private void UpdateUI()
+    // Làm mới lại tiến độ của tầng hiện tại khi người chơi tử trận
+    public void ResetCurrentStageOnDeath()
+    {
+        isBossStage = false;
+        if (bossTimerUI != null) bossTimerUI.SetActive(false);
+        enemiesKilled = 0; // Làm mới lại từ đầu tiến trình quái của tầng này (0 / 20)
+        
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
+        }
+
+        UpdateUI();
+        
+        if (DataManager.Instance != null)
+        {
+            DataManager.Instance.SaveCurrentGame(silent: true);
+        }
+
+        Debug.Log($"🔄 [StageManager] Nhân vật tử trận! Làm mới lại Tầng {currentStage} [0/{enemiesToBoss}]");
+    }
+
+    public void UpdateUI()
     {
         if (stageText == null) return;
 
@@ -128,7 +157,7 @@ public class StageManager : MonoBehaviour
         {
             stageText.text = $"Tầng {currentStage} - KHIÊU CHIẾN LÔI KIẾP!";
             stageText.color = Color.red;
-            progressBar.GetComponent<RectTransform>().anchorMax = new Vector2(1f, 1f); // Đầy thanh
+            if (progressBar != null) progressBar.GetComponent<RectTransform>().anchorMax = new Vector2(1f, 1f); // Đầy thanh
         }
         else
         {
@@ -137,5 +166,22 @@ public class StageManager : MonoBehaviour
             float ratio = (float)enemiesKilled / enemiesToBoss;
             if (progressBar != null) progressBar.GetComponent<RectTransform>().anchorMax = new Vector2(ratio, 1f);
         }
+    }
+
+    // ── SAVE / LOAD ─────────────────────────────────────────────────────────
+    public void SaveToSlot(CharacterSaveData slot)
+    {
+        slot.combatStage = currentStage;
+        slot.enemiesKilled = enemiesKilled;
+    }
+
+    public void LoadFromSlot(CharacterSaveData slot)
+    {
+        currentStage = Mathf.Max(1, slot.combatStage);
+        enemiesKilled = Mathf.Clamp(slot.enemiesKilled, 0, enemiesToBoss);
+        isBossStage = false; // Khi load lại luôn ở trạng thái farm thường
+        if (bossTimerUI != null) bossTimerUI.SetActive(false);
+        UpdateUI();
+        Debug.Log($"[StageManager] Đã nạp dữ liệu: Tầng {currentStage} ({enemiesKilled}/{enemiesToBoss})");
     }
 }

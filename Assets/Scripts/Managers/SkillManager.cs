@@ -25,32 +25,32 @@ public class SkillManager : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(this); return; }
         Instance = this;
     }
-    
+
     private void Start()
     {
         if (activeSkill == null)
         {
             activeSkill = ScriptableObject.CreateInstance<SkillData>();
-            activeSkill.skillName = "Váº¡n Kiáº¿m Quy TÃ´ng";
+            activeSkill.skillName = "Vạn Kiếm Quy Tông";
             activeSkill.skillType = SkillType.VanKiemQuyTong;
             activeSkill.manaCost = 100f;
             activeSkill.baseCooldown = 3f;
             activeSkill.baseDamage = 500f;
             activeSkill.isUnlocked = false;
-            activeSkill.requiredStageIndex = 15; // TrÃºc CÆ¡ SÆ¡ Ká»³ (Index 15)
-            activeSkill.unlockCost = 2; // 2 CÆ¡ DuyÃªn
+            activeSkill.requiredStageIndex = 15; // Trúc Cơ Sơ Kỳ (Index 15)
+            activeSkill.unlockCost = 2; // 2 Cơ Duyên
         }
 
-        // Tá»± táº¡o 3 ká»¹ nÄƒng thÆ°á»ng náº¿u chÆ°a cÃ³
+        // Tự tạo 3 kỹ năng thường nếu chưa có
         if (normalSkills[0] == null)
         {
             normalSkills[0] = ScriptableObject.CreateInstance<SkillData>();
-            normalSkills[0].skillName = "áº¤n ChÆ°á»Ÿng";
+            normalSkills[0].skillName = "Ấn Chưởng";
             normalSkills[0].skillType = SkillType.AnChuong;
             normalSkills[0].baseCooldown = 8f;
             normalSkills[0].baseDamage = 150f;
             normalSkills[0].isUnlocked = false;
-            normalSkills[0].requiredStageIndex = 18; // Káº¿t Äan SÆ¡ Ká»³
+            normalSkills[0].requiredStageIndex = 18; // Kết Đan Sơ Kỳ
             normalSkills[0].unlockCost = 4;
 
             normalSkills[1] = ScriptableObject.CreateInstance<SkillData>();
@@ -59,7 +59,7 @@ public class SkillManager : MonoBehaviour
             normalSkills[1].baseCooldown = 12f;
             normalSkills[1].baseDamage = 800f;
             normalSkills[1].isUnlocked = false;
-            normalSkills[1].requiredStageIndex = 21; // NguyÃªn Anh SÆ¡ Ká»³
+            normalSkills[1].requiredStageIndex = 21; // Nguyên Anh Sơ Kỳ
             normalSkills[1].unlockCost = 8;
 
             normalSkills[2] = ScriptableObject.CreateInstance<SkillData>();
@@ -68,8 +68,7 @@ public class SkillManager : MonoBehaviour
             normalSkills[2].baseCooldown = 20f;
             normalSkills[2].baseDamage = 0f;
             normalSkills[2].isUnlocked = false;
-            normalSkills[2].isUnlocked = false;
-            normalSkills[2].requiredStageIndex = 24; // HÃ³a Tháº§n SÆ¡ Ká»³
+            normalSkills[2].requiredStageIndex = 24; // Hóa Thần Sơ Kỳ
             normalSkills[2].unlockCost = 16;
         }
     }
@@ -193,30 +192,48 @@ public class SkillManager : MonoBehaviour
 
     private void ExecuteNormalSkill(SkillData skill)
     {
-        float damage = skill.baseDamage * (CultivationManager.Instance != null ? CultivationManager.Instance.permanentStatMultiplier : 1f);
+        float damage = skill.GetCurrentDamage() * (CultivationManager.Instance != null ? CultivationManager.Instance.permanentStatMultiplier : 1f);
         
         switch (skill.skillType)
         {
             case SkillType.AnChuong:
                 if (CombatManager.Instance != null) CombatManager.Instance.CastAnChuong(damage);
-                if (GameLogger.Instance != null) GameLogger.Instance.Log("Thi triển: Ấn Chưởng", new Color(1f, 0.5f, 0f));
+                if (GameLogger.Instance != null) GameLogger.Instance.Log($"Thi triển: Ấn Chưởng (Lv.{skill.level})", new Color(1f, 0.5f, 0f));
                 break;
             case SkillType.LoiPhat:
                 if (CombatManager.Instance != null) CombatManager.Instance.CastLoiPhat(damage);
-                if (GameLogger.Instance != null) GameLogger.Instance.Log("Thi triển: Lôi Phạt", new Color(0.8f, 0f, 1f));
+                if (GameLogger.Instance != null) GameLogger.Instance.Log($"Thi triển: Lôi Phạt (Lv.{skill.level})", new Color(0.8f, 0f, 1f));
                 break;
             case SkillType.AmDuongTran:
                 if (CombatManager.Instance != null) CombatManager.Instance.CastAmDuongTran();
-                if (GameLogger.Instance != null) GameLogger.Instance.Log("Thi triển: Âm Dương Trận", Color.cyan);
+                if (GameLogger.Instance != null) GameLogger.Instance.Log($"Thi triển: Âm Dương Trận (Lv.{skill.level})", Color.cyan);
                 break;
         }
     }
 
-    private void ActivateSkill()
+    public void CastActiveSkill()
+    {
+        if (activeSkill == null || !activeSkill.isUnlocked) return;
+        if (isSkillActive) return;
+        if (currentCooldown > 0)
+        {
+            if (GameLogger.Instance != null) GameLogger.Instance.Log($"Vạn Kiếm Quy Tông đang hồi chiêu ({currentCooldown:F1}s)!", Color.gray);
+            return;
+        }
+        if (currentLinhLuc < maxLinhLuc)
+        {
+            if (GameLogger.Instance != null) GameLogger.Instance.Log($"Chưa đủ Linh Lực để kích hoạt Vạn Kiếm Quy Tông! ({Mathf.FloorToInt(currentLinhLuc)}/{Mathf.FloorToInt(maxLinhLuc)})", Color.cyan);
+            return;
+        }
+
+        ActivateSkill();
+    }
+
+    public void ActivateSkill()
     {
         isSkillActive = true;
         
-        float finalDamage = activeSkill.baseDamage;
+        float finalDamage = activeSkill.GetCurrentDamage();
         if (CultivationManager.Instance != null)
         {
             finalDamage *= CultivationManager.Instance.permanentStatMultiplier;
@@ -252,17 +269,37 @@ public class SkillManager : MonoBehaviour
     public void SaveToSlot(CharacterSaveData slot)
     {
         slot.skillActiveUnlocked = activeSkill != null && activeSkill.isUnlocked;
+        slot.skillActiveLevel = activeSkill != null ? activeSkill.level : 1;
         slot.skillNormal0Unlocked = normalSkills[0] != null && normalSkills[0].isUnlocked;
+        slot.skillNormal0Level = normalSkills[0] != null ? normalSkills[0].level : 1;
         slot.skillNormal1Unlocked = normalSkills[1] != null && normalSkills[1].isUnlocked;
+        slot.skillNormal1Level = normalSkills[1] != null ? normalSkills[1].level : 1;
         slot.skillNormal2Unlocked = normalSkills[2] != null && normalSkills[2].isUnlocked;
+        slot.skillNormal2Level = normalSkills[2] != null ? normalSkills[2].level : 1;
     }
 
     public void LoadFromSlot(CharacterSaveData slot)
     {
-        if (activeSkill != null) activeSkill.isUnlocked = slot.skillActiveUnlocked;
-        if (normalSkills[0] != null) normalSkills[0].isUnlocked = slot.skillNormal0Unlocked;
-        if (normalSkills[1] != null) normalSkills[1].isUnlocked = slot.skillNormal1Unlocked;
-        if (normalSkills[2] != null) normalSkills[2].isUnlocked = slot.skillNormal2Unlocked;
+        if (activeSkill != null) 
+        {
+            activeSkill.isUnlocked = slot.skillActiveUnlocked;
+            activeSkill.level = Mathf.Max(1, slot.skillActiveLevel);
+        }
+        if (normalSkills[0] != null) 
+        {
+            normalSkills[0].isUnlocked = slot.skillNormal0Unlocked;
+            normalSkills[0].level = Mathf.Max(1, slot.skillNormal0Level);
+        }
+        if (normalSkills[1] != null) 
+        {
+            normalSkills[1].isUnlocked = slot.skillNormal1Unlocked;
+            normalSkills[1].level = Mathf.Max(1, slot.skillNormal1Level);
+        }
+        if (normalSkills[2] != null) 
+        {
+            normalSkills[2].isUnlocked = slot.skillNormal2Unlocked;
+            normalSkills[2].level = Mathf.Max(1, slot.skillNormal2Level);
+        }
     }
 }
 

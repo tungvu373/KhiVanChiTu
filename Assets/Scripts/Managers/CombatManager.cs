@@ -7,8 +7,11 @@ public class CombatManager : MonoBehaviour
 
     public GameObject[] normalEnemyPrefabs;
     public GameObject[] bossEnemyPrefabs;
-    public GameObject damagePopupPrefab; // Hiá»ƒn thá»‹ sá»‘ sÃ¡t thÆ°Æ¡ng
+    public GameObject damagePopupPrefab; // Hiển thị số sát thương
     public Transform playerTransform;
+    [Header("Player Visual & Animation")]
+    public Animator playerAnimator;
+    public bool isPlayerDead = false;
 
     private float spawnTimer;
     public float spawnInterval = 0.2f; // Spawn nhanh hÆ¡n (0.2s)
@@ -43,6 +46,8 @@ public class CombatManager : MonoBehaviour
 
     private void Start()
     {
+        FindPlayerAnimator();
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnStateChanged += HandleStateChanged;
@@ -50,9 +55,17 @@ public class CombatManager : MonoBehaviour
         if (CultivationManager.Instance != null)
         {
             CultivationManager.Instance.OnStageChanged += HandleStageChanged;
+            CultivationManager.Instance.OnTuViChanged += HandleTuViChanged;
             
-            // TÃ­nh toÃ¡n láº§n Ä‘áº§u
-            HandleStageChanged(null);
+            // Tính toán lượng máu ban đầu theo Cảnh Giới và Tu Vi
+            RecalculateMaxHp(false);
+        }
+
+        // Tự động kích hoạt Hệ thống Mây Tiên (Particle System đi theo Player) nếu chưa có
+        if (FindObjectOfType<TuTienCloudSystem>() == null)
+        {
+            GameObject cloudObj = new GameObject("TuTienCloudSystem");
+            cloudObj.AddComponent<TuTienCloudSystem>();
         }
 
         if (SimplePool.Instance != null)
@@ -88,24 +101,62 @@ public class CombatManager : MonoBehaviour
         if (CultivationManager.Instance != null)
         {
             CultivationManager.Instance.OnStageChanged -= HandleStageChanged;
+            CultivationManager.Instance.OnTuViChanged -= HandleTuViChanged;
         }
+    }
+
+    /// <summary>
+    /// Tính toán lượng Máu Tối Đa (Max HP) theo Cảnh Giới và Điểm Tu Vi tích lũy
+    /// </summary>
+    public void RecalculateMaxHp(bool fullHeal = false)
+    {
+        if (CultivationManager.Instance == null) return;
+
+        float oldMax = playerMaxHp;
+
+        // Công thức HP chuẩn Tu Tiên:
+        // 1. Máu khởi điểm căn bản: 1000 HP
+        // 2. Thưởng Cảnh Giới: mỗi cấp cảnh giới (Luyện Khí 1..15, Trúc Cơ, Kết Đan...) +200 HP
+        // 3. Thưởng Tu Vi hiện tại: mỗi điểm Tu Vi +0.5 HP
+        // 4. Nhân hệ số đột phá vĩnh viễn (permanentStatMultiplier)
+        int stageIdx = CultivationManager.Instance.currentStageIndex;
+        float tuVi = CultivationManager.Instance.currentTuVi;
+        float statMult = CultivationManager.Instance.permanentStatMultiplier;
+
+        float baseHp = 1000f + (stageIdx * 200f) + (tuVi * 0.5f);
+        playerMaxHp = Mathf.Round(baseHp * (statMult > 0 ? statMult : 1f));
+
+        if (fullHeal)
+        {
+            playerCurrentHp = playerMaxHp;
+        }
+        else
+        {
+            float diff = playerMaxHp - oldMax;
+            if (diff > 0)
+            {
+                playerCurrentHp += diff; // Tăng máu theo lượng max HP mới mở rộng
+            }
+            playerCurrentHp = Mathf.Clamp(playerCurrentHp, 1f, playerMaxHp);
+        }
+
+        UpdatePlayerHPUI();
     }
 
     private void HandleStageChanged(CultivationStageData stageData)
     {
-        if (CultivationManager.Instance != null)
+        // Khi đột phá cảnh giới: Tính lại Max HP và hồi phục đầy máu
+        RecalculateMaxHp(fullHeal: true);
+        if (GameLogger.Instance != null && stageData != null)
         {
-            float oldMaxHp = playerMaxHp;
-            playerMaxHp = 1000f; // MÃ¡u máº·c Ä‘á»‹nh
-            
-            // Há»“i phá»¥c lÆ°á»£ng mÃ¡u chÃªnh lá»‡ch khi lÃªn cáº¥p
-            if (playerCurrentHp > 0)
-            {
-                playerCurrentHp += (playerMaxHp - oldMaxHp);
-            }
-            
-            UpdatePlayerHPUI();
+            GameLogger.Instance.Log($"Đột phá {stageData.stageName}! HP tối đa tăng lên {playerMaxHp:F0}!", Color.green);
         }
+    }
+
+    private void HandleTuViChanged(float currentTuVi, float maxTuVi)
+    {
+        // Khi tăng Tu Vi (farm quái, cắn đan...): HP lập tức tăng theo
+        RecalculateMaxHp(fullHeal: false);
     }
 
     private void HandleStateChanged(GameManager.GameState state)
@@ -121,9 +172,34 @@ public class CombatManager : MonoBehaviour
     {
         foreach (var e in activeEnemies)
         {
-            if (e != null) e.gameObject.SetActive(false);
+            if (e != null)
+            {
+                e.CancelInvoke();
+                e.isDead = false;
+                e.gameObject.SetActive(false);
+            }
         }
         activeEnemies.Clear();
+
+        if (currentBoss != null)
+        {
+            currentBoss.CancelInvoke();
+            currentBoss.isDead = false;
+            currentBoss.gameObject.SetActive(false);
+            currentBoss = null;
+        }
+
+        // Quét sạch tất cả Enemy đang active trong Scene để đảm bảo không sót
+        Enemy[] lingering = FindObjectsOfType<Enemy>();
+        for (int i = 0; i < lingering.Length; i++)
+        {
+            if (lingering[i] != null && lingering[i].gameObject.activeSelf)
+            {
+                lingering[i].CancelInvoke();
+                lingering[i].isDead = false;
+                lingering[i].gameObject.SetActive(false);
+            }
+        }
     }
 
     private Enemy currentBoss;
@@ -134,8 +210,8 @@ public class CombatManager : MonoBehaviour
         
         GameObject bossPrefab = bossEnemyPrefabs[Random.Range(0, bossEnemyPrefabs.Length)];
         
-        // Sinh Boss trÃªn trá»¥c Z (phÃ­a trÆ°á»›c) vÃ  Ã©p cá»©ng tá»a Ä‘á»™ Y báº±ng vá»›i NhÃ¢n váº­t
-        Vector3 spawnPos = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 8f);
+        // 1. Sinh Boss từ xa (cách 26m phía trước) uy nghi tiến dần đến Player
+        Vector3 spawnPos = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 26f);
         GameObject go = null;
         if (SimplePool.Instance != null) 
         {
@@ -147,9 +223,6 @@ public class CombatManager : MonoBehaviour
         {
             go = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
         }
-        
-        // Bá» scale 3x vÃ¬ Boss Ä‘Ã£ cÃ³ kÃ­ch thÆ°á»›c chuáº©n 1.5 tá»« file Prefab
-        // go.transform.localScale = Vector3.one * 3f; 
         
         BossEnemy boss = go.GetComponent<BossEnemy>();
         if (boss == null)
@@ -174,12 +247,55 @@ public class CombatManager : MonoBehaviour
         bool isTribulation = GameManager.Instance != null && GameManager.Instance.currentState == GameManager.GameState.BossTribulation;
         
         boss.InitBoss(stage, playerTransform, isTribulation);
+        boss.moveSpeed = 1.8f; // Boss bước đi trầm ổn, oai vệ từ xa
         activeEnemies.Add(currentBoss);
+
+        // 2. Sinh toán quái con (tiền trạm) chạy trước hộ giá Boss!
+        SpawnMinionsAheadOfBoss(stage);
+    }
+
+    private void SpawnMinionsAheadOfBoss(int stage)
+    {
+        if (normalEnemyPrefabs == null || normalEnemyPrefabs.Length == 0 || playerTransform == null) return;
+
+        // Sinh 4-6 quái con ở cự ly gần hơn (12m - 16m), chạy trước xung phong
+        int minionCount = Mathf.Clamp(4 + (stage / 10), 4, 8);
+        for (int i = 0; i < minionCount; i++)
+        {
+            GameObject prefab = normalEnemyPrefabs[Random.Range(0, normalEnemyPrefabs.Length)];
+            float xOffset = Random.Range(-5f, 5f);
+            float zOffset = Random.Range(12f, 16f) + (i * 0.7f);
+            Vector3 spawnPos = new Vector3(playerTransform.position.x + xOffset, playerTransform.position.y, playerTransform.position.z + zOffset);
+
+            GameObject minionObj = null;
+            if (SimplePool.Instance != null)
+            {
+                minionObj = SimplePool.Instance.SpawnFromPool(prefab.name, spawnPos, Quaternion.identity);
+            }
+            if (minionObj == null)
+            {
+                minionObj = Instantiate(prefab, spawnPos, Quaternion.identity);
+            }
+
+            minionObj.transform.localScale = Vector3.one;
+
+            Enemy enemy = minionObj.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                float health = 50f * Mathf.Pow(1.8f, Mathf.Max(0, stage - 1));
+                enemy.Init(health, playerTransform, false);
+                enemy.moveSpeed = 3.6f; // Quái con chạy nhanh hơn Boss xông lên trước
+                activeEnemies.Add(enemy);
+            }
+        }
     }
 
     private void Update()
     {
-        // TrÆ°á»£t thanh mÃ¡u mÆ°á»£t mÃ  (Game Feel) - Xá»­ lÃ½ ngay cáº£ khi Ä‘Ã¡nh Boss
+        // 1. Đồng bộ Trạng thái Di chuyển Map & Animation Run / Idle của Player
+        UpdateMapAndPlayerState();
+
+        // 2. Trượt thanh máu mượt mà (Game Feel) - Xử lý ngay cả khi đánh Boss
         if (playerHpFill != null)
         {
             playerVisualHp = Mathf.Lerp(playerVisualHp, playerCurrentHp, Time.deltaTime * 10f);
@@ -191,6 +307,10 @@ public class CombatManager : MonoBehaviour
         // Táº¡m ngÆ°ng sinh quÃ¡i vÃ  há»“i mÃ¡u thá»¥ Ä‘á»™ng náº¿u Ä‘ang á»Ÿ tráº¡ng thÃ¡i khÃ¡c (ÄÃ¡nh Boss/Äá»™t phÃ¡)
         // (LÆ°u Ã½: Game Feel HP trÆ°á»£t váº«n cháº¡y á»Ÿ trÃªn)
         if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm)
+            return;
+
+        // Nếu Player đang tử trận: Ngưng hoàn toàn sinh quái và hồi máu
+        if (isPlayerDead)
             return;
 
         // Há»“i mÃ¡u thá»¥ Ä‘á»™ng máº·c Ä‘á»‹nh cá»§a game (1% má»—i giÃ¢y)
@@ -212,7 +332,7 @@ public class CombatManager : MonoBehaviour
         }
 
         spawnTimer -= Time.deltaTime;
-        activeEnemies.RemoveAll(e => e == null);
+        activeEnemies.RemoveAll(e => e == null || !e.gameObject.activeInHierarchy || e.isDead);
         
         // Logic mới: Sau 10 tầng số lượng quái +10 dần dần
         int currentStage = StageManager.Instance != null ? StageManager.Instance.currentStage : 1;
@@ -287,27 +407,193 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    public void DamagePlayer(float amount)
+    public void DamagePlayer(float amount, bool isBoss = false)
     {
+        if (isPlayerDead) return;
+
+        // Nếu bị Boss tấn công: Kích hoạt hiệu ứng chớp đỏ viền màn hình combat
+        if (isBoss)
+        {
+            BossDamageVignette.TriggerFlash();
+        }
+
         playerCurrentHp -= amount;
         if (playerCurrentHp <= 0)
         {
             playerCurrentHp = 0;
+            isPlayerDead = true;
+
+            // Hiển thị thông báo Tử trận uy nghiêm ở giữa màn Combat 3D
+            CombatNotificationUI.ShowDeath();
+
+            // Dừng cuộn map ngay khi tử trận
+            if (MapScroller.Instance != null) MapScroller.Instance.StopMoving();
+
+            if (playerAnimator == null) FindPlayerAnimator();
+            if (playerAnimator != null)
+            {
+                playerAnimator.SetBool("IsMoving", false);
+                playerAnimator.ResetTrigger("Revive");
+                playerAnimator.SetTrigger("Die");
+                Debug.Log("💀 [CombatManager] Nhân vật tử trận! Đã gọi trigger 'Die'.");
+            }
+            else
+            {
+                Debug.LogError("❌ [CombatManager] playerAnimator bị NULL khi tử trận!");
+            }
             
             if (CultivationManager.Instance != null)
             {
                 CultivationManager.Instance.HandlePlayerDeath();
             }
+
+            // Reset tiến trình của Tầng đã chết: Giữ nguyên số tầng, làm mới quái về 0/20
+            if (StageManager.Instance != null)
+            {
+                StageManager.Instance.ResetCurrentStageOnDeath();
+            }
             
-            // XÃ³a boss Ä‘ang hiá»‡n diá»‡n khi player thua
+            // Xóa boss và quái đang hiện diện khi player thua
             ClearAllEnemies();
-            currentBoss = null;
 
             if (GameManager.Instance != null) GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
 
-            playerCurrentHp = playerMaxHp;
+            // Chờ 2.0s để diễn trọn vẹn hoạt ảnh tử trận (Dead) rồi mới hồi sinh
+            CancelInvoke(nameof(RevivePlayer));
+            Invoke(nameof(RevivePlayer), 2.0f);
         }
         UpdatePlayerHPUI();
+    }
+
+    public void RevivePlayer()
+    {
+        playerCurrentHp = playerMaxHp;
+        isPlayerDead = false;
+
+        // Đảm bảo dọn sạch mọi quái sót lại và tạo khoảng thở 0.5s trước khi đợt quái đầu tiên sinh ra
+        ClearAllEnemies();
+        spawnTimer = 0.5f;
+
+        if (playerAnimator == null) FindPlayerAnimator();
+        if (playerAnimator != null)
+        {
+            playerAnimator.ResetTrigger("Die");
+            playerAnimator.SetTrigger("Revive");
+            Debug.Log("✨ [CombatManager] Nhân vật hồi sinh! Đã gọi trigger 'Revive'.");
+        }
+
+        UpdatePlayerHPUI();
+    }
+
+    // ── KIỂM TRA QUÁI TRONG TẦM ĐÁNH & ĐIỀU KHIỂN MAP / PLAYER ───────────
+    public bool HasEnemyInAttackRange()
+    {
+        // 1. Đang có Boss -> Coi như đang trong tầm đánh, dừng map
+        if (currentBoss != null && !currentBoss.isDead && currentBoss.gameObject.activeInHierarchy)
+            return true;
+
+        if (playerTransform == null) return false;
+
+        // 2. Quét danh sách quái thường đang hoạt động
+        Vector2 playerPos2D = new Vector2(playerTransform.position.x, playerTransform.position.z);
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            Enemy e = activeEnemies[i];
+            if (e != null && !e.isDead && e.gameObject.activeInHierarchy)
+            {
+                Vector2 enemyPos2D = new Vector2(e.transform.position.x, e.transform.position.z);
+                float dist = Vector2.Distance(enemyPos2D, playerPos2D);
+                // Quái đã tiến vào tầm đánh của nó
+                if (dist <= e.attackRange + 0.3f)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void UpdateMapAndPlayerState()
+    {
+        // Nếu Player đang tử trận: Map dừng, Player không Run
+        if (isPlayerDead)
+        {
+            if (MapScroller.Instance != null && MapScroller.Instance.isMoving)
+            {
+                MapScroller.Instance.StopMoving();
+            }
+            if (playerAnimator != null && playerAnimator.GetBool("IsMoving"))
+            {
+                playerAnimator.SetBool("IsMoving", false);
+            }
+            return;
+        }
+
+        bool enemyInRange = HasEnemyInAttackRange();
+
+        if (enemyInRange)
+        {
+            // Có quái/Boss vào tầm đánh: DỪNG MAP, NHÂN VẬT ĐỔI SANG IDLE
+            if (MapScroller.Instance != null && MapScroller.Instance.isMoving)
+            {
+                MapScroller.Instance.StopMoving();
+            }
+            if (playerAnimator != null && playerAnimator.GetBool("IsMoving"))
+            {
+                playerAnimator.SetBool("IsMoving", false);
+            }
+        }
+        else
+        {
+            // Không có quái nào trong tầm đánh: CUỘN MAP, NHÂN VẬT ĐỔI SANG RUN
+            if (GameManager.Instance == null || GameManager.Instance.currentState == GameManager.GameState.IdleFarm)
+            {
+                if (MapScroller.Instance != null && !MapScroller.Instance.isMoving)
+                {
+                    MapScroller.Instance.ResumeMoving();
+                }
+                if (playerAnimator != null && !playerAnimator.GetBool("IsMoving"))
+                {
+                    playerAnimator.SetBool("IsMoving", true);
+                }
+            }
+        }
+    }
+
+    private void FindPlayerAnimator()
+    {
+        if (playerAnimator != null) return;
+
+        if (playerTransform != null)
+        {
+            playerAnimator = playerTransform.GetComponentInChildren<Animator>();
+            if (playerAnimator == null) playerAnimator = playerTransform.GetComponentInParent<Animator>();
+            if (playerAnimator == null) playerAnimator = playerTransform.GetComponent<Animator>();
+        }
+
+        if (playerAnimator == null)
+        {
+            Animator[] allAnims = FindObjectsOfType<Animator>();
+            foreach (var a in allAnims)
+            {
+                if (a.name.ToLower().Contains("player") || 
+                    (a.runtimeAnimatorController != null && a.runtimeAnimatorController.name.ToLower().Contains("player")))
+                {
+                    playerAnimator = a;
+                    break;
+                }
+            }
+        }
+
+        if (playerAnimator != null)
+        {
+            Debug.Log($"✅ [CombatManager] Đã kết nối Player Animator: '{playerAnimator.gameObject.name}', Controller: '{playerAnimator.runtimeAnimatorController?.name}'");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ [CombatManager] Chưa tìm thấy Player Animator! Hãy kiểm tra lại Transform nhân vật trên Inspector.");
+        }
     }
 
     public void HealPlayer(float amount)
@@ -318,20 +604,30 @@ public class CombatManager : MonoBehaviour
 
     private void UpdatePlayerHPUI()
     {
-        if (playerHpText != null) playerHpText.text = $"HP: {Mathf.Ceil(playerCurrentHp)} / {playerMaxHp}";
+        if (playerHpText != null) playerHpText.text = $"HP: {Mathf.Ceil(playerCurrentHp)} / {playerMaxHp:F0}";
     }
 
     public void ChangeToBossState()
     {
         ClearAllEnemies();
-        SpawnBoss();
+        if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.BossTribulation)
+        {
+            GameManager.Instance.ChangeState(GameManager.GameState.BossTribulation);
+        }
+        else
+        {
+            SpawnBoss();
+        }
         if (MapScroller.Instance != null) MapScroller.Instance.StopMoving();
     }
 
     public void ChangeToIdleState()
     {
         ClearAllEnemies();
-        currentBoss = null;
+        if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm)
+        {
+            GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
+        }
         if (MapScroller.Instance != null) MapScroller.Instance.ResumeMoving();
     }
 
@@ -545,7 +841,7 @@ public class CombatManager : MonoBehaviour
                 Vector3 endPos = targetPos;
                 if (i > 0) endPos += new Vector3(Random.Range(-3f, 3f), 0, Random.Range(-3f, 3f));
                 Vector3 startPos = endPos + Vector3.up * 20f;
-                lightning.AddComponent<LightningVFX>().Setup(startPos, endPos, new Color(0.8f, 0.2f, 1f), magicArrayMaterial);
+                lightning.AddComponent<LightningVFX>().Setup(startPos, endPos, new Color(1f, 0.95f, 0.2f), magicArrayMaterial);
             }
 
             Debug.Log("[Skill] ⚡ LÔI PHẠT!");
@@ -604,8 +900,9 @@ public class CombatManager : MonoBehaviour
 
     public void LoadFromSlot(CharacterSaveData slot)
     {
-        playerMaxHp = Mathf.Max(1000f, slot.playerMaxHp);
-        playerCurrentHp = Mathf.Clamp(slot.playerCurrentHp, 1f, playerMaxHp);
+        RecalculateMaxHp(false);
+        if (slot.playerMaxHp > playerMaxHp) playerMaxHp = slot.playerMaxHp;
+        playerCurrentHp = Mathf.Clamp(slot.playerCurrentHp > 0 ? slot.playerCurrentHp : playerMaxHp, 1f, playerMaxHp);
         playerVisualHp = playerCurrentHp;
         UpdatePlayerHPUI();
     }

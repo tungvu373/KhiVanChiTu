@@ -77,7 +77,7 @@ public class BaseDataGenerator
             {
                 for (int i = 1; i <= 15; i++)
                 {
-                    CreateStage(stageCount, $"{realm} Tầng {i}", currentTuVi, i % 5 == 0, 1.1f);
+                    CreateStage(stageCount, $"{realm} Tầng {i}", currentTuVi, i % 10 == 0 || i == 15, 1.1f);
                     currentTuVi *= 1.2f;
                     stageCount++;
                 }

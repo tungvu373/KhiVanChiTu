@@ -42,6 +42,13 @@ public class MainMenuManager : MonoBehaviour
     private DataManager dataManager;
     private System.Collections.Generic.List<GameObject> hiddenUIElements = new System.Collections.Generic.List<GameObject>();
 
+    public static MainMenuManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private void Start()
     {
         // Đóng băng mọi hoạt động của game (HP, MP, Quái vật) khi đang ở Menu
@@ -73,6 +80,13 @@ public class MainMenuManager : MonoBehaviour
                 if (child == this.transform || child.IsChildOf(this.transform)) continue;
                 // Không ẩn hệ thống Click Event
                 if (child.GetComponent<UnityEngine.EventSystems.EventSystem>() != null) continue;
+
+                // Không đưa các Popup Modal (PauseMenuModal, CharacterDetailModal) vào danh sách tự động hiện lại khi vào game
+                if (child.name.EndsWith("Modal"))
+                {
+                    child.gameObject.SetActive(false);
+                    continue;
+                }
 
                 if (child.gameObject.activeSelf)
                 {
@@ -116,6 +130,23 @@ public class MainMenuManager : MonoBehaviour
         confirmCreateButton.onClick.AddListener(OnConfirmCreateCharacter);
 
         closeSettingsButton.onClick.AddListener(() => ShowPanel(mainPanel));
+
+        // Đồng bộ âm thanh với AudioManager
+        if (AudioManager.Instance != null)
+        {
+            if (bgmSlider != null)
+            {
+                bgmSlider.value = AudioManager.Instance.bgmVolume;
+                bgmSlider.onValueChanged.RemoveAllListeners();
+                bgmSlider.onValueChanged.AddListener(val => AudioManager.Instance.SetBgmVolume(val));
+            }
+            if (sfxSlider != null)
+            {
+                sfxSlider.value = AudioManager.Instance.sfxVolume;
+                sfxSlider.onValueChanged.RemoveAllListeners();
+                sfxSlider.onValueChanged.AddListener(val => AudioManager.Instance.SetSfxVolume(val));
+            }
+        }
     }
 
     private void UpdateMainMenuPlayButton()
@@ -169,6 +200,8 @@ public class MainMenuManager : MonoBehaviour
         newData.stageName = "Luyện Khí Kỳ Tầng 1";
         newData.stageIndex = 0;
         newData.currentTuVi = 0f;
+        newData.combatStage = 1;
+        newData.enemiesKilled = 0;
         newData.linhThach = 0f;
         newData.coDuyen = 0;
         newData.kiemY = 0;

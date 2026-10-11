@@ -10,8 +10,22 @@ public class BossEnemy : Enemy
         float healthMultiplier = isTribulation ? 3f : 2.5f;
         float finalHealth = 5000f * Mathf.Pow(healthMultiplier, stage / 5f);
         
+        // Chiều cao thanh máu cao hơn đầu Boss (Model Boss to 1.5x, nếu chưa chỉnh hoặc <= 2.5f thì tự nâng lên 3.5f)
+        if (this.hpBarHeight < 3.2f) this.hpBarHeight = 3.5f;
+        
+        // Tầm đánh cận chiến của Boss (Boss to hơn nên áp sát cự ly 2.2m để vung vuốt)
+        this.attackRange = 2.2f;
+        if (this.moveSpeed < 1f) this.moveSpeed = 2.0f;
+        
         // Gọi hàm Init của lớp cha (Enemy)
         base.Init(finalHealth, target, true);
+
+        // Đảm bảo vị trí Canvas thanh máu nằm cao hơn đầu Boss
+        Transform hpCanvas = transform.Find("HPCanvas");
+        if (hpCanvas != null)
+        {
+            hpCanvas.localPosition = new Vector3(0, hpBarHeight, 0);
+        }
 
         // 2. Tính toán Sát thương (Damage): Không tính theo % máu nữa vì máu Boss quá cao sẽ gây One-shot Player.
         // Tầng 5: Sát thương ~ 50. Tầng 10: ~ 100. (Vừa phải để Player có cơ hội hồi máu/sống sót)

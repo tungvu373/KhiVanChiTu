@@ -73,18 +73,26 @@ public class MapScroller : MonoBehaviour
         }
     }
 
-    // Gọi hàm này khi gặp quái để dừng map lại
+    // Gọi hàm này khi gặp quái/Boss để dừng map lại
     public void StopMoving()
     {
         isMoving = false;
-        // Gắn logic đổi Animation nhân vật sang trạng thái Idle/Combat ở đây
+        // Đổi Animation nhân vật sang trạng thái Idle (đứng lại đánh)
+        if (CombatManager.Instance != null && CombatManager.Instance.playerAnimator != null)
+        {
+            CombatManager.Instance.playerAnimator.SetBool("IsMoving", false);
+        }
     }
 
-    // Gọi hàm này khi quái chết để đi tiếp
+    // Gọi hàm này khi dọn xong để tiếp tục hành trình
     public void ResumeMoving()
     {
         isMoving = true;
-        // Gắn logic đổi Animation nhân vật sang trạng thái Run/Walk ở đây
+        // Đổi Animation nhân vật sang trạng thái Run (chạy tiếp)
+        if (CombatManager.Instance != null && CombatManager.Instance.playerAnimator != null)
+        {
+            CombatManager.Instance.playerAnimator.SetBool("IsMoving", true);
+        }
     }
 
     public void RandomizeBiomeColor()

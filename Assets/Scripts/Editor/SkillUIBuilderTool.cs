@@ -86,12 +86,13 @@ public class SkillUIBuilderTool
             title.text = skillNames[i];
             title.alignment = TextAnchor.MiddleCenter;
             title.color = Color.white;
-            title.fontSize = 14;
+            title.fontSize = 13;
+            title.fontStyle = FontStyle.Bold;
             RectTransform tRt = titleObj.GetComponent<RectTransform>();
             tRt.anchorMin = new Vector2(0, 0);
             tRt.anchorMax = new Vector2(1, 0);
-            tRt.offsetMin = new Vector2(0, 50); 
-            tRt.offsetMax = new Vector2(0, 80);
+            tRt.offsetMin = new Vector2(4, 58); 
+            tRt.offsetMax = new Vector2(-4, 90);
 
             GameObject condObj = new GameObject("Condition", typeof(RectTransform));
             condObj.transform.SetParent(card.transform, false);
@@ -99,13 +100,15 @@ public class SkillUIBuilderTool
             cond.font = defaultFont;
             cond.text = "Đang tải..."; 
             cond.alignment = TextAnchor.MiddleCenter;
-            cond.color = Color.red;
-            cond.fontSize = 12;
+            cond.color = Color.white;
+            cond.fontSize = 11;
+            cond.verticalOverflow = VerticalWrapMode.Overflow;
+            cond.horizontalOverflow = HorizontalWrapMode.Wrap;
             RectTransform cRt = condObj.GetComponent<RectTransform>();
             cRt.anchorMin = new Vector2(0, 0);
             cRt.anchorMax = new Vector2(1, 0);
-            cRt.offsetMin = new Vector2(0, 30);
-            cRt.offsetMax = new Vector2(0, 50);
+            cRt.offsetMin = new Vector2(4, 34);
+            cRt.offsetMax = new Vector2(-4, 56);
 
             GameObject btnObj = new GameObject("UnlockButton", typeof(RectTransform));
             btnObj.transform.SetParent(card.transform, false);
@@ -113,10 +116,10 @@ public class SkillUIBuilderTool
             Image btnImg = btnObj.AddComponent<Image>();
             btnImg.color = new Color(0.8f, 0.6f, 0.1f);
             RectTransform btnRt = btnObj.GetComponent<RectTransform>();
-            btnRt.anchorMin = new Vector2(0.1f, 0);
-            btnRt.anchorMax = new Vector2(0.9f, 0);
-            btnRt.offsetMin = new Vector2(0, 5);
-            btnRt.offsetMax = new Vector2(0, 25); 
+            btnRt.anchorMin = new Vector2(0.06f, 0);
+            btnRt.anchorMax = new Vector2(0.94f, 0);
+            btnRt.offsetMin = new Vector2(0, 6);
+            btnRt.offsetMax = new Vector2(0, 32); 
 
             GameObject btnTxtObj = new GameObject("Text", typeof(RectTransform));
             btnTxtObj.transform.SetParent(btnObj.transform, false);
@@ -124,7 +127,8 @@ public class SkillUIBuilderTool
             btnTxt.font = defaultFont;
             btnTxt.alignment = TextAnchor.MiddleCenter;
             btnTxt.color = Color.white;
-            btnTxt.fontSize = 12;
+            btnTxt.fontSize = 11;
+            btnTxt.fontStyle = FontStyle.Bold;
             RectTransform btnTxtRt = btnTxtObj.GetComponent<RectTransform>();
             btnTxtRt.anchorMin = Vector2.zero;
             btnTxtRt.anchorMax = Vector2.one;

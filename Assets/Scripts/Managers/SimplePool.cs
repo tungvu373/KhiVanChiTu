@@ -79,7 +79,7 @@ public class SimplePool : MonoBehaviour
             GameObject go = objectPool.Dequeue();
             if (go == null) continue; // Bỏ qua nếu đã bị Destroy ngoài ý muốn
 
-            if (!go.activeInHierarchy)
+            if (!go.activeSelf || !go.activeInHierarchy)
             {
                 objToSpawn = go;
                 break;
@@ -105,13 +105,24 @@ public class SimplePool : MonoBehaviour
             }
         }
 
-        objToSpawn.SetActive(true);
         objToSpawn.transform.position = position;
         objToSpawn.transform.rotation = rotation;
+        objToSpawn.SetActive(true);
 
         // Bỏ lại vào queue để tái sử dụng sau này
         objectPool.Enqueue(objToSpawn);
 
         return objToSpawn;
+    }
+
+    public void DeactivateAllInPool(string tag)
+    {
+        if (poolDictionary != null && poolDictionary.ContainsKey(tag))
+        {
+            foreach (var go in poolDictionary[tag])
+            {
+                if (go != null) go.SetActive(false);
+            }
+        }
     }
 }

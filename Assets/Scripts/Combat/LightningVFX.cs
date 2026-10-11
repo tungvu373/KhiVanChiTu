@@ -13,10 +13,16 @@ public class LightningVFX : MonoBehaviour
         lr.startWidth = 0.5f;
         lr.endWidth = 0.1f;
         
-        // Dùng shader Unlit/Color để phát sáng hoặc customMat
-        if (customMat != null)
+        Material finalMat = customMat;
+        if (finalMat == null && CombatManager.Instance != null)
         {
-            lr.material = customMat;
+            finalMat = CombatManager.Instance.magicArrayMaterial;
+        }
+
+        // Dùng shader Unlit/Color hoặc Mat_MagicArray để phát sáng
+        if (finalMat != null)
+        {
+            lr.material = finalMat;
         }
         else
         {
@@ -62,7 +68,14 @@ public class LightningVFX : MonoBehaviour
         shape.shapeType = ParticleSystemShapeType.Hemisphere;
         
         var renderer = sparkPs.GetComponent<ParticleSystemRenderer>();
-        renderer.material = new Material(Shader.Find("Sprites/Default"));
+        if (finalMat != null)
+        {
+            renderer.material = finalMat;
+        }
+        else
+        {
+            renderer.material = new Material(Shader.Find("Sprites/Default"));
+        }
         renderer.renderMode = ParticleSystemRenderMode.Stretch;
         renderer.lengthScale = 2f; // Tia lửa dãn dài ra
         
