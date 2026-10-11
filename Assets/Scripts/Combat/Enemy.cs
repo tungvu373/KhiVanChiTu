@@ -17,29 +17,113 @@ public class Enemy : MonoBehaviour
     // UI & Game Feel
     private Image hpFill;
     private float visualHp;
-    private Material mat;
-    private Color originalColor;
+    private Renderer[] renderers; // Hỗ trợ Model 3D có nhiều bộ phận
+    private Color[] originalColors;
     private float flashTimer;
     private Camera mainCamera;
+    
+    // Animation
+    public Animator animator;
+    public bool isDead = false;
+    private bool hasIsMovingParam = false;
+    
+    [Header("Settings")]
+    public float hpBarHeight = 2.5f; // Chiều cao thanh máu (tùy chỉnh trên Inspector)
+
+    public float attackRange = 1.8f; // Khoảng cách đứng đánh cận chiến sát người chơi
+
+    private void OnDisable()
+    {
+        CancelInvoke();
+        isDead = false;
+    }
 
     public void Init(float health, Transform target, bool boss = false)
     {
+        CancelInvoke();
         maxHp = health;
         hp = health;
         visualHp = health;
         playerTarget = target;
         isBoss = boss;
         damage = boss ? health * 0.2f : health * 0.05f; // Sát thương tỉ lệ theo máu
+        isDead = false;
+        attackTimer = 0.5f;
+
+        SetupHPBar();
+
+        // Lấy tất cả SkinnedMeshRenderer/MeshRenderer trên Model 3D
+        if (renderers == null || renderers.Length == 0)
+        {
+            renderers = GetComponentsInChildren<Renderer>();
+            originalColors = new Color[renderers.Length];
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (renderers[i].material.HasProperty("_Color"))
+                    originalColors[i] = renderers[i].material.color;
+                else if (renderers[i].material.HasProperty("_BaseColor"))
+                    originalColors[i] = renderers[i].material.GetColor("_BaseColor");
+                else
+                    originalColors[i] = Color.white;
+            }
+        }
+        else
+        {
+            // Phục hồi lại màu ban đầu nếu từng bị Flash trắng
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (renderers[i] != null && originalColors != null && i < originalColors.Length)
+                {
+                    if (renderers[i].material.HasProperty("_Color"))
+                        renderers[i].material.color = originalColors[i];
+                    else if (renderers[i].material.HasProperty("_BaseColor"))
+                        renderers[i].material.SetColor("_BaseColor", originalColors[i]);
+                }
+            }
+        }
+        
+        if (animator == null) animator = GetComponentInChildren<Animator>();
+        hasIsMovingParam = false;
+        if (animator != null)
+        {
+            foreach (var p in animator.parameters)
+            {
+                if (p.name == "IsMoving") { hasIsMovingParam = true; break; }
+            }
+
+            animator.ResetTrigger("Die");
+            animator.ResetTrigger("Attack");
+            if (hasIsMovingParam) animator.SetBool("IsMoving", false);
+
+            // Đưa Animator về trạng thái ban đầu để tránh bị đông cứng ở thế nằm chết
+            animator.Rebind();
+            animator.Update(0f);
+        }
+        
+        mainCamera = Camera.main;
+    }
+
+    private void SetupHPBar()
+    {
+        Transform canvasTr = transform.Find("HPCanvas");
+        if (canvasTr != null)
+        {
+            canvasTr.gameObject.SetActive(true);
+            canvasTr.localPosition = new Vector3(0, hpBarHeight, 0);
+            if (hpFill == null)
+            {
+                Transform fillTr = canvasTr.Find("HP_BG/HP_Fill");
+                if (fillTr != null) hpFill = fillTr.GetComponent<Image>();
+            }
+            if (hpFill != null)
+            {
+                RectTransform fillRt = hpFill.GetComponent<RectTransform>();
+                fillRt.anchorMax = Vector2.one;
+            }
+            return;
+        }
 
         CreateHPBar();
-
-        Renderer r = GetComponent<Renderer>();
-        if (r != null)
-        {
-            mat = r.material;
-            originalColor = mat.color;
-        }
-        mainCamera = Camera.main;
     }
 
     private void CreateHPBar()
@@ -47,7 +131,7 @@ public class Enemy : MonoBehaviour
         // Tạo Canvas World Space trên đầu quái
         GameObject canvasObj = new GameObject("HPCanvas", typeof(RectTransform), typeof(Canvas));
         canvasObj.transform.SetParent(transform, false);
-        canvasObj.transform.localPosition = new Vector3(0, 1.2f, 0);
+        canvasObj.transform.localPosition = new Vector3(0, hpBarHeight, 0);
         
         Canvas canvas = canvasObj.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
@@ -68,7 +152,7 @@ public class Enemy : MonoBehaviour
         GameObject fillObj = new GameObject("HP_Fill", typeof(RectTransform), typeof(Image));
         fillObj.transform.SetParent(bgObj.transform, false);
         hpFill = fillObj.GetComponent<Image>();
-        hpFill.color = isBoss ? Color.magenta : Color.red;
+        hpFill.color = Color.red; // Đổi lại thành đỏ theo yêu cầu
         // Không dùng Filled vì thiếu Sprite gốc sẽ lỗi, dùng Anchor thay thế
         RectTransform fillRt = fillObj.GetComponent<RectTransform>();
         fillRt.anchorMin = Vector2.zero; 
@@ -95,61 +179,107 @@ public class Enemy : MonoBehaviour
         }
 
         // Đổi màu giật cục (Flash)
-        if (flashTimer > 0 && mat != null)
+        if (flashTimer > 0)
         {
             flashTimer -= Time.deltaTime;
-            if (flashTimer <= 0) mat.color = originalColor;
+            if (flashTimer <= 0)
+            {
+                // Trả lại màu gốc
+                for (int i = 0; i < renderers.Length; i++)
+                {
+                    if (renderers[i] != null)
+                    {
+                        if (renderers[i].material.HasProperty("_Color"))
+                            renderers[i].material.color = originalColors[i];
+                        else if (renderers[i].material.HasProperty("_BaseColor"))
+                            renderers[i].material.SetColor("_BaseColor", originalColors[i]);
+                    }
+                }
+            }
         }
 
-        if (playerTarget != null)
+        if (playerTarget != null && !isDead)
         {
-            float dist = Vector3.Distance(transform.position, playerTarget.position);
-            if (dist > 1.5f)
+            // BỎ QUA TRỤC Y khi tính khoảng cách (để tránh lỗi quái không bao giờ tới gần vì độ cao 3D)
+            float dist = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(playerTarget.position.x, playerTarget.position.z));
+            Vector3 targetPos = new Vector3(playerTarget.position.x, transform.position.y, playerTarget.position.z);
+            transform.LookAt(targetPos);
+
+            if (dist > attackRange)
             {
-                // Di chuyển
-                Vector3 targetPos = new Vector3(playerTarget.position.x, transform.position.y, playerTarget.position.z);
-                transform.LookAt(targetPos);
+                // Cả quái thường lẫn Boss đều di chuyển tiến lại gần sát người chơi
                 transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+                
+                if (animator != null && hasIsMovingParam) animator.SetBool("IsMoving", true);
             }
             else
             {
-                // Tấn công Player
+                // Đã vào tầm đánh cận chiến sát Player -> Dừng lại và tấn công
+                if (animator != null && hasIsMovingParam) animator.SetBool("IsMoving", false);
+                
                 if (attackTimer > 0)
                 {
                     attackTimer -= Time.deltaTime;
                 }
                 else
                 {
-                    attackTimer = 1f / attackSpeed;
+                    attackTimer = isBoss ? 1.5f : (1f / attackSpeed);
+                    
+                    if (animator != null) animator.SetTrigger("Attack"); // Kích hoạt Anim Đánh
+                    
                     if (CombatManager.Instance != null)
                     {
-                        CombatManager.Instance.DamagePlayer(damage);
+                        CombatManager.Instance.DamagePlayer(damage, isBoss);
                     }
                 }
             }
         }
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, bool isCrit = false)
     {
         hp -= amount;
         
-        // Game Feel: Flash trắng
-        if (mat != null)
+        // Game Feel: Flash trắng cho toàn bộ Model 3D
+        flashTimer = 0.1f;
+        foreach (var r in renderers)
         {
-            mat.color = Color.white;
-            flashTimer = 0.1f;
+            if (r != null)
+            {
+                if (r.material.HasProperty("_Color"))
+                    r.material.color = Color.white;
+                else if (r.material.HasProperty("_BaseColor"))
+                    r.material.SetColor("_BaseColor", Color.white);
+            }
         }
         
         if (CombatManager.Instance != null && CombatManager.Instance.damagePopupPrefab != null)
         {
-            GameObject popup = Instantiate(CombatManager.Instance.damagePopupPrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
-            popup.GetComponent<DamagePopup>().Setup(amount, amount >= 400); 
+            if (SimplePool.Instance != null)
+            {
+                GameObject popup = SimplePool.Instance.SpawnFromPool("DamagePopup", transform.position + Vector3.up * (hpBarHeight + 0.3f), Quaternion.identity);
+                if (popup != null) popup.GetComponent<DamagePopup>().Setup(amount, isCrit || amount >= 400);
+            }
+            else
+            {
+                GameObject popup = Instantiate(CombatManager.Instance.damagePopupPrefab, transform.position + Vector3.up * (hpBarHeight + 0.3f), Quaternion.identity);
+                popup.GetComponent<DamagePopup>().Setup(amount, isCrit || amount >= 400); 
+            }
         }
 
-        if (hp <= 0)
+        if (hp <= 0 && !isDead)
         {
-            Die();
+            isDead = true;
+            if (animator != null) animator.SetTrigger("Die");
+            
+            // Ẩn Canvas máu ngay khi chết
+            Transform canvasTr = transform.Find("HPCanvas");
+            if (canvasTr != null) canvasTr.gameObject.SetActive(false);
+            else if (hpFill != null && hpFill.transform.parent != null && hpFill.transform.parent.parent != null)
+                hpFill.transform.parent.parent.gameObject.SetActive(false);
+            
+            // Đợi Animation chết chạy xong mới gọi Die()
+            Invoke(nameof(Die), 1.5f); // Chờ 1.5s
         }
     }
 
@@ -158,8 +288,8 @@ public class Enemy : MonoBehaviour
         int stageIndex = 1;
         if (CultivationManager.Instance != null) stageIndex = CultivationManager.Instance.currentStageIndex;
 
-        float baseDrop = 10f * Mathf.Pow(1.3f, stageIndex);
-        if (isBoss) baseDrop *= 5f; // Boss rớt nhiều gấp 5
+        float baseDrop = 100f * Mathf.Pow(2.0f, stageIndex); // Rớt rất nhiều Linh Thạch
+        if (isBoss) baseDrop *= 10f; // Boss rớt nhiều gấp 10 lần quái thường
 
         float tuLinhBonus = UpgradeManager.Instance != null ? UpgradeManager.Instance.GetTuLinhValue() : 0;
         
@@ -179,12 +309,32 @@ public class Enemy : MonoBehaviour
         {
             CombatManager.Instance.OnEnemyDied(this);
         }
-        Destroy(gameObject);
+        
+        if (StageManager.Instance != null)
+        {
+            StageManager.Instance.OnEnemyKilled(isBoss);
+        }
+        
+        // Spawn Flying VFX (Game Feel)
+        if (VFXHelper.Instance != null)
+        {
+            VFXHelper.Instance.SpawnFlyingLoot(transform.position, isBoss ? 5 : 1);
+        }
+
+        gameObject.SetActive(false); // Pooling thay vì Destroy
     }
 
     private void OnDestroy()
     {
-        if (mat != null) Destroy(mat);
+        // Cleanup vật liệu để tránh rò rỉ bộ nhớ
+        if (renderers != null)
+        {
+            foreach (var r in renderers)
+            {
+                if (r != null && r.material != null) Destroy(r.material);
+            }
+        }
+        
         if (hpFill != null)
         {
             Transform hpCanvas = hpFill.transform.parent?.parent;

@@ -21,6 +21,10 @@ public class CultivationManager : MonoBehaviour
     [Header("Chỉ số cộng thêm (Buff vĩnh viễn)")]
     public float permanentStatMultiplier = 1f;
 
+    // Tên nhân vật (lấy từ DataManager khi vào game)
+    private string characterName = "Đạo Hữu";
+    public string CharacterName => characterName;
+
     public event Action<float, float> OnTuViChanged; // current, max
     public event Action<CultivationStageData> OnStageChanged;
 
@@ -28,7 +32,7 @@ public class CultivationManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Instance = this;
@@ -74,8 +78,17 @@ public class CultivationManager : MonoBehaviour
 
         if (characterInfoText != null)
         {
-            characterInfoText.text = $"Tên: Đạo Hữu\nCảnh giới: {currentStageData.stageName}\nTu Vi: {Mathf.FloorToInt(currentTuVi)}/{currentStageData.requiredTuVi}\nLoại: Nhân Tộc";
+            characterInfoText.text = $"Tên: {characterName}\nCảnh giới: {currentStageData.stageName}\nTu Vi: {Mathf.FloorToInt(currentTuVi)}/{currentStageData.requiredTuVi}";
         }
+    }
+
+    /// <summary>Thiết lập tên nhân vật và cập nhật UI ngay lập tức.</summary>
+    public void SetCharacterName(string name)
+    {
+        characterName = string.IsNullOrEmpty(name) ? "Đạo Hữu" : name;
+        // Refresh UI ngay
+        if (allStages != null && currentStageIndex < allStages.Length)
+            UpdateDashboardUI(allStages[currentStageIndex]);
     }
 
     private void CheckBreakthrough()
@@ -86,6 +99,15 @@ public class CultivationManager : MonoBehaviour
             if (currentStageData.hasTribulationBoss)
             {
                 Debug.Log("⚠️ LÔI KIẾP HÀNG LÂM! Chuẩn bị đánh Boss Lôi Kiếp!");
+                if (CameraShake.Instance != null) CameraShake.Instance.TriggerShake(1.0f, 0.6f);
+                if (lightningVFXPrefab != null && CombatManager.Instance != null && CombatManager.Instance.playerTransform != null)
+                {
+                    Instantiate(lightningVFXPrefab, CombatManager.Instance.playerTransform.position + Vector3.up * 8f, Quaternion.Euler(90, 0, 0));
+                }
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayLoiPhatSFX();
+                }
                 GameManager.Instance.ChangeState(GameManager.GameState.BossTribulation);
             }
             else
@@ -114,10 +136,20 @@ public class CultivationManager : MonoBehaviour
             {
                 Instantiate(lightningVFXPrefab, CombatManager.Instance.playerTransform.position + Vector3.up * 8f, Quaternion.Euler(90, 0, 0));
             }
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayLoiPhatSFX();
+            }
         }
 
         // Reset tu vi về 0 để lên cấp mới
         currentTuVi = 0; 
+
+        // Phát âm thanh nổ vang chúc mừng đột phá tu vi (bang.mp3)
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBreakthroughSFX();
+        }
         
         // Thưởng điểm Cơ Duyên (Quy tắc chống lạm phát)
         int coDuyenBonus = 0;
@@ -156,6 +188,7 @@ public class CultivationManager : MonoBehaviour
 
         if (currentStageIndex < allStages.Length)
         {
+            CombatNotificationUI.ShowBreakthrough(allStages[currentStageIndex].stageName);
             OnStageChanged?.Invoke(allStages[currentStageIndex]);
             OnTuViChanged?.Invoke(currentTuVi, allStages[currentStageIndex].requiredTuVi);
             UpdateDashboardUI(allStages[currentStageIndex]);
@@ -180,11 +213,8 @@ public class CultivationManager : MonoBehaviour
 
     public void HandlePlayerDeath()
     {
-        if (currentStageIndex > 0)
-        {
-            currentStageIndex--;
-        }
-        currentTuVi = 0; // Reset tu vi để tránh kẹt trạng thái Boss
+        // Khi tử trận: Giữ nguyên Cảnh giới hiện tại (không bị tụt cấp), làm mới tu vi của tầng này
+        currentTuVi = 0f; 
 
         if (allStages != null && currentStageIndex < allStages.Length)
         {
@@ -194,7 +224,32 @@ public class CultivationManager : MonoBehaviour
             OnStageChanged?.Invoke(currentStageData);
         }
 
-        Debug.Log("💀 BẠN ĐÃ TỬ TRẬN! Rớt Cảnh giới hoặc Tổn thất Tu Vi.");
-        if (GameLogger.Instance != null) GameLogger.Instance.Log("TỬ TRẬN! Tổn thất Tu Vi", Color.red);
+        Debug.Log("💀 [CultivationManager] TỬ TRẬN! Giữ nguyên cảnh giới, hồi sinh làm mới tại tầng hiện tại.");
+        if (GameLogger.Instance != null) GameLogger.Instance.Log("TỬ TRẬN! Hồi sinh làm mới tại tầng này", Color.red);
+    }
+
+    // ── SAVE / LOAD ─────────────────────────────────────────────────────────
+    public void SaveToSlot(CharacterSaveData slot)
+    {
+        slot.stageIndex = currentStageIndex;
+        slot.stageName = (allStages != null && currentStageIndex < allStages.Length)
+            ? allStages[currentStageIndex].stageName : "Luyện Khí Kỳ Tầng 1";
+        slot.currentTuVi = currentTuVi;
+        slot.permanentStatMultiplier = permanentStatMultiplier;
+    }
+
+    public void LoadFromSlot(CharacterSaveData slot)
+    {
+        currentStageIndex = Mathf.Clamp(slot.stageIndex, 0, allStages != null ? allStages.Length - 1 : 0);
+        currentTuVi = slot.currentTuVi;
+        permanentStatMultiplier = Mathf.Max(1f, slot.permanentStatMultiplier);
+
+        if (allStages != null && currentStageIndex < allStages.Length)
+        {
+            OnStageChanged?.Invoke(allStages[currentStageIndex]);
+            OnTuViChanged?.Invoke(currentTuVi, allStages[currentStageIndex].requiredTuVi);
+            UpdateDashboardUI(allStages[currentStageIndex]);
+        }
     }
 }
+

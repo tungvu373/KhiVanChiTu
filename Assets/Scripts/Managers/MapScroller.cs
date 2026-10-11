@@ -11,6 +11,18 @@ public class MapScroller : MonoBehaviour
     public List<Transform> mapChunks; // Bỏ 3 chunk map giống nhau vào đây
     public float chunkLength = 20f;   // Chiều dài của mỗi chunk
 
+    public static MapScroller Instance { get; private set; }
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+            return;
+        }
+        Instance = this;
+    }
+
     void Start()
     {
         // Tự động nhận diện kích thước nếu người dùng thay chunk map bằng Unity Terrain
@@ -61,17 +73,40 @@ public class MapScroller : MonoBehaviour
         }
     }
 
-    // Gọi hàm này khi gặp quái để dừng map lại
+    // Gọi hàm này khi gặp quái/Boss để dừng map lại
     public void StopMoving()
     {
         isMoving = false;
-        // Gắn logic đổi Animation nhân vật sang trạng thái Idle/Combat ở đây
+        // Đổi Animation nhân vật sang trạng thái Idle (đứng lại đánh)
+        if (CombatManager.Instance != null && CombatManager.Instance.playerAnimator != null)
+        {
+            CombatManager.Instance.playerAnimator.SetBool("IsMoving", false);
+        }
     }
 
-    // Gọi hàm này khi quái chết để đi tiếp
+    // Gọi hàm này khi dọn xong để tiếp tục hành trình
     public void ResumeMoving()
     {
         isMoving = true;
-        // Gắn logic đổi Animation nhân vật sang trạng thái Run/Walk ở đây
+        // Đổi Animation nhân vật sang trạng thái Run (chạy tiếp)
+        if (CombatManager.Instance != null && CombatManager.Instance.playerAnimator != null)
+        {
+            CombatManager.Instance.playerAnimator.SetBool("IsMoving", true);
+        }
+    }
+
+    public void RandomizeBiomeColor()
+    {
+        // Simple color tinting for terrains or meshes
+        Color randomColor = new Color(Random.Range(0.6f, 1f), Random.Range(0.6f, 1f), Random.Range(0.6f, 1f));
+        foreach (Transform chunk in mapChunks)
+        {
+            if (chunk == null) continue;
+            Renderer r = chunk.GetComponentInChildren<Renderer>();
+            if (r != null && r.material != null)
+            {
+                r.material.color = randomColor;
+            }
+        }
     }
 }

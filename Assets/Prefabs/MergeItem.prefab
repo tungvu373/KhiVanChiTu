@@ -184,3 +184,12 @@ MonoBehaviour:
   level: 1
   currentPieces: 1
   originalParent: {fileID: 0}
+  levelSprites:
+  - {fileID: 1502375349, guid: c3b06f82b8096634c899fc8a9bb7e925, type: 3}
+  - {fileID: 1488912151, guid: c3b06f82b8096634c899fc8a9bb7e925, type: 3}
+  - {fileID: 901060457, guid: c3b06f82b8096634c899fc8a9bb7e925, type: 3}
+  - {fileID: 1100613662, guid: c3b06f82b8096634c899fc8a9bb7e925, type: 3}
+  - {fileID: 1158386403, guid: c3b06f82b8096634c899fc8a9bb7e925, type: 3}
+  - {fileID: 151518044, guid: c3b06f82b8096634c899fc8a9bb7e925, type: 3}
+  - {fileID: -711250668, guid: c3b06f82b8096634c899fc8a9bb7e925, type: 3}
+  - {fileID: -332695938, guid: c3b06f82b8096634c899fc8a9bb7e925, type: 3}

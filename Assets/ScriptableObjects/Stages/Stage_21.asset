@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Stage_21
   m_EditorClassIdentifier: Assembly-CSharp::CultivationStageData
   stageName: "K\u1EBFt \u0110an H\u1EADu K\u1EF3"
-  requiredTuVi: 58498.56
+  requiredTuVi: 2560000
   hasTribulationBoss: 1
   statMultiplierBonus: 1.5

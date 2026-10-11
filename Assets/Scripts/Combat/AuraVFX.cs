@@ -14,10 +14,8 @@ public class AuraVFX : MonoBehaviour
         yang.transform.localScale = Vector3.one * 1.5f;
         Destroy(yang.GetComponent<Collider>());
         
-        Material matYang = new Material(Shader.Find("Standard"));
+        Material matYang = new Material(Shader.Find("Sprites/Default"));
         matYang.color = Color.white;
-        matYang.EnableKeyword("_EMISSION");
-        matYang.SetColor("_EmissionColor", Color.white);
         yang.GetComponent<Renderer>().material = matYang;
 
         TrailRenderer trYang = yang.AddComponent<TrailRenderer>();
@@ -35,7 +33,7 @@ public class AuraVFX : MonoBehaviour
         yin.transform.localScale = Vector3.one * 1.5f;
         Destroy(yin.GetComponent<Collider>());
 
-        Material matYin = new Material(Shader.Find("Standard"));
+        Material matYin = new Material(Shader.Find("Sprites/Default"));
         matYin.color = Color.black;
         yin.GetComponent<Renderer>().material = matYin;
 

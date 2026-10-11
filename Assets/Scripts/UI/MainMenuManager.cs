@@ -24,8 +24,6 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Character Creation")]
     public InputField nameInput;
-    public Toggle maleToggle;
-    public Toggle femaleToggle;
     public Button confirmCreateButton;
     public Button cancelCreateButton;
     private int currentSlotBeingCreated = -1;
@@ -43,6 +41,13 @@ public class MainMenuManager : MonoBehaviour
 
     private DataManager dataManager;
     private System.Collections.Generic.List<GameObject> hiddenUIElements = new System.Collections.Generic.List<GameObject>();
+
+    public static MainMenuManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -76,6 +81,13 @@ public class MainMenuManager : MonoBehaviour
                 // Không ẩn hệ thống Click Event
                 if (child.GetComponent<UnityEngine.EventSystems.EventSystem>() != null) continue;
 
+                // Không đưa các Popup Modal (PauseMenuModal, CharacterDetailModal) vào danh sách tự động hiện lại khi vào game
+                if (child.name.EndsWith("Modal"))
+                {
+                    child.gameObject.SetActive(false);
+                    continue;
+                }
+
                 if (child.gameObject.activeSelf)
                 {
                     hiddenUIElements.Add(child.gameObject);
@@ -106,6 +118,12 @@ public class MainMenuManager : MonoBehaviour
         SetupButtons();
         UpdateMainMenuPlayButton();
         ShowPanel(mainPanel);
+
+        // Phát nhạc nền Menu
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayMenuBGM();
+        }
     }
 
     private void SetupButtons()
@@ -118,6 +136,23 @@ public class MainMenuManager : MonoBehaviour
         confirmCreateButton.onClick.AddListener(OnConfirmCreateCharacter);
 
         closeSettingsButton.onClick.AddListener(() => ShowPanel(mainPanel));
+
+        // Đồng bộ âm thanh với AudioManager
+        if (AudioManager.Instance != null)
+        {
+            if (bgmSlider != null)
+            {
+                bgmSlider.value = AudioManager.Instance.bgmVolume;
+                bgmSlider.onValueChanged.RemoveAllListeners();
+                bgmSlider.onValueChanged.AddListener(val => AudioManager.Instance.SetBgmVolume(val));
+            }
+            if (sfxSlider != null)
+            {
+                sfxSlider.value = AudioManager.Instance.sfxVolume;
+                sfxSlider.onValueChanged.RemoveAllListeners();
+                sfxSlider.onValueChanged.AddListener(val => AudioManager.Instance.SetSfxVolume(val));
+            }
+        }
     }
 
     private void UpdateMainMenuPlayButton()
@@ -152,14 +187,13 @@ public class MainMenuManager : MonoBehaviour
     public void OpenCharacterCreation(int slotIndex)
     {
         currentSlotBeingCreated = slotIndex;
-        if(nameInput) nameInput.text = "";
-        if(maleToggle) maleToggle.isOn = true; // Mặc định là nam
+        if (nameInput) nameInput.text = "";
         ShowPanel(characterCreatePanel);
     }
 
     private void OnConfirmCreateCharacter()
     {
-        string charName = nameInput != null ? nameInput.text.Trim() : "Đạo Hữu";
+        string charName = nameInput != null ? nameInput.text.Trim() : "";
         if (string.IsNullOrEmpty(charName))
         {
             Debug.LogWarning("Tên không được để trống!");
@@ -169,10 +203,11 @@ public class MainMenuManager : MonoBehaviour
         CharacterSaveData newData = new CharacterSaveData();
         newData.isSlotEmpty = false;
         newData.characterName = charName;
-        newData.gender = maleToggle != null && maleToggle.isOn ? 0 : 1;
         newData.stageName = "Luyện Khí Kỳ Tầng 1";
         newData.stageIndex = 0;
         newData.currentTuVi = 0f;
+        newData.combatStage = 1;
+        newData.enemiesKilled = 0;
         newData.linhThach = 0f;
         newData.coDuyen = 0;
         newData.kiemY = 0;
@@ -233,6 +268,15 @@ public class MainMenuManager : MonoBehaviour
         
         // 4. Ẩn toàn bộ hệ thống MainMenu để người chơi bắt đầu Idle Farm phía sau
         gameObject.SetActive(false);
+
+        // 5. Load dữ liệu nhân vật từ slot vào từng Manager (dùng Invoke để đợi 1 frame sau khi UI đã khởi tạo)
+        dataManager.Invoke(nameof(DataManager.LoadCurrentGame), 0.05f);
+
+        // 6. Chuyển sang nhạc nền Ingame
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayInGameBGM();
+        }
     }
 
     private void ConfirmQuitGame()

@@ -118,20 +118,6 @@ public class MainMenuUIBuilder : EditorWindow
         Text inputLabel = CreateText("Label", inputObj.transform, "Đạo Hữu Tôn Tính Đại Danh:", arial, 24);
         SetRect(inputLabel.GetComponent<RectTransform>(), 0, 60, 400, 40);
 
-        // Giới tính (Toggles)
-        GameObject toggleGroupObj = CreateUIElement("GenderToggles", createPanel.transform);
-        SetRect(toggleGroupObj.GetComponent<RectTransform>(), 0, -50, 400, 60);
-        ToggleGroup tGroup = toggleGroupObj.AddComponent<ToggleGroup>();
-
-        Toggle maleToggle = CreateToggle("MaleToggle", toggleGroupObj.transform, "Nam Tử", arial);
-        SetRect(maleToggle.GetComponent<RectTransform>(), -100, 0, 120, 40);
-        maleToggle.group = tGroup;
-        maleToggle.isOn = true;
-
-        Toggle femaleToggle = CreateToggle("FemaleToggle", toggleGroupObj.transform, "Nữ Tử", arial);
-        SetRect(femaleToggle.GetComponent<RectTransform>(), 100, 0, 120, 40);
-        femaleToggle.group = tGroup;
-
         Button confirmCreateBtn = CreateButton("ConfirmButton", createPanel.transform, "Bắt Đầu Tu Tiên", arial, out _);
         SetRect(confirmCreateBtn.GetComponent<RectTransform>(), 150, -200, 250, 70);
 
@@ -197,8 +183,6 @@ public class MainMenuUIBuilder : EditorWindow
         menuManager.backFromSelectButton = backFromSelectBtn;
 
         menuManager.nameInput = nameInput;
-        menuManager.maleToggle = maleToggle;
-        menuManager.femaleToggle = femaleToggle;
         menuManager.confirmCreateButton = confirmCreateBtn;
         menuManager.cancelCreateButton = cancelCreateBtn;
 
@@ -240,10 +224,7 @@ public class MainMenuUIBuilder : EditorWindow
         SetRectStretch(dataPanel.GetComponent<RectTransform>());
         slotUI.dataPanel = dataPanel;
 
-        GameObject modelObj = CreateUIElement("ModelImage", dataPanel.transform);
-        SetRect(modelObj.GetComponent<RectTransform>(), 0, 80, 180, 180);
-        Image modelImg = modelObj.AddComponent<Image>();
-        slotUI.modelImage = modelImg;
+        // Bỏ modelImage vì SaveSlotUI không còn dùng nữa
 
         Text nameText = CreateText("NameText", dataPanel.transform, "Tên Nhân Vật", font, 28);
         nameText.alignment = TextAnchor.MiddleCenter;

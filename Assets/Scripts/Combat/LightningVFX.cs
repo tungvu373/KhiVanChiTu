@@ -6,17 +6,30 @@ public class LightningVFX : MonoBehaviour
     private LineRenderer lr;
     private float lifetime = 0.3f;
 
-    public void Setup(Vector3 start, Vector3 end, Color color)
+    public void Setup(Vector3 start, Vector3 end, Color color, Material customMat = null)
     {
         lr = gameObject.AddComponent<LineRenderer>();
         lr.positionCount = 5; // Tạm 5 khúc gấp khúc
         lr.startWidth = 0.5f;
         lr.endWidth = 0.1f;
         
-        // Dùng shader Unlit/Color để phát sáng
-        lr.material = new Material(Shader.Find("Sprites/Default")); 
-        lr.startColor = color;
-        lr.endColor = Color.white;
+        Material finalMat = customMat;
+        if (finalMat == null && CombatManager.Instance != null)
+        {
+            finalMat = CombatManager.Instance.magicArrayMaterial;
+        }
+
+        // Dùng shader Unlit/Color hoặc Mat_MagicArray để phát sáng
+        if (finalMat != null)
+        {
+            lr.material = finalMat;
+        }
+        else
+        {
+            lr.material = new Material(Shader.Find("Sprites/Default")); 
+            lr.startColor = color;
+            lr.endColor = Color.white;
+        }
 
         // Tạo đường gấp khúc ngẫu nhiên
         lr.SetPosition(0, start);
@@ -55,7 +68,14 @@ public class LightningVFX : MonoBehaviour
         shape.shapeType = ParticleSystemShapeType.Hemisphere;
         
         var renderer = sparkPs.GetComponent<ParticleSystemRenderer>();
-        renderer.material = new Material(Shader.Find("Sprites/Default"));
+        if (finalMat != null)
+        {
+            renderer.material = finalMat;
+        }
+        else
+        {
+            renderer.material = new Material(Shader.Find("Sprites/Default"));
+        }
         renderer.renderMode = ParticleSystemRenderMode.Stretch;
         renderer.lengthScale = 2f; // Tia lửa dãn dài ra
         

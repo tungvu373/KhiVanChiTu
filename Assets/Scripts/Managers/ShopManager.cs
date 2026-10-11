@@ -21,7 +21,7 @@ public class ShopManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Instance = this;
@@ -156,7 +156,7 @@ public class ShopManager : MonoBehaviour
         return 0;
     }
 
-    private void ApplyBuff(int itemIndex)
+    public void ApplyBuff(int itemIndex)
     {
         switch (itemIndex)
         {

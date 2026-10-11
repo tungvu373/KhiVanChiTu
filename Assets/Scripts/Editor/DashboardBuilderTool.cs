@@ -71,7 +71,7 @@ public class DashboardBuilderTool
         infoObj.transform.SetParent(charPanel.transform, false);
         Text infoTxt = infoObj.AddComponent<Text>();
         infoTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        infoTxt.text = "Tên: Đạo Hữu\nCảnh giới: Luyện Khí\nTu Vi: 0/100\nLoại: Nhân Tộc";
+        infoTxt.text = "Tên: Đạo Hữu\nCảnh giới: Luyện Khí\nTu Vi: 0/100";
         infoTxt.color = Color.white;
         infoTxt.fontSize = 18;
         RectTransform infoRt = infoObj.GetComponent<RectTransform>();

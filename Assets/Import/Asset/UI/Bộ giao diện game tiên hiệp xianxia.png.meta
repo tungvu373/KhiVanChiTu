@@ -1,0 +1,510 @@
+fileFormatVersion: 2
+guid: 34189061c20eaab4da97a86b49144181
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1268091112498893018
+    second: "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_0"
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 64
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: 1
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 1352
+        width: 472
+        height: 159
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd2503d3bfddb1248b9e3063d1517ddc
+      internalID: 57384836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1105
+        width: 292
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fbe79f8326f0f564fbb3af89c8e8ba7c
+      internalID: -1973288743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 3
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 1105
+        width: 309
+        height: 165
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f23a14ba568ca240ac8c7bb423664f5
+      internalID: -1289884964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 8
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 1151
+        width: 97
+        height: 90
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03bd8a6174f201043a78ff377dc74675
+      internalID: -908896169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_9"
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 1212
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e373318a9e2d03f4ca3836a2333f8e32
+      internalID: 824718589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_17"
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 1046
+        width: 95
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d53ae35fb8af3cd43934f92e1f100f7d
+      internalID: -626934387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_18"
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 1041
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b87a4c2bf58cfce4eb095b00709801a7
+      internalID: -96433899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_19"
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 922
+        width: 410
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bcb88d79ecb1e0045b5ad717fd95a908
+      internalID: 348264866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 4
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 688
+        width: 329
+        height: 213
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4839dfe80deeea04990408e3c4d1ae66
+      internalID: -1695179246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_26"
+      rect:
+        serializedVersion: 2
+        x: 676
+        y: 841
+        width: 328
+        height: 54
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 193a2d2144c6d0945ae7a937df052792
+      internalID: -663262203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_27"
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 690
+        width: 309
+        height: 113
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 18e3bbb1af1214e4893d19f5ae912646
+      internalID: -1680940021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_29"
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 592
+        width: 322
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db009ff20469c8542aea99749be3ab7c
+      internalID: -1822378253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 6
+      rect:
+        serializedVersion: 2
+        x: 728
+        y: 521
+        width: 265
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b80c753cca7e112419db8a0ae35711e3
+      internalID: -118460143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 5
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 336
+        width: 347
+        height: 167
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c5bcfcb75a9f884d822094754c75098
+      internalID: 1717079023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 7
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 30
+        width: 92
+        height: 291
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef1559e480b7d704090e08756c832043
+      internalID: 807232053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 610f4682a2972f1418fac2e1f263d24a
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceOnImport
+        value: False
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      1: 57384836
+      2: -1973288743
+      3: -1289884964
+      4: -1695179246
+      5: 1717079023
+      6: -118460143
+      7: 807232053
+      8: -908896169
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_0": -1268091112498893018
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_10": -1445707823
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_11": 1225489728
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_12": 619080166
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_13": 1303141292
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_14": 822951662
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_15": 1173219329
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_16": 1502740617
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_17": -626934387
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_18": -96433899
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_19": 348264866
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_2": 1230092287
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_20": -255036597
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_21": 2035982699
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_22": 659953431
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_23": 415564310
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_25": 368461906
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_26": -663262203
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_27": -1680940021
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_28": 109450296
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_29": -1822378253
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_30": -1796499510
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_31": -1698019089
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_32": -2067734873
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_33": -1535635319
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_34": 1077281095
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_35": -645097562
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_38": -701578898
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_39": -149288408
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_40": 1634361812
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_41": 227489430
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_43": -1558822145
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_44": -259705333
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_45": 1388564424
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_46": -620702056
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_47": 1556318355
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_48": -2087275005
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_49": -653278435
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_5": -696009139
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_50": -468864329
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_51": -800990063
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_52": 1652038821
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_53": 1946066020
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_6": -1842506554
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_8": 700699173
+      "B\u1ED9 giao di\u1EC7n game ti\xEAn hi\u1EC7p xianxia_9": 824718589
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

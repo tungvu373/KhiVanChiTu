@@ -7,29 +7,56 @@ public class FlyingSword : MonoBehaviour
     public int swordIndex = 0; // Biến phân bổ vị trí bay
     public bool isUltimateClone = false; // Đánh dấu đây là kiếm của Ultimate
     
+    [Header("Sprites cho từng Level (1-8)")]
+    public Sprite[] levelSprites;
+    
     // Tách biệt rạch ròi Data của Kiếm và Data Nâng cấp (Upgrade)
     public static float CalculateBaseDamage(int level) { return level * level * 10f; }
     public static float CalculateBaseSpeed(int level) { return 5f + (level * 2f); }
 
-    private Enemy targetEnemy;
+    public Enemy TargetEnemy { get; private set; }
     private float searchTimer = 0f;
+
+    public float GetExpectedDamage()
+    {
+        float kiemY = UpgradeManager.Instance != null ? UpgradeManager.Instance.GetKiemYValue() : 0;
+        float bonusMultiplier = CultivationManager.Instance != null ? CultivationManager.Instance.permanentStatMultiplier : 1f;
+        if (ShopManager.Instance != null) bonusMultiplier *= ShopManager.Instance.GetDamageMultiplier();
+        if (EconomyManager.Instance != null) bonusMultiplier *= (1f + EconomyManager.Instance.currentKiemY * 0.5f);
+        return (baseDamage + kiemY) * bonusMultiplier;
+    }
+
+    private void Start()
+    {
+        TrailRenderer tr = GetComponent<TrailRenderer>();
+        if (tr != null)
+        {
+            if (tr.sharedMaterial == null || tr.sharedMaterial.name == "Default-Material")
+            {
+                tr.material = new Material(Shader.Find("Sprites/Default"));
+            }
+            tr.startWidth = 0.4f;
+            tr.endWidth = 0f;
+            tr.time = 0.25f;
+        }
+    }
 
     private void Update()
     {
-        if (targetEnemy == null || !targetEnemy.gameObject.activeInHierarchy)
+        if (TargetEnemy == null || !TargetEnemy.gameObject.activeInHierarchy || TargetEnemy.hp <= 0)
         {
-            targetEnemy = null;
+            TargetEnemy = null;
             searchTimer -= Time.deltaTime;
             if (searchTimer <= 0)
             {
                 if (CombatManager.Instance != null)
                 {
-                    targetEnemy = CombatManager.Instance.GetNearestEnemy(transform.position);
+                    TargetEnemy = CombatManager.Instance.GetOptimalTarget(this);
                 }
                 searchTimer = 0.2f; 
             }
             
-            Vector3 center = CombatManager.Instance != null ? CombatManager.Instance.playerTransform.position : Vector3.zero;
+            Vector3 center = CombatManager.Instance != null ? CombatManager.Instance.playerTransform.position + Vector3.up * 1.5f : Vector3.up * 1.5f;
             
             // Xếp đội hình quỹ đạo: Kiếm thường bay vòng trong (2m, 4 góc vuông). Kiếm Ultimate bay vòng ngoài (4m, 20 góc).
             float currentRadius = isUltimateClone ? 4f : 2f;
@@ -57,18 +84,19 @@ public class FlyingSword : MonoBehaviour
         float finalSpeed = baseSpeed + thanThuc;
         if (ShopManager.Instance != null) finalSpeed *= ShopManager.Instance.GetSpeedMultiplier();
         
-        if (targetEnemy == null) return;
-        transform.position = Vector3.MoveTowards(transform.position, targetEnemy.transform.position, finalSpeed * Time.deltaTime);
+        if (TargetEnemy == null) return;
+        transform.position = Vector3.MoveTowards(transform.position, TargetEnemy.transform.position + Vector3.up * 1.5f, finalSpeed * Time.deltaTime);
         
         // Chĩa mũi kiếm (trục Z) về phía quái vật
-        Vector3 dir = targetEnemy.transform.position - transform.position;
+        Vector3 targetPos = TargetEnemy.transform.position + Vector3.up * 1.5f;
+        Vector3 dir = targetPos - transform.position;
         if (dir != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(dir);
         }
 
         // Kiểm tra va chạm (khoảng cách < 0.5)
-        if (Vector3.Distance(transform.position, targetEnemy.transform.position) < 0.5f)
+        if (Vector3.Distance(transform.position, targetPos) < 0.5f)
         {
             AttackTarget();
         }
@@ -76,17 +104,40 @@ public class FlyingSword : MonoBehaviour
 
     private void AttackTarget()
     {
-        float kiemY = UpgradeManager.Instance != null ? UpgradeManager.Instance.GetKiemYValue() : 0;
-        float bonusMultiplier = CultivationManager.Instance != null ? CultivationManager.Instance.permanentStatMultiplier : 1f;
-        if (ShopManager.Instance != null) bonusMultiplier *= ShopManager.Instance.GetDamageMultiplier();
-        if (EconomyManager.Instance != null) bonusMultiplier *= (1f + EconomyManager.Instance.currentKiemY * 0.5f); // +50% Sát thương mỗi điểm Kiếm Ý (Tế kiếm)
+        float expectedDamage = GetExpectedDamage();
         
-        // baseDamage đã được set trực tiếp bởi CombatManager (dựa vào Level kiếm)
-        float finalDamage = (baseDamage + kiemY) * bonusMultiplier;
+        // Random sát thương dao động +- 20%
+        float minDamage = expectedDamage * 0.8f;
+        float maxDamage = expectedDamage * 1.2f;
+        float finalDamage = Random.Range(minDamage, maxDamage);
         
-        targetEnemy.TakeDamage(finalDamage);
+        // Tỉ lệ Crit 20%, Crit x2 sát thương (có thể đưa vào UpgradeManager sau này nếu cần)
+        bool isCrit = Random.value <= 0.2f;
+        if (isCrit) 
+        {
+            finalDamage *= 2f;
+        }
+        
+        TargetEnemy.TakeDamage(finalDamage, isCrit);
+        
+        // Phát âm thanh va chạm kiếm chém trúng quái / boss
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySwordHitSFX();
+        }
         
         // Hủy mục tiêu để frame tiếp theo tìm con mới
-        targetEnemy = null; 
+        TargetEnemy = null; 
+    }
+
+    public void SetLevelVisual(int level)
+    {
+        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
+        if (sr != null && levelSprites != null && levelSprites.Length > 0)
+        {
+            // Level 1 -> index 0. Dùng Clamp để không bị lỗi quá mảng
+            int index = Mathf.Clamp(level - 1, 0, levelSprites.Length - 1);
+            sr.sprite = levelSprites[index];
+        }
     }
 }

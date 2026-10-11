@@ -68,7 +68,7 @@ public class UpgradeUIPlaceholder : MonoBehaviour
     private void UpdateEconomyUI(float linhThach)
     {
         if (txtLinhThach != null)
-            txtLinhThach.text = $"Linh Thạch: {Mathf.FloorToInt(linhThach)}";
+            txtLinhThach.text = EconomyManager.FormatNumber(linhThach);
         
         // Cập nhật lại trạng thái nút (bật/tắt) khi tiền thay đổi
         UpdateUpgradesUI();

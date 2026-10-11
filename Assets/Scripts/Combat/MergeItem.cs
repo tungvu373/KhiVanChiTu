@@ -40,6 +40,9 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         return level; // Cấp 3 cần 3, Cấp 4 cần 4...
     }
 
+    [Header("Sprites cho từng Level (1-8)")]
+    public Sprite[] levelSprites;
+    
     public void SetLevel(int newLevel, int newPieces = 1)
     {
         level = newLevel;
@@ -47,27 +50,110 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         UpdateUI();
     }
     
+    private Image auraImage;
+
     public void UpdateUI()
     {
+        // 1. Tắt hiển thị chữ Level đè lên ảnh
         if (levelText != null) 
         {
-            if (level >= 8)
-                levelText.text = "Lv.MAX";
-            else
-                levelText.text = $"Lv.{level}\n({currentPieces}/{GetRequiredPieces()})";
+            levelText.gameObject.SetActive(false); 
         }
         
-        // Màu sắc thay đổi theo cấp độ (Hue dịch chuyển)
+        // Đổi hình ảnh kiếm UI khớp với Level
         Image img = GetComponent<Image>();
         if (img != null)
         {
+            img.preserveAspect = true; // Tự động căn chỉnh ảnh vừa khít
+            
+            if (levelSprites != null && levelSprites.Length > 0)
+            {
+                int index = Mathf.Clamp(level - 1, 0, levelSprites.Length - 1);
+                img.sprite = levelSprites[index];
+                img.color = Color.white;
+                img.rectTransform.localRotation = Quaternion.Euler(0, 0, -45f); // Xoay chéo góc 45 độ
+            }
+            else
+            {
+                float hue = (level * 0.15f) % 1f;
+                img.color = Color.HSVToRGB(hue, 0.7f, 0.9f);
+                img.rectTransform.localRotation = Quaternion.Euler(0, 0, -45f);
+            }
+            
+            // Tạo hào quang (Aura) từ Level 4 trở lên
+            if (level >= 4)
+            {
+                if (auraImage == null)
+                {
+                    GameObject auraObj = new GameObject("SwordAura", typeof(RectTransform), typeof(Image));
+                    auraObj.transform.SetParent(this.transform, false);
+                    auraObj.transform.SetAsFirstSibling(); // Nằm lót đằng sau thanh kiếm
+                    
+                    RectTransform rt = auraObj.GetComponent<RectTransform>();
+                    rt.anchorMin = Vector2.zero;
+                    rt.anchorMax = Vector2.one;
+                    rt.offsetMin = Vector2.zero;
+                    rt.offsetMax = Vector2.zero;
+                    
+                    auraImage = auraObj.GetComponent<Image>();
+                }
+                
+                auraImage.gameObject.SetActive(true);
+                auraImage.sprite = img.sprite; // Lấy đúng hình dáng kiếm
+                auraImage.preserveAspect = true;
+                
+                // Vì aura là con của kiếm, nó tự động kế thừa góc xoay chéo của kiếm cha.
+                // Đặt localRotation = identity (0 độ) để không bị xoay đúp thành nằm ngang!
+                auraImage.rectTransform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                if (auraImage != null) auraImage.gameObject.SetActive(false);
+            }
+        }
+        
+        // Đổi màu nền của Ô chứa (Slot) theo cấp độ kiếm
+        if (transform.parent != null && transform.parent.GetComponent<Canvas>() == null)
+        {
+            Image slotImg = transform.parent.GetComponent<Image>();
+            if (slotImg != null)
+            {
+                float hue = (level * 0.15f) % 1f;
+                // Màu tối sẫm ngả màu theo level để làm nổi kiếm
+                slotImg.color = Color.HSVToRGB(hue, 0.6f, 0.2f); 
+            }
+        }
+    }
+
+    private void Update()
+    {
+        // Hiệu ứng lấp lánh (Aura Pulse)
+        if (auraImage != null && auraImage.gameObject.activeInHierarchy)
+        {
             float hue = (level * 0.15f) % 1f;
-            img.color = Color.HSVToRGB(hue, 0.7f, 0.9f);
+            Color auraColor = Color.HSVToRGB(hue, 1f, 1f); // Màu chói nhất
+            
+            // Nhấp nháy Alpha (Độ mờ) từ 0.2 đến 0.8
+            float alpha = 0.2f + Mathf.PingPong(Time.time * 3f, 0.6f);
+            
+            // Phình to thu nhỏ nhẹ từ 1.1 đến 1.3
+            float scale = 1.1f + Mathf.PingPong(Time.time * 2f, 0.2f);
+            
+            auraColor.a = alpha;
+            auraImage.color = auraColor;
+            auraImage.rectTransform.localScale = new Vector3(scale, scale, 1f);
         }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        // Trả lại màu đen/xám mặc định cho ô (slot) cũ
+        if (transform.parent != null)
+        {
+            Image slotImg = transform.parent.GetComponent<Image>();
+            if (slotImg != null) slotImg.color = new Color(0.1f, 0.1f, 0.1f, 0.8f);
+        }
+
         originalParent = transform.parent;
         
         // Nhấc lên lớp ngoài cùng Canvas để không bị đè
@@ -100,6 +186,7 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
         
         if (MergeManager.Instance != null) MergeManager.Instance.OnEquipChanged();
+        UpdateUI(); // Cập nhật lại màu cho ô Slot mới
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -108,6 +195,13 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             if (MergeManager.Instance == null) return;
+            
+            // Xóa màu ô cũ trước khi bay đi
+            if (transform.parent != null)
+            {
+                Image oldSlotImg = transform.parent.GetComponent<Image>();
+                if (oldSlotImg != null) oldSlotImg.color = new Color(0.1f, 0.1f, 0.1f, 0.8f);
+            }
             
             bool isEquipped = transform.parent.name.StartsWith("Equip");
             if (!isEquipped)
@@ -119,6 +213,7 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                     {
                         transform.SetParent(slot, false);
                         rectTransform.anchoredPosition = Vector2.zero;
+                        UpdateUI();
                         MergeManager.Instance.OnEquipChanged();
                         return;
                     }
@@ -149,6 +244,8 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                     oldItem.transform.SetParent(myOldSlot, false);
                     oldItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
                     
+                    UpdateUI();
+                    oldItem.UpdateUI();
                     MergeManager.Instance.OnEquipChanged();
                 }
             }
@@ -163,6 +260,7 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                         {
                             transform.SetParent(slot, false);
                             rectTransform.anchoredPosition = Vector2.zero;
+                            UpdateUI();
                             MergeManager.Instance.OnEquipChanged();
                             return;
                         }
@@ -179,7 +277,20 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         {
             float dmg = FlyingSword.CalculateBaseDamage(level);
             float spd = FlyingSword.CalculateBaseSpeed(level);
-            string info = $"<color=#00FF00>Kiếm Phôi Cấp {level}</color>\nSát thương: {dmg:F0}\nTốc độ: {spd:F0}\n\n<i>[Trái] Kéo thả để ghép\n[Phải] Trang bị nhanh</i>";
+            
+            string info = $"<color=#00FF00>Kiếm Phôi Cấp {level}</color>\nSát thương: {dmg:F0}\nTốc độ: {spd:F0}\n\n";
+            
+            if (level >= 8)
+            {
+                info += "<color=orange>Đã đạt Cấp Tối Đa</color>\n";
+            }
+            else
+            {
+                info += $"<color=yellow>Tiến độ đột phá: {currentPieces} / {GetRequiredPieces()}</color>\n";
+            }
+            
+            info += "\n<i>[Trái] Kéo thả để ghép\n[Phải] Trang bị nhanh</i>";
+            
             TooltipManager.Instance.ShowTooltip(info);
         }
     }

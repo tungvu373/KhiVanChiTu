@@ -46,6 +46,13 @@ public class MergeSlot : MonoBehaviour, IDropHandler
                 }
                 
                 currentItem.UpdateUI();
+
+                // Phát âm thanh ghép kiếm
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayMergeSwordSFX();
+                }
+
                 Debug.Log($"[Merge] Tiến trình ghép kiếm: Lv.{currentItem.level} ({currentItem.currentPieces}/{currentItem.GetRequiredPieces()})!");
             }
             else
