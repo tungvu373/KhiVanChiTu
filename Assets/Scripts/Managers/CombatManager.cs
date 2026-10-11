@@ -30,6 +30,15 @@ public class CombatManager : MonoBehaviour
     [Header("Skill VFX Materials")]
     public Material magicArrayMaterial;
 
+    private Coroutine deathAndReviveCoroutine;
+    private float reviveIdleLockTimer = 0f;
+
+    private void OnDisable()
+    {
+        // Đảm bảo khôi phục lại thời gian trò chơi bình thường nếu thoát/tắt Scene
+        Time.timeScale = 1f;
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -432,66 +441,124 @@ public class CombatManager : MonoBehaviour
             playerCurrentHp = 0;
             isPlayerDead = true;
 
-            // Hiển thị thông báo Tử trận uy nghiêm ở giữa màn Combat 3D
-            CombatNotificationUI.ShowDeath();
+            // 1. Đóng băng toàn bộ thế giới game bằng Time.timeScale = 0 theo yêu cầu
+            Time.timeScale = 0f;
 
-            // Dừng cuộn map ngay khi tử trận
+            // 2. Dừng cuộn map ngay khi tử trận
             if (MapScroller.Instance != null) MapScroller.Instance.StopMoving();
 
+            // 3. Hoạt ảnh tử trận của Player (dùng UnscaledTime để hoạt ảnh diễn ra mượt mà khi timeScale = 0)
             if (playerAnimator == null) FindPlayerAnimator();
             if (playerAnimator != null)
             {
+                playerAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
                 playerAnimator.SetBool("IsMoving", false);
                 playerAnimator.ResetTrigger("Revive");
                 playerAnimator.SetTrigger("Die");
-                Debug.Log("💀 [CombatManager] Nhân vật tử trận! Đã gọi trigger 'Die'.");
+                Debug.Log("💀 [CombatManager] Nhân vật tử trận! Đã gọi trigger 'Die' (TimeScale = 0).");
             }
             else
             {
                 Debug.LogError("❌ [CombatManager] playerAnimator bị NULL khi tử trận!");
             }
-            
+
+            // 4. Hiển thị thông báo Tử trận uy nghiêm ở giữa màn Combat 3D
+            CombatNotificationUI.ShowDeath();
+
+            // 5. Bảo toàn tu vi và làm mới tiến trình ải
             if (CultivationManager.Instance != null)
             {
                 CultivationManager.Instance.HandlePlayerDeath();
             }
 
-            // Reset tiến trình của Tầng đã chết: Giữ nguyên số tầng, làm mới quái về 0/20
             if (StageManager.Instance != null)
             {
                 StageManager.Instance.ResetCurrentStageOnDeath();
             }
-            
-            // Xóa boss và quái đang hiện diện khi player thua
-            ClearAllEnemies();
 
             if (GameManager.Instance != null) GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
 
-            // Chờ 2.0s để diễn trọn vẹn hoạt ảnh tử trận (Dead) rồi mới hồi sinh
-            CancelInvoke(nameof(RevivePlayer));
-            Invoke(nameof(RevivePlayer), 2.0f);
+            // 6. Chờ thời gian thực (Realtime) khi Time.timeScale = 0 để hồi sinh và reset màn hình combat
+            if (deathAndReviveCoroutine != null) StopCoroutine(deathAndReviveCoroutine);
+            deathAndReviveCoroutine = StartCoroutine(PlayerDeathAndReviveRoutine(2.2f));
         }
         UpdatePlayerHPUI();
     }
 
+    private System.Collections.IEnumerator PlayerDeathAndReviveRoutine(float delayRealtime)
+    {
+        yield return new WaitForSecondsRealtime(delayRealtime);
+        RevivePlayer();
+        deathAndReviveCoroutine = null;
+    }
+
+    /// <summary>
+    /// Hồi sinh người chơi và Reset toàn bộ màn hình Combat về trạng thái ban đầu sạch sẽ.
+    /// </summary>
     public void RevivePlayer()
     {
+        // 1. Khôi phục lại thời gian trò chơi bình thường
+        Time.timeScale = 1f;
+
+        // 2. Khôi phục toàn bộ máu người chơi và cập nhật thanh máu ngay lập tức
         playerCurrentHp = playerMaxHp;
+        playerVisualHp = playerMaxHp;
         isPlayerDead = false;
+        UpdatePlayerHPUI();
 
-        // Đảm bảo dọn sạch mọi quái sót lại và tạo khoảng thở 0.5s trước khi đợt quái đầu tiên sinh ra
+        // 3. Reset toàn bộ màn hình Combat:
+        // a. Quét sạch tất cả quái vật và Boss hiện diện
         ClearAllEnemies();
-        spawnTimer = 0.5f;
 
+        // b. Xóa sạch mọi chữ số sát thương (Damage Popup) đang bay lơ lửng trên màn hình
+        if (SimplePool.Instance != null)
+        {
+            SimplePool.Instance.DeactivateAllInPool("DamagePopup");
+        }
+
+        // c. Đặt lại mục tiêu của toàn bộ phi kiếm để bay quay về quanh người chơi
+        FlyingSword[] swords = FindObjectsOfType<FlyingSword>();
+        foreach (var sword in swords)
+        {
+            if (sword != null) sword.ResetTarget();
+        }
+
+        // d. Tắt thông báo tử trận, viền đỏ chớp và rung camera
+        if (CombatNotificationUI.Instance != null)
+        {
+            CombatNotificationUI.Instance.HideImmediate();
+        }
+        if (BossDamageVignette.Instance != null)
+        {
+            BossDamageVignette.Instance.ResetVignette();
+        }
+        if (CameraShake.Instance != null)
+        {
+            CameraShake.Instance.ResetShake();
+        }
+
+        // e. Khôi phục Animator người chơi và trở về hoạt ảnh IDLE chuẩn mực
         if (playerAnimator == null) FindPlayerAnimator();
         if (playerAnimator != null)
         {
+            playerAnimator.updateMode = AnimatorUpdateMode.Normal;
             playerAnimator.ResetTrigger("Die");
-            playerAnimator.SetTrigger("Revive");
-            Debug.Log("✨ [CombatManager] Nhân vật hồi sinh! Đã gọi trigger 'Revive'.");
+            playerAnimator.ResetTrigger("Revive");
+            playerAnimator.SetBool("IsMoving", false);
+            // Ép Animator chuyển ngay về State "idle" (Layer 0, thời gian 0f) để không bị kẹt ở Dead hoặc ép Run
+            playerAnimator.Play("idle", 0, 0f);
+            Debug.Log("✨ [CombatManager] Nhân vật hồi sinh! Đã trở về hoạt ảnh 'idle'.");
         }
 
-        UpdatePlayerHPUI();
+        // f. Dừng cuộn map trong thời gian nghỉ hồi sinh (nhân vật đứng yên thế thủ)
+        if (MapScroller.Instance != null)
+        {
+            MapScroller.Instance.StopMoving();
+        }
+
+        // g. Khóa trạng thái Idle trong 1.0s (bằng đúng spawnTimer) để nhân vật đứng yên thế thủ trước khi quái xuất hiện
+        reviveIdleLockTimer = 1.0f;
+        spawnTimer = 1.0f;
     }
 
     // ── KIỂM TRA QUÁI TRONG TẦM ĐÁNH & ĐIỀU KHIỂN MAP / PLAYER ───────────
@@ -525,9 +592,24 @@ public class CombatManager : MonoBehaviour
 
     private void UpdateMapAndPlayerState()
     {
-        // Nếu Player đang tử trận: Map dừng, Player không Run
+        // 1. Nếu Player đang tử trận: Map dừng, Player không Run
         if (isPlayerDead)
         {
+            if (MapScroller.Instance != null && MapScroller.Instance.isMoving)
+            {
+                MapScroller.Instance.StopMoving();
+            }
+            if (playerAnimator != null && playerAnimator.GetBool("IsMoving"))
+            {
+                playerAnimator.SetBool("IsMoving", false);
+            }
+            return;
+        }
+
+        // 2. Nếu đang trong thời gian nghỉ sau hồi sinh: Giữ nguyên thế IDLE và dừng map
+        if (reviveIdleLockTimer > 0f)
+        {
+            reviveIdleLockTimer -= Time.deltaTime;
             if (MapScroller.Instance != null && MapScroller.Instance.isMoving)
             {
                 MapScroller.Instance.StopMoving();
@@ -760,42 +842,69 @@ public class CombatManager : MonoBehaviour
 
     public Enemy GetOptimalTarget(FlyingSword seekingSword)
     {
+        if (seekingSword == null) return null;
+
         Enemy bestEnemy = null;
         float minScore = float.MaxValue;
-        
-        foreach (Enemy e in activeEnemies)
+
+        Enemy fallbackEnemy = null;
+        float minFallbackDist = float.MaxValue;
+
+        Vector3 swordPos = seekingSword.transform.position;
+
+        for (int i = 0; i < activeEnemies.Count; i++)
         {
-            if (e == null || e.hp <= 0) continue;
-            
-            // TÃ­nh toÃ¡n lÆ°á»£ng sÃ¡t thÆ°Æ¡ng dá»± kiáº¿n quÃ¡i sáº½ pháº£i nháº­n tá»« cÃ¡c kiáº¿m khÃ¡c
+            Enemy e = activeEnemies[i];
+            if (e == null || !e.gameObject.activeInHierarchy || e.isDead || e.hp <= 0) continue;
+
+            float dist = Vector3.Distance(swordPos, e.transform.position);
+
+            // Luôn lưu quái/Boss gần nhất còn sống làm Fallback (để kiếm không bao giờ bị mất mục tiêu)
+            if (dist < minFallbackDist)
+            {
+                minFallbackDist = dist;
+                fallbackEnemy = e;
+            }
+
+            // Tính toán lượng sát thương dự kiến quái sẽ phải nhận từ các kiếm khác đang bay tới
             float incomingDmg = 0f;
-            foreach (var sword in activeSwords)
+            if (activeSwords != null)
             {
-                if (sword != null && sword != seekingSword && sword.gameObject.activeInHierarchy && sword.TargetEnemy == e)
+                for (int s = 0; s < activeSwords.Length; s++)
                 {
-                    incomingDmg += sword.GetExpectedDamage();
-                }
-            }
-            foreach (var sword in ultimateSwords)
-            {
-                if (sword != null && sword != seekingSword && sword.gameObject.activeInHierarchy && sword.TargetEnemy == e)
-                {
-                    incomingDmg += sword.GetExpectedDamage();
+                    var sword = activeSwords[s];
+                    if (sword != null && sword != seekingSword && sword.gameObject.activeInHierarchy && sword.TargetEnemy == e)
+                    {
+                        incomingDmg += sword.GetExpectedDamage();
+                    }
                 }
             }
 
-            if (e.hp - incomingDmg <= 0)
-                continue;
-
-            float dist = Vector3.Distance(seekingSword.transform.position, e.transform.position);
-            if (dist < minScore)
+            if (ultimateSwords != null)
             {
-                minScore = dist;
-                bestEnemy = e;
+                for (int s = 0; s < ultimateSwords.Count; s++)
+                {
+                    var sword = ultimateSwords[s];
+                    if (sword != null && sword != seekingSword && sword.gameObject.activeInHierarchy && sword.TargetEnemy == e)
+                    {
+                        incomingDmg += sword.GetExpectedDamage();
+                    }
+                }
+            }
+
+            // Nếu quái chưa nhận đủ sát thương kết liễu từ các kiếm khác -> Ưu tiên nhắm vào
+            if (e.hp - incomingDmg > 0)
+            {
+                if (dist < minScore)
+                {
+                    minScore = dist;
+                    bestEnemy = e;
+                }
             }
         }
-        
-        return bestEnemy;
+
+        // Nếu tất cả quái đều đã có kiếm nhắm tới (hoặc chỉ có 1 quái/Boss) -> BẮT BUỘC trả về fallbackEnemy để kiếm tiếp tục chém bồi!
+        return bestEnemy != null ? bestEnemy : fallbackEnemy;
     }
 
     // --- 3 KỸ NĂNG THƯỜNG ---

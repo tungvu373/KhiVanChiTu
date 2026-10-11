@@ -213,8 +213,8 @@ public class CultivationManager : MonoBehaviour
 
     public void HandlePlayerDeath()
     {
-        // Khi tử trận: Giữ nguyên Cảnh giới hiện tại (không bị tụt cấp), làm mới tu vi của tầng này
-        currentTuVi = 0f; 
+        // Khi tử trận: Giữ nguyên Cảnh giới và BẢO LƯU toàn bộ Tu vi hiện tại (không bị trừ tu vi nữa)
+        // currentTuVi được giữ nguyên vẹn
 
         if (allStages != null && currentStageIndex < allStages.Length)
         {
@@ -224,8 +224,8 @@ public class CultivationManager : MonoBehaviour
             OnStageChanged?.Invoke(currentStageData);
         }
 
-        Debug.Log("💀 [CultivationManager] TỬ TRẬN! Giữ nguyên cảnh giới, hồi sinh làm mới tại tầng hiện tại.");
-        if (GameLogger.Instance != null) GameLogger.Instance.Log("TỬ TRẬN! Hồi sinh làm mới tại tầng này", Color.red);
+        Debug.Log($"💀 [CultivationManager] TỬ TRẬN! Bảo toàn toàn bộ Tu Vi ({currentTuVi:F0}) và Cảnh Giới.");
+        if (GameLogger.Instance != null) GameLogger.Instance.Log("TỬ TRẬN! Bảo toàn Tu Vi và Cảnh Giới", Color.yellow);
     }
 
     // ── SAVE / LOAD ─────────────────────────────────────────────────────────

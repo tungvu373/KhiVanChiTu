@@ -20,7 +20,7 @@ public class CameraShake : MonoBehaviour
         if (shakeDuration > 0)
         {
             transform.localPosition = originalPos + Random.insideUnitSphere * shakeMagnitude;
-            shakeDuration -= Time.deltaTime * dampingSpeed;
+            shakeDuration -= Time.unscaledDeltaTime * dampingSpeed;
         }
         else
         {
@@ -33,5 +33,14 @@ public class CameraShake : MonoBehaviour
     {
         shakeDuration = duration;
         shakeMagnitude = magnitude;
+    }
+
+    /// <summary>
+    /// Đặt lại vị trí camera ngay lập tức khi hồi sinh
+    /// </summary>
+    public void ResetShake()
+    {
+        shakeDuration = 0f;
+        transform.localPosition = originalPos;
     }
 }

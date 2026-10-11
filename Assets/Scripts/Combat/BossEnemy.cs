@@ -1,22 +1,76 @@
 using UnityEngine;
+using System.Collections;
 
+/// <summary>
+/// Quản lý hành vi và hoạt ảnh của Boss (Tấn công uy lực, bước đi oai vệ, chống giật animation).
+/// Tích hợp đầy đủ các tham số Animator: IsMoving (bool), Attack (trigger), Die (trigger).
+/// </summary>
 public class BossEnemy : Enemy
 {
-    // Viết riêng script Boss để dễ dàng mở rộng kỹ năng đặc biệt sau này
+    [Header("--- Boss Animation & Motion Settings ---")]
+    [Tooltip("Tốc độ xoay hướng nhìn mượt mà về phía người chơi (độ/giây)")]
+    public float turnSpeed = 360f;
+
+    [Tooltip("Độ trễ chống rung giật animation Walk/Idle khi đứng sát mép tầm đánh (Hysteresis)")]
+    public float stoppingBuffer = 0.35f;
+
+    [Tooltip("Khoảng thời gian hồi giữa các đòn đánh của Boss")]
+    public float attackInterval = 1.8f;
+
+    [Tooltip("Thời gian chờ từ lúc vung tay đến lúc đòn đánh chạm đích gây sát thương")]
+    public float attackImpactDelay = 0.35f;
+
+    [Tooltip("Thời gian hồi phục sau đòn đánh trước khi Boss có thể bước đi lại")]
+    public float attackRecovery = 0.8f;
+
+    // Animator Parameter Hashes (Tối ưu hiệu năng, tránh GC Alloc chuỗi string)
+    private static readonly int HashIsMoving = Animator.StringToHash("IsMoving");
+    private static readonly int HashAttack = Animator.StringToHash("Attack");
+    private static readonly int HashDie = Animator.StringToHash("Die");
+
+    private bool hasHashIsMoving = false;
+    private bool hasHashAttack = false;
+    private bool hasHashDie = false;
+
+    // Quản lý trạng thái nội bộ
+    private bool isAttacking = false;
+    private bool isMovingState = false;
+    private Coroutine attackCoroutine;
+
+    private void Awake()
+    {
+        CacheAnimatorParameters();
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke();
+        if (attackCoroutine != null)
+        {
+            StopCoroutine(attackCoroutine);
+            attackCoroutine = null;
+        }
+        isAttacking = false;
+        isMovingState = false;
+        isDead = false;
+    }
+
+    /// <summary>
+    /// Khởi tạo Boss với các thông số tương ứng theo tầng và độ khó (Lôi Kiếp).
+    /// </summary>
     public void InitBoss(int stage, Transform target, bool isTribulation = false)
     {
-        // 1. Tính toán Máu (HP): Player DPS ở tầng 5 ~ 500. Để Boss chịu được ~25s -> HP cần ~ 12,500.
-        // Tầng 10 Player DPS ~ 1500 -> HP cần ~ 37,500.
+        // 1. Tính toán Máu (HP): Player DPS ở tầng 5 ~ 500. Boss chịu được ~25s -> HP ~ 12,500.
         float healthMultiplier = isTribulation ? 3f : 2.5f;
         float finalHealth = 5000f * Mathf.Pow(healthMultiplier, stage / 5f);
-        
-        // Chiều cao thanh máu cao hơn đầu Boss (Model Boss to 1.5x, nếu chưa chỉnh hoặc <= 2.5f thì tự nâng lên 3.5f)
+
+        // Chiều cao thanh máu cao hơn đầu Boss (Model Boss to 1.5x)
         if (this.hpBarHeight < 3.2f) this.hpBarHeight = 3.5f;
-        
-        // Tầm đánh cận chiến của Boss (Boss to hơn nên áp sát cự ly 2.2m để vung vuốt)
-        this.attackRange = 2.2f;
-        if (this.moveSpeed < 1f) this.moveSpeed = 2.0f;
-        
+
+        // Tầm đánh cận chiến của Boss (Boss to hơn nên áp sát cự ly 2.4m)
+        this.attackRange = 2.4f;
+        if (this.moveSpeed < 1f) this.moveSpeed = 1.8f;
+
         // Gọi hàm Init của lớp cha (Enemy)
         base.Init(finalHealth, target, true);
 
@@ -27,17 +81,193 @@ public class BossEnemy : Enemy
             hpCanvas.localPosition = new Vector3(0, hpBarHeight, 0);
         }
 
-        // 2. Tính toán Sát thương (Damage): Không tính theo % máu nữa vì máu Boss quá cao sẽ gây One-shot Player.
-        // Tầng 5: Sát thương ~ 50. Tầng 10: ~ 100. (Vừa phải để Player có cơ hội hồi máu/sống sót)
+        // 2. Tính toán Sát thương (Damage)
         float finalDamage = 50f + ((stage - 5) / 5f) * 50f;
-        if (finalDamage < 20f) finalDamage = 20f; // Sát thương tối thiểu
+        if (finalDamage < 20f) finalDamage = 20f;
         if (isTribulation) finalDamage *= 1.5f;
-        
-        this.damage = finalDamage; // Ghi đè lại thuộc tính damage của Enemy cơ bản
+        this.damage = finalDamage;
 
-        // Kích thước to hơn để thể hiện sự đáng sợ
+        // Kích thước to hơn để thể hiện sự đáng sợ, uy nghiêm
         transform.localScale = Vector3.one * 1.5f;
 
-        Debug.Log($"[BossEnemy] Sinh ra Boss! Máu: {finalHealth}, Lôi Kiếp: {isTribulation}");
+        // Reset trạng thái chiến đấu & hoạt ảnh
+        isAttacking = false;
+        isMovingState = false;
+        attackTimer = 0.5f; // Thời gian khởi động ngắn trước đòn đánh đầu tiên
+
+        CacheAnimatorParameters();
+        SetMoving(false);
+
+        Debug.Log($"[BossEnemy] Sinh ra Boss! Máu: {finalHealth:F0}, Sát thương: {finalDamage:F0}, Lôi Kiếp: {isTribulation}");
+    }
+
+    /// <summary>
+    /// Kiểm tra và lưu cache các tham số thực tế có trong Animator của Boss.
+    /// </summary>
+    private void CacheAnimatorParameters()
+    {
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+            if (animator == null) animator = GetComponentInParent<Animator>();
+        }
+
+        hasHashIsMoving = false;
+        hasHashAttack = false;
+        hasHashDie = false;
+
+        if (animator != null)
+        {
+            foreach (var p in animator.parameters)
+            {
+                if (p.name == "IsMoving" && p.type == AnimatorControllerParameterType.Bool) hasHashIsMoving = true;
+                if (p.name == "Attack" && p.type == AnimatorControllerParameterType.Trigger) hasHashAttack = true;
+                if (p.name == "Die" && p.type == AnimatorControllerParameterType.Trigger) hasHashDie = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Ghi đè logic di chuyển và chiến đấu của Boss để mượt mà, không bị giật lùi hay ngắt quãng hoạt ảnh.
+    /// </summary>
+    protected override void UpdateMovementAndCombat()
+    {
+        if (playerTarget == null || isDead) return;
+
+        Vector3 currentPos = transform.position;
+        Vector3 targetPos = new Vector3(playerTarget.position.x, currentPos.y, playerTarget.position.z);
+
+        // 1. Nếu Boss đang trong hoạt ảnh vung đòn (Attack):
+        if (isAttacking)
+        {
+            // Đảm bảo không kích hoạt walk khi đang đánh
+            SetMoving(false);
+
+            // Vẫn xoay nhẹ nhàng bám theo Player để cú đánh chuẩn hướng
+            Vector3 attackLookDir = (targetPos - currentPos).normalized;
+            if (attackLookDir.sqrMagnitude > 0.001f)
+            {
+                Quaternion attackRot = Quaternion.LookRotation(attackLookDir);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, attackRot, (turnSpeed * 0.5f) * Time.deltaTime);
+            }
+            return; // Đứng yên tại chỗ, không trượt chân khi đang vung vuốt/đao
+        }
+
+        // 2. Tính toán cự ly trên mặt phẳng 2D X-Z (Bỏ qua trục Y độ cao)
+        float dist = Vector2.Distance(new Vector2(currentPos.x, currentPos.z), new Vector2(targetPos.x, targetPos.z));
+
+        // 3. Xoay người mượt mà theo hướng Player
+        Vector3 lookDir = (targetPos - currentPos).normalized;
+        if (lookDir.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(lookDir);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
+        }
+
+        // 4. Thuật toán Hysteresis chống rung giật hoạt ảnh Đi/Đứng:
+        // - Khi đang đi: Chỉ dừng khi đã vào hẳn cự ly attackRange.
+        // - Khi đang đứng: Chỉ bước tiếp khi cự ly vượt xa tầm đánh + stoppingBuffer.
+        float resumeDistance = attackRange + stoppingBuffer;
+        bool shouldMove = isMovingState ? (dist > attackRange) : (dist > resumeDistance);
+
+        if (shouldMove)
+        {
+            // Boss bước đi uy nghi tiến dần tới sát người chơi
+            SetMoving(true);
+            transform.position = Vector3.MoveTowards(currentPos, targetPos, moveSpeed * Time.deltaTime);
+        }
+        else
+        {
+            // Đã áp sát tầm đánh -> Dừng bước chân và chuyển về thế Idle/Attack
+            SetMoving(false);
+
+            // Đếm ngược thời gian hồi đòn đánh
+            if (attackTimer > 0f)
+            {
+                attackTimer -= Time.deltaTime;
+            }
+            else
+            {
+                // Kích hoạt chuỗi đòn đánh của Boss
+                attackTimer = attackInterval;
+                if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+                attackCoroutine = StartCoroutine(BossAttackRoutine());
+            }
+        }
+    }
+
+    /// <summary>
+    /// Coroutine thực hiện đòn đánh: Đồng bộ giữa hoạt ảnh, thời điểm vung trúng đích và hồi phục.
+    /// </summary>
+    private IEnumerator BossAttackRoutine()
+    {
+        isAttacking = true;
+        SetMoving(false);
+
+        // Kích hoạt trigger Attack trên Animator
+        if (animator != null && hasHashAttack)
+        {
+            animator.ResetTrigger(HashAttack);
+            animator.SetTrigger(HashAttack);
+        }
+
+        // 1. Chờ đến đúng thời điểm vung tay/vuốt chạm đích
+        yield return new WaitForSeconds(attackImpactDelay);
+
+        if (!isDead && playerTarget != null)
+        {
+            // Gây sát thương lên Player (CombatManager tự động kích hoạt viền chớp đỏ BossDamageVignette)
+            if (CombatManager.Instance != null)
+            {
+                CombatManager.Instance.DamagePlayer(damage, true);
+            }
+
+            // Game Feel: Rung màn hình khi Boss giáng đòn nặng nề
+            if (CameraShake.Instance != null)
+            {
+                CameraShake.Instance.TriggerShake(0.25f, 0.2f);
+            }
+        }
+
+        // 2. Chờ kết thúc nốt phần phục hồi của hoạt ảnh đánh
+        float remainingRecovery = Mathf.Max(0.1f, attackRecovery - attackImpactDelay);
+        yield return new WaitForSeconds(remainingRecovery);
+
+        isAttacking = false;
+        attackCoroutine = null;
+    }
+
+    /// <summary>
+    /// Cập nhật trạng thái IsMoving vào Animator một cách an toàn và chỉ cập nhật khi thay đổi.
+    /// </summary>
+    private void SetMoving(bool moving)
+    {
+        if (isMovingState == moving) return;
+        isMovingState = moving;
+
+        if (animator != null && hasHashIsMoving)
+        {
+            animator.SetBool(HashIsMoving, moving);
+        }
+    }
+
+    /// <summary>
+    /// Xử lý khi nhận sát thương hoặc tử trận.
+    /// </summary>
+    public override void TakeDamage(float amount, bool isCrit = false)
+    {
+        if (hp <= amount && !isDead)
+        {
+            // Hủy coroutine đánh nếu Boss tử trận giữa chừng
+            if (attackCoroutine != null)
+            {
+                StopCoroutine(attackCoroutine);
+                attackCoroutine = null;
+            }
+            isAttacking = false;
+            SetMoving(false);
+        }
+
+        base.TakeDamage(amount, isCrit);
     }
 }

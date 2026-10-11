@@ -104,6 +104,8 @@ public class FlyingSword : MonoBehaviour
 
     private void AttackTarget()
     {
+        if (TargetEnemy == null) return;
+
         float expectedDamage = GetExpectedDamage();
         
         // Random sát thương dao động +- 20%
@@ -111,14 +113,15 @@ public class FlyingSword : MonoBehaviour
         float maxDamage = expectedDamage * 1.2f;
         float finalDamage = Random.Range(minDamage, maxDamage);
         
-        // Tỉ lệ Crit 20%, Crit x2 sát thương (có thể đưa vào UpgradeManager sau này nếu cần)
+        // Tỉ lệ Crit 20%, Crit x2 sát thương
         bool isCrit = Random.value <= 0.2f;
         if (isCrit) 
         {
             finalDamage *= 2f;
         }
         
-        TargetEnemy.TakeDamage(finalDamage, isCrit);
+        Enemy hitEnemy = TargetEnemy;
+        hitEnemy.TakeDamage(finalDamage, isCrit);
         
         // Phát âm thanh va chạm kiếm chém trúng quái / boss
         if (AudioManager.Instance != null)
@@ -126,8 +129,9 @@ public class FlyingSword : MonoBehaviour
             AudioManager.Instance.PlaySwordHitSFX();
         }
         
-        // Hủy mục tiêu để frame tiếp theo tìm con mới
+        // Hủy mục tiêu hiện tại và đặt searchTimer = 0f để frame tiếp theo kiếm tìm ngay mục tiêu chém bồi
         TargetEnemy = null; 
+        searchTimer = 0f;
     }
 
     public void SetLevelVisual(int level)
@@ -139,5 +143,14 @@ public class FlyingSword : MonoBehaviour
             int index = Mathf.Clamp(level - 1, 0, levelSprites.Length - 1);
             sr.sprite = levelSprites[index];
         }
+    }
+
+    /// <summary>
+    /// Đặt lại mục tiêu của kiếm khi hồi sinh hoặc đổi ải (để kiếm bay về quanh Player)
+    /// </summary>
+    public void ResetTarget()
+    {
+        TargetEnemy = null;
+        searchTimer = 0.4f;
     }
 }
