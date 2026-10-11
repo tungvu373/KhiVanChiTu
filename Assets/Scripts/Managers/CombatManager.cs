@@ -68,6 +68,15 @@ public class CombatManager : MonoBehaviour
             cloudObj.AddComponent<TuTienCloudSystem>();
         }
 
+        // Nếu MainMenu không mở (chơi trực tiếp Scene), đảm bảo nhạc nền Ingame tự động phát
+        if (MainMenuManager.Instance == null || !MainMenuManager.Instance.gameObject.activeInHierarchy)
+        {
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayInGameBGM();
+            }
+        }
+
         if (SimplePool.Instance != null)
         {
             // Pool toÃ n bá»™ quÃ¡i thÆ°á»ng
@@ -842,6 +851,12 @@ public class CombatManager : MonoBehaviour
                 if (i > 0) endPos += new Vector3(Random.Range(-3f, 3f), 0, Random.Range(-3f, 3f));
                 Vector3 startPos = endPos + Vector3.up * 20f;
                 lightning.AddComponent<LightningVFX>().Setup(startPos, endPos, new Color(1f, 0.95f, 0.2f), magicArrayMaterial);
+            }
+
+            // Phát âm thanh kỹ năng Lôi Phạt
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayLoiPhatSFX();
             }
 
             Debug.Log("[Skill] ⚡ LÔI PHẠT!");

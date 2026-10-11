@@ -80,10 +80,12 @@ public class MergeManager : MonoBehaviour
         }
 
         // 3. Xử lý gộp từ cấp thấp lên cấp cao
+        int totalUpgrades = 0;
         for (int L = 1; L < 8; L++)
         {
             int required = GetRequiredPiecesForLevel(L);
             int upgrades = counts[L] / required;
+            totalUpgrades += upgrades;
             counts[L] = counts[L] % required; // Phôi lẻ còn dư
             counts[L + 1] += upgrades;
         }
@@ -101,6 +103,12 @@ public class MergeManager : MonoBehaviour
         
         // 5. Sắp xếp lại kho sau khi ghép
         SortInventory();
+
+        if (totalUpgrades > 0 && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayMergeSwordSFX();
+        }
+
         Debug.Log("[Merge] Đã ghép nhanh tuân thủ tỷ lệ thành công!");
     }
 

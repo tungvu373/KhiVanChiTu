@@ -118,6 +118,12 @@ public class MainMenuManager : MonoBehaviour
         SetupButtons();
         UpdateMainMenuPlayButton();
         ShowPanel(mainPanel);
+
+        // Phát nhạc nền Menu
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayMenuBGM();
+        }
     }
 
     private void SetupButtons()
@@ -265,6 +271,12 @@ public class MainMenuManager : MonoBehaviour
 
         // 5. Load dữ liệu nhân vật từ slot vào từng Manager (dùng Invoke để đợi 1 frame sau khi UI đã khởi tạo)
         dataManager.Invoke(nameof(DataManager.LoadCurrentGame), 0.05f);
+
+        // 6. Chuyển sang nhạc nền Ingame
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayInGameBGM();
+        }
     }
 
     private void ConfirmQuitGame()

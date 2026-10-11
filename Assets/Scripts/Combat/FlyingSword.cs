@@ -120,6 +120,12 @@ public class FlyingSword : MonoBehaviour
         
         TargetEnemy.TakeDamage(finalDamage, isCrit);
         
+        // Phát âm thanh va chạm kiếm chém trúng quái / boss
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySwordHitSFX();
+        }
+        
         // Hủy mục tiêu để frame tiếp theo tìm con mới
         TargetEnemy = null; 
     }

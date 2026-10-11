@@ -104,6 +104,10 @@ public class CultivationManager : MonoBehaviour
                 {
                     Instantiate(lightningVFXPrefab, CombatManager.Instance.playerTransform.position + Vector3.up * 8f, Quaternion.Euler(90, 0, 0));
                 }
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayLoiPhatSFX();
+                }
                 GameManager.Instance.ChangeState(GameManager.GameState.BossTribulation);
             }
             else
@@ -132,10 +136,20 @@ public class CultivationManager : MonoBehaviour
             {
                 Instantiate(lightningVFXPrefab, CombatManager.Instance.playerTransform.position + Vector3.up * 8f, Quaternion.Euler(90, 0, 0));
             }
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayLoiPhatSFX();
+            }
         }
 
         // Reset tu vi về 0 để lên cấp mới
         currentTuVi = 0; 
+
+        // Phát âm thanh nổ vang chúc mừng đột phá tu vi (bang.mp3)
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBreakthroughSFX();
+        }
         
         // Thưởng điểm Cơ Duyên (Quy tắc chống lạm phát)
         int coDuyenBonus = 0;
