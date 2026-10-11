@@ -10,6 +10,8 @@ public class FixEnemy2AnimatorTool
         AssetDatabase.ImportAsset("Assets/Import/Enemy/Zombie Run.anim", ImportAssetOptions.ForceUpdate);
         AssetDatabase.ImportAsset("Assets/Import/Enemy/Idle.anim", ImportAssetOptions.ForceUpdate);
         AssetDatabase.ImportAsset("Assets/Import/Enemy/Enemy2.controller", ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset("Assets/Import/Boss/Zombie Walk.anim", ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset("Assets/Import/Boss/boss.controller", ImportAssetOptions.ForceUpdate);
         AssetDatabase.ImportAsset("Assets/Prefabs/Enemy1.prefab", ImportAssetOptions.ForceUpdate);
         AssetDatabase.ImportAsset("Assets/Prefabs/Enemy2.prefab", ImportAssetOptions.ForceUpdate);
         AssetDatabase.ImportAsset("Assets/Prefabs/Boss.prefab", ImportAssetOptions.ForceUpdate);

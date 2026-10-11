@@ -10,23 +10,26 @@ public class Enemy : MonoBehaviour
     public bool isBoss = false;
     public float damage = 10f;
     public float attackSpeed = 1f; // Tấn công mỗi giây
-    private float attackTimer = 0f;
+    protected float attackTimer = 0f;
 
-    private Transform playerTarget;
+    protected Transform playerTarget;
     
     // UI & Game Feel
-    private Image hpFill;
-    private float visualHp;
-    private Renderer[] renderers; // Hỗ trợ Model 3D có nhiều bộ phận
-    private Color[] originalColors;
-    private float flashTimer;
-    private Camera mainCamera;
+    protected Image hpFill;
+    protected float visualHp;
+    protected Renderer[] renderers; // Hỗ trợ Model 3D có nhiều bộ phận
+    protected Color[] originalColors;
+    protected float flashTimer;
+    protected Camera mainCamera;
     
     // Animation
     public Animator animator;
     public bool isDead = false;
-    private bool hasIsMovingParam = false;
+    protected bool hasIsMovingParam = false;
     
+    // UI Damage Popup (Cộng dồn sát thương tránh đè chữ)
+    protected DamagePopup activePopup;
+
     [Header("Settings")]
     public float hpBarHeight = 2.5f; // Chiều cao thanh máu (tùy chỉnh trên Inspector)
 
@@ -36,6 +39,7 @@ public class Enemy : MonoBehaviour
     {
         CancelInvoke();
         isDead = false;
+        activePopup = null;
     }
 
     public void Init(float health, Transform target, bool boss = false)
@@ -49,6 +53,7 @@ public class Enemy : MonoBehaviour
         damage = boss ? health * 0.2f : health * 0.05f; // Sát thương tỉ lệ theo máu
         isDead = false;
         attackTimer = 0.5f;
+        activePopup = null;
 
         SetupHPBar();
 
@@ -117,6 +122,7 @@ public class Enemy : MonoBehaviour
             }
             if (hpFill != null)
             {
+                hpFill.color = new Color(1f, 0.05f, 0.05f, 1f); // Đỏ tươi rực rỡ, không bị hồng
                 RectTransform fillRt = hpFill.GetComponent<RectTransform>();
                 fillRt.anchorMax = Vector2.one;
             }
@@ -152,7 +158,7 @@ public class Enemy : MonoBehaviour
         GameObject fillObj = new GameObject("HP_Fill", typeof(RectTransform), typeof(Image));
         fillObj.transform.SetParent(bgObj.transform, false);
         hpFill = fillObj.GetComponent<Image>();
-        hpFill.color = Color.red; // Đổi lại thành đỏ theo yêu cầu
+        hpFill.color = new Color(1f, 0.05f, 0.05f, 1f); // Đỏ tươi rực rỡ, không bị hồng
         // Không dùng Filled vì thiếu Sprite gốc sẽ lỗi, dùng Anchor thay thế
         RectTransform fillRt = fillObj.GetComponent<RectTransform>();
         fillRt.anchorMin = Vector2.zero; 
@@ -161,7 +167,14 @@ public class Enemy : MonoBehaviour
         fillRt.offsetMax = Vector2.zero;
     }
 
-    private void Update()
+    protected virtual void Update()
+    {
+        UpdateHpBar();
+        UpdateFlashEffect();
+        UpdateMovementAndCombat();
+    }
+
+    protected virtual void UpdateHpBar()
     {
         // Smooth HP Bar (Game Feel)
         if (hpFill != null)
@@ -177,7 +190,10 @@ public class Enemy : MonoBehaviour
                 hpFill.transform.parent.parent.LookAt(hpFill.transform.parent.parent.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);
             }
         }
+    }
 
+    protected virtual void UpdateFlashEffect()
+    {
         // Đổi màu giật cục (Flash)
         if (flashTimer > 0)
         {
@@ -197,46 +213,55 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
+    }
 
-        if (playerTarget != null && !isDead)
+    protected virtual void UpdateMovementAndCombat()
+    {
+        if (playerTarget == null || isDead) return;
+
+        // BỎ QUA TRỤC Y khi tính khoảng cách (để tránh lỗi quái không bao giờ tới gần vì độ cao 3D)
+        float dist = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(playerTarget.position.x, playerTarget.position.z));
+        Vector3 targetPos = new Vector3(playerTarget.position.x, transform.position.y, playerTarget.position.z);
+        
+        // Xoay mượt về phía Player
+        Vector3 dir = (targetPos - transform.position).normalized;
+        if (dir.sqrMagnitude > 0.001f)
         {
-            // BỎ QUA TRỤC Y khi tính khoảng cách (để tránh lỗi quái không bao giờ tới gần vì độ cao 3D)
-            float dist = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(playerTarget.position.x, playerTarget.position.z));
-            Vector3 targetPos = new Vector3(playerTarget.position.x, transform.position.y, playerTarget.position.z);
-            transform.LookAt(targetPos);
+            Quaternion targetRot = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, 500f * Time.deltaTime);
+        }
 
-            if (dist > attackRange)
+        if (dist > attackRange)
+        {
+            // Cả quái thường lẫn Boss đều di chuyển tiến lại gần sát người chơi
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            
+            if (animator != null && hasIsMovingParam) animator.SetBool("IsMoving", true);
+        }
+        else
+        {
+            // Đã vào tầm đánh cận chiến sát Player -> Dừng lại và tấn công
+            if (animator != null && hasIsMovingParam) animator.SetBool("IsMoving", false);
+            
+            if (attackTimer > 0)
             {
-                // Cả quái thường lẫn Boss đều di chuyển tiến lại gần sát người chơi
-                transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
-                
-                if (animator != null && hasIsMovingParam) animator.SetBool("IsMoving", true);
+                attackTimer -= Time.deltaTime;
             }
             else
             {
-                // Đã vào tầm đánh cận chiến sát Player -> Dừng lại và tấn công
-                if (animator != null && hasIsMovingParam) animator.SetBool("IsMoving", false);
+                attackTimer = isBoss ? 1.5f : (1f / attackSpeed);
                 
-                if (attackTimer > 0)
+                if (animator != null) animator.SetTrigger("Attack"); // Kích hoạt Anim Đánh
+                
+                if (CombatManager.Instance != null)
                 {
-                    attackTimer -= Time.deltaTime;
-                }
-                else
-                {
-                    attackTimer = isBoss ? 1.5f : (1f / attackSpeed);
-                    
-                    if (animator != null) animator.SetTrigger("Attack"); // Kích hoạt Anim Đánh
-                    
-                    if (CombatManager.Instance != null)
-                    {
-                        CombatManager.Instance.DamagePlayer(damage, isBoss);
-                    }
+                    CombatManager.Instance.DamagePlayer(damage, isBoss);
                 }
             }
         }
     }
 
-    public void TakeDamage(float amount, bool isCrit = false)
+    public virtual void TakeDamage(float amount, bool isCrit = false)
     {
         hp -= amount;
         
@@ -253,23 +278,13 @@ public class Enemy : MonoBehaviour
             }
         }
         
-        if (CombatManager.Instance != null && CombatManager.Instance.damagePopupPrefab != null)
-        {
-            if (SimplePool.Instance != null)
-            {
-                GameObject popup = SimplePool.Instance.SpawnFromPool("DamagePopup", transform.position + Vector3.up * (hpBarHeight + 0.3f), Quaternion.identity);
-                if (popup != null) popup.GetComponent<DamagePopup>().Setup(amount, isCrit || amount >= 400);
-            }
-            else
-            {
-                GameObject popup = Instantiate(CombatManager.Instance.damagePopupPrefab, transform.position + Vector3.up * (hpBarHeight + 0.3f), Quaternion.identity);
-                popup.GetComponent<DamagePopup>().Setup(amount, isCrit || amount >= 400); 
-            }
-        }
+        // Hiển thị sát thương (Gộp tổng dame nhận từ nhiều kiếm chém vào cùng mục tiêu)
+        ShowDamagePopup(amount, isCrit);
 
         if (hp <= 0 && !isDead)
         {
             isDead = true;
+            activePopup = null;
             if (animator != null) animator.SetTrigger("Die");
             
             // Ẩn Canvas máu ngay khi chết
@@ -283,7 +298,47 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void Die()
+    /// <summary>
+    /// Hiển thị chữ số sát thương bay lên: Tự động gom/cộng dồn các đòn đánh liên tiếp vào 1 số duy nhất.
+    /// </summary>
+    protected virtual void ShowDamagePopup(float amount, bool isCrit)
+    {
+        if (CombatManager.Instance == null || CombatManager.Instance.damagePopupPrefab == null) return;
+
+        // Nếu popup hiện tại vẫn đang tồn tại và còn trong cửa sổ nhận sát thương -> Cộng dồn vào popup đó!
+        if (activePopup != null && activePopup.gameObject.activeInHierarchy && activePopup.CanAccumulate)
+        {
+            activePopup.AddDamage(amount, isCrit);
+            return;
+        }
+
+        // Tạo popup mới khi chưa có hoặc popup trước đã bay đi
+        Vector3 spawnPos = transform.position + Vector3.up * (hpBarHeight + 0.3f);
+        // Thêm độ lệch nhẹ ngẫu nhiên để các đợt số kế tiếp không trùng khít tọa độ
+        spawnPos.x += Random.Range(-0.25f, 0.25f);
+        spawnPos.z += Random.Range(-0.15f, 0.15f);
+
+        GameObject popup = null;
+        if (SimplePool.Instance != null)
+        {
+            popup = SimplePool.Instance.SpawnFromPool("DamagePopup", spawnPos, Quaternion.identity);
+        }
+        else
+        {
+            popup = Instantiate(CombatManager.Instance.damagePopupPrefab, spawnPos, Quaternion.identity);
+        }
+
+        if (popup != null)
+        {
+            activePopup = popup.GetComponent<DamagePopup>();
+            if (activePopup != null)
+            {
+                activePopup.Setup(amount, isCrit || amount >= 400f);
+            }
+        }
+    }
+
+    protected virtual void Die()
     {
         int stageIndex = 1;
         if (CultivationManager.Instance != null) stageIndex = CultivationManager.Instance.currentStageIndex;

@@ -218,7 +218,7 @@ public class CombatNotificationUI : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < popTime)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / popTime);
 
             float scaleProgress;
@@ -251,7 +251,7 @@ public class CombatNotificationUI : MonoBehaviour
         elapsed = 0f;
         while (elapsed < holdTime)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float floatT = elapsed / holdTime;
             if (containerRect != null)
             {
@@ -266,7 +266,7 @@ public class CombatNotificationUI : MonoBehaviour
         Vector2 startFadePos = containerRect != null ? containerRect.anchoredPosition : basePosition;
         while (elapsed < fadeTime)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / fadeTime);
             if (canvasGroup != null)
             {
@@ -286,6 +286,24 @@ public class CombatNotificationUI : MonoBehaviour
             containerRect.localScale = baseScale;
         }
         activeAnimRoutine = null;
+    }
+
+    /// <summary>
+    /// Ẩn ngay lập tức thông báo khi hồi sinh hoặc đổi màn hình
+    /// </summary>
+    public void HideImmediate()
+    {
+        if (activeAnimRoutine != null)
+        {
+            StopCoroutine(activeAnimRoutine);
+            activeAnimRoutine = null;
+        }
+        if (canvasGroup != null) canvasGroup.alpha = 0f;
+        if (containerRect != null && userConfiguredPosition != Vector2.zero)
+        {
+            containerRect.anchoredPosition = userConfiguredPosition;
+            containerRect.localScale = userConfiguredScale;
+        }
     }
 
     [ContextMenu("Test Breakthrough Banner")]

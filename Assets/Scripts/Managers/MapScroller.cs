@@ -95,6 +95,11 @@ public class MapScroller : MonoBehaviour
         }
     }
 
+    public void StartMoving()
+    {
+        ResumeMoving();
+    }
+
     public void RandomizeBiomeColor()
     {
         // Simple color tinting for terrains or meshes

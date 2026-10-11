@@ -170,7 +170,7 @@ public class BossDamageVignette : MonoBehaviour
     {
         // 1. Chớp đỏ mạnh tức thì
         canvasGroup.alpha = 0.95f;
-        yield return new WaitForSeconds(0.04f);
+        yield return new WaitForSecondsRealtime(0.04f);
 
         // 2. Mờ dần mượt mà trong 0.4 giây
         float duration = 0.4f;
@@ -178,7 +178,7 @@ public class BossDamageVignette : MonoBehaviour
 
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float t = elapsed / duration;
             canvasGroup.alpha = Mathf.Lerp(0.95f, 0f, Mathf.SmoothStep(0f, 1f, t));
             yield return null;
@@ -186,5 +186,18 @@ public class BossDamageVignette : MonoBehaviour
 
         canvasGroup.alpha = 0f;
         flashCoroutine = null;
+    }
+
+    /// <summary>
+    /// Đặt lại và ẩn viền đỏ ngay lập tức khi hồi sinh
+    /// </summary>
+    public void ResetVignette()
+    {
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine);
+            flashCoroutine = null;
+        }
+        if (canvasGroup != null) canvasGroup.alpha = 0f;
     }
 }
