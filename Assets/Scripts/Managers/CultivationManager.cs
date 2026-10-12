@@ -68,12 +68,59 @@ public class CultivationManager : MonoBehaviour
         CheckBreakthrough();
     }
 
+    /// <summary>
+    /// Lấy dữ liệu cảnh giới hiện tại an toàn.
+    /// </summary>
+    public CultivationStageData GetCurrentStageData()
+    {
+        if (allStages == null || currentStageIndex >= allStages.Length) return null;
+        return allStages[currentStageIndex];
+    }
+
+    /// <summary>
+    /// Kiểm tra xem Cảnh Giới hiện tại có phải là mốc Đột Phá (cần diệt Boss) hay không.
+    /// QUY TẮC CHUẨN:
+    /// - Riêng 15 tầng Luyện Khí Kỳ: CHỈ CÓ DUY NHẤT TẦNG 15 mới là Đột Phá (cần diệt Boss lên Trúc Cơ).
+    ///   Các tầng 1 -> 14 chỉ là tích lũy tu vi tiểu cảnh giới, đủ 100% Tu Vi là TỰ ĐỘNG THĂNG TẦNG!
+    /// - Các đại cảnh giới khác (Trúc Cơ, Kết Đan...): Căn cứ theo hasTribulationBoss của Cảnh Giới đó.
+    /// </summary>
+    public bool RequiresBossToBreakthrough(CultivationStageData stageData)
+    {
+        if (stageData == null) return false;
+
+        // Riêng 15 tầng Luyện Khí Kỳ: CHỈ CÓ DUY NHẤT TẦNG 15 MỚI LÀ ĐỘT PHÁ!
+        if (stageData.stageName.Contains("Luyện Khí"))
+        {
+            return stageData.stageName.Contains("Tầng 15");
+        }
+
+        // Các cảnh giới khác: Cần đánh boss nếu có hasTribulationBoss
+        return stageData.hasTribulationBoss;
+    }
+
+    /// <summary>
+    /// Kiểm tra người chơi đã đạt cực hạn 100% tu vi (đạt bình cảnh) để sẵn sàng đột phá hay chưa.
+    /// </summary>
+    public bool IsTuViMaxed()
+    {
+        if (allStages == null || currentStageIndex >= allStages.Length) return false;
+        return currentTuVi >= allStages[currentStageIndex].requiredTuVi;
+    }
+
     private void UpdateDashboardUI(CultivationStageData currentStageData)
     {
         if (stageText != null)
         {
-            float progress = (currentTuVi / currentStageData.requiredTuVi) * 100f;
-            stageText.text = $"Cảnh Giới: {currentStageData.stageName} - Tiến độ: {progress:F1}%";
+            bool needBoss = RequiresBossToBreakthrough(currentStageData);
+            if (currentTuVi >= currentStageData.requiredTuVi && needBoss)
+            {
+                stageText.text = $"Cảnh Giới: {currentStageData.stageName} - 100% (Cần diệt Boss để Đột phá)";
+            }
+            else
+            {
+                float progress = (currentTuVi / currentStageData.requiredTuVi) * 100f;
+                stageText.text = $"Cảnh Giới: {currentStageData.stageName} - Tiến độ: {progress:F1}%";
+            }
         }
 
         if (characterInfoText != null)
@@ -93,25 +140,35 @@ public class CultivationManager : MonoBehaviour
 
     private void CheckBreakthrough()
     {
+        if (allStages == null || currentStageIndex >= allStages.Length) return;
         CultivationStageData currentStageData = allStages[currentStageIndex];
+
         if (currentTuVi >= currentStageData.requiredTuVi)
         {
-            if (currentStageData.hasTribulationBoss)
+            bool needBoss = RequiresBossToBreakthrough(currentStageData);
+
+            if (needBoss)
             {
-                Debug.Log("⚠️ LÔI KIẾP HÀNG LÂM! Chuẩn bị đánh Boss Lôi Kiếp!");
-                if (CameraShake.Instance != null) CameraShake.Instance.TriggerShake(1.0f, 0.6f);
-                if (lightningVFXPrefab != null && CombatManager.Instance != null && CombatManager.Instance.playerTransform != null)
+                // MỐC ĐỘT PHÁ (DUY NHẤT Luyện Khí Tầng 15 hoặc Đại Cảnh Giới): Cần Boss để Đột Phá!
+                if (currentStageData.hasTribulationBoss)
                 {
-                    Instantiate(lightningVFXPrefab, CombatManager.Instance.playerTransform.position + Vector3.up * 8f, Quaternion.Euler(90, 0, 0));
+                    Debug.Log("⚠️ LÔI KIẾP HÀNG LÂM! Chuẩn bị đánh Boss Lôi Kiếp để đột phá!");
+                    if (CameraShake.Instance != null) CameraShake.Instance.TriggerShake(1.0f, 0.6f);
+                    if (lightningVFXPrefab != null && CombatManager.Instance != null && CombatManager.Instance.playerTransform != null)
+                    {
+                        Instantiate(lightningVFXPrefab, CombatManager.Instance.playerTransform.position + Vector3.up * 8f, Quaternion.Euler(90, 0, 0));
+                    }
+                    if (AudioManager.Instance != null)
+                    {
+                        AudioManager.Instance.PlayLoiPhatSFX();
+                    }
+                    GameManager.Instance.ChangeState(GameManager.GameState.BossTribulation);
                 }
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.PlayLoiPhatSFX();
-                }
-                GameManager.Instance.ChangeState(GameManager.GameState.BossTribulation);
             }
             else
             {
+                // TIỂU CẢNH GIỚI (Luyện Khí Tầng 1 -> 14, Trúc Cơ Sơ -> Trung...):
+                // Đủ 100% Tu Vi là TỰ ĐỘNG THĂNG TẦNG / LÊN CẤP NGAY!
                 Breakthrough();
             }
         }
@@ -132,7 +189,7 @@ public class CultivationManager : MonoBehaviour
         if (isMajorBreakthrough)
         {
             if (CameraShake.Instance != null) CameraShake.Instance.TriggerShake(0.8f, 0.5f);
-            if (lightningVFXPrefab != null && CombatManager.Instance != null)
+            if (lightningVFXPrefab != null && CombatManager.Instance != null && CombatManager.Instance.playerTransform != null)
             {
                 Instantiate(lightningVFXPrefab, CombatManager.Instance.playerTransform.position + Vector3.up * 8f, Quaternion.Euler(90, 0, 0));
             }
@@ -204,11 +261,12 @@ public class CultivationManager : MonoBehaviour
 
     private void ReturnToIdle()
     {
-        if (GameManager.Instance.currentState == GameManager.GameState.Breakthrough)
+        if (GameManager.Instance != null && GameManager.Instance.currentState == GameManager.GameState.Breakthrough)
         {
             GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
         }
         isBreakthroughInProgress = false; // Mở lại sau 2s
+        if (MapScroller.Instance != null) MapScroller.Instance.ResumeMoving();
     }
 
     public void HandlePlayerDeath()

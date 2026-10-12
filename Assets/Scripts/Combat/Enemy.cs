@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    public float maxHp = 480f;
-    public float hp = 480f;
+    public float maxHp = 35f;
+    public float hp = 35f;
     public float moveSpeed = 2f;
     
     public bool isBoss = false;
@@ -77,7 +77,7 @@ public class Enemy : MonoBehaviour
         visualHp = health;
         playerTarget = target;
         isBoss = boss;
-        damage = boss ? health * 0.2f : health * 0.05f; // Sát thương tỉ lệ theo máu
+        damage = boss ? health * 0.2f : Mathf.Max(2f, health * 0.05f); // Sát thương tỉ lệ theo máu (tối thiểu 2)
         isDead = false;
         attackTimer = 0.5f;
         activePopup = null;
@@ -390,7 +390,8 @@ public class Enemy : MonoBehaviour
             EconomyManager.Instance.AddLinhThach(baseDrop + tuLinhBonus);
         }
         
-        if (CultivationManager.Instance != null)
+        // Cộng Tu Vi nếu người chơi chưa đạt 100% tu vi (Boss thưởng tu vi gấp 5 lần quái thường)
+        if (CultivationManager.Instance != null && !CultivationManager.Instance.IsTuViMaxed())
         {
             float tuViBonus = 5f * Mathf.Pow(1.2f, stageIndex);
             if (isBoss) tuViBonus *= 5f;

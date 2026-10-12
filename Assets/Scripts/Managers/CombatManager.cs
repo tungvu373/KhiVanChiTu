@@ -300,9 +300,8 @@ public class CombatManager : MonoBehaviour
             Enemy enemy = minionObj.GetComponent<Enemy>();
             if (enemy != null)
             {
-                // Máu quái con: Dưới tầng 20 tăng 8 lần, từ tầng 20 giữ nguyên tăng 5 lần
-                float mult = (stage >= 20) ? 5f : Mathf.Lerp(8f, 5f, Mathf.Clamp01((stage - 1f) / 19f));
-                float health = (45f * mult) * Mathf.Pow(1.28f, Mathf.Max(0, stage - 1));
+                // Máu quái con hộ giá Boss: 75% máu quái thường của tầng đó (tầng 1-4 rất thấp giúp dễ thở)
+                float health = CalculateEnemyHealth(stage) * 0.75f;
                 enemy.Init(health, playerTransform, false);
                 enemy.moveSpeed = 3.6f; // Quái con chạy nhanh hơn Boss xông lên trước
                 activeEnemies.Add(enemy);
@@ -426,25 +425,72 @@ public class CombatManager : MonoBehaviour
         
         int stageIndex = StageManager.Instance != null ? StageManager.Instance.currentStage : 1;
         
-        // Máu quái thường: Dưới tầng 20 tăng 8 lần, từ tầng 20 giữ nguyên tăng 5 lần
-        float mult = (stageIndex >= 20) ? 5f : Mathf.Lerp(8f, 5f, Mathf.Clamp01((stageIndex - 1f) / 19f));
-        float health = (60f * mult) * Mathf.Pow(1.28f, Mathf.Max(0, stageIndex - 1)); 
+        // Máu quái thường: Cân bằng tầng 1, 2, 3, 4 máu thấp xuống để người chơi dễ dàng farm đầu game
+        float health = CalculateEnemyHealth(stageIndex); 
         
         enemy.Init(health, playerTransform, false);
         
         activeEnemies.Add(enemy);
     }
 
+    /// <summary>
+    /// Tính toán máu của Enemy thường theo tầng:
+    /// Tầng 1: 35 HP (kiếm Lv1 10 dame chém 4 nhát là diệt)
+    /// Tầng 2: 65 HP
+    /// Tầng 3: 110 HP
+    /// Tầng 4: 180 HP
+    /// Tầng 5 trở đi: Tăng trưởng lũy tiến nhịp nhàng (x1.22 mỗi tầng)
+    /// </summary>
+    public static float CalculateEnemyHealth(int stage)
+    {
+        if (stage <= 1) return 35f;
+        if (stage == 2) return 65f;
+        if (stage == 3) return 110f;
+        if (stage == 4) return 180f;
+
+        return 180f * Mathf.Pow(1.22f, stage - 4);
+    }
+
     public void OnEnemyDied(Enemy enemy)
     {
         activeEnemies.Remove(enemy);
         
-        if (enemy == currentBoss)
+        bool isBossEnemy = (enemy == currentBoss) || (enemy != null && enemy.isBoss) || (enemy is BossEnemy);
+        if (isBossEnemy)
         {
             currentBoss = null;
-            if (CultivationManager.Instance != null && GameManager.Instance != null && GameManager.Instance.currentState == GameManager.GameState.BossTribulation)
+            
+            // QUY TẮC ĐỘT PHÁ CHUẨN:
+            // - Riêng 15 tầng Luyện Khí Kỳ: CHỈ DUY NHẤT TẦNG 15 mới là Đột Phá (cần diệt Boss lên Trúc Cơ).
+            //   Các tầng 1 -> 14 chỉ là tích lũy tu vi tiểu cảnh giới, đủ 100% Tu Vi là tự động thăng tầng!
+            // - Khi đang ở mốc Cần Đột Phá (Luyện Khí Tầng 15 hoặc Đại Cảnh Giới):
+            //   Bắt buộc phải đạt đủ 100% Tu Vi và diệt Boss thì MỚI ĐƯỢC ĐỘT PHÁ!
+            if (CultivationManager.Instance != null)
             {
-                CultivationManager.Instance.Breakthrough();
+                CultivationStageData currentStage = CultivationManager.Instance.GetCurrentStageData();
+                bool needBoss = CultivationManager.Instance.RequiresBossToBreakthrough(currentStage);
+
+                if (needBoss)
+                {
+                    if (CultivationManager.Instance.IsTuViMaxed())
+                    {
+                        Debug.Log("💥 [CombatManager] ĐÃ ĐẠT 100% TU VI + DIỆT BOSS THÀNH CÔNG -> ĐỘT PHÁ CẢNH GIỚI NGAY!");
+                        CultivationManager.Instance.Breakthrough();
+                    }
+                    else
+                    {
+                        Debug.Log("⚔️ [CombatManager] Diệt Boss tầng thành công nhưng Tu Vi CHƯA ĐỦ 100% nên chưa thể đột phá! Tiếp tục farm!");
+                        if (GameLogger.Instance != null)
+                        {
+                            GameLogger.Instance.Log("Diệt Boss thành công! (Cần 100% Tu Vi mới được Đột Phá)", Color.yellow);
+                        }
+                    }
+                }
+                else
+                {
+                    // Các tầng Luyện Khí 1-14: Diệt Boss chỉ là hạ Boss của Stage để qua màn và nhận quà
+                    Debug.Log("⚔️ [CombatManager] Diệt Boss tầng thường thành công! Tiếp tục farm!");
+                }
             }
         }
         else
@@ -748,11 +794,15 @@ public class CombatManager : MonoBehaviour
     public void ChangeToIdleState()
     {
         ClearAllEnemies();
-        if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm)
+        // Nếu đang trong hoạt cảnh Đột Phá, giữ nguyên để CultivationManager chạy trọn vẹn hiệu ứng 2 giây
+        if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm && GameManager.Instance.currentState != GameManager.GameState.Breakthrough)
         {
             GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
         }
-        if (MapScroller.Instance != null) MapScroller.Instance.ResumeMoving();
+        if (MapScroller.Instance != null && (GameManager.Instance == null || GameManager.Instance.currentState != GameManager.GameState.Breakthrough))
+        {
+            MapScroller.Instance.ResumeMoving();
+        }
     }
 
     public GameObject swordPrefab;

@@ -56,15 +56,46 @@ public class BossEnemy : Enemy
     }
 
     /// <summary>
-    /// Khởi tạo Boss với các thông số tương ứng theo tầng và độ khó (Lôi Kiếp).
+    /// Tính toán máu của Boss theo tầng: Cân bằng tầng 1-4 thấp xuống để người chơi dễ dàng farm đầu game.
     /// </summary>
+    public static float CalculateBossHealth(int stage, bool isTribulation)
+    {
+        float baseHp;
+        if (stage <= 1) baseHp = 350f;
+        else if (stage == 2) baseHp = 750f;
+        else if (stage == 3) baseHp = 1400f;
+        else if (stage == 4) baseHp = 2500f;
+        else
+        {
+            // Tầng 5 trở đi: Khởi điểm từ 4000 HP, tăng trưởng đều theo tầng
+            float stageScale = (stage - 5) / 5f;
+            baseHp = 4000f * Mathf.Pow(2.2f, stageScale);
+        }
+
+        if (isTribulation) baseHp *= 1.35f;
+        return baseHp;
+    }
+
+    /// <summary>
+    /// Tính toán sát thương của Boss theo tầng: Cân bằng tầng 1-4 không bị one-shot người chơi.
+    /// </summary>
+    public static float CalculateBossDamage(int stage, bool isTribulation)
+    {
+        float finalDamage;
+        if (stage <= 1) finalDamage = 8f;
+        else if (stage == 2) finalDamage = 14f;
+        else if (stage == 3) finalDamage = 22f;
+        else if (stage == 4) finalDamage = 32f;
+        else finalDamage = 45f + ((stage - 5) / 5f) * 25f;
+
+        if (isTribulation) finalDamage *= 1.25f;
+        return finalDamage;
+    }
+
     public void InitBoss(int stage, Transform target, bool isTribulation = false)
     {
-        // Máu (HP) của Boss: Dưới tầng 20 tăng gấp 8 lần, từ tầng 20 giữ nguyên tăng gấp 5 lần
-        float mult = (stage >= 20) ? 5f : Mathf.Lerp(8f, 5f, Mathf.Clamp01((stage - 1f) / 19f));
-        float healthMultiplier = isTribulation ? 2.5f : 2.1f;
-        float stageScale = Mathf.Max(0f, (stage - 1) / 5f);
-        float finalHealth = (10000f * mult) * Mathf.Pow(healthMultiplier, stageScale);
+        // 1. Máu (HP) của Boss: Cân bằng thấp ở tầng 1-4
+        float finalHealth = CalculateBossHealth(stage, isTribulation);
 
         // Chiều cao thanh máu cao hơn đầu Boss (Model Boss to 1.5x)
         if (this.hpBarHeight < 3.2f) this.hpBarHeight = 3.5f;
@@ -84,9 +115,7 @@ public class BossEnemy : Enemy
         }
 
         // 2. Tính toán Sát thương (Damage)
-        float finalDamage = 50f + ((stage - 5) / 5f) * 50f;
-        if (finalDamage < 20f) finalDamage = 20f;
-        if (isTribulation) finalDamage *= 1.5f;
+        float finalDamage = CalculateBossDamage(stage, isTribulation);
         this.damage = finalDamage;
 
         // Kích thước to hơn để thể hiện sự đáng sợ, uy nghiêm
@@ -100,7 +129,7 @@ public class BossEnemy : Enemy
         CacheAnimatorParameters();
         SetMoving(false);
 
-        Debug.Log($"[BossEnemy] Sinh ra Boss! Máu: {finalHealth:F0}, Sát thương: {finalDamage:F0}, Lôi Kiếp: {isTribulation}");
+        Debug.Log($"[BossEnemy] Sinh ra Boss! Tầng {stage}, Máu: {finalHealth:F0}, Sát thương: {finalDamage:F0}, Lôi Kiếp: {isTribulation}");
     }
 
     /// <summary>
