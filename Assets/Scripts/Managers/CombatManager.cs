@@ -300,7 +300,9 @@ public class CombatManager : MonoBehaviour
             Enemy enemy = minionObj.GetComponent<Enemy>();
             if (enemy != null)
             {
-                float health = 50f * Mathf.Pow(1.8f, Mathf.Max(0, stage - 1));
+                // Máu quái con: Dưới tầng 20 tăng 8 lần, từ tầng 20 giữ nguyên tăng 5 lần
+                float mult = (stage >= 20) ? 5f : Mathf.Lerp(8f, 5f, Mathf.Clamp01((stage - 1f) / 19f));
+                float health = (45f * mult) * Mathf.Pow(1.28f, Mathf.Max(0, stage - 1));
                 enemy.Init(health, playerTransform, false);
                 enemy.moveSpeed = 3.6f; // Quái con chạy nhanh hơn Boss xông lên trước
                 activeEnemies.Add(enemy);
@@ -340,7 +342,37 @@ public class CombatManager : MonoBehaviour
         // Há»“i mÃ¡u tá»« Shop (Há»“i Huyáº¿t Äan: 5% má»—i giÃ¢y)
         if (ShopManager.Instance != null && ShopManager.Instance.hpRegenVisualTimer > 0)
         {
-            HealPlayer(playerMaxHp * 0.05f * Time.deltaTime);
+            float potionHpRate = ShopManager.Instance.GetHpRegenRate();
+            if (potionHpRate > 0)
+            {
+                HealPlayer(playerMaxHp * potionHpRate * Time.deltaTime);
+            }
+        }
+
+        // Hiệu ứng hồi máu & MP liên tục khi Âm Dương Trận đang kích hoạt (6 giây)
+        if (isAmDuongTranActive)
+        {
+            amDuongTranTimer -= Time.deltaTime;
+            if (amDuongTranTimer <= 0)
+            {
+                EndAmDuongTran();
+            }
+            else
+            {
+                // Hồi máu: 3% + 0.5%/cấp mỗi giây
+                if (playerCurrentHp > 0 && playerCurrentHp < playerMaxHp)
+                {
+                    HealPlayer(playerMaxHp * GetAmDuongTranHpRegenPercent() * Time.deltaTime);
+                }
+                // Hồi Linh Lực (MP): 15 + 3/cấp mỗi giây
+                if (SkillManager.Instance != null && !SkillManager.Instance.isSkillActive)
+                {
+                    SkillManager.Instance.currentLinhLuc = Mathf.Min(
+                        SkillManager.Instance.maxLinhLuc, 
+                        SkillManager.Instance.currentLinhLuc + GetAmDuongTranMpRegenFlat() * Time.deltaTime
+                    );
+                }
+            }
         }
 
         if (normalEnemyPrefabs == null || normalEnemyPrefabs.Length == 0)
@@ -394,8 +426,9 @@ public class CombatManager : MonoBehaviour
         
         int stageIndex = StageManager.Instance != null ? StageManager.Instance.currentStage : 1;
         
-        // Logic mới: Quái thường trâu hơn rõ rệt qua mỗi tầng (hệ số tăng nhanh hơn)
-        float health = 50f * Mathf.Pow(1.8f, stageIndex - 1); 
+        // Máu quái thường: Dưới tầng 20 tăng 8 lần, từ tầng 20 giữ nguyên tăng 5 lần
+        float mult = (stageIndex >= 20) ? 5f : Mathf.Lerp(8f, 5f, Mathf.Clamp01((stageIndex - 1f) / 19f));
+        float health = (60f * mult) * Mathf.Pow(1.28f, Mathf.Max(0, stageIndex - 1)); 
         
         enemy.Init(health, playerTransform, false);
         
@@ -913,7 +946,7 @@ public class CombatManager : MonoBehaviour
         Enemy nearest = GetNearestEnemy(playerTransform.position);
         if (nearest != null)
         {
-            // Đánh lan (AoE) bán kính 6m
+            // Đánh lan (AoE) bán kính 6m + GÂY CHOÁNG 2 GIÂY ĐỨNG IM
             Collider[] hitColliders = Physics.OverlapSphere(nearest.transform.position, 6f);
             foreach (var hit in hitColliders)
             {
@@ -921,6 +954,10 @@ public class CombatManager : MonoBehaviour
                 if (e != null && !e.isDead)
                 {
                     e.TakeDamage(damage);
+                    if (!e.isBoss)
+                    {
+                        e.Stun(2.0f); // Quái thường đứng im hoàn toàn 2 giây (Boss miễn nhiễm)
+                    }
                 }
             }
             
@@ -931,7 +968,11 @@ public class CombatManager : MonoBehaviour
             GiantHandVFX gh = handVFX.AddComponent<GiantHandVFX>();
             gh.Setup(new Color(1f, 0.4f, 0f), magicArrayMaterial); 
             
-            Debug.Log("[Skill] 🖐️ ẤN CHƯỞNG!");
+            if (GameLogger.Instance != null)
+            {
+                GameLogger.Instance.Log("🖐️ ẤN CHƯỞNG: Chấn áp kinh thiên, toàn bộ quái vật bị CHOÁNG 2s!", new Color(1f, 0.5f, 0f));
+            }
+            Debug.Log("[Skill] 🖐️ ẤN CHƯỞNG: Đã gây choáng 2s!");
         }
     }
 
@@ -940,9 +981,41 @@ public class CombatManager : MonoBehaviour
         Enemy target = currentBoss != null ? currentBoss : GetNearestEnemy(playerTransform.position);
         if (target != null)
         {
-            target.TakeDamage(damage);
             Vector3 targetPos = target.transform.position;
             
+            // 1. MỤC TIÊU CHÍNH:
+            if (target.isBoss)
+            {
+                // Boss KHÔNG chịu ảnh hưởng đạo tiêu tức khắc, nhận sát thương sấm sét chí mạng cực lớn
+                target.TakeDamage(damage, true);
+                if (GameLogger.Instance != null)
+                {
+                    GameLogger.Instance.Log($"⚡ LÔI PHẠT: Giáng thẳng vào BOSS, gây {damage:N0} sát thương chí mạng!", new Color(0.8f, 0f, 1f));
+                }
+            }
+            else
+            {
+                // Quái thường: BỊ ĐẠO TIÊU NGAY TỨC KHẮC!
+                float executeDamage = target.hp + 999999f;
+                target.TakeDamage(executeDamage, true);
+                if (GameLogger.Instance != null)
+                {
+                    GameLogger.Instance.Log("⚡ LÔI KIẾP: Thiên kiếp giáng lâm, yêu quái đã bị ĐẠO TIÊU ngay tức khắc!", Color.red);
+                }
+            }
+
+            // 2. PHẦN ĐÁNH LAN (AoE Sóng xung kích bán kính 6m):
+            Collider[] hitColliders = Physics.OverlapSphere(targetPos, 6f);
+            foreach (var hit in hitColliders)
+            {
+                Enemy e = hit.GetComponent<Enemy>();
+                if (e != null && !e.isDead && e != target)
+                {
+                    // Quái xung quanh chịu sát thương lan (60% sát thương sấm sét)
+                    e.TakeDamage(damage * 0.6f, false);
+                }
+            }
+
             // Sóng xung kích
             GameObject shockwave = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             shockwave.transform.position = targetPos + Vector3.up * 0.5f; 
@@ -968,51 +1041,66 @@ public class CombatManager : MonoBehaviour
                 AudioManager.Instance.PlayLoiPhatSFX();
             }
 
-            Debug.Log("[Skill] ⚡ LÔI PHẠT!");
+            Debug.Log("[Skill] ⚡ LÔI PHẠT / LÔI KIẾP!");
         }
     }
 
-    private bool isAmDuongTranActive = false;
+    // --- ÂM DƯƠNG TRẬN (Buff toàn diện: Tốc độ kiếm, Sát thương, Hồi HP, Hồi MP) ---
+    public bool isAmDuongTranActive = false;
+    private float amDuongTranTimer = 0f;
+    private int amDuongTranLevel = 1;
 
-    public void CastAmDuongTran()
+    public bool IsAmDuongTranActive => isAmDuongTranActive;
+    public float GetAmDuongTranDamageMultiplier() => isAmDuongTranActive ? (1.30f + (amDuongTranLevel - 1) * 0.05f) : 1f; // +30% (+5%/lv)
+    public float GetAmDuongTranSpeedMultiplier() => isAmDuongTranActive ? (1.50f + (amDuongTranLevel - 1) * 0.05f) : 1f; // +50% (+5%/lv)
+    public float GetAmDuongTranHpRegenPercent() => 0.03f + (amDuongTranLevel - 1) * 0.005f; // 3% HP/s (+0.5%/lv)
+    public float GetAmDuongTranMpRegenFlat() => 15f + (amDuongTranLevel - 1) * 3f; // 15 MP/s (+3/lv)
+
+    public void CastAmDuongTran(int level = 1)
     {
-        if (isAmDuongTranActive) return;
+        amDuongTranLevel = Mathf.Max(1, level);
+        amDuongTranTimer = 6f; // Duy trì 6 giây
         isAmDuongTranActive = true;
 
-        // Dùng GameObject rỗng thay vì Cylinder để xóa vòng tròn ở giữa
+        // Vòng trận pháp Thái Cực xoay dưới chân người chơi
         GameObject aura = new GameObject("AmDuongTranPivot");
         aura.transform.position = playerTransform.position + Vector3.up * 0.5f;
-        
         AuraVFX auraVfx = aura.AddComponent<AuraVFX>();
         auraVfx.SetupYinYang();
-        Destroy(aura, 5f);
+        Destroy(aura, 6f);
 
-        foreach (var sword in activeSwords)
+        // Đổi màu vệt kiếm sang xanh ngọc lục bảo (Emerald) phát sáng rực rỡ
+        if (activeSwords != null)
         {
-            if (sword != null && sword.gameObject.activeSelf)
+            foreach (var sword in activeSwords)
             {
-                sword.baseSpeed *= 2f;
-                TrailRenderer tr = sword.GetComponent<TrailRenderer>();
-                if (tr != null) tr.startColor = Color.green;
+                if (sword != null && sword.gameObject.activeSelf)
+                {
+                    TrailRenderer tr = sword.GetComponent<TrailRenderer>();
+                    if (tr != null) tr.startColor = new Color(0.2f, 1f, 0.6f);
+                }
             }
         }
-        Invoke(nameof(EndAmDuongTran), 5f);
-        Debug.Log("[Skill] 👥 ÂM DƯƠNG TRẬN! (Tốc độ Phi Kiếm x2)");
+
+        Debug.Log($"[Skill] 👥 ÂM DƯƠNG TRẬN (Lv.{level}) kích hoạt! Tốc độ +{Mathf.RoundToInt((GetAmDuongTranSpeedMultiplier() - 1f) * 100)}%, Sát thương +{Mathf.RoundToInt((GetAmDuongTranDamageMultiplier() - 1f) * 100)}%, Hồi {GetAmDuongTranHpRegenPercent() * 100f:F1}% HP/s, Hồi {GetAmDuongTranMpRegenFlat():F0} MP/s.");
     }
 
     private void EndAmDuongTran()
     {
         isAmDuongTranActive = false;
-        foreach (var sword in activeSwords)
+        amDuongTranTimer = 0f;
+        if (activeSwords != null)
         {
-            if (sword != null && sword.gameObject.activeSelf)
+            foreach (var sword in activeSwords)
             {
-                sword.baseSpeed /= 2f; // Phục hồi tốc độ
-                // Phục hồi màu mặc định (Cyan)
-                TrailRenderer tr = sword.GetComponent<TrailRenderer>();
-                if (tr != null) tr.startColor = Color.cyan; 
+                if (sword != null && sword.gameObject.activeSelf)
+                {
+                    TrailRenderer tr = sword.GetComponent<TrailRenderer>();
+                    if (tr != null) tr.startColor = Color.cyan;
+                }
             }
         }
+        Debug.Log("[Skill] Âm Dương Trận kết thúc.");
     }
 
     // â”€â”€ SAVE / LOAD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

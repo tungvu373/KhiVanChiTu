@@ -117,7 +117,13 @@ public class ShopBuilderTool
 
         // 4. THÊM CÁC MẶT HÀNG (ĐAN DƯỢC)
         string[] itemNames = { "Hồi Linh Đan", "Tật Phong Đan", "Hồi Huyết Đan", "Cuồng Nộ Đan", "Tĩnh Tâm Đan" };
-        string[] itemDescs = { "+5% tốc độ hồi Linh lực (15s)", "+5% tốc độ Phi kiếm (15s)", "Hồi 5% HP mỗi giây (15s)", "+5% Sát thương (15s)", "+5% Thần Thức (15s)" };
+        string[] itemDescs = { 
+            "+5% hồi Linh Lực/15s (Dồn tối đa 5 lọ: 25%)", 
+            "+5% tốc độ Kiếm/15s (Dồn tối đa 5 lọ: 25%)", 
+            "Hồi 5% HP/s/15s (Dồn tối đa 5 lọ: 25%/s)", 
+            "+5% Sát thương/15s (Dồn tối đa 5 lọ: 25%)", 
+            "+5% Thần Thức/15s (Dồn tối đa 5 lọ: 25%)" 
+        };
         int[] itemCosts = { 500, 500, 500, 500, 1000 };
         Color[] itemColors = { Color.blue, Color.green, Color.red, new Color(1f, 0.5f, 0f), Color.magenta };
 

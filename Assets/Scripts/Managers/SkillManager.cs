@@ -34,11 +34,17 @@ public class SkillManager : MonoBehaviour
             activeSkill.skillName = "Vạn Kiếm Quy Tông";
             activeSkill.skillType = SkillType.VanKiemQuyTong;
             activeSkill.manaCost = 100f;
-            activeSkill.baseCooldown = 3f;
-            activeSkill.baseDamage = 500f;
+            activeSkill.baseCooldown = 10f;
+            activeSkill.baseDamage = 150f;
             activeSkill.isUnlocked = false;
             activeSkill.requiredStageIndex = 15; // Trúc Cơ Sơ Kỳ (Index 15)
             activeSkill.unlockCost = 2; // 2 Cơ Duyên
+        }
+        else
+        {
+            activeSkill.baseDamage = 150f;
+            activeSkill.baseCooldown = 10f;
+            activeSkill.skillType = SkillType.VanKiemQuyTong;
         }
 
         // Tự tạo 3 kỹ năng thường nếu chưa có
@@ -48,7 +54,7 @@ public class SkillManager : MonoBehaviour
             normalSkills[0].skillName = "Ấn Chưởng";
             normalSkills[0].skillType = SkillType.AnChuong;
             normalSkills[0].baseCooldown = 8f;
-            normalSkills[0].baseDamage = 150f;
+            normalSkills[0].baseDamage = 1000f;
             normalSkills[0].isUnlocked = false;
             normalSkills[0].requiredStageIndex = 18; // Kết Đan Sơ Kỳ
             normalSkills[0].unlockCost = 4;
@@ -57,7 +63,7 @@ public class SkillManager : MonoBehaviour
             normalSkills[1].skillName = "Lôi Phạt";
             normalSkills[1].skillType = SkillType.LoiPhat;
             normalSkills[1].baseCooldown = 12f;
-            normalSkills[1].baseDamage = 800f;
+            normalSkills[1].baseDamage = 2000f;
             normalSkills[1].isUnlocked = false;
             normalSkills[1].requiredStageIndex = 21; // Nguyên Anh Sơ Kỳ
             normalSkills[1].unlockCost = 8;
@@ -70,6 +76,17 @@ public class SkillManager : MonoBehaviour
             normalSkills[2].isUnlocked = false;
             normalSkills[2].requiredStageIndex = 24; // Hóa Thần Sơ Kỳ
             normalSkills[2].unlockCost = 16;
+        }
+        else
+        {
+            if (normalSkills[0] != null) normalSkills[0].baseDamage = 1000f;
+            if (normalSkills[1] != null) normalSkills[1].baseDamage = 2000f;
+            if (normalSkills[2] != null)
+            {
+                normalSkills[2].skillName = "Âm Dương Trận";
+                normalSkills[2].skillType = SkillType.AmDuongTran;
+                normalSkills[2].baseDamage = 0f;
+            }
         }
     }
 
@@ -190,9 +207,31 @@ public class SkillManager : MonoBehaviour
     public float GetActiveSkillCooldown() => currentCooldown;
     public float GetNormalSkillCooldown(int index) => normalCooldowns[index];
 
+    public float CalculateTotalSkillDamage(SkillData skill)
+    {
+        if (skill == null) return 0f;
+        float baseDmg = skill.GetCurrentDamage();
+        if (baseDmg <= 0) return 0f;
+
+        // Chỉ số Kiếm Ý từ tab Nâng Cấp được chuyển hóa trực tiếp vào uy lực kỹ năng
+        float kiemY = UpgradeManager.Instance != null ? UpgradeManager.Instance.GetKiemYValue() : 0f;
+        
+        // Vạn Kiếm Quy Tông: Mỗi thanh kiếm nhận +100% Kiếm Ý (tổng 20 kiếm = 20x Kiếm Ý)
+        // Kỹ năng thường (Ấn Chưởng, Lôi Phạt): Nhận +200% Kiếm Ý
+        float totalBase = (skill.skillType == SkillType.VanKiemQuyTong) ? (baseDmg + kiemY) : (baseDmg + kiemY * 2f);
+
+        float multiplier = CultivationManager.Instance != null ? CultivationManager.Instance.permanentStatMultiplier : 1f;
+        if (ShopManager.Instance != null) multiplier *= ShopManager.Instance.GetDamageMultiplier();
+        if (EconomyManager.Instance != null) multiplier *= (1f + EconomyManager.Instance.currentKiemY * 0.1f);
+        if (CombatManager.Instance != null && CombatManager.Instance.IsAmDuongTranActive)
+            multiplier *= CombatManager.Instance.GetAmDuongTranDamageMultiplier();
+
+        return totalBase * multiplier;
+    }
+
     private void ExecuteNormalSkill(SkillData skill)
     {
-        float damage = skill.GetCurrentDamage() * (CultivationManager.Instance != null ? CultivationManager.Instance.permanentStatMultiplier : 1f);
+        float damage = CalculateTotalSkillDamage(skill);
         
         switch (skill.skillType)
         {
@@ -205,7 +244,7 @@ public class SkillManager : MonoBehaviour
                 if (GameLogger.Instance != null) GameLogger.Instance.Log($"Thi triển: Lôi Phạt (Lv.{skill.level})", new Color(0.8f, 0f, 1f));
                 break;
             case SkillType.AmDuongTran:
-                if (CombatManager.Instance != null) CombatManager.Instance.CastAmDuongTran();
+                if (CombatManager.Instance != null) CombatManager.Instance.CastAmDuongTran(skill.level);
                 if (GameLogger.Instance != null) GameLogger.Instance.Log($"Thi triển: Âm Dương Trận (Lv.{skill.level})", Color.cyan);
                 break;
         }
@@ -233,11 +272,7 @@ public class SkillManager : MonoBehaviour
     {
         isSkillActive = true;
         
-        float finalDamage = activeSkill.GetCurrentDamage();
-        if (CultivationManager.Instance != null)
-        {
-            finalDamage *= CultivationManager.Instance.permanentStatMultiplier;
-        }
+        float finalDamage = CalculateTotalSkillDamage(activeSkill);
         
         if (CombatManager.Instance != null)
         {

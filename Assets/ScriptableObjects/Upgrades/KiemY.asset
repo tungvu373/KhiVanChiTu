@@ -16,5 +16,5 @@ MonoBehaviour:
   upgradeName: "Ki\u1EBFm \xDD"
   baseCost: 500
   costMultiplier: 1.35
-  baseValue: 10
-  valueIncrementPerLevel: 5
+  baseValue: 20
+  valueIncrementPerLevel: 15

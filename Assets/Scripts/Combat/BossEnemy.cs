@@ -60,9 +60,11 @@ public class BossEnemy : Enemy
     /// </summary>
     public void InitBoss(int stage, Transform target, bool isTribulation = false)
     {
-        // 1. Tính toán Máu (HP): Player DPS ở tầng 5 ~ 500. Boss chịu được ~25s -> HP ~ 12,500.
-        float healthMultiplier = isTribulation ? 3f : 2.5f;
-        float finalHealth = 5000f * Mathf.Pow(healthMultiplier, stage / 5f);
+        // Máu (HP) của Boss: Dưới tầng 20 tăng gấp 8 lần, từ tầng 20 giữ nguyên tăng gấp 5 lần
+        float mult = (stage >= 20) ? 5f : Mathf.Lerp(8f, 5f, Mathf.Clamp01((stage - 1f) / 19f));
+        float healthMultiplier = isTribulation ? 2.5f : 2.1f;
+        float stageScale = Mathf.Max(0f, (stage - 1) / 5f);
+        float finalHealth = (10000f * mult) * Mathf.Pow(healthMultiplier, stageScale);
 
         // Chiều cao thanh máu cao hơn đầu Boss (Model Boss to 1.5x)
         if (this.hpBarHeight < 3.2f) this.hpBarHeight = 3.5f;
@@ -194,6 +196,16 @@ public class BossEnemy : Enemy
                 attackCoroutine = StartCoroutine(BossAttackRoutine());
             }
         }
+    }
+
+    public override void Stun(float duration)
+    {
+        // Boss miễn nhiễm hoàn toàn hiệu ứng Choáng!
+    }
+
+    public override void Knockback(Vector3 direction, float distance)
+    {
+        // Boss miễn nhiễm hoàn toàn hiệu ứng Đẩy lùi!
     }
 
     /// <summary>

@@ -32,7 +32,7 @@ public class BaseDataGenerator
     private static void GenerateUpgrades()
     {
         CreateUpgrade("LinhLuc", "Linh Lực", 10, 1.2f, 100, 20);
-        CreateUpgrade("KiemY", "Kiếm Ý", 15, 1.3f, 10, 5);
+        CreateUpgrade("KiemY", "Kiếm Ý", 15, 1.3f, 20, 15);
         CreateUpgrade("ThanThuc", "Thần Thức", 20, 1.25f, 5, 0.2f);
         CreateUpgrade("TuLinh", "Tụ Linh", 25, 1.4f, 1, 0.5f);
     }
@@ -60,8 +60,8 @@ public class BaseDataGenerator
         SkillData skill = ScriptableObject.CreateInstance<SkillData>();
         skill.skillName = "Vạn Kiếm Quy Tông";
         skill.manaCost = 100;
-        skill.baseCooldown = 5;
-        skill.baseDamage = 500;
+        skill.baseCooldown = 10;
+        skill.baseDamage = 150;
         AssetDatabase.CreateAsset(skill, path);
     }
 

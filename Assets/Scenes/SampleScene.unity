@@ -552,6 +552,11 @@ MonoBehaviour:
       swords: []
       combatStage: 1
       enemiesKilled: 0
+      tutorialCompleted: 0
+      tutorialSwordDone: 0
+      tutorialUpgradeDone: 0
+      tutorialCoDuyenDone: 0
+      tutorialShopDone: 0
       playTime: 0
       lastPlayedDate: 
     - isSlotEmpty: 1
@@ -580,6 +585,11 @@ MonoBehaviour:
       swords: []
       combatStage: 1
       enemiesKilled: 0
+      tutorialCompleted: 0
+      tutorialSwordDone: 0
+      tutorialUpgradeDone: 0
+      tutorialCoDuyenDone: 0
+      tutorialShopDone: 0
       playTime: 0
       lastPlayedDate: 
     - isSlotEmpty: 1
@@ -608,6 +618,11 @@ MonoBehaviour:
       swords: []
       combatStage: 1
       enemiesKilled: 0
+      tutorialCompleted: 0
+      tutorialSwordDone: 0
+      tutorialUpgradeDone: 0
+      tutorialCoDuyenDone: 0
+      tutorialShopDone: 0
       playTime: 0
       lastPlayedDate: 
     lastPlayedSlotIndex: -1
@@ -39099,6 +39114,7 @@ MonoBehaviour:
   playerHpText: {fileID: 574036722}
   magicArrayMaterial: {fileID: 2100000, guid: fd5468e5397c41443a642d9fa8f1203b, type: 2}
   swordPrefab: {fileID: 8895727489844450355, guid: 47f67e3a9cccfe643b9510892aeb6144, type: 3}
+  isAmDuongTranActive: 0
 --- !u!114 &1629939732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39116,6 +39132,11 @@ MonoBehaviour:
   damageBuffTimer: 0
   spiritBuffTimer: 0
   hpRegenVisualTimer: 0
+  manaRegenStacks: 0
+  speedStacks: 0
+  hpRegenStacks: 0
+  damageStacks: 0
+  spiritStacks: 0
 --- !u!114 &1629939733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39180,6 +39201,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 068950dc743b4904db0b6d5ab153ab92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TutorialManager
+  swordDone: 0
+  upgradeDone: 0
+  coDuyenDone: 0
+  shopDone: 0
   tutorialOverlay: {fileID: 1704437177}
   tutorialText: {fileID: 1477816200}
 --- !u!1 &1630337105
