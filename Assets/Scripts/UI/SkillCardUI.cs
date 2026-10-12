@@ -53,8 +53,24 @@ public class SkillCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         string stageColor = reachStage ? "#88FF88" : "#FF6666";
         int currentCoDuyen = EconomyManager.Instance.currentCoDuyen;
 
+        string dmgBrief = "";
+        if (skill.isUnlocked)
+        {
+            float currentDmg = SkillManager.Instance != null ? SkillManager.Instance.CalculateTotalSkillDamage(skill) : skill.GetCurrentDamage();
+            if (skillIndex == 0)
+                dmgBrief = $"ST: {currentDmg:F0}x20 (Đẩy Lùi)";
+            else if (skill.skillType == SkillType.AnChuong)
+                dmgBrief = $"ST: {currentDmg:F0} (Choáng 2s)";
+            else if (skill.skillType == SkillType.LoiPhat)
+                dmgBrief = $"Đạo Tiêu (Lan {currentDmg * 0.6f:F0})";
+            else if (skill.skillType == SkillType.AmDuongTran)
+                dmgBrief = "Trận Pháp Buff";
+            else if (skill.baseDamage > 0)
+                dmgBrief = $"ST: {currentDmg:F0}";
+        }
+
         string reqText = skill.isUnlocked 
-            ? $"Yêu cầu: <color=#88FF88>{shortStage}</color> | <color=#FFD700>Lv.{skill.level}</color>" 
+            ? $"<color=#FFD700>{dmgBrief}</color> | <color=#88FF88>Lv.{skill.level}</color>" 
             : $"Yêu cầu: <color={stageColor}>{shortStage}</color>";
 
         // 1. Cập nhật condText nếu có
@@ -143,7 +159,14 @@ public class SkillCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             Debug.Log($"[Skill] Đã nâng cấp {skill.skillName} lên Lv.{skill.level} (Sát thương: {currentDmg:F0})");
             if (GameLogger.Instance != null) 
             {
-                GameLogger.Instance.Log($"Nâng cấp thành công: {skill.skillName} lên Cấp {skill.level}! (+30% Sát thương)", Color.green);
+                if (skill.skillType == SkillType.AmDuongTran)
+                {
+                    GameLogger.Instance.Log($"Nâng cấp thành công: {skill.skillName} lên Cấp {skill.level}! (+5% Tốc độ & Sát thương, +0.5% HP, +3 MP)", Color.green);
+                }
+                else
+                {
+                    GameLogger.Instance.Log($"Nâng cấp thành công: {skill.skillName} lên Cấp {skill.level}! (+30% Sát thương)", Color.green);
+                }
             }
         }
         else
@@ -166,21 +189,48 @@ public class SkillCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
                 string stageColor = reachStage ? "#88FF88" : "#FF6666";
 
-                float currentDmg = skill.GetCurrentDamage();
+                float currentDmg = SkillManager.Instance != null ? SkillManager.Instance.CalculateTotalSkillDamage(skill) : skill.GetCurrentDamage();
                 string titleStr = skill.isUnlocked 
                     ? $"{skill.skillName} (Cấp {skill.level})" 
                     : skill.skillName;
 
                 string info = $"<size=15><b><color=#00FFFF>{titleStr}</color></b></size>\n\n";
-                if (skill.baseDamage > 0)
+                if (skillIndex == 0)
+                {
+                    info += $"<color=#FFD700>Sát thương:</color> {currentDmg:F0}/kiếm (20 phi kiếm, tổng {currentDmg * 20:F0} ST)\n";
+                    info += $"<color=#00FFFF>Đặc hiệu:</color> <color=#88FF88>ĐẨY LÙI MỤC TIÊU liên tục!</color>\n";
+                    if (skill.level > 1) info += $"<color=#88FF88>(+{Mathf.RoundToInt((skill.level - 1) * 30)}% Cấp độ + Kiếm Ý)</color>\n";
+                }
+                else if (skill.skillType == SkillType.AnChuong)
+                {
+                    info += $"<color=#FFD700>Sát thương AOE:</color> {currentDmg:F0} (Bán kính nổ 6m)\n";
+                    info += $"<color=#00FFFF>Đặc hiệu:</color> <color=#FFD700>GÂY CHOÁNG TOÀN BỘ QUÁI 2 GIÂY ĐỨNG IM!</color>\n";
+                    if (skill.level > 1) info += $"<color=#88FF88>(+{Mathf.RoundToInt((skill.level - 1) * 30)}% Cấp độ + Kiếm Ý)</color>\n";
+                }
+                else if (skill.skillType == SkillType.LoiPhat)
+                {
+                    info += $"<color=#FFD700>Thiên Kiếp Trảm:</color> <color=#FF4444>ĐẠO TIÊU quái thường ngay tức khắc!</color>\n";
+                    info += $"<color=#FFD700>Sát thương Boss:</color> {currentDmg:F0} chí mạng (Boss không bị one-shot)\n";
+                    info += $"<color=#FFD700>Đánh lan:</color> {currentDmg * 0.6f:F0} ST xung quanh (6m)\n";
+                    if (skill.level > 1) info += $"<color=#88FF88>(+{Mathf.RoundToInt((skill.level - 1) * 30)}% Cấp độ + Kiếm Ý)</color>\n";
+                }
+                else if (skill.skillType == SkillType.AmDuongTran)
+                {
+                    int spdBonus = 50 + (skill.level - 1) * 5;
+                    int dmgBonus = 30 + (skill.level - 1) * 5;
+                    float hpRegen = 3f + (skill.level - 1) * 0.5f;
+                    float mpRegen = 15f + (skill.level - 1) * 3f;
+                    info += $"<color=#FFD700>Hiệu ứng Trận Pháp (6s):</color>\n";
+                    info += $" • Tốc độ kiếm: <color=#88FF88>+{spdBonus}%</color>\n";
+                    info += $" • Sát thương kiếm: <color=#88FF88>+{dmgBonus}%</color>\n";
+                    info += $" • Hồi máu: <color=#88FF88>+{hpRegen:F1}% Max HP/s</color>\n";
+                    info += $" • Hồi Linh Lực: <color=#88FF88>+{mpRegen:F0} MP/s</color>\n";
+                }
+                else if (skill.baseDamage > 0)
                 {
                     info += $"<color=#FFD700>Sát thương:</color> {currentDmg:F0}";
                     if (skill.level > 1) info += $" <color=#88FF88>(+{Mathf.RoundToInt((skill.level - 1) * 30)}%)</color>";
                     info += "\n";
-                }
-                else
-                {
-                    info += $"<color=#FFD700>Hiệu ứng:</color> Tốc độ Phi Kiếm x2 (Lv.{skill.level})\n";
                 }
 
                 info += $"<color=#FFD700>Hồi chiêu:</color> {skill.baseCooldown:F1}s\n";
@@ -202,9 +252,14 @@ public class SkillCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
                     string cdColor = (currentCoDuyen >= upCost) ? "#88FF88" : "#FFB84D";
                     info += $"<color=#FFD700>Cơ duyên nâng cấp (Lv.{skill.level + 1}):</color> <color={cdColor}>{currentCoDuyen}/{upCost} CD</color>\n\n";
                     if (currentCoDuyen >= upCost)
-                        info += "<color=#88FF88><i>[Bấm nút để Nâng Cấp (+30% Sức mạnh)!]</i></color>";
+                    {
+                        string buffNote = (skill.skillType == SkillType.AmDuongTran) ? "+Hiệu ứng Trận Pháp" : "+30% Sát thương";
+                        info += $"<color=#88FF88><i>[Bấm nút để Nâng Cấp ({buffNote})!]</i></color>";
+                    }
                     else
+                    {
                         info += "<color=#FFB84D><i>[Cần thêm Cơ Duyên để nâng cấp]</i></color>";
+                    }
                 }
 
                 TooltipManager.Instance.ShowTooltip(info);

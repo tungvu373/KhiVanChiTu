@@ -57,7 +57,7 @@ public class SkillUIBuilderTool
         CreateUpgradeCard(upgradePanel.transform, "TuLinh", defaultFont, ref uiPlaceholder.txtTuLinh, ref uiPlaceholder.btnTuLinh);
         
         // --- BƯỚC 2: TẠO 4 THẺ KỸ NĂNG ---
-        string[] skillNames = { "Vạn Kiếm Quy Tông", "Ấn Chưởng", "Lôi Phạt", "Phân Thân" };
+        string[] skillNames = { "Vạn Kiếm Quy Tông", "Ấn Chưởng", "Lôi Phạt", "Âm Dương Trận" };
         Color[] colors = { Color.yellow, Color.cyan, Color.magenta, Color.green };
 
         for (int i = 0; i < 4; i++)

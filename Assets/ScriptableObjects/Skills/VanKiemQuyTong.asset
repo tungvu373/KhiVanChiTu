@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: "V\u1EA1n Ki\u1EBFm Quy T\xF4ng"
   manaCost: 100
-  baseCooldown: 5
-  baseDamage: 500
+  baseCooldown: 10
+  baseDamage: 150

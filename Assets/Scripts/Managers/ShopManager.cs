@@ -6,12 +6,19 @@ public class ShopManager : MonoBehaviour
 {
     public static ShopManager Instance { get; private set; }
 
-    [Header("Buffs (Giới hạn tối đa 150s - 10 viên)")]
+    [Header("Buffs (Cộng dồn tối đa 5 lọ = 75s, +25%)")]
     public float manaRegenBuffTimer = 0f;
     public float speedBuffTimer = 0f;
     public float damageBuffTimer = 0f;
     public float spiritBuffTimer = 0f; 
     public float hpRegenVisualTimer = 0f; 
+
+    [Header("Buff Stacks (1 lọ 5% -> 5 lọ 25%)")]
+    public int manaRegenStacks = 0;
+    public int speedStacks = 0;
+    public int hpRegenStacks = 0;
+    public int damageStacks = 0;
+    public int spiritStacks = 0;
 
     private Text[] buffTexts = new Text[5];
     private Image[] buffFills = new Image[5];
@@ -59,11 +66,31 @@ public class ShopManager : MonoBehaviour
 
     private void Update()
     {
-        if (manaRegenBuffTimer > 0) manaRegenBuffTimer -= Time.deltaTime;
-        if (speedBuffTimer > 0) speedBuffTimer -= Time.deltaTime;
-        if (hpRegenVisualTimer > 0) hpRegenVisualTimer -= Time.deltaTime;
-        if (damageBuffTimer > 0) damageBuffTimer -= Time.deltaTime;
-        if (spiritBuffTimer > 0) spiritBuffTimer -= Time.deltaTime;
+        if (manaRegenBuffTimer > 0)
+        {
+            manaRegenBuffTimer -= Time.deltaTime;
+            if (manaRegenBuffTimer <= 0) { manaRegenBuffTimer = 0; manaRegenStacks = 0; }
+        }
+        if (speedBuffTimer > 0)
+        {
+            speedBuffTimer -= Time.deltaTime;
+            if (speedBuffTimer <= 0) { speedBuffTimer = 0; speedStacks = 0; }
+        }
+        if (hpRegenVisualTimer > 0)
+        {
+            hpRegenVisualTimer -= Time.deltaTime;
+            if (hpRegenVisualTimer <= 0) { hpRegenVisualTimer = 0; hpRegenStacks = 0; }
+        }
+        if (damageBuffTimer > 0)
+        {
+            damageBuffTimer -= Time.deltaTime;
+            if (damageBuffTimer <= 0) { damageBuffTimer = 0; damageStacks = 0; }
+        }
+        if (spiritBuffTimer > 0)
+        {
+            spiritBuffTimer -= Time.deltaTime;
+            if (spiritBuffTimer <= 0) { spiritBuffTimer = 0; spiritStacks = 0; }
+        }
 
         UpdateBuffUI();
     }
@@ -75,28 +102,30 @@ public class ShopManager : MonoBehaviour
             FindBuffUITexts();
         }
         
-        UpdateRow(0, "Hồi Linh: +5%", manaRegenBuffTimer);
-        UpdateRow(1, "Tốc Độ: +5%", speedBuffTimer);
-        UpdateRow(2, "Hồi Máu: +5%/s", hpRegenVisualTimer);
-        UpdateRow(3, "Sát Thương: +5%", damageBuffTimer);
-        UpdateRow(4, "Thần Thức: +5%", spiritBuffTimer);
+        UpdateRow(0, "Hồi Linh", manaRegenStacks, manaRegenBuffTimer);
+        UpdateRow(1, "Tốc Độ", speedStacks, speedBuffTimer);
+        UpdateRow(2, "Hồi Máu", hpRegenStacks, hpRegenVisualTimer);
+        UpdateRow(3, "Sát Thương", damageStacks, damageBuffTimer);
+        UpdateRow(4, "Thần Thức", spiritStacks, spiritBuffTimer);
     }
 
-    private void UpdateRow(int index, string label, float timer)
+    private void UpdateRow(int index, string label, int stacks, float timer)
     {
         if (buffRows[index] != null)
         {
-            if (timer > 0)
+            if (timer > 0 && stacks > 0)
             {
                 buffRows[index].SetActive(true);
                 if (buffTexts[index] != null)
                 {
-                    buffTexts[index].text = $"{label} ({Mathf.Ceil(timer)}s)";
+                    int percent = stacks * 5;
+                    string unit = (index == 2) ? "%/s" : "%";
+                    buffTexts[index].text = $"{label}: +{percent}{unit} (x{stacks}) [{Mathf.Ceil(timer)}s]";
                 }
                 if (buffFills[index] != null)
                 {
-                    // Scale chiều ngang của thanh (thời gian tối đa 150s)
-                    float fillRatio = Mathf.Clamp01(timer / 150f);
+                    // Scale chiều ngang của thanh (thời gian tối đa 75s = 5 lọ)
+                    float fillRatio = Mathf.Clamp01(timer / 75f);
                     RectTransform fillRt = buffFills[index].GetComponent<RectTransform>();
                     fillRt.anchorMax = new Vector2(fillRatio, 1);
                 }
@@ -108,42 +137,20 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    public void BuyItem(int itemIndex)
+    public int GetStacksByIndex(int itemIndex)
     {
-        int stage = CultivationManager.Instance != null ? CultivationManager.Instance.currentStageIndex : 0;
-        float baseCost = (itemIndex == 4) ? 1000f : 500f; // Tĩnh Tâm Đan
-        float cost = baseCost * Mathf.Pow(1.2f, stage);
-
-        // Check giới hạn 150s (10 viên * 15s)
-        float currentTimer = GetTimerByIndex(itemIndex);
-        if (currentTimer + 15f > 150f)
+        switch (itemIndex)
         {
-            Debug.Log("[Shop] Giới hạn tối đa 10 viên mỗi loại! Đã đạt max buff.");
-            return;
+            case 0: return manaRegenStacks;
+            case 1: return speedStacks;
+            case 2: return hpRegenStacks;
+            case 3: return damageStacks;
+            case 4: return spiritStacks;
         }
-
-        if (EconomyManager.Instance != null && EconomyManager.Instance.SpendLinhThach(cost))
-        {
-            ApplyBuff(itemIndex);
-            
-            // Tìm lại UI trong trường hợp Editor vừa sinh UI
-            FindBuffUITexts(); 
-            
-            Debug.Log($"[Shop] Mua thành công vật phẩm số {itemIndex}");
-            
-            if (GameLogger.Instance != null)
-            {
-                string[] names = { "Hồi Linh Đan", "Tật Phong Đan", "Hồi Huyết Đan", "Cuồng Bạo Đan", "Ngưng Thần Đan" };
-                GameLogger.Instance.Log($"Mua: {names[itemIndex]}", Color.green);
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"[Shop] LỖI: Không đủ Linh Thạch! Cần {cost} LT nhưng bạn chỉ có {(EconomyManager.Instance != null ? EconomyManager.Instance.currentLinhThach : 0)} LT.");
-        }
+        return 0;
     }
 
-    private float GetTimerByIndex(int itemIndex)
+    public float GetTimerByIndex(int itemIndex)
     {
         switch (itemIndex)
         {
@@ -156,27 +163,77 @@ public class ShopManager : MonoBehaviour
         return 0;
     }
 
+    public void BuyItem(int itemIndex)
+    {
+        int currentStacks = GetStacksByIndex(itemIndex);
+        if (currentStacks >= 5)
+        {
+            Debug.Log("[Shop] Đã đạt giới hạn tối đa 5 lọ cộng dồn (+25%)! Hãy đợi hết hiệu lực.");
+            if (GameLogger.Instance != null)
+            {
+                string[] names = { "Hồi Linh Đan", "Tật Phong Đan", "Hồi Huyết Đan", "Cuồng Nộ Đan", "Tĩnh Tâm Đan" };
+                GameLogger.Instance.Log($"{names[itemIndex]} đã đạt tối đa 5 lọ (+25%)!", Color.yellow);
+            }
+            return;
+        }
+
+        int stage = CultivationManager.Instance != null ? CultivationManager.Instance.currentStageIndex : 0;
+        float baseCost = (itemIndex == 4) ? 1000f : 500f; // Tĩnh Tâm Đan
+        float cost = baseCost * Mathf.Pow(1.2f, stage);
+
+        if (EconomyManager.Instance != null && EconomyManager.Instance.SpendLinhThach(cost))
+        {
+            ApplyBuff(itemIndex);
+            
+            // Tìm lại UI trong trường hợp Editor vừa sinh UI
+            FindBuffUITexts(); 
+            
+            string[] names = { "Hồi Linh Đan", "Tật Phong Đan", "Hồi Huyết Đan", "Cuồng Nộ Đan", "Tĩnh Tâm Đan" };
+            int newStacks = GetStacksByIndex(itemIndex);
+            Debug.Log($"[Shop] Mua thành công {names[itemIndex]} (Tầng {newStacks}/5 - +{newStacks * 5}%)");
+            
+            if (GameLogger.Instance != null)
+            {
+                GameLogger.Instance.Log($"Dùng {names[itemIndex]}: +{newStacks * 5}% (Tầng {newStacks}/5, {Mathf.Ceil(GetTimerByIndex(itemIndex))}s)", Color.green);
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[Shop] LỖI: Không đủ Linh Thạch! Cần {cost} LT nhưng bạn chỉ có {(EconomyManager.Instance != null ? EconomyManager.Instance.currentLinhThach : 0)} LT.");
+        }
+    }
+
     public void ApplyBuff(int itemIndex)
     {
         switch (itemIndex)
         {
-            case 0: manaRegenBuffTimer += 15f; break;
-            case 1: speedBuffTimer += 15f; break;
-            case 2: hpRegenVisualTimer += 15f; break;
-            case 3: damageBuffTimer += 15f; break;
-            case 4: spiritBuffTimer += 15f; break;
+            case 0:
+                manaRegenStacks = Mathf.Min(5, manaRegenStacks + 1);
+                manaRegenBuffTimer = Mathf.Min(75f, manaRegenBuffTimer + 15f);
+                break;
+            case 1:
+                speedStacks = Mathf.Min(5, speedStacks + 1);
+                speedBuffTimer = Mathf.Min(75f, speedBuffTimer + 15f);
+                break;
+            case 2:
+                hpRegenStacks = Mathf.Min(5, hpRegenStacks + 1);
+                hpRegenVisualTimer = Mathf.Min(75f, hpRegenVisualTimer + 15f);
+                break;
+            case 3:
+                damageStacks = Mathf.Min(5, damageStacks + 1);
+                damageBuffTimer = Mathf.Min(75f, damageBuffTimer + 15f);
+                break;
+            case 4:
+                spiritStacks = Mathf.Min(5, spiritStacks + 1);
+                spiritBuffTimer = Mathf.Min(75f, spiritBuffTimer + 15f);
+                break;
         }
     }
 
     // Helper functions for other managers to read buff states
-    private float GetScaledBuff()
-    {
-        int stage = CultivationManager.Instance != null ? CultivationManager.Instance.currentStageIndex : 0;
-        return 1f + 0.05f + (stage * 0.005f);
-    }
-
-    public float GetManaRegenMultiplier() => manaRegenBuffTimer > 0 ? GetScaledBuff() : 1f;
-    public float GetSpeedMultiplier() => speedBuffTimer > 0 ? GetScaledBuff() : 1f;
-    public float GetDamageMultiplier() => damageBuffTimer > 0 ? GetScaledBuff() : 1f;
-    public float GetSpiritMultiplier() => spiritBuffTimer > 0 ? GetScaledBuff() : 1f;
+    public float GetManaRegenMultiplier() => (manaRegenBuffTimer > 0 && manaRegenStacks > 0) ? (1f + manaRegenStacks * 0.05f) : 1f;
+    public float GetSpeedMultiplier() => (speedBuffTimer > 0 && speedStacks > 0) ? (1f + speedStacks * 0.05f) : 1f;
+    public float GetDamageMultiplier() => (damageBuffTimer > 0 && damageStacks > 0) ? (1f + damageStacks * 0.05f) : 1f;
+    public float GetSpiritMultiplier() => (spiritBuffTimer > 0 && spiritStacks > 0) ? (1f + spiritStacks * 0.05f) : 1f;
+    public float GetHpRegenRate() => (hpRegenVisualTimer > 0 && hpRegenStacks > 0) ? (hpRegenStacks * 0.05f) : 0f;
 }

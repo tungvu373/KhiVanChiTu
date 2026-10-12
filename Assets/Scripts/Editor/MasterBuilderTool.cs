@@ -551,7 +551,7 @@ public class MasterBuilderTool
         MakeUpgradeCard(content.transform, "TuLinh", font, ref uiPlaceholder.txtTuLinh, ref uiPlaceholder.btnTuLinh);
 
         // --- 4 Thẻ Kỹ Năng ---
-        string[] skillNames = { "Vạn Kiếm Quy Tông", "Ấn Chưởng", "Lôi Phạt", "Phân Thân" };
+        string[] skillNames = { "Vạn Kiếm Quy Tông", "Ấn Chưởng", "Lôi Phạt", "Âm Dương Trận" };
         Color[] colors = { Color.yellow, Color.cyan, Color.magenta, Color.green };
 
         for (int i = 0; i < 4; i++)

@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    public float maxHp = 50f;
-    public float hp = 50f;
+    public float maxHp = 480f;
+    public float hp = 480f;
     public float moveSpeed = 2f;
     
     public bool isBoss = false;
@@ -30,6 +30,10 @@ public class Enemy : MonoBehaviour
     // UI Damage Popup (Cộng dồn sát thương tránh đè chữ)
     protected DamagePopup activePopup;
 
+    [Header("Crowd Control (Khống Chế)")]
+    public float stunTimer = 0f;
+    public bool IsStunned => stunTimer > 0f;
+
     [Header("Settings")]
     public float hpBarHeight = 2.5f; // Chiều cao thanh máu (tùy chỉnh trên Inspector)
 
@@ -40,6 +44,29 @@ public class Enemy : MonoBehaviour
         CancelInvoke();
         isDead = false;
         activePopup = null;
+        stunTimer = 0f;
+    }
+
+    public virtual void Stun(float duration)
+    {
+        if (isDead || isBoss) return; // Boss miễn nhiễm hoàn toàn hiệu ứng Choáng!
+        stunTimer = Mathf.Max(stunTimer, duration);
+        if (animator != null && hasIsMovingParam)
+        {
+            animator.SetBool("IsMoving", false);
+        }
+    }
+
+    public virtual void Knockback(Vector3 direction, float distance)
+    {
+        if (isDead || isBoss) return; // Boss miễn nhiễm hoàn toàn hiệu ứng Đẩy lùi!
+        direction.y = 0f;
+        if (direction.sqrMagnitude > 0.001f)
+            direction.Normalize();
+        else
+            direction = Vector3.forward;
+
+        transform.position += direction * distance;
     }
 
     public void Init(float health, Transform target, bool boss = false)
@@ -54,6 +81,7 @@ public class Enemy : MonoBehaviour
         isDead = false;
         attackTimer = 0.5f;
         activePopup = null;
+        stunTimer = 0f;
 
         SetupHPBar();
 
@@ -171,6 +199,15 @@ public class Enemy : MonoBehaviour
     {
         UpdateHpBar();
         UpdateFlashEffect();
+
+        // Xử lý Choáng (Stun): Quái vật đứng im hoàn toàn, không di chuyển và không đánh
+        if (stunTimer > 0f)
+        {
+            stunTimer -= Time.deltaTime;
+            if (animator != null && hasIsMovingParam) animator.SetBool("IsMoving", false);
+            return;
+        }
+
         UpdateMovementAndCombat();
     }
 

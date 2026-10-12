@@ -68,6 +68,13 @@ public class CharacterSaveData
     public int combatStage = 1;
     public int enemiesKilled = 0;
 
+    // ── Hướng Dẫn Tân Thủ (Tutorial) ──────────────────────────────────────────
+    public bool tutorialCompleted = false;
+    public bool tutorialSwordDone = false;
+    public bool tutorialUpgradeDone = false;
+    public bool tutorialCoDuyenDone = false;
+    public bool tutorialShopDone = false;
+
     // ── Tiến trình ──────────────────────────────────────────────────────────
     public float playTime = 0f;
     public string lastPlayedDate = "";
@@ -187,6 +194,7 @@ public class DataManager : MonoBehaviour
         CombatManager.Instance?.SaveToSlot(slot);
         StageManager.Instance?.SaveToSlot(slot);
         MergeManager.Instance?.SaveToSlot(slot);
+        TutorialManager.Instance?.SaveToSlot(slot);
 
         SaveData(); // Ghi xuống PlayerPrefs & File backup
 
@@ -218,6 +226,7 @@ public class DataManager : MonoBehaviour
         CombatManager.Instance?.LoadFromSlot(slot);
         StageManager.Instance?.LoadFromSlot(slot);
         MergeManager.Instance?.LoadFromSlot(slot); // Cuối cùng vì gọi CombatManager.UpdateEquippedSwords
+        TutorialManager.Instance?.LoadFromSlot(slot);
 
         // KÍCH HOẠT CỜ SESSION: Bây giờ game đã nạp dữ liệu xong, cho phép hệ thống auto-save hoạt động
         isSessionActive = true;
