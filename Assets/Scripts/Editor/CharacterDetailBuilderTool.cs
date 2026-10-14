@@ -9,17 +9,8 @@ using UnityEditor.SceneManagement;
 /// tích hợp ScrollView hoàn chỉnh (ScrollRect + RectMask2D + VerticalLayoutGroup + Scrollbar)
 /// để người chơi thoải mái cuộn chuột / kéo xem toàn bộ thông tin mà không bao giờ bị tràn khỏi khung.
 /// </summary>
-[InitializeOnLoad]
 public class CharacterDetailBuilderTool
 {
-    static CharacterDetailBuilderTool()
-    {
-        EditorApplication.delayCall += () =>
-        {
-            EnsureCharacterDetailInScene(forceRebuild: false);
-        };
-    }
-
     [MenuItem("TuTien/UI/Tạo Panel Chi Tiết Nhân Vật (Character Detail)")]
     public static void CreateOrSelectMenu()
     {

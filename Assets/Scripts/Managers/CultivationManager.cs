@@ -68,12 +68,59 @@ public class CultivationManager : MonoBehaviour
         CheckBreakthrough();
     }
 
+    /// <summary>
+    /// Lấy dữ liệu cảnh giới hiện tại an toàn.
+    /// </summary>
+    public CultivationStageData GetCurrentStageData()
+    {
+        if (allStages == null || currentStageIndex >= allStages.Length) return null;
+        return allStages[currentStageIndex];
+    }
+
+    /// <summary>
+    /// Kiểm tra xem Cảnh Giới hiện tại có phải là mốc Đột Phá (cần diệt Boss) hay không.
+    /// QUY TẮC CHUẨN:
+    /// - Riêng 15 tầng Luyện Khí Kỳ: CHỈ CÓ DUY NHẤT TẦNG 15 mới là Đột Phá (cần diệt Boss lên Trúc Cơ).
+    ///   Các tầng 1 -> 14 chỉ là tích lũy tu vi tiểu cảnh giới, đủ 100% Tu Vi là TỰ ĐỘNG THĂNG TẦNG!
+    /// - Các đại cảnh giới khác (Trúc Cơ, Kết Đan...): Căn cứ theo hasTribulationBoss của Cảnh Giới đó.
+    /// </summary>
+    public bool RequiresBossToBreakthrough(CultivationStageData stageData)
+    {
+        if (stageData == null) return false;
+
+        // Riêng 15 tầng Luyện Khí Kỳ: CHỈ CÓ DUY NHẤT TẦNG 15 MỚI LÀ ĐỘT PHÁ!
+        if (stageData.stageName.Contains("Luyện Khí"))
+        {
+            return stageData.stageName.Contains("Tầng 15");
+        }
+
+        // Các cảnh giới khác: Cần đánh boss nếu có hasTribulationBoss
+        return stageData.hasTribulationBoss;
+    }
+
+    /// <summary>
+    /// Kiểm tra người chơi đã đạt cực hạn 100% tu vi (đạt bình cảnh) để sẵn sàng đột phá hay chưa.
+    /// </summary>
+    public bool IsTuViMaxed()
+    {
+        if (allStages == null || currentStageIndex >= allStages.Length) return false;
+        return currentTuVi >= allStages[currentStageIndex].requiredTuVi;
+    }
+
     private void UpdateDashboardUI(CultivationStageData currentStageData)
     {
         if (stageText != null)
         {
-            float progress = (currentTuVi / currentStageData.requiredTuVi) * 100f;
-            stageText.text = $"Cảnh Giới: {currentStageData.stageName} - Tiến độ: {progress:F1}%";
+            bool needBoss = RequiresBossToBreakthrough(currentStageData);
+            if (currentTuVi >= currentStageData.requiredTuVi && needBoss)
+            {
+                stageText.text = $"Cảnh Giới: {currentStageData.stageName} - 100% (Cần diệt Boss để Đột phá)";
+            }
+            else
+            {
+                float progress = (currentTuVi / currentStageData.requiredTuVi) * 100f;
+                stageText.text = $"Cảnh Giới: {currentStageData.stageName} - Tiến độ: {progress:F1}%";
+            }
         }
 
         if (characterInfoText != null)
@@ -91,27 +138,78 @@ public class CultivationManager : MonoBehaviour
             UpdateDashboardUI(allStages[currentStageIndex]);
     }
 
+    /// <summary>
+    /// Lấy thứ hạng Đại Cảnh Giới đang cần Đột Phá:
+    /// 1 = Lên Trúc Cơ (Luyện Khí 15)
+    /// 2 = Lên Kết Đan (Trúc Cơ Hậu Kỳ)
+    /// 3 = Lên Nguyên Anh (Kết Đan Hậu Kỳ)
+    /// 4 = Lên Hóa Thần (Nguyên Anh Hậu Kỳ)
+    /// </summary>
+    public int GetCurrentTribulationTier()
+    {
+        if (allStages == null || currentStageIndex >= allStages.Length) return 1;
+        string name = allStages[currentStageIndex].stageName;
+        if (name.Contains("Luyện Khí")) return 1;
+        if (name.Contains("Trúc Cơ")) return 2;
+        if (name.Contains("Kết Đan")) return 3;
+        if (name.Contains("Nguyên Anh")) return 4;
+        if (name.Contains("Hóa Thần")) return 5;
+        return Mathf.Clamp((currentStageIndex / 6) + 1, 1, 6);
+    }
+
+    /// <summary>
+    /// Lấy tên Đại Cảnh Giới kế tiếp
+    /// </summary>
+    public string GetNextRealmName()
+    {
+        int nextIdx = currentStageIndex + 1;
+        if (allStages != null && nextIdx < allStages.Length)
+        {
+            return allStages[nextIdx].stageName;
+        }
+        return "Cảnh Giới Mới";
+    }
+
+    /// <summary>
+    /// Áp dụng hình phạt khi Độ Kiếp thất bại: Bị Thiên Kiếp phản phệ, tổn thất 25% điểm Tu Vi.
+    /// </summary>
+    public float ApplyTribulationFailurePenalty()
+    {
+        if (allStages == null || currentStageIndex >= allStages.Length) return 0f;
+
+        CultivationStageData currentStageData = allStages[currentStageIndex];
+        float penalty = currentStageData.requiredTuVi * 0.25f;
+        currentTuVi = Mathf.Max(0f, currentTuVi - penalty);
+
+        UpdateDashboardUI(currentStageData);
+        OnTuViChanged?.Invoke(currentTuVi, currentStageData.requiredTuVi);
+
+        Debug.Log($"⚡ [CultivationManager] Độ kiếp thất bại! Bị thiên kiếp phản phệ, tổn thất 25% Tu Vi (-{penalty:F0}). Tu vi hiện tại: {currentTuVi:F0}/{currentStageData.requiredTuVi}");
+        return penalty;
+    }
+
     private void CheckBreakthrough()
     {
+        if (allStages == null || currentStageIndex >= allStages.Length) return;
         CultivationStageData currentStageData = allStages[currentStageIndex];
+
         if (currentTuVi >= currentStageData.requiredTuVi)
         {
-            if (currentStageData.hasTribulationBoss)
+            bool needBoss = RequiresBossToBreakthrough(currentStageData);
+
+            if (needBoss)
             {
-                Debug.Log("⚠️ LÔI KIẾP HÀNG LÂM! Chuẩn bị đánh Boss Lôi Kiếp!");
-                if (CameraShake.Instance != null) CameraShake.Instance.TriggerShake(1.0f, 0.6f);
-                if (lightningVFXPrefab != null && CombatManager.Instance != null && CombatManager.Instance.playerTransform != null)
-                {
-                    Instantiate(lightningVFXPrefab, CombatManager.Instance.playerTransform.position + Vector3.up * 8f, Quaternion.Euler(90, 0, 0));
-                }
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.PlayLoiPhatSFX();
-                }
-                GameManager.Instance.ChangeState(GameManager.GameState.BossTribulation);
+                // MỐC ĐỘT PHÁ ĐẠI CẢNH GIỚI:
+                // Mở UI Panel hỏi ý người chơi: Xác nhận độ kiếp thăng cấp hay từ chối để củng cố sức mạnh!
+                if (CombatManager.Instance != null && CombatManager.Instance.isTribulationBossActive) return;
+                if (StageManager.Instance != null && StageManager.Instance.isBossStage) return; // Không làm phiền khi đang đánh boss tầng
+
+                TribulationModalUI.Open();
             }
             else
             {
+                // TIỂU CẢNH GIỚI (Luyện Khí Tầng 1 -> 14, Trúc Cơ Sơ -> Trung...):
+                // Đủ 100% Tu Vi là TỰ ĐỘNG THĂNG TẦNG / LÊN CẤP NGAY!
                 Breakthrough();
             }
         }
@@ -132,7 +230,7 @@ public class CultivationManager : MonoBehaviour
         if (isMajorBreakthrough)
         {
             if (CameraShake.Instance != null) CameraShake.Instance.TriggerShake(0.8f, 0.5f);
-            if (lightningVFXPrefab != null && CombatManager.Instance != null)
+            if (lightningVFXPrefab != null && CombatManager.Instance != null && CombatManager.Instance.playerTransform != null)
             {
                 Instantiate(lightningVFXPrefab, CombatManager.Instance.playerTransform.position + Vector3.up * 8f, Quaternion.Euler(90, 0, 0));
             }
@@ -204,11 +302,12 @@ public class CultivationManager : MonoBehaviour
 
     private void ReturnToIdle()
     {
-        if (GameManager.Instance.currentState == GameManager.GameState.Breakthrough)
+        if (GameManager.Instance != null && GameManager.Instance.currentState == GameManager.GameState.Breakthrough)
         {
             GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
         }
         isBreakthroughInProgress = false; // Mở lại sau 2s
+        if (MapScroller.Instance != null) MapScroller.Instance.ResumeMoving();
     }
 
     public void HandlePlayerDeath()
@@ -251,5 +350,23 @@ public class CultivationManager : MonoBehaviour
             UpdateDashboardUI(allStages[currentStageIndex]);
         }
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// [Cheat Tool Editor] Thiết lập cảnh giới và tu vi trực tiếp từ Editor Tool.
+    /// Hoàn toàn bị strip khi Build game.
+    /// </summary>
+    public void SetStageAndTuViForEditor(int stageIndex, float tuVi)
+    {
+        if (allStages == null || allStages.Length == 0) return;
+        currentStageIndex = Mathf.Clamp(stageIndex, 0, allStages.Length - 1);
+        var stageData = allStages[currentStageIndex];
+        currentTuVi = tuVi;
+
+        UpdateDashboardUI(stageData);
+        OnStageChanged?.Invoke(stageData);
+        OnTuViChanged?.Invoke(currentTuVi, stageData.requiredTuVi);
+    }
+#endif
 }
 

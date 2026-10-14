@@ -75,6 +75,9 @@ public class CharacterSaveData
     public bool tutorialCoDuyenDone = false;
     public bool tutorialShopDone = false;
 
+    // ── Nhiệm Vụ Mốc Tu Luyện (Milestone Quests) ─────────────────────────────
+    public string[] claimedMilestoneIds = new string[0];
+
     // ── Tiến trình ──────────────────────────────────────────────────────────
     public float playTime = 0f;
     public string lastPlayedDate = "";
@@ -195,6 +198,7 @@ public class DataManager : MonoBehaviour
         StageManager.Instance?.SaveToSlot(slot);
         MergeManager.Instance?.SaveToSlot(slot);
         TutorialManager.Instance?.SaveToSlot(slot);
+        MilestoneManager.Instance?.SaveToSlot(slot);
 
         SaveData(); // Ghi xuống PlayerPrefs & File backup
 
@@ -217,7 +221,7 @@ public class DataManager : MonoBehaviour
 
         sessionStartTime = Time.realtimeSinceStartup; // Reset bộ đếm session
 
-        // Load theo thứ tự phụ thuộc: Cultivation → Economy → Upgrade → Skill → Combat → Stage → Merge
+        // Load theo thứ tự phụ thuộc: Cultivation → Economy → Upgrade → Skill → Combat → Stage → Merge → Tutorial → Milestone
         CultivationManager.Instance?.LoadFromSlot(slot);
         CultivationManager.Instance?.SetCharacterName(slot.characterName); // Truyền tên nhân vật
         EconomyManager.Instance?.LoadFromSlot(slot);
@@ -227,6 +231,7 @@ public class DataManager : MonoBehaviour
         StageManager.Instance?.LoadFromSlot(slot);
         MergeManager.Instance?.LoadFromSlot(slot); // Cuối cùng vì gọi CombatManager.UpdateEquippedSwords
         TutorialManager.Instance?.LoadFromSlot(slot);
+        MilestoneManager.Instance?.LoadFromSlot(slot);
 
         // KÍCH HOẠT CỜ SESSION: Bây giờ game đã nạp dữ liệu xong, cho phép hệ thống auto-save hoạt động
         isSessionActive = true;

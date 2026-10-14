@@ -51,7 +51,7 @@ public class StageUITool : EditorWindow
         RectTransform txtRt = txtObj.GetComponent<RectTransform>();
         txtRt.anchorMin = new Vector2(0, 0.5f); txtRt.anchorMax = new Vector2(1, 1);
         txtRt.offsetMin = Vector2.zero; txtRt.offsetMax = Vector2.zero;
-        stageText.text = "Tầng 1 [ 0 / 20 ]";
+        stageText.text = "Tầng 1 [ 0 / 10 ]";
 
         // 5. Tạo Progress Bar Background
         GameObject bgObj = new GameObject("ProgressBG", typeof(RectTransform), typeof(Image));

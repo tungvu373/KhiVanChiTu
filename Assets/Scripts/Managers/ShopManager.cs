@@ -20,6 +20,23 @@ public class ShopManager : MonoBehaviour
     public int damageStacks = 0;
     public int spiritStacks = 0;
 
+    /// <summary>
+    /// Kiểm tra giao diện ShopPanel có đang mở hay không
+    /// </summary>
+    public bool isShopOpen
+    {
+        get
+        {
+            Transform shopT = GameObject.Find("Canvas")?.transform.Find("ShopPanel");
+            if (shopT == null)
+            {
+                GameObject direct = GameObject.Find("ShopPanel");
+                if (direct != null) shopT = direct.transform;
+            }
+            return shopT != null && shopT.gameObject.activeInHierarchy;
+        }
+    }
+
     private Text[] buffTexts = new Text[5];
     private Image[] buffFills = new Image[5];
     private GameObject[] buffRows = new GameObject[5];

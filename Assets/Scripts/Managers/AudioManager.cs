@@ -301,6 +301,11 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clickSfx, sfxVolume);
     }
 
+    public void PlayBtnClick()
+    {
+        PlayClickSFX();
+    }
+
     public void PlaySwordHitSFX()
     {
         if (isMuted || sfxVolume <= 0f) return;

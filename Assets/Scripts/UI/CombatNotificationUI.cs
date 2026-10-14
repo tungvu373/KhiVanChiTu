@@ -182,6 +182,48 @@ public class CombatNotificationUI : MonoBehaviour
         PlayBannerAnimation(duration: 2.2f);
     }
 
+    /// <summary>
+    /// Hiển thị thông báo Độ Kiếp Thất Bại (bị thiên kiếp phản phệ, tổn thất 25% tu vi)
+    /// </summary>
+    public static void ShowTribulationFailed(float lostTuVi)
+    {
+        if (Instance == null) return;
+        Instance.DisplayTribulationFailed(lostTuVi);
+    }
+
+    public void DisplayTribulationFailed(float lostTuVi)
+    {
+        if (titleText != null)
+        {
+            titleText.text = "⚡ ĐỘ KIẾP THẤT BẠI ⚡";
+            titleText.color = new Color(1f, 0.3f, 0.2f); // Đỏ sấm sét
+        }
+
+        if (subtitleText != null)
+        {
+            subtitleText.text = $"[ Bị Thiên Kiếp Phản Phệ • Tổn Thất 25% Tu Vi (-{lostTuVi:F0}) ]";
+            subtitleText.color = new Color(1f, 0.85f, 0.4f); // Vàng cam cảnh báo
+        }
+
+        if (extraDetailText != null)
+        {
+            extraDetailText.text = "Đạo thân thọ thương • Hãy củng cố tu vi và nâng cấp phi kiếm trước khi thử lại!";
+            extraDetailText.color = new Color(0.95f, 0.85f, 0.85f, 0.95f);
+        }
+
+        Color thunderBorder = new Color(1f, 0.4f, 0.1f, 0.95f);
+        if (borderTop != null) borderTop.color = thunderBorder;
+        if (borderBottom != null) borderBottom.color = thunderBorder;
+        if (backgroundImage != null) backgroundImage.color = new Color(0.18f, 0.05f, 0.05f, 0.95f);
+
+        if (CameraShake.Instance != null && Application.isPlaying)
+        {
+            CameraShake.Instance.TriggerShake(0.6f, 0.4f);
+        }
+
+        PlayBannerAnimation(duration: 3.2f);
+    }
+
     private void PlayBannerAnimation(float duration)
     {
         if (!Application.isPlaying)
