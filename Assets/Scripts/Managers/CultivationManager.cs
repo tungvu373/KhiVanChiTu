@@ -138,6 +138,56 @@ public class CultivationManager : MonoBehaviour
             UpdateDashboardUI(allStages[currentStageIndex]);
     }
 
+    /// <summary>
+    /// Lấy thứ hạng Đại Cảnh Giới đang cần Đột Phá:
+    /// 1 = Lên Trúc Cơ (Luyện Khí 15)
+    /// 2 = Lên Kết Đan (Trúc Cơ Hậu Kỳ)
+    /// 3 = Lên Nguyên Anh (Kết Đan Hậu Kỳ)
+    /// 4 = Lên Hóa Thần (Nguyên Anh Hậu Kỳ)
+    /// </summary>
+    public int GetCurrentTribulationTier()
+    {
+        if (allStages == null || currentStageIndex >= allStages.Length) return 1;
+        string name = allStages[currentStageIndex].stageName;
+        if (name.Contains("Luyện Khí")) return 1;
+        if (name.Contains("Trúc Cơ")) return 2;
+        if (name.Contains("Kết Đan")) return 3;
+        if (name.Contains("Nguyên Anh")) return 4;
+        if (name.Contains("Hóa Thần")) return 5;
+        return Mathf.Clamp((currentStageIndex / 6) + 1, 1, 6);
+    }
+
+    /// <summary>
+    /// Lấy tên Đại Cảnh Giới kế tiếp
+    /// </summary>
+    public string GetNextRealmName()
+    {
+        int nextIdx = currentStageIndex + 1;
+        if (allStages != null && nextIdx < allStages.Length)
+        {
+            return allStages[nextIdx].stageName;
+        }
+        return "Cảnh Giới Mới";
+    }
+
+    /// <summary>
+    /// Áp dụng hình phạt khi Độ Kiếp thất bại: Bị Thiên Kiếp phản phệ, tổn thất 25% điểm Tu Vi.
+    /// </summary>
+    public float ApplyTribulationFailurePenalty()
+    {
+        if (allStages == null || currentStageIndex >= allStages.Length) return 0f;
+
+        CultivationStageData currentStageData = allStages[currentStageIndex];
+        float penalty = currentStageData.requiredTuVi * 0.25f;
+        currentTuVi = Mathf.Max(0f, currentTuVi - penalty);
+
+        UpdateDashboardUI(currentStageData);
+        OnTuViChanged?.Invoke(currentTuVi, currentStageData.requiredTuVi);
+
+        Debug.Log($"⚡ [CultivationManager] Độ kiếp thất bại! Bị thiên kiếp phản phệ, tổn thất 25% Tu Vi (-{penalty:F0}). Tu vi hiện tại: {currentTuVi:F0}/{currentStageData.requiredTuVi}");
+        return penalty;
+    }
+
     private void CheckBreakthrough()
     {
         if (allStages == null || currentStageIndex >= allStages.Length) return;
@@ -149,21 +199,12 @@ public class CultivationManager : MonoBehaviour
 
             if (needBoss)
             {
-                // MỐC ĐỘT PHÁ (DUY NHẤT Luyện Khí Tầng 15 hoặc Đại Cảnh Giới): Cần Boss để Đột Phá!
-                if (currentStageData.hasTribulationBoss)
-                {
-                    Debug.Log("⚠️ LÔI KIẾP HÀNG LÂM! Chuẩn bị đánh Boss Lôi Kiếp để đột phá!");
-                    if (CameraShake.Instance != null) CameraShake.Instance.TriggerShake(1.0f, 0.6f);
-                    if (lightningVFXPrefab != null && CombatManager.Instance != null && CombatManager.Instance.playerTransform != null)
-                    {
-                        Instantiate(lightningVFXPrefab, CombatManager.Instance.playerTransform.position + Vector3.up * 8f, Quaternion.Euler(90, 0, 0));
-                    }
-                    if (AudioManager.Instance != null)
-                    {
-                        AudioManager.Instance.PlayLoiPhatSFX();
-                    }
-                    GameManager.Instance.ChangeState(GameManager.GameState.BossTribulation);
-                }
+                // MỐC ĐỘT PHÁ ĐẠI CẢNH GIỚI:
+                // Mở UI Panel hỏi ý người chơi: Xác nhận độ kiếp thăng cấp hay từ chối để củng cố sức mạnh!
+                if (CombatManager.Instance != null && CombatManager.Instance.isTribulationBossActive) return;
+                if (StageManager.Instance != null && StageManager.Instance.isBossStage) return; // Không làm phiền khi đang đánh boss tầng
+
+                TribulationModalUI.Open();
             }
             else
             {
@@ -309,5 +350,23 @@ public class CultivationManager : MonoBehaviour
             UpdateDashboardUI(allStages[currentStageIndex]);
         }
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// [Cheat Tool Editor] Thiết lập cảnh giới và tu vi trực tiếp từ Editor Tool.
+    /// Hoàn toàn bị strip khi Build game.
+    /// </summary>
+    public void SetStageAndTuViForEditor(int stageIndex, float tuVi)
+    {
+        if (allStages == null || allStages.Length == 0) return;
+        currentStageIndex = Mathf.Clamp(stageIndex, 0, allStages.Length - 1);
+        var stageData = allStages[currentStageIndex];
+        currentTuVi = tuVi;
+
+        UpdateDashboardUI(stageData);
+        OnStageChanged?.Invoke(stageData);
+        OnTuViChanged?.Invoke(currentTuVi, stageData.requiredTuVi);
+    }
+#endif
 }
 

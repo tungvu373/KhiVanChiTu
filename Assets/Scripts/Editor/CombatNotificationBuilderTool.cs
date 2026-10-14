@@ -8,17 +8,8 @@ using UnityEditor.SceneManagement;
 /// Tool tạo sẵn Banner Thông Báo (CombatNotificationBanner) trực tiếp vào Canvas trong Scene.
 /// Giúp Game Designer / Sinh viên có thể tự do căn chỉnh vị trí, kích thước, màu sắc trong Scene View.
 /// </summary>
-[InitializeOnLoad]
 public class CombatNotificationBuilderTool
 {
-    static CombatNotificationBuilderTool()
-    {
-        EditorApplication.delayCall += () =>
-        {
-            EnsureBannerInScene(forceSelect: false);
-        };
-    }
-
     [MenuItem("TuTien/UI/Tạo Sẵn Banner Thông Báo (Đột Phá & Tử Trận)")]
     public static void CreateOrSelectBannerMenu()
     {

@@ -14,10 +14,11 @@ public class CombatManager : MonoBehaviour
     public bool isPlayerDead = false;
 
     private float spawnTimer;
-    public float spawnInterval = 0.2f; // Spawn nhanh hÆ¡n (0.2s)
+    [Header("Spawning & Density Control")]
+    public float spawnInterval = 0.2f; // Tốc độ spawn quái (0.2s)
+    public int maxOnScreenEnemies = 15; // Giới hạn số lượng quái xuất hiện đồng thời trên sân (tránh lag, đè chồng)
     
     private List<Enemy> activeEnemies = new List<Enemy>();
-    private const int MAX_ENEMIES = 50;
 
     public float playerMaxHp = 1000f;
     public float playerCurrentHp = 1000f;
@@ -29,6 +30,10 @@ public class CombatManager : MonoBehaviour
 
     [Header("Skill VFX Materials")]
     public Material magicArrayMaterial;
+
+    [Header("Tribulation Boss (Độ Kiếp Thăng Cấp)")]
+    public bool isTribulationBossActive = false;
+    private Coroutine tribulationStormCoroutine;
 
     private Coroutine deathAndReviveCoroutine;
     private float reviveIdleLockTimer = 0f;
@@ -86,23 +91,37 @@ public class CombatManager : MonoBehaviour
             }
         }
 
+        if (magicArrayMaterial == null)
+        {
+#if UNITY_EDITOR
+            magicArrayMaterial = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/Materials/Mat_MagicArray.mat");
+#endif
+            if (magicArrayMaterial == null)
+            {
+                Shader s = Shader.Find("Sprites/Default") ?? Shader.Find("Mobile/Particles/Additive");
+                magicArrayMaterial = new Material(s);
+                magicArrayMaterial.color = new Color(0.9f, 0.85f, 1f, 0.9f);
+            }
+        }
+
         if (SimplePool.Instance != null)
         {
             // Pool toÃ n bá»™ quÃ¡i thÆ°á»ng
             if (normalEnemyPrefabs != null && normalEnemyPrefabs.Length > 0)
             {
+                int perPrefabSize = Mathf.Max(10, 30 / normalEnemyPrefabs.Length);
                 foreach (var prefab in normalEnemyPrefabs)
                 {
-                    if (prefab != null) SimplePool.Instance.AddPool(prefab.name, prefab, 20);
+                    if (prefab != null) SimplePool.Instance.AddPool(prefab.name, prefab, perPrefabSize);
                 }
             }
             
-            // Pool toÃ n bá»™ boss
+            // Pool toàn bộ boss (chỉ duy nhất 1 con mỗi 10 vòng, pool size = 1)
             if (bossEnemyPrefabs != null && bossEnemyPrefabs.Length > 0)
             {
                 foreach (var prefab in bossEnemyPrefabs)
                 {
-                    if (prefab != null) SimplePool.Instance.AddPool(prefab.name, prefab, 5);
+                    if (prefab != null) SimplePool.Instance.AddPool(prefab.name, prefab, 1);
                 }
             }
 
@@ -224,11 +243,21 @@ public class CombatManager : MonoBehaviour
 
     private void SpawnBoss()
     {
+        // 1. Kiểm tra an toàn: Nếu đã có Boss đang tồn tại và hoạt động thì TUYỆT ĐỐI KHÔNG spawn thêm tránh dư thừa
+        if (currentBoss != null && currentBoss.gameObject.activeInHierarchy && !currentBoss.isDead)
+        {
+            Debug.LogWarning("⚠️ [CombatManager] Đang có Boss tồn tại trên sân! Bỏ qua lệnh SpawnBoss để tránh dư thừa Boss.");
+            return;
+        }
+
         if (bossEnemyPrefabs == null || bossEnemyPrefabs.Length == 0 || playerTransform == null) return;
         
+        // 2. Dọn sạch quái thường còn sót lại trên sân trước khi sinh Boss
+        ClearAllEnemies();
+
         GameObject bossPrefab = bossEnemyPrefabs[Random.Range(0, bossEnemyPrefabs.Length)];
         
-        // 1. Sinh Boss từ xa (cách 26m phía trước) uy nghi tiến dần đến Player
+        // Sinh Boss từ xa (cách 26m phía trước) uy nghi tiến dần đến Player
         Vector3 spawnPos = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 26f);
         GameObject go = null;
         if (SimplePool.Instance != null) 
@@ -268,7 +297,7 @@ public class CombatManager : MonoBehaviour
         boss.moveSpeed = 1.8f; // Boss bước đi trầm ổn, oai vệ từ xa
         activeEnemies.Add(currentBoss);
 
-        // 2. Sinh toán quái con (tiền trạm) chạy trước hộ giá Boss!
+        // Sinh đội quân quái hộ tống Boss xung phong tiền trạm (lấy từ pool quái thường 30 con)
         SpawnMinionsAheadOfBoss(stage);
     }
 
@@ -309,6 +338,151 @@ public class CombatManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Bắt đầu trận chiến Boss Độ Kiếp (Thiên Kiếp Hàng Lâm).
+    /// Reset toàn bộ quái thường, tạo sấm sét liên tục trên map bằng Material Lôi Phạt có sẵn,
+    /// và spawn Boss Độ Kiếp có sức mạnh tương ứng theo bậc Cảnh Giới.
+    /// </summary>
+    public void StartTribulationBossBattle()
+    {
+        if (isTribulationBossActive) return;
+
+        // 1. Tạm thời ẩn UI Stage tầng (tiến độ quái/tầng) trong suốt trận chiến Thiên Kiếp
+        if (StageManager.Instance != null)
+        {
+            StageManager.Instance.SetStageUIVisible(false);
+        }
+
+        // 2. Dọn dẹp sạch sẽ toàn bộ quái thường và đạn/popup cũ
+        ClearAllEnemies();
+        if (SimplePool.Instance != null)
+        {
+            SimplePool.Instance.DeactivateAllInPool("DamagePopup");
+        }
+
+        isTribulationBossActive = true;
+
+        // 3. Dừng map di chuyển để tập trung chiến đấu sinh tử
+        if (MapScroller.Instance != null)
+        {
+            MapScroller.Instance.StopMoving();
+        }
+
+        // 4. Spawn Boss Thiên Kiếp (Độ Kiếp) - CHỈ DUY NHẤT 1 MÌNH BOSS, ĐẤU 1-1 VỚI PLAYER!
+        SpawnTribulationBoss();
+
+        // 4. Bật hiệu ứng sấm sét Lôi Phạt liên tục trên map bằng magicArrayMaterial
+        StopTribulationStorm();
+        tribulationStormCoroutine = StartCoroutine(TribulationLightningStormRoutine());
+
+        // 5. Hiệu ứng khởi đầu trận chiến uy nghiêm
+        if (CameraShake.Instance != null)
+        {
+            CameraShake.Instance.TriggerShake(0.8f, 0.5f);
+        }
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayLoiPhatSFX();
+        }
+    }
+
+    private void SpawnTribulationBoss()
+    {
+        if (bossEnemyPrefabs == null || bossEnemyPrefabs.Length == 0 || playerTransform == null)
+        {
+            Debug.LogError("❌ [CombatManager] Không có Boss Prefabs để spawn Boss Độ Kiếp!");
+            return;
+        }
+
+        GameObject bossPrefab = bossEnemyPrefabs[Random.Range(0, bossEnemyPrefabs.Length)];
+        // Rút ngắn cự ly spawn xuống 13m (thay vì 24m) để Boss áp sát chỉ sau ~2.5 - 3s, ra đòn ngay lập tức
+        Vector3 spawnPos = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 13f);
+
+        GameObject go = null;
+        if (SimplePool.Instance != null)
+        {
+            go = SimplePool.Instance.SpawnFromPool(bossPrefab.name, spawnPos, Quaternion.identity);
+        }
+        if (go == null)
+        {
+            go = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
+        }
+
+        BossEnemy boss = go.GetComponent<BossEnemy>();
+        if (boss == null)
+        {
+            Enemy oldEnemy = go.GetComponent<Enemy>();
+            boss = go.AddComponent<BossEnemy>();
+            if (oldEnemy != null)
+            {
+                boss.hpBarHeight = oldEnemy.hpBarHeight;
+                boss.attackRange = oldEnemy.attackRange;
+                boss.animator = oldEnemy.animator;
+                Destroy(oldEnemy);
+            }
+        }
+
+        currentBoss = boss;
+
+        int realmTier = CultivationManager.Instance != null ? CultivationManager.Instance.GetCurrentTribulationTier() : 1;
+        int stageIdx = CultivationManager.Instance != null ? CultivationManager.Instance.currentStageIndex : 0;
+        string targetRealm = CultivationManager.Instance != null ? CultivationManager.Instance.GetNextRealmName() : "Đại Cảnh Giới Mới";
+
+        boss.InitTribulationBoss(realmTier, stageIdx, targetRealm, playerTransform);
+        activeEnemies.Add(boss);
+
+        if (GameLogger.Instance != null)
+        {
+            GameLogger.Instance.Log($"⚡ THIÊN KIẾP HÀNG LÂM! Boss Độ Kiếp xuất hiện! Quyết chiến để tấn thăng {targetRealm}!", Color.red);
+        }
+    }
+
+    /// <summary>
+    /// Hiệu ứng sấm sét Lôi Phạt giáng xuống liên tục khắp map trong suốt trận chiến Boss Độ Kiếp.
+    /// Sử dụng magicArrayMaterial có sẵn để tạo tia sét từ trời đánh xuống đất.
+    /// </summary>
+    private System.Collections.IEnumerator TribulationLightningStormRoutine()
+    {
+        while (isTribulationBossActive && !isPlayerDead)
+        {
+            float waitTime = Random.Range(0.6f, 1.2f);
+            yield return new WaitForSeconds(waitTime);
+
+            if (!isTribulationBossActive || isPlayerDead || playerTransform == null) break;
+
+            // Đánh 2 - 3 tia sét ngẫu nhiên tại các vị trí xung quanh đấu trường
+            int strikeCount = Random.Range(2, 4);
+            for (int i = 0; i < strikeCount; i++)
+            {
+                float xOff = Random.Range(-10f, 10f);
+                float zOff = Random.Range(-2f, 22f);
+                Vector3 strikePos = playerTransform.position + new Vector3(xOff, 0f, zOff);
+                Vector3 skyPos = strikePos + Vector3.up * 22f;
+
+                GameObject lightning = new GameObject("TribulationStormLightning");
+                LightningVFX vfx = lightning.AddComponent<LightningVFX>();
+                Color lightningColor = new Color(0.95f, 0.85f, 1f); // Tím lam lôi điện thiên kiếp
+                vfx.Setup(skyPos, strikePos, lightningColor, magicArrayMaterial);
+            }
+
+            // Thỉnh thoảng rung nhẹ mặt đất và phát tiếng sét nổ từ xa
+            if (Random.value <= 0.4f)
+            {
+                if (CameraShake.Instance != null) CameraShake.Instance.TriggerShake(0.2f, 0.15f);
+                if (AudioManager.Instance != null) AudioManager.Instance.PlayLoiPhatSFX();
+            }
+        }
+    }
+
+    public void StopTribulationStorm()
+    {
+        if (tribulationStormCoroutine != null)
+        {
+            StopCoroutine(tribulationStormCoroutine);
+            tribulationStormCoroutine = null;
+        }
+    }
+
     private void Update()
     {
         // 1. Đồng bộ Trạng thái Di chuyển Map & Animation Run / Idle của Player
@@ -325,6 +499,10 @@ public class CombatManager : MonoBehaviour
 
         // Táº¡m ngÆ°ng sinh quÃ¡i vÃ  há»“i mÃ¡u thá»¥ Ä‘á»™ng náº¿u Ä‘ang á»Ÿ tráº¡ng thÃ¡i khÃ¡c (ÄÃ¡nh Boss/Äá»™t phÃ¡)
         // (LÆ°u Ã½: Game Feel HP trÆ°á»£t váº«n cháº¡y á»Ÿ trÃªn)
+        // Tuyệt đối không sinh quái nếu đang đối đầu Boss Thiên Kiếp (Boss chỉ xuất hiện 1 mình đấu 1-1 với Player)
+        if (isTribulationBossActive)
+            return;
+
         if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm)
             return;
 
@@ -383,11 +561,19 @@ public class CombatManager : MonoBehaviour
         spawnTimer -= Time.deltaTime;
         activeEnemies.RemoveAll(e => e == null || !e.gameObject.activeInHierarchy || e.isDead);
         
-        // Logic mới: Sau 10 tầng số lượng quái +10 dần dần
-        int currentStage = StageManager.Instance != null ? StageManager.Instance.currentStage : 1;
-        int maxEnemies = 10 + (currentStage / 10) * 10;
+        // Cân bằng số quái yêu cầu theo tầng (1-10: 10, 11-20: 20...) và tính số quái còn thiếu để active đủ
+        int targetKills = StageManager.Instance != null ? StageManager.Instance.enemiesToBoss : 10;
+        int alreadyKilled = StageManager.Instance != null ? StageManager.Instance.enemiesKilled : 0;
+        int killsNeededRemaining = Mathf.Max(0, targetKills - alreadyKilled);
         
-        if (spawnTimer <= 0 && playerTransform != null && activeEnemies.Count < maxEnemies)
+        // Số quái còn lại cần spawn cho tầng này (tổng số quái spawn ra không vượt quá targetKills)
+        int remainingToSpawn = killsNeededRemaining - activeEnemies.Count;
+
+        // Giới hạn số lượng quái cùng xuất hiện trên sân (tối đa maxOnScreenEnemies = 15 con, hoặc ít hơn nếu tầng yêu cầu ít hơn)
+        int currentMaxOnScreen = Mathf.Min(maxOnScreenEnemies, targetKills);
+        
+        // Điều kiện spawn: Chưa vượt trần hiển thị trên sân (tránh lag/đè chồng) VÀ vẫn còn quái cần spawn cho tầng này
+        if (spawnTimer <= 0 && playerTransform != null && activeEnemies.Count < currentMaxOnScreen && remainingToSpawn > 0)
         {
             SpawnEnemy();
             spawnTimer = spawnInterval;
@@ -459,38 +645,45 @@ public class CombatManager : MonoBehaviour
         if (isBossEnemy)
         {
             currentBoss = null;
-            
-            // QUY TẮC ĐỘT PHÁ CHUẨN:
-            // - Riêng 15 tầng Luyện Khí Kỳ: CHỈ DUY NHẤT TẦNG 15 mới là Đột Phá (cần diệt Boss lên Trúc Cơ).
-            //   Các tầng 1 -> 14 chỉ là tích lũy tu vi tiểu cảnh giới, đủ 100% Tu Vi là tự động thăng tầng!
-            // - Khi đang ở mốc Cần Đột Phá (Luyện Khí Tầng 15 hoặc Đại Cảnh Giới):
-            //   Bắt buộc phải đạt đủ 100% Tu Vi và diệt Boss thì MỚI ĐƯỢC ĐỘT PHÁ!
-            if (CultivationManager.Instance != null)
-            {
-                CultivationStageData currentStage = CultivationManager.Instance.GetCurrentStageData();
-                bool needBoss = CultivationManager.Instance.RequiresBossToBreakthrough(currentStage);
 
-                if (needBoss)
+            // TRƯỜNG HỢP 1: TIÊU DIỆT BOSS ĐỘ KIẾP (THIÊN KIẾP) THÀNH CÔNG!
+            if (isTribulationBossActive)
+            {
+                StopTribulationStorm();
+                isTribulationBossActive = false;
+
+                // Hiển thị lại UI Stage tầng
+                if (StageManager.Instance != null)
                 {
-                    if (CultivationManager.Instance.IsTuViMaxed())
-                    {
-                        Debug.Log("💥 [CombatManager] ĐÃ ĐẠT 100% TU VI + DIỆT BOSS THÀNH CÔNG -> ĐỘT PHÁ CẢNH GIỚI NGAY!");
-                        CultivationManager.Instance.Breakthrough();
-                    }
-                    else
-                    {
-                        Debug.Log("⚔️ [CombatManager] Diệt Boss tầng thành công nhưng Tu Vi CHƯA ĐỦ 100% nên chưa thể đột phá! Tiếp tục farm!");
-                        if (GameLogger.Instance != null)
-                        {
-                            GameLogger.Instance.Log("Diệt Boss thành công! (Cần 100% Tu Vi mới được Đột Phá)", Color.yellow);
-                        }
-                    }
+                    StageManager.Instance.SetStageUIVisible(true);
                 }
-                else
+
+                string targetRealm = CultivationManager.Instance != null ? CultivationManager.Instance.GetNextRealmName() : "Cảnh Giới Mới";
+
+                // Tấn thăng cảnh giới
+                if (CultivationManager.Instance != null)
                 {
-                    // Các tầng Luyện Khí 1-14: Diệt Boss chỉ là hạ Boss của Stage để qua màn và nhận quà
-                    Debug.Log("⚔️ [CombatManager] Diệt Boss tầng thường thành công! Tiếp tục farm!");
+                    CultivationManager.Instance.Breakthrough();
                 }
+
+                // Hiển thị thông báo chiến thắng rực rỡ
+                CombatNotificationUI.ShowBreakthrough(targetRealm);
+
+                if (GameLogger.Instance != null)
+                {
+                    GameLogger.Instance.Log($"⚡ ĐỘ KIẾP THÀNH CÔNG! Đã vượt qua Thiên Kiếp, tấn thăng {targetRealm}!", Color.green);
+                }
+
+                // Chuyển về trạng thái farm tiếp tục leo tầng bình thường
+                ChangeToIdleState();
+                return;
+            }
+
+            // TRƯỜNG HỢP 2: TIÊU DIỆT BOSS TẦNG THƯỜNG (Stage Boss mỗi 10 tầng: 10, 20, 30...)
+            Debug.Log("⚔️ [CombatManager] Tiêu diệt Boss tầng thành công! Đạt mốc qua tầng mới.");
+            if (GameLogger.Instance != null)
+            {
+                GameLogger.Instance.Log("Tiêu diệt Boss tầng thành công! Chuẩn bị chuyển tầng tiếp theo!", Color.yellow);
             }
         }
         else
@@ -541,23 +734,60 @@ public class CombatManager : MonoBehaviour
                 Debug.LogError("❌ [CombatManager] playerAnimator bị NULL khi tử trận!");
             }
 
-            // 4. Hiển thị thông báo Tử trận uy nghiêm ở giữa màn Combat 3D
-            CombatNotificationUI.ShowDeath();
-
-            // 5. Bảo toàn tu vi và làm mới tiến trình ải
-            if (CultivationManager.Instance != null)
+            // 4. Xử lý THẤT BẠI ĐỘ KIẾP hoặc TỬ TRẬN THƯỜNG
+            if (isTribulationBossActive)
             {
-                CultivationManager.Instance.HandlePlayerDeath();
+                StopTribulationStorm();
+                isTribulationBossActive = false;
+
+                // Hiển thị lại UI Stage tầng
+                if (StageManager.Instance != null)
+                {
+                    StageManager.Instance.SetStageUIVisible(true);
+                }
+
+                // Độ kiếp thất bại: Bị thiên kiếp phản phệ, tổn thất 25% điểm Tu Vi
+                float lostTuVi = 0f;
+                if (CultivationManager.Instance != null)
+                {
+                    lostTuVi = CultivationManager.Instance.ApplyTribulationFailurePenalty();
+                }
+
+                // Hiển thị Banner Độ Kiếp Thất Bại sấm sét
+                CombatNotificationUI.ShowTribulationFailed(lostTuVi);
+
+                if (GameLogger.Instance != null)
+                {
+                    GameLogger.Instance.Log($"⚡ ĐỘ KIẾP THẤT BẠI! Bị Thiên Kiếp phản phệ, tổn thất {lostTuVi:F0} Tu Vi (-25%)!", Color.red);
+                }
+
+                if (StageManager.Instance != null)
+                {
+                    StageManager.Instance.ResetCurrentStageOnDeath();
+                }
+
+                if (GameManager.Instance != null) GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
+            }
+            else
+            {
+                // Hiển thị thông báo Tử trận uy nghiêm ở giữa màn Combat 3D
+                CombatNotificationUI.ShowDeath();
+
+                // Bảo toàn tu vi và làm mới tiến trình ải
+                if (CultivationManager.Instance != null)
+                {
+                    CultivationManager.Instance.HandlePlayerDeath();
+                }
+
+                if (StageManager.Instance != null)
+                {
+                    StageManager.Instance.ResetCurrentStageOnDeath();
+                }
+
+                if (GameManager.Instance != null) GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
             }
 
-            if (StageManager.Instance != null)
-            {
-                StageManager.Instance.ResetCurrentStageOnDeath();
-            }
-
-            if (GameManager.Instance != null) GameManager.Instance.ChangeState(GameManager.GameState.IdleFarm);
-
-            // 6. Chờ thời gian thực (Realtime) khi Time.timeScale = 0 để hồi sinh và reset màn hình combat
+            // 5. Chờ thời gian thực (Realtime) khi Time.timeScale = 0 để hồi sinh và reset màn hình combat
             if (deathAndReviveCoroutine != null) StopCoroutine(deathAndReviveCoroutine);
             deathAndReviveCoroutine = StartCoroutine(PlayerDeathAndReviveRoutine(2.2f));
         }
@@ -586,6 +816,13 @@ public class CombatManager : MonoBehaviour
         UpdatePlayerHPUI();
 
         // 3. Reset toàn bộ màn hình Combat:
+        StopTribulationStorm();
+        isTribulationBossActive = false;
+        if (StageManager.Instance != null)
+        {
+            StageManager.Instance.SetStageUIVisible(true);
+        }
+
         // a. Quét sạch tất cả quái vật và Boss hiện diện
         ClearAllEnemies();
 
@@ -794,6 +1031,7 @@ public class CombatManager : MonoBehaviour
     public void ChangeToIdleState()
     {
         ClearAllEnemies();
+        spawnTimer = 0f; // Bắt đầu sinh quái cho tầng mới ngay lập tức
         // Nếu đang trong hoạt cảnh Đột Phá, giữ nguyên để CultivationManager chạy trọn vẹn hiệu ứng 2 giây
         if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm && GameManager.Instance.currentState != GameManager.GameState.Breakthrough)
         {

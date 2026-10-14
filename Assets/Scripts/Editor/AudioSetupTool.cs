@@ -5,15 +5,6 @@ using UnityEditor.SceneManagement;
 
 public class AudioSetupTool
 {
-    [InitializeOnLoadMethod]
-    private static void AutoSetupOnLoad()
-    {
-        EditorApplication.delayCall += () =>
-        {
-            SetupAudioManagerInScene(silent: true);
-        };
-    }
-
     [MenuItem("TuTien/Âm thanh/Thiết lập Hệ thống Âm thanh Toàn Cục (AudioManager)")]
     public static void ManualSetup()
     {

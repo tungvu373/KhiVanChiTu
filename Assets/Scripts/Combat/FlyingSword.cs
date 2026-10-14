@@ -152,6 +152,18 @@ public class FlyingSword : MonoBehaviour
         }
         
         Enemy hitEnemy = TargetEnemy;
+
+        // BOSS ĐỘ KIẾP KHẮC CHẾ VẠN KIẾM QUY TÔNG:
+        // Boss Độ Kiếp chỉ nhận giới hạn 20% sát thương từ kỹ năng Vạn Kiếm Quy Tông (giảm 80% sát thương của skill)
+        if (isUltimateClone)
+        {
+            BossEnemy boss = hitEnemy as BossEnemy;
+            if (boss != null && boss.isTribulationBoss)
+            {
+                finalDamage *= 0.20f; // Chỉ nhận tối đa 20% sát thương
+            }
+        }
+
         hitEnemy.TakeDamage(finalDamage, isCrit);
 
         // VẠN KIẾM QUY TÔNG: Đẩy lùi mục tiêu về phía sau (ra xa khỏi Player) - Trừ Boss không bị đẩy lùi

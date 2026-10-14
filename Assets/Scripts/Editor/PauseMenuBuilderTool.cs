@@ -8,17 +8,8 @@ using UnityEditor.SceneManagement;
 /// Tool tự động tạo Nút Cài Đặt/Pause ở góc trên cùng bên phải và Panel Pause Game hoàn chỉnh trên Canvas.
 /// Tích hợp đầy đủ: Tạm Dừng, Cài Đặt Âm Thanh, Trở Về Main Menu, Thoát Game, và Đồng Bộ Lưu Tiến Trình DataManager.
 /// </summary>
-[InitializeOnLoad]
 public class PauseMenuBuilderTool
 {
-    static PauseMenuBuilderTool()
-    {
-        EditorApplication.delayCall += () =>
-        {
-            EnsurePauseMenuInScene(forceRebuild: false);
-        };
-    }
-
     [MenuItem("TuTien/UI/Tạo Nút & Panel Pause (Cài Đặt Game)")]
     public static void CreateOrSelectMenu()
     {
