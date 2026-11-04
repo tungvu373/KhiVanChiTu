@@ -1,251 +1,272 @@
-# Bàn giao công việc và hướng dẫn setup — Khí Vận Chi Tử
+# Hướng dẫn dành riêng cho người làm module PC
 
-Tài liệu dành cho người cộng tác PC/Windows, nội dung và QA; chủ dự án phụ trách Android. Các hướng dẫn kỹ thuật được tập trung tại đây để README giới thiệu game dễ đọc.
+**Bạn nhận phần PC/Windows, nội dung và QA. Nhánh làm việc của bạn là `codex/pc-content-handoff`, từ lúc clone, mở Unity/Antigravity, sửa nội dung cho đến commit và push.**
 
-[Quay lại giới thiệu và cách chơi](README.md)
+Chủ dự án phụ trách Android trên `codex/android-release`. Nhánh Android chỉ là nơi gửi Pull Request để chủ dự án xem và tích hợp; bạn không chuyển sang nhánh đó để làm việc.
 
-## Công việc giao người cộng tác
-
-Bạn phụ trách **Android**. Người cộng tác nhận **PC/Windows, nội dung chặng đầu và QA** trên nhánh `codex/pc-content-handoff`.
-
-| ID | Công việc | Đầu ra cần nghiệm thu |
-| --- | --- | --- |
-| PC-01 | Setup checkout, Unity, CLI/Pipeline; mở hai scene và build Windows | Không compile error; giữ marker save riêng; EXE mở được |
-| CONTENT-01 | Dựng một chủ đề môi trường chặng đầu và hai chunk nối nhau | Không hở khi cuộn; prefab không chứa manager/camera/UI; material riêng |
-| DESIGN-01 | Thiết kế 10–15 phút đầu: farm → ghép kiếm → nâng cấp → boss → lưu/chơi tiếp | Mỗi mốc có hành động, điều kiện mở, phản hồi và xử lý khi thua |
-| BALANCE-01 | Quan sát 10 tầng chiến đấu đầu và boss tầng 10 | Có build/thiết bị, thời gian, tài nguyên, điểm kẹt và đề xuất; không tự đổi công thức |
-| PC-02 | Kiểm chuột, kéo ghép, cửa sổ 1280×720, 1920×1080 và resize | HUD đọc được, không cắt nút/text; ghi rõ hành vi Escape/focus còn thiếu |
-| TEXT-01 | Rà tên, mô tả, hướng dẫn và thông báo | Thuật ngữ nhất quán, đúng tính năng đang mở |
-| QA-01 / QA-02 | Regression Windows và quan sát nhóm nhỏ người mới chơi | Lỗi có bước tái hiện, expected/actual, build và ảnh/log; kiểm lại sau khi sửa |
-| STORE-01 | Chuẩn bị ảnh/video gameplay thật, mô tả ngắn và nguồn art/font/nhạc | Phản ánh đúng bản thực tế; thực hiện sau khi gameplay ổn định |
-
-Bắt đầu bằng **PC-01 và một PR CONTENT-01 nhỏ**. Chủ dự án giữ gameplay, economy, save/migration, backend, SDK, ký/phát hành Android và tích hợp nội dung vào scene Android. Phối hợp trước nếu cần sửa các phần này.
-
-### Mốc bàn giao
-
-- Ngày đầu: setup chạy được hoặc ghi rõ blocker; một prefab nhỏ đi hết quy trình Git.
-- Tuần 1: chốt quy cách content, kịch bản chặng đầu và báo cáo QA ban đầu.
-- Tuần 2: chặng 10–15 phút chạy được trên PC; chủ dự án kiểm cùng nội dung trên Android.
-- Tuần 3: sửa điểm kẹt đã quan sát và khóa tính năng cuối tuần.
-- Tuần 4: regression, sửa lỗi và chuẩn bị ứng viên thử kín.
-
-Đây là mục tiêu kế hoạch, cần điều chỉnh theo thời gian thực tế của nhóm. Backend online vẫn là phần việc kỹ thuật của chủ dự án nếu giữ phạm vi online MVP.
-
-### Quy cách scene, prefab và save
-
-- Phạm vi sở hữu chính của người cộng tác: `Assets/Modules/PCContent/**`.
-- `PCGameplayWork` dùng gameplay thật; `ContentSandbox` chỉ xem môi trường và không có DataManager.
-- Prefab chunk mẫu rộng **24**, dài **80** Unity units; pivot ở đầu chunk, hướng dọc **+Z**, root scale **(1,1,1)**. Chunk thứ hai đặt tại z=80.
-- Camera, ánh sáng xem thử và gameplay manager để trong scene phù hợp; không đóng gói chúng vào prefab nội dung.
-- Tạo material/TerrainData riêng khi cần chỉnh; sao chép scene không tự tách những asset dùng chung này.
-- Giữ `__PCWorkspace_SaveIsolation` và profile `pc-workspace`. PC dùng key `pc-workspace::KhiVanChiTu_SaveData` và file `pc-workspace_KhiVanChiTu_SaveData.json`; không nhập save Android vào hồ sơ thử.
-- MapScroller có `chunkLength` riêng; phối hợp chủ dự án để thống nhất khi đưa prefab vào gameplay.
-
-### Mẫu bàn giao / báo lỗi
-
-```text
-Task / mức ưu tiên:
-Build / commit / thiết bị:
-Scene, prefab và asset đã sửa:
-Thay đổi và lý do:
-Các bước kiểm thử / tái hiện:
-Kết quả mong đợi và thực tế:
-Ảnh / video / log:
-Phần Android cần chủ dự án xác nhận:
-Lỗi còn lại:
-```
-
-## Setup dự án
-
-### Công cụ cần có
-
-| Công cụ | Yêu cầu |
+| Mục cần nhớ | Giá trị dành cho người làm PC |
 | --- | --- |
-| Git và Git LFS | Git LFS cần để tải đúng ảnh, âm thanh và mô hình |
-| Unity Hub / Unity Editor | Dùng đúng **6000.6.4f1** theo ProjectVersion.txt |
-| Render pipeline | **URP 17.6.0**, lấy theo manifest và package lock của project |
-| Android Build Support | Máy build Android cần Android SDK & NDK Tools và OpenJDK đi kèm Unity |
-| Windows Build Support | Máy phụ trách PC cần hỗ trợ Windows; IL2CPP cần toolchain tương ứng nếu lựa chọn backend này |
-| Unity CLI | Dùng cho tự động hóa và kết nối Editor; không bắt buộc nếu chỉ thao tác Unity bằng tay |
-| Antigravity | Tùy chọn khi dùng AI hỗ trợ phát triển |
+| Repository | `https://github.com/tungvu373/KhiVanChiTu.git` |
+| Nhánh clone, làm việc và push | **`codex/pc-content-handoff`** |
+| Thư mục riêng trên máy bạn | `KhiVanChiTu-PC` |
+| Unity Editor | **6000.6.4f1** |
+| Build target | **Windows / StandaloneWindows64** |
+| Scene chơi và kiểm thử game | `Assets/Modules/PCContent/Scenes/PCGameplayWork.unity` |
+| Scene dựng/xem môi trường | `Assets/Modules/PCContent/Scenes/ContentSandbox.unity` |
+| Phạm vi sửa chính | **`Assets/Modules/PCContent/**`** |
 
-Giữ nguyên phiên bản Editor và packages của nhóm; không tự nâng trên một máy.
+## 1. Cài công cụ trên máy PC của bạn
 
-### Clone đúng nhánh
+Cài Git, Git LFS, Unity Hub, Unity Editor **6000.6.4f1** và Antigravity. Cài hỗ trợ Windows của Editor nếu bản cài yêu cầu. Giữ render pipeline, scripting backend và package lock lấy từ nhánh của dự án.
 
-Nhánh `main` là trang giới thiệu và dòng mã nền. Phần cộng tác mới, scene MobileWork/PC và công cụ bàn giao nằm trên các nhánh dưới đây:
+Bạn làm bản Windows; không cần cài Android SDK/NDK/OpenJDK cho phần việc này.
 
-| Phạm vi | Nhánh | Scene chính |
-| --- | --- | --- |
-| Chủ dự án — Android | [codex/android-release](https://github.com/tungvu373/KhiVanChiTu/tree/codex/android-release) | `Assets/Scenes/SampleScene_MobileWork.unity` |
-| Người cộng tác — PC, nội dung, QA | [codex/pc-content-handoff](https://github.com/tungvu373/KhiVanChiTu/tree/codex/pc-content-handoff) | `Assets/Modules/PCContent/Scenes/PCGameplayWork.unity` |
-| Xem môi trường độc lập | Nhánh PC hoặc Android ở mốc bàn giao | `Assets/Modules/PCContent/Scenes/ContentSandbox.unity` |
+## 2. Clone thẳng nhánh PC
 
-**Android — PowerShell:**
-
-```powershell
-git lfs install
-git clone --branch codex/android-release https://github.com/tungvu373/KhiVanChiTu.git KhiVanChiTu-Android
-Set-Location .\KhiVanChiTu-Android
-git lfs pull
-```
-
-**PC — PowerShell:**
+Mở PowerShell tại thư mục bạn muốn đặt dự án, chạy lần lượt:
 
 ```powershell
 git lfs install
 git clone --branch codex/pc-content-handoff https://github.com/tungvu373/KhiVanChiTu.git KhiVanChiTu-PC
 Set-Location .\KhiVanChiTu-PC
 git lfs pull
+git branch --show-current
 ```
 
-Trong Unity Hub, chọn **Add / Open project from disk**, trỏ tới thư mục vừa clone chứa `Assets`, `Packages`, `ProjectSettings`. Đợi Unity resolve packages và import xong, kiểm tra Console trước khi Play.
+Lệnh cuối phải in đúng:
 
-Mở thư mục project gốc trong IDE/Antigravity. Hai người dùng hai checkout riêng; không đổi nhánh trong cùng thư mục để giả lập hai nơi làm việc đồng thời.
+```text
+codex/pc-content-handoff
+```
 
-## Unity CLI và Pipeline
+Nếu kết quả khác, dừng bước sửa dự án và kiểm tra lại checkout. Không làm nội dung trên `main`, `develop` hoặc `codex/android-release`.
 
-Unity CLI là công cụ terminal. Package `com.unity.pipeline` kết nối CLI tới **Editor đang mở** qua localhost; lệnh `unity command` không khởi động Editor thứ hai.
+Từ đây, mọi lệnh Git và Unity CLI trong tài liệu đều chạy trong thư mục **KhiVanChiTu-PC** vừa clone — thư mục có `Assets`, `Packages`, `ProjectSettings`. Không chạy từ bên trong Assets.
 
-### Cài CLI trên Windows
+## 3. Mở đúng project và scene PC trong Unity
 
-Kiểm tra trước bằng `unity --version`. Nếu chưa có CLI, mở PowerShell và chạy:
+1. Trong Unity Hub, chọn **Add / Open project from disk** và trỏ tới thư mục **KhiVanChiTu-PC**.
+2. Mở bằng Unity **6000.6.4f1**, đợi resolve packages/import/compile hoàn tất.
+3. Mở **File > Build Profiles**, chọn **Windows / StandaloneWindows64** và chuyển active platform sang Windows trên checkout PC của bạn.
+4. Mở **TuTien > Collaboration > 2. Open PC Gameplay**. Scene đang mở phải là `Assets/Modules/PCContent/Scenes/PCGameplayWork.unity`.
+5. Bấm **Play**. Tạo/chọn nhân vật trong menu để thử gameplay và lưu tiến trình PC.
+6. Khi dựng môi trường, dừng Play rồi mở **TuTien > Collaboration > 3. Open Content Sandbox**.
+
+Hai scene đã có sẵn trên nhánh PC. Không cần tạo lại hay sao chép scene Android. ContentSandbox chỉ xem hai chunk môi trường chạy nối tiếp; PCGameplayWork dùng để kiểm tra game thật.
+
+Không thêm PCGameplayWork/ContentSandbox vào danh sách scene build toàn cục. Công cụ build PC ở bước 8 sẽ chọn đúng scene PC riêng.
+
+## 4. Cài Unity CLI và kiểm tra Pipeline
+
+Trong PowerShell, kiểm tra `unity --version`. Nếu chưa có CLI, chạy installer chính thức:
 
 ```powershell
 irm https://unity.com/install.ps1 | iex
 ```
 
-Mở terminal mới để nhận PATH, sau đó:
+Mở terminal mới trong Antigravity để nhận PATH. Mở workspace **KhiVanChiTu-PC**, chạy:
 
 ```powershell
 unity --version
-unity --help
-unity self-update --check --format json
+git branch --show-current
+unity status --format json
 ```
 
-Nếu PATH chưa cập nhật, thử executable mặc định theo tài khoản hiện tại:
+Kết quả cần có: branch `codex/pc-content-handoff`, Editor `ready` và `projectPath` trỏ đúng thư mục **KhiVanChiTu-PC** trên máy bạn.
 
-```powershell
-$unityCliPath = Join-Path $env:LOCALAPPDATA 'Unity\bin\unity.exe'
-& $unityCliPath --version
-```
-
-### Kết nối Pipeline
-
-Hai nhánh làm việc đã có Pipeline **0.9.1-exp.1** trong manifest/package lock. Bình thường Unity sẽ tải package khi import; không cần cài lại.
-
-Nếu package thực sự thiếu, chạy tại root project:
+Nhánh này đã có `com.unity.pipeline` **0.9.1-exp.1** và URP **17.6.0**. Bình thường Unity tự tải package khi import. Nếu xác nhận Pipeline thực sự bị thiếu, cài đúng phiên bản tại root checkout PC:
 
 ```powershell
 unity pipeline install --project-path . --version 0.9.1-exp.1
 ```
 
-Chỉ mở project bằng CLI khi chưa có Editor của checkout này đang chạy:
+Giữ phiên bản package của nhóm. `unity command` kết nối Editor đang mở, không mở Editor thứ hai. Nếu có nhiều Editor, thêm `--project-path` trỏ đúng KhiVanChiTu-PC; không chọn phiên Android của chủ dự án. Port lấy từ status, không hardcode 7800.
+
+Kiểm tra scene và console:
 
 ```powershell
-unity open .
-```
-
-Khi Editor đã mở, kiểm tra:
-
-```powershell
-unity status --format json
 unity command scene list_open --format json
 unity command console status --format json
 unity command
 ```
 
-Mong đợi đúng `projectPath`, trạng thái `ready` và không có lỗi compile. Port được lấy từ kết quả status; không mặc định mọi máy đều dùng 7800.
+Để mở scene PC bằng CLI:
 
-**Mọi lệnh Unity chạy ở root project, không chạy từ Assets.** Dùng Pipeline để sửa scene/prefab qua Editor. Khi có nhiều Editor, thêm `--project-path` trỏ đúng checkout. Không sửa Scene/Prefab YAML bằng text replacement.
+```powershell
+unity command editor invoke_menu --path "TuTien/Collaboration/2. Open PC Gameplay"
+```
 
-## Sử dụng với Antigravity
+Nếu không thấy instance: kiểm tra đúng project đang mở, compile/Safe Mode và quyền truy cập localhost. Nếu CLI chưa có trên PATH, thử executable tại `$env:LOCALAPPDATA\Unity\bin\unity.exe`. Không xóa package hoặc mở thêm Editor trên cùng checkout để xử lý lỗi kết nối.
 
-1. Mở thư mục project gốc trong Antigravity, mở đúng project đó trong Unity.
-2. Chạy `unity status --format json` trong terminal của Antigravity.
-3. Yêu cầu AI đọc `AGENTS.md` ở root và quy định của phạm vi đang sửa.
-4. Khám phá lệnh bằng `unity command` trước khi thao tác; lưu scene và kiểm tra Console sau mỗi task.
+## 5. Cấu hình Antigravity cho workspace PC
 
-Cài plugin Unity cho Antigravity nếu muốn dùng bộ hướng dẫn Unity tích hợp. `agy` cần có trên PATH theo bản Antigravity đang dùng:
+Trong Antigravity, **Open Folder → KhiVanChiTu-PC**. Terminal phải đang ở root thư mục này và `git branch --show-current` phải trả `codex/pc-content-handoff`.
+
+Nếu muốn cài bộ hướng dẫn Unity tích hợp, bảo đảm lệnh `agy` của Antigravity có trên PATH, rồi chạy:
 
 ```powershell
 unity setup antigravity --dry-run
 unity setup antigravity
 ```
 
-Mở phiên Antigravity mới sau khi cài plugin. CLI trực tiếp vẫn dùng được khi Pipeline kết nối, kể cả chưa đăng ký MCP.
-
-**MCP tùy chọn**, chạy từ root checkout của mình:
+Mở phiên Antigravity mới sau khi cài plugin. AI có thể gọi CLI trực tiếp khi Pipeline đã kết nối. Nếu muốn đăng ký thêm MCP, chạy tại root KhiVanChiTu-PC:
 
 ```powershell
 unity mcp configure antigravity --project-path (Get-Location).Path --dry-run
 unity mcp configure antigravity --project-path (Get-Location).Path
 ```
 
-Nếu cấu hình MCP hiện có không phải JSON hợp lệ, sao lưu và sửa cú pháp trước; không ghi đè các server khác. Nếu Antigravity chặn localhost trong sandbox, cấp quyền riêng cho lệnh Unity/IPC cần thiết theo giao diện của công cụ.
+Nếu cấu hình MCP cũ sai JSON, sao lưu và sửa cú pháp; không ghi đè các server khác. Nếu sandbox chặn localhost, cho phép riêng Unity/IPC cần thiết trong giao diện quyền của Antigravity.
 
-**Prompt bắt đầu:**
+**Dán prompt này vào Antigravity để bắt đầu:**
 
 ```text
-Tôi đang làm Khí Vận Chi Tử. Đọc README.md, HUONG_DAN_CONG_TAC.md và AGENTS.md trước.
-Xác định nhánh hiện tại và phạm vi Android hoặc PC được giao.
-Mọi lệnh unity chạy ở project root; kiểm tra status, scene đang mở và console.
-Dùng Editor đang mở qua Pipeline; không sửa Scene/Prefab YAML thủ công.
-Trước khi chạy một lệnh Editor, xem schema bằng unity command.
-Làm task nhỏ, giữ .meta, biên dịch, lưu scene và ghi rõ kết quả đã kiểm tra.
-Không đổi công thức, save, package hoặc scene của người khác ngoài phạm vi task.
+Tôi nhận module PC/Windows của Khí Vận Chi Tử. Tôi làm trong checkout
+KhiVanChiTu-PC, trên nhánh codex/pc-content-handoff.
+Chủ dự án làm Android trên codex/android-release; tôi không sửa/push nhánh đó.
+
+Đọc HUONG_DAN_CONG_TAC.md, AGENTS.md ở root và
+Assets/Modules/PCContent/AGENTS.md.
+Trước khi sửa, kiểm tra git branch --show-current phải là
+codex/pc-content-handoff và unity status phải trỏ đúng checkout PC này.
+
+Scene chơi của tôi: Assets/Modules/PCContent/Scenes/PCGameplayWork.unity.
+Scene môi trường: Assets/Modules/PCContent/Scenes/ContentSandbox.unity.
+Phạm vi sửa chính: Assets/Modules/PCContent/**.
+Dùng Editor đang mở qua Pipeline. Không sửa Scene/Prefab YAML bằng text.
+Giữ marker __PCWorkspace_SaveIsolation và profile pc-workspace.
+Không đổi scene Android, global scene list, Packages, ProjectSettings,
+công thức gameplay, economy, save/migration hoặc backend ngoài task đã giao.
+
+Bắt đầu PC-01: kiểm tra clone/LFS/compile, mở scene PC, chạy validator,
+Play và xác minh frame tăng, kiểm tra tạo/chọn nhân vật, build Windows.
+Sau đó làm CONTENT-01: dựng hai chunk môi trường theo prefab mẫu.
+Commit nhỏ cùng .meta, báo rõ phần đã kiểm và lỗi còn lại.
 ```
 
-**Lệnh dùng thường xuyên:**
+## 6. Công việc bạn được giao
+
+Làm **PC-01 trước**, rồi giao một PR nhỏ cho **CONTENT-01** để kiểm chứng cách phối hợp.
+
+| ID | Việc của người làm PC | Đầu ra cần bàn giao |
+| --- | --- | --- |
+| PC-01 | Setup đúng nhánh PC, Unity, CLI/Pipeline; chạy hai scene và build Windows | Không compile error; hồ sơ PC riêng; EXE mở được |
+| CONTENT-01 | Một chủ đề môi trường chặng đầu, hai chunk nối nhau, prefab/material riêng | Không hở khi cuộn; không lẫn camera/manager/UI vào prefab content |
+| DESIGN-01 | Kịch bản 10–15 phút đầu: farm → ghép kiếm → nâng cấp → boss → lưu/chơi tiếp | Hành động, điều kiện mở, thời gian dự kiến, phản hồi và cách xử lý khi thua |
+| BALANCE-01 | Quan sát 10 tầng chiến đấu đầu và boss tầng 10 trên PC | Số đo theo build/thiết bị, tài nguyên, điểm kẹt và đề xuất; không tự đổi công thức |
+| PC-02 | Kiểm chuột, kéo ghép, Escape/focus, cửa sổ 1280×720, 1920×1080 và resize | Báo cáo lỗi và phần chỉnh trong scene/prefab PC được giao |
+| TEXT-01 | Rà tên, mô tả, hướng dẫn và thông báo | Thuật ngữ nhất quán, khớp tính năng đang mở |
+| QA-01 / QA-02 | Regression Windows, quan sát nhóm nhỏ người mới chơi | Bước tái hiện, expected/actual, build, thiết bị, ảnh/log; kiểm lại lỗi đã sửa |
+| STORE-01 | Ảnh/video gameplay thật, mô tả ngắn, nguồn art/font/nhạc | Thực hiện khi gameplay ổn định, phản ánh đúng bản đang có |
+
+Bạn gửi đề xuất/lỗi ở gameplay, save hay backend để chủ dự án xử lý. Việc build APK/AAB, SDK Android, ký và phát hành Android thuộc chủ dự án.
+
+## 7. Phạm vi file, content và save của bạn
+
+Bạn sửa scene, prefab, material, nội dung và tài liệu thuộc **Assets/Modules/PCContent** theo task. Phối hợp trước khi cần sửa tài nguyên ngoài thư mục này hoặc behaviour dùng chung.
+
+```text
+Assets/Modules/PCContent/
+  Scenes/PCGameplayWork.unity       # kiểm thử gameplay PC
+  Scenes/ContentSandbox.unity       # dựng/xem môi trường
+  Content/Opening/                  # prefab, material nội dung của bạn
+  Runtime/                          # component module; thay đổi logic cần review
+  Editor/                           # công cụ module; thay đổi cần review
+  Docs/                             # ghi nhận design/QA được giao
+```
+
+- Prefab chunk mẫu rộng **24**, dài **80** Unity units; pivot ở đầu chunk, dọc **+Z**, root scale **(1,1,1)**; chunk thứ hai tại z=80.
+- Giữ camera/ánh sáng preview trong sandbox. Không đóng gói gameplay manager, DataManager, camera chính hay UI vào prefab môi trường.
+- Tạo bản material/TerrainData riêng nếu cần chỉnh asset dùng chung. Sao chép scene không tự tách chúng.
+- Giữ `__PCWorkspace_SaveIsolation` và profile **pc-workspace**. PlayerPrefs PC là `pc-workspace::KhiVanChiTu_SaveData`; backup là `pc-workspace_KhiVanChiTu_SaveData.json` trong persistentDataPath.
+- Không nhập save Android vào PC. Marker chỉ tách tiến trình local; không cung cấp đồng bộ tài khoản online.
+- Không sửa `Assets/Scenes/SampleScene_MobileWork.unity`, core `Assets/Scripts`, `Packages` hoặc `ProjectSettings` khi chưa phối hợp chủ dự án.
+
+## 8. Chạy kiểm tra và build Windows
+
+Trước mỗi lượt kiểm tra, xác nhận `git branch --show-current` là **codex/pc-content-handoff** và Editor đang mở **PCGameplayWork**. Lưu scene, rồi chạy:
 
 ```powershell
 unity recompile --format json
-unity command editor.playmode start
-unity status --until-ready --format json
-unity command editor.playmode stop
-unity command scene save
+unity command editor invoke_menu --path "TuTien/Collaboration/4. Validate PC Workspace"
 unity command console get --tail 10 --format json
 ```
 
-Tên lệnh có thể khác giữa các bản package. `unity command <group>` hoặc `unity command --query <từ-khóa>` là nguồn kiểm tra cú pháp của Editor hiện tại. Khi nghiệm thu Play Mode, xác minh frame thực sự tăng; ảnh tĩnh và trạng thái Play chưa đủ.
+Console phải có `[PCWorkspace] PASS` và không có lỗi chưa xử lý. Lệnh gọi menu báo `success` chỉ chứng minh menu được gọi; vẫn phải đọc Console.
 
-## Build game
+Dùng Play trong Editor để kiểm tra menu/tạo nhân vật, chuột/ghép kiếm, drawer/modal, boss và save/load. Khi AI nghiệm thu Play, xác minh frame thực sự tăng, không chỉ chụp một ảnh tĩnh.
 
-### Android
+Khi active target là Windows / StandaloneWindows64, build bằng:
 
-Trên nhánh Android, mở **File > Build Profiles**, chọn Android và kiểm tra scene đầu vào là `Assets/Scenes/SampleScene_MobileWork.unity`. Máy build cần Android Build Support/SDK/NDK/OpenJDK của đúng Editor.
-
-Dùng APK để thử trên thiết bị. Khi chuẩn bị phân phối Google Play, tạo AAB và cấu hình định danh/ký phát hành của dự án. Giữ keystore và mật khẩu ngoài Git. Luôn kiểm tra touch, safe area, Back, pause/resume và save trên máy Android thật.
-
-### Windows PC
-
-Trên checkout PC, chọn Windows / `StandaloneWindows64`, lưu scene rồi mở:
-
-```text
-TuTien > Collaboration > 4. Validate PC Workspace
-TuTien > Collaboration > 5. Build Windows Development
+```powershell
+unity command editor invoke_menu --path "TuTien/Collaboration/5. Build Windows Development" --timeout 1800
 ```
 
-Tool chọn riêng PCGameplayWork và giữ danh sách scene Android. Output mặc định:
+Output:
 
 ```text
-Builds/PCContent/KhiVanChiTu_PC.exe
+KhiVanChiTu-PC/Builds/PCContent/KhiVanChiTu_PC.exe
 ```
 
-Gửi toàn bộ thư mục build có EXE và dữ liệu đi kèm. Tool từ chối ghi đè EXE đã tồn tại; dùng thư mục output mới qua `PCWorkspaceTools.BuildWindowsAtPath` khi cần giữ nhiều bản QA. Build output không nằm trong Git; clone repository là tải source, không tự có EXE/APK.
+Gửi **cả thư mục build**, gồm EXE và dữ liệu đi kèm, khi bàn giao bản chạy. Đây là development build cho QA. Tool tự chọn PCGameplayWork, không cần sửa global build scene list.
 
-## Cộng tác
+Nếu EXE cũ đã tồn tại, tool từ chối ghi đè. Giữ bản cũ và dùng `PCWorkspaceTools.BuildWindowsAtPath` với thư mục output mới, hoặc phối hợp chủ dự án chọn nơi xuất bản mới. Không commit Builds/Library/log/save lên Git.
 
-- **Chủ dự án:** Android, gameplay, economy, save/migration, backend, SDK và tích hợp.
-- **Người cộng tác:** Windows/PC, nội dung chặng đầu, môi trường, hướng dẫn và QA.
-- Dùng prefab/asset riêng để bàn giao nội dung; không ghi đè nguyên scene Android bằng scene PC.
-- Mỗi scene/prefab có một người sửa tại một thời điểm. Commit cùng `.meta`; di chuyển/đổi tên asset qua Editor.
-- Giữ các thay đổi nhỏ, review diff và dùng PR khi tích hợp giữa hai nhánh.
-- PCGameplayWork dùng save local `pc-workspace`; giữ marker tách save. Đây không phải cơ chế đồng bộ online.
+## 9. Nhịp làm việc hằng ngày trên nhánh PC
 
-Đầu việc đầu tiên cho người cộng tác: setup chạy được → dựng hai chunk môi trường → thiết kế 10–15 phút đầu → đo nhịp 10 tầng chiến đấu đầu → kiểm thử Windows và báo lỗi chung để kiểm lại trên Android.
+Đầu ngày, trong KhiVanChiTu-PC:
+
+```powershell
+git branch --show-current
+git status --short
+```
+
+Chỉ khi branch đúng **codex/pc-content-handoff** và working tree sạch, cập nhật:
+
+```powershell
+git pull --ff-only origin codex/pc-content-handoff
+```
+
+Nếu có thay đổi chưa commit, giữ/commit công việc của bạn trước; không reset hoặc xóa file để ép pull.
+
+Làm task trên scene/prefab PC, kiểm thử, lưu và xem diff. Ví dụ commit CONTENT-01:
+
+```powershell
+git diff --stat
+git add -- Assets/Modules/PCContent
+git diff --cached --stat
+git commit -m "PC: finish CONTENT-01 opening environment"
+git push origin codex/pc-content-handoff
+```
+
+Chỉ stage file thuộc task, đi cùng `.meta`. Push của người làm PC chỉ nhắm **codex/pc-content-handoff**; không push trực tiếp `codex/android-release`, `main` hoặc `develop`.
+
+## 10. Bàn giao lại cho chủ dự án
+
+Mở Pull Request trên GitHub với đúng hướng:
+
+```text
+compare / nhánh nguồn: codex/pc-content-handoff
+base / nhánh nhận:     codex/android-release
+```
+
+Bạn tạo PR và gửi bản build/báo cáo; chủ dự án review, tích hợp và kiểm trên Android. Không tự merge để ghi đè scene Android bằng scene PC.
+
+PR ghi rõ:
+
+```text
+Task:
+Commit / build / thiết bị Windows:
+Scene, prefab và asset đã sửa:
+Kết quả kiểm thử:
+Ảnh / video / log:
+Lỗi còn lại:
+Phần cần chủ dự án tích hợp hoặc kiểm trên Android:
+```
+
+Mốc đầu tiên: PC-01 hoàn tất và một prefab CONTENT-01 nhỏ đi hết quy trình. Sau đó mới mở rộng nội dung và polish PC theo phản hồi. Chủ dự án giữ lịch và phạm vi online; bạn không tự nhận thêm backend, Ads/IAP hay phát hành Android.
 
 ## Tài liệu công cụ
 
-- [Unity CLI — cài đặt và sử dụng](https://docs.unity.com/en-us/unity-cli/use-unity-cli)
-- [Unity agent integration — Antigravity và MCP](https://github.com/Unity-Technologies/unity-agent-plugin/blob/main/skills/unity-cli/references/integration-advanced.md)
+- [Unity CLI chính thức](https://docs.unity.com/en-us/unity-cli/use-unity-cli)
+- [Unity integration cho Antigravity/MCP](https://github.com/Unity-Technologies/unity-agent-plugin/blob/main/skills/unity-cli/references/integration-advanced.md)
