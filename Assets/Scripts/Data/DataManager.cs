@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using KhiVanChiTu.Collaboration;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DATA STRUCTURES
@@ -106,6 +107,9 @@ public class DataManager : MonoBehaviour
 
     public GameSaveData gameSaveData = new GameSaveData();
     private const string SAVE_KEY = "KhiVanChiTu_SaveData";
+    private string saveProfileId = string.Empty;
+    public string SaveStorageKey => WorkspaceSaveProfile.Key(SAVE_KEY, saveProfileId);
+    public string SaveProfileId => saveProfileId;
 
     // Thời điểm bắt đầu session hiện tại (để tính thời gian chơi cộng dồn)
     private float sessionStartTime;
@@ -120,7 +124,8 @@ public class DataManager : MonoBehaviour
         isSessionActive = true;
     }
 
-    private string BackupFilePath => System.IO.Path.Combine(Application.persistentDataPath, "KhiVanChiTu_SaveData.json");
+    private string BackupFilePath => System.IO.Path.Combine(Application.persistentDataPath,
+        WorkspaceSaveProfile.FileName("KhiVanChiTu_SaveData.json", saveProfileId));
 
     private void Awake()
     {
@@ -129,6 +134,9 @@ public class DataManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        // Capture before DontDestroyOnLoad moves this object out of its authoring scene.
+        // Keeping this immutable also isolates autosave/quit after the workspace scene unloads.
+        saveProfileId = WorkspaceSaveProfile.Resolve(gameObject.scene);
         Instance = this;
         DontDestroyOnLoad(gameObject);
         if (SwordLoadoutService.Instance == null && GetComponent<SwordLoadoutService>() == null)
@@ -303,7 +311,7 @@ public class DataManager : MonoBehaviour
     // ─────────────────────────────────────────────────────────────────────────
     public void LoadData()
     {
-        string json = PlayerPrefs.GetString(SAVE_KEY, "");
+        string json = PlayerPrefs.GetString(SaveStorageKey, "");
 
         // Nếu PlayerPrefs rỗng (hoặc bị reset), thử tìm trong file JSON sao lưu dự phòng
         if (string.IsNullOrEmpty(json) && System.IO.File.Exists(BackupFilePath))
@@ -361,7 +369,7 @@ public class DataManager : MonoBehaviour
         {
             string json = JsonUtility.ToJson(gameSaveData, true);
             // 1. Lưu vào Windows Registry (PlayerPrefs)
-            PlayerPrefs.SetString(SAVE_KEY, json);
+            PlayerPrefs.SetString(SaveStorageKey, json);
             PlayerPrefs.Save();
 
             // 2. Lưu kép vào file JSON ổ cứng (AppData) để đảm bảo không bao giờ mất
