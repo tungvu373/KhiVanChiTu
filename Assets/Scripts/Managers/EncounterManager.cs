@@ -33,6 +33,7 @@ public class EncounterManager : MonoBehaviour
 
     public static bool CanSpawnEncounter()
     {
+        if (GameplayChoicesService.Instance != null && (GameplayChoicesService.Instance.IsChoosing || GameplayChoicesService.Instance.ChallengeRemaining > 0)) return false;
         if (Time.timeScale <= 0f) return false;
         if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm) return false;
         if (MobileDrawerUIController.Instance != null && MobileDrawerUIController.Instance.IsBlockingGameplay) return false;
@@ -119,6 +120,11 @@ public class EncounterItem : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         if (!EncounterManager.CanSpawnEncounter()) return;
+        if (GameplayChoicesService.Instance != null)
+        {
+            if (GameplayChoicesService.Instance.OfferEncounter()) Destroy(gameObject);
+            return;
+        }
         AchievementManager.Instance?.OnEncounterCollected();
         // Phân chia tỷ lệ cân bằng: 50% Kiếm, 40% Đan Dược (Thuốc), 10% Cơ Duyên
         float rng = Random.value;

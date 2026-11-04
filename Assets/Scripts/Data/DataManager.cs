@@ -28,6 +28,9 @@ public class GameSaveData
 [Serializable]
 public class CharacterSaveData
 {
+    public int swordStyle;
+    public bool swordStyleUnlocked;
+    public int encounterKillsRemaining;
     public int saveVersion = 0;
     public int realmId = 0;
     public int subLevel = 1;
@@ -138,6 +141,7 @@ public class DataManager : MonoBehaviour
         // Keeping this immutable also isolates autosave/quit after the workspace scene unloads.
         saveProfileId = WorkspaceSaveProfile.Resolve(gameObject.scene);
         Instance = this;
+        if (GetComponent<GameplayChoicesService>() == null) gameObject.AddComponent<GameplayChoicesService>();
         DontDestroyOnLoad(gameObject);
         if (SwordLoadoutService.Instance == null && GetComponent<SwordLoadoutService>() == null)
             gameObject.AddComponent<SwordLoadoutService>();

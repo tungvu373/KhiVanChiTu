@@ -24,6 +24,10 @@ public class FlyingSword : MonoBehaviour
     private const float RETREAT_DURATION = 0.25f; // Thời gian bay lùi ra xa sau khi chém
     private float retreatTimer = 0f;
     private float bladePunchTimer = 0f;
+    private Enemy lastStyleTarget;
+    private int consecutiveStyleHits;
+    private int lastStyleTargetVersion;
+    private void OnDisable() { lastStyleTarget = null; consecutiveStyleHits = 0; }
 
     public float GetExpectedDamage()
     {
@@ -199,6 +203,43 @@ public class FlyingSword : MonoBehaviour
         }
 
         bladePunchTimer = 0.08f;
+        if (!isUltimateClone && GameplayChoicesService.Instance != null)
+        {
+            int style = GameplayChoicesService.Instance.Style;
+            if (style == 1)
+            {
+                consecutiveStyleHits = lastStyleTarget == hitEnemy && lastStyleTargetVersion == hitEnemy.SpawnVersion
+                    ? Mathf.Min(4, consecutiveStyleHits + 1) : 0;
+                lastStyleTarget = hitEnemy;
+                lastStyleTargetVersion = hitEnemy.SpawnVersion;
+                finalDamage *= 1f + consecutiveStyleHits * 0.2f;
+                var guard = hitEnemy.GetComponent<OpeningBossGuard>();
+                if (guard != null) guard.Absorb(finalDamage);
+            }
+            else
+            {
+                lastStyleTarget = null; consecutiveStyleHits = 0;
+                if (style == 0 && CombatManager.Instance != null)
+                {
+                    int hitCount = 0;
+                    Vector3 direction = hitEnemy.transform.position - CombatManager.Instance.playerTransform.position;
+                    direction.y = 0; direction.Normalize();
+                    var candidates = CombatManager.Instance.ActiveEnemies;
+                    for (int index = candidates.Count - 1; index >= 0; index--)
+                    {
+                        if (index >= candidates.Count) continue;
+                        var other = candidates[index];
+                        if (other == null) continue;
+                        if (other == hitEnemy || other.isDead || other.hp <= 0) continue;
+                        Vector3 offset = other.transform.position - hitEnemy.transform.position; offset.y = 0;
+                        float along = Vector3.Dot(offset, direction);
+                        if (along < 0 || along > 6 || (offset - direction * along).sqrMagnitude > 4) continue;
+                        other.TakeDamage(finalDamage * 0.5f, isCrit, direction);
+                        if (++hitCount == 2) break;
+                    }
+                }
+            }
+        }
         hitEnemy.TakeDamage(finalDamage, isCrit, slashDir);
         if (!isUltimateClone && CombatManager.Instance != null && PlayerStatsService.Instance != null)
             CombatManager.Instance.HealPlayer(finalDamage * PlayerStatsService.Instance.LifestealPercent);
@@ -242,6 +283,8 @@ public class FlyingSword : MonoBehaviour
     /// </summary>
     public void ResetTarget()
     {
+        lastStyleTarget = null;
+        consecutiveStyleHits = 0;
         TargetEnemy = null;
         searchTimer = 0.4f;
         attackCooldown = 0f;

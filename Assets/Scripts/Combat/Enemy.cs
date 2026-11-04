@@ -25,6 +25,7 @@ public class Enemy : MonoBehaviour
     // Animation
     public Animator animator;
     public bool isDead = false;
+    public int SpawnVersion { get; private set; }
     protected bool hasIsMovingParam = false;
     
     // UI Damage Popup (Cộng dồn sát thương tránh đè chữ)
@@ -77,6 +78,7 @@ public class Enemy : MonoBehaviour
 
     public void Init(float health, Transform target, bool boss = false)
     {
+        SpawnVersion++;
         CancelInvoke();
         maxHp = health;
         hp = health;
@@ -494,6 +496,7 @@ public class Enemy : MonoBehaviour
         AlchemyService.Instance?.OnEnemyDefeated(isBoss, combatStage);
         ArtifactService.Instance?.OnEnemyDefeated(isBoss, combatStage);
         AchievementManager.Instance?.OnEnemyKilled(isBoss);
+        GameplayChoicesService.Instance?.OnEnemyDefeated(isBoss);
         
         if (CombatManager.Instance != null)
         {

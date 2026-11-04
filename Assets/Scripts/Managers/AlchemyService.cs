@@ -30,6 +30,14 @@ public class AlchemyService : MonoBehaviour
         OnChanged?.Invoke();
     }
 
+    public void GrantEncounterPill()
+    {
+        int realm = CultivationManager.Instance != null ? (int)CultivationManager.Instance.CurrentRealm : 0;
+        int index = Mathf.Clamp(realm, 0, 8) * 8 + 5;
+        State.pills[index] = Mathf.Min(1000000, State.pills[index] + 1);
+        OnChanged?.Invoke();
+    }
+
     public int GetHerbCount(int herb) => herb >= 0 && herb < 3 ? State.herbs[herb] : 0;
 
     public int[] GetRecipeCosts(PillRecipe recipe, int realm)

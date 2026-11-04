@@ -118,6 +118,13 @@ public class BossEnemy : Enemy
         this.attackInterval = 1.5f;
 
         base.Init(finalHealth, target, true);
+        var guard = GetComponent<OpeningBossGuard>();
+        if (stage == 10)
+        {
+            if (guard == null) guard = gameObject.AddComponent<OpeningBossGuard>();
+            guard.ResetGuard(finalHealth * 0.3f);
+        }
+        else if (guard != null) guard.ResetGuard(0);
 
         Transform hpCanvas = transform.Find("HPCanvas");
         if (hpCanvas != null)
@@ -152,6 +159,8 @@ public class BossEnemy : Enemy
 
     public void InitTribulationBoss(int realmTier, int stageIndex, string targetRealmName, Transform target)
     {
+        var openingGuard = GetComponent<OpeningBossGuard>();
+        if (openingGuard != null) openingGuard.ResetGuard(0);
         this.isBoss = true;
         this.isTribulationBoss = true;
         this.playerTarget = target;
@@ -461,6 +470,8 @@ public class BossEnemy : Enemy
     /// </summary>
     public override void TakeDamage(float amount, bool isCrit = false, Vector3 hitDirection = default)
     {
+        var guard = GetComponent<OpeningBossGuard>();
+        if (!isTribulationBoss && guard != null) amount = guard.Absorb(amount);
         if (isTribulationBoss)
         {
             // 1. Damage Cap: Mỗi đòn đánh của phi kiếm/kỹ năng chỉ được gây tối đa 4% Max HP của Boss

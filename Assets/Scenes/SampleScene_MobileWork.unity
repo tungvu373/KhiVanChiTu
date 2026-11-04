@@ -637,7 +637,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DataManager
   gameSaveData:
     slots:
-    - saveVersion: 0
+    - swordStyle: 0
+      swordStyleUnlocked: 0
+      encounterKillsRemaining: 0
+      saveVersion: 0
       realmId: 0
       subLevel: 1
       lastActiveUtcTicks: 0
@@ -715,7 +718,10 @@ MonoBehaviour:
         lifetimeLinhThachEarned: 0
       playTime: 0
       lastPlayedDate: 
-    - saveVersion: 0
+    - swordStyle: 0
+      swordStyleUnlocked: 0
+      encounterKillsRemaining: 0
+      saveVersion: 0
       realmId: 0
       subLevel: 1
       lastActiveUtcTicks: 0
@@ -793,7 +799,10 @@ MonoBehaviour:
         lifetimeLinhThachEarned: 0
       playTime: 0
       lastPlayedDate: 
-    - saveVersion: 0
+    - swordStyle: 0
+      swordStyleUnlocked: 0
+      encounterKillsRemaining: 0
+      saveVersion: 0
       realmId: 0
       subLevel: 1
       lastActiveUtcTicks: 0
@@ -84048,7 +84057,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2093441491
 RectTransform:
   m_ObjectHideFlags: 0

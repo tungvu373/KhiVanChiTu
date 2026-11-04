@@ -19,6 +19,7 @@ public class CombatManager : MonoBehaviour
     public int maxOnScreenEnemies = 15; // Giới hạn số lượng quái xuất hiện đồng thời trên sân (tránh lag, đè chồng)
     
     private List<Enemy> activeEnemies = new List<Enemy>();
+    public System.Collections.Generic.IReadOnlyList<Enemy> ActiveEnemies => activeEnemies;
 
     public float playerMaxHp = 1000f;
     public float playerCurrentHp = 1000f;
