@@ -1,6 +1,6 @@
 # Hướng dẫn dành riêng cho người làm module PC
 
-**Bạn nhận phần PC/Windows, nội dung và QA. Nhánh làm việc của bạn là `codex/pc-content-handoff`, từ lúc clone, mở Unity/Antigravity, sửa nội dung cho đến commit và push.**
+**Bạn nhận phần PC/Windows, nội dung và QA. Nhánh làm việc của bạn là `codex/pc-content-handoff`, từ lúc clone, mở Unity và Antigravity IDE, sửa nội dung cho đến commit và push.**
 
 Chủ dự án phụ trách Android trên `codex/android-release`. Nhánh Android chỉ là nơi gửi Pull Request để chủ dự án xem và tích hợp; bạn không chuyển sang nhánh đó để làm việc.
 
@@ -17,7 +17,7 @@ Chủ dự án phụ trách Android trên `codex/android-release`. Nhánh Androi
 
 ## 1. Cài công cụ trên máy PC của bạn
 
-Cài Git, Git LFS, Unity Hub, Unity Editor **6000.6.4f1** và Antigravity. Cài hỗ trợ Windows của Editor nếu bản cài yêu cầu. Giữ render pipeline, scripting backend và package lock lấy từ nhánh của dự án.
+Cài Git, Git LFS, Unity Hub, Unity Editor **6000.6.4f1** và Antigravity IDE. Cài hỗ trợ Windows của Editor nếu bản cài yêu cầu. Giữ render pipeline, scripting backend và package lock lấy từ nhánh của dự án.
 
 Bạn làm bản Windows; không cần cài Android SDK/NDK/OpenJDK cho phần việc này.
 
@@ -64,7 +64,7 @@ Trong PowerShell, kiểm tra `unity --version`. Nếu chưa có CLI, chạy inst
 irm https://unity.com/install.ps1 | iex
 ```
 
-Mở terminal mới trong Antigravity để nhận PATH. Mở workspace **KhiVanChiTu-PC**, chạy:
+Mở terminal tích hợp mới trong Antigravity IDE để nhận PATH. Mở workspace **KhiVanChiTu-PC**, chạy:
 
 ```powershell
 unity --version
@@ -98,27 +98,27 @@ unity command editor invoke_menu --path "TuTien/Collaboration/2. Open PC Gamepla
 
 Nếu không thấy instance: kiểm tra đúng project đang mở, compile/Safe Mode và quyền truy cập localhost. Nếu CLI chưa có trên PATH, thử executable tại `$env:LOCALAPPDATA\Unity\bin\unity.exe`. Không xóa package hoặc mở thêm Editor trên cùng checkout để xử lý lỗi kết nối.
 
-## 5. Cấu hình Antigravity cho workspace PC
+## 5. Cấu hình Antigravity IDE cho workspace PC
 
-Trong Antigravity, **Open Folder → KhiVanChiTu-PC**. Terminal phải đang ở root thư mục này và `git branch --show-current` phải trả `codex/pc-content-handoff`.
+Trong Antigravity IDE, **Open Folder → KhiVanChiTu-PC**. Terminal phải đang ở root thư mục này và `git branch --show-current` phải trả `codex/pc-content-handoff`.
 
-Nếu muốn cài bộ hướng dẫn Unity tích hợp, bảo đảm lệnh `agy` của Antigravity có trên PATH, rồi chạy:
+Nếu muốn cài bộ hướng dẫn Unity tích hợp, bảo đảm lệnh `agy` của Antigravity IDE có trên PATH, rồi chạy:
 
 ```powershell
 unity setup antigravity --dry-run
 unity setup antigravity
 ```
 
-Mở phiên Antigravity mới sau khi cài plugin. AI có thể gọi CLI trực tiếp khi Pipeline đã kết nối. Nếu muốn đăng ký thêm MCP, chạy tại root KhiVanChiTu-PC:
+Mở phiên Antigravity IDE mới sau khi cài plugin. AI có thể gọi CLI trực tiếp khi Pipeline đã kết nối. Nếu muốn đăng ký thêm MCP, chạy tại root KhiVanChiTu-PC:
 
 ```powershell
 unity mcp configure antigravity --project-path (Get-Location).Path --dry-run
 unity mcp configure antigravity --project-path (Get-Location).Path
 ```
 
-Nếu cấu hình MCP cũ sai JSON, sao lưu và sửa cú pháp; không ghi đè các server khác. Nếu sandbox chặn localhost, cho phép riêng Unity/IPC cần thiết trong giao diện quyền của Antigravity.
+Nếu cấu hình MCP cũ sai JSON, sao lưu và sửa cú pháp; không ghi đè các server khác. Nếu sandbox chặn localhost, cho phép riêng Unity/IPC cần thiết trong giao diện quyền của Antigravity IDE.
 
-**Dán prompt này vào Antigravity để bắt đầu:**
+**Dán prompt này vào Antigravity IDE để bắt đầu:**
 
 ```text
 Tôi nhận module PC/Windows của Khí Vận Chi Tử. Tôi làm trong checkout
@@ -269,4 +269,4 @@ Mốc đầu tiên: PC-01 hoàn tất và một prefab CONTENT-01 nhỏ đi hế
 ## Tài liệu công cụ
 
 - [Unity CLI chính thức](https://docs.unity.com/en-us/unity-cli/use-unity-cli)
-- [Unity integration cho Antigravity/MCP](https://github.com/Unity-Technologies/unity-agent-plugin/blob/main/skills/unity-cli/references/integration-advanced.md)
+- [Unity integration cho Antigravity IDE/MCP](https://github.com/Unity-Technologies/unity-agent-plugin/blob/main/skills/unity-cli/references/integration-advanced.md)
