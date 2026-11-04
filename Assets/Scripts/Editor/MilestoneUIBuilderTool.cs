@@ -140,23 +140,41 @@ public class MilestoneUIBuilderTool
         pRt.sizeDelta = new Vector2(400f, 20f);
         ui.txtTotalProgress = progTxt;
 
-        // Nút Đóng [X]
-        GameObject btnCloseObj = new GameObject("BtnClose", typeof(RectTransform), typeof(Button), typeof(Text));
+        // Nút Đóng [X] kích thước chuẩn Mobile 56x56
+        GameObject btnCloseObj = new GameObject("BtnClose", typeof(RectTransform), typeof(Image), typeof(Button));
         btnCloseObj.transform.SetParent(boxObj.transform, false);
         RectTransform cRt = btnCloseObj.GetComponent<RectTransform>();
         cRt.anchorMin = new Vector2(1, 1);
         cRt.anchorMax = new Vector2(1, 1);
         cRt.pivot = new Vector2(1, 1);
-        cRt.anchoredPosition = new Vector2(-10f, -10f);
-        cRt.sizeDelta = new Vector2(30f, 30f);
-        Text cTxt = btnCloseObj.GetComponent<Text>();
+        cRt.anchoredPosition = new Vector2(-12f, -12f);
+        cRt.sizeDelta = new Vector2(56f, 56f);
+
+        Image cImg = btnCloseObj.GetComponent<Image>();
+        cImg.color = new Color(0.85f, 0.22f, 0.22f, 0.95f);
+        cImg.raycastTarget = true;
+
+        GameObject closeTxtObj = new GameObject("Txt", typeof(RectTransform), typeof(Text));
+        closeTxtObj.transform.SetParent(btnCloseObj.transform, false);
+        RectTransform ctRt = closeTxtObj.GetComponent<RectTransform>();
+        ctRt.anchorMin = Vector2.zero;
+        ctRt.anchorMax = Vector2.one;
+        ctRt.sizeDelta = Vector2.zero;
+
+        Text cTxt = closeTxtObj.GetComponent<Text>();
         cTxt.font = defaultFont;
-        cTxt.fontSize = 20;
+        cTxt.fontSize = 26;
         cTxt.fontStyle = FontStyle.Bold;
         cTxt.text = "✕";
-        cTxt.color = new Color(1f, 0.4f, 0.4f);
+        cTxt.color = Color.white;
         cTxt.alignment = TextAnchor.MiddleCenter;
+        cTxt.raycastTarget = false;
         ui.btnClose = btnCloseObj.GetComponent<Button>();
+
+        // Backdrop click để đóng modal
+        Button modalBackdropBtn = modalObj.GetComponent<Button>();
+        if (modalBackdropBtn == null) modalBackdropBtn = modalObj.AddComponent<Button>();
+        boxBg.raycastTarget = true;
 
         // ── SCROLL VIEW (Danh sách nhiệm vụ) ────────────────────────────────
         GameObject scrollObj = new GameObject("ScrollView", typeof(RectTransform), typeof(ScrollRect), typeof(Image));
@@ -244,6 +262,9 @@ public class MilestoneUIBuilderTool
         cltRt.offsetMax = Vector2.zero;
 
         ui.btnClaimAll = btnClaimObj.GetComponent<Button>();
+
+        // Đảm bảo nút đóng luôn là Last Sibling trong ModalBox để nhận Raycast ưu tiên tuyệt đối
+        btnCloseObj.transform.SetAsLastSibling();
 
         // Mặc định ẩn trong Editor khi khởi động
         modalObj.SetActive(false);

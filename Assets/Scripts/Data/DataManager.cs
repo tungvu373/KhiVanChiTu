@@ -27,6 +27,17 @@ public class GameSaveData
 [Serializable]
 public class CharacterSaveData
 {
+    public int saveVersion = 0;
+    public int realmId = 0;
+    public int subLevel = 1;
+    public long lastActiveUtcTicks = 0;
+    public OfflineEarningsManager.OfflineRewardData pendingOfflineReward;
+    public int[] bodyStatLevels = new int[6];
+    public bool[] bodyMilestonePassives = new bool[6];
+    public AlchemySaveState alchemy = new AlchemySaveState();
+    public ArtifactSaveState artifacts = new ArtifactSaveState();
+    public FormationSaveState formations = new FormationSaveState();
+
     public bool isSlotEmpty = true;
     public string characterName = "";
 
@@ -78,6 +89,9 @@ public class CharacterSaveData
     // ── Nhiệm Vụ Mốc Tu Luyện (Milestone Quests) ─────────────────────────────
     public string[] claimedMilestoneIds = new string[0];
 
+    // ── Hệ Thống Thành Tựu Tiên Lộ (Achievements) ───────────────────────────
+    public AchievementSaveState achievements = new AchievementSaveState();
+
     // ── Tiến trình ──────────────────────────────────────────────────────────
     public float playTime = 0f;
     public string lastPlayedDate = "";
@@ -117,6 +131,18 @@ public class DataManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        if (SwordLoadoutService.Instance == null && GetComponent<SwordLoadoutService>() == null)
+            gameObject.AddComponent<SwordLoadoutService>();
+        if (PlayerStatsService.Instance == null && GetComponent<PlayerStatsService>() == null)
+            gameObject.AddComponent<PlayerStatsService>();
+        if (AlchemyService.Instance == null && GetComponent<AlchemyService>() == null)
+            gameObject.AddComponent<AlchemyService>();
+        if (ArtifactService.Instance == null && GetComponent<ArtifactService>() == null)
+            gameObject.AddComponent<ArtifactService>();
+        if (FormationService.Instance == null && GetComponent<FormationService>() == null)
+            gameObject.AddComponent<FormationService>();
+        if (OfflineEarningsManager.Instance == null && GetComponent<OfflineEarningsManager>() == null)
+            gameObject.AddComponent<OfflineEarningsManager>();
         LoadData();
     }
 
@@ -153,6 +179,25 @@ public class DataManager : MonoBehaviour
         {
             SaveCurrentGame(silent: true);
         }
+        else if (hasFocus && isSessionActive)
+        {
+            RefreshOfflineReward();
+        }
+    }
+
+    private void OnApplicationPause(bool isPaused)
+    {
+        if (!isSessionActive) return;
+        if (isPaused) SaveCurrentGame(silent: true);
+        else RefreshOfflineReward();
+    }
+
+    private void RefreshOfflineReward()
+    {
+        int index = gameSaveData.lastPlayedSlotIndex;
+        if (index < 0 || index >= gameSaveData.slots.Length) return;
+        OfflineEarningsManager.Instance?.ProcessOfflineEarnings(gameSaveData.slots[index]);
+        SaveCurrentGame(silent: true);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -192,6 +237,11 @@ public class DataManager : MonoBehaviour
         // Gọi Save trên từng Manager (theo thứ tự)
         CultivationManager.Instance?.SaveToSlot(slot);
         EconomyManager.Instance?.SaveToSlot(slot);
+        PlayerStatsService.Instance?.SaveToSlot(slot);
+        AlchemyService.Instance?.SaveToSlot(slot);
+        ArtifactService.Instance?.SaveToSlot(slot);
+        FormationService.Instance?.SaveToSlot(slot);
+        OfflineEarningsManager.Instance?.SaveToSlot(slot);
         UpgradeManager.Instance?.SaveToSlot(slot);
         SkillManager.Instance?.SaveToSlot(slot);
         CombatManager.Instance?.SaveToSlot(slot);
@@ -199,6 +249,7 @@ public class DataManager : MonoBehaviour
         MergeManager.Instance?.SaveToSlot(slot);
         TutorialManager.Instance?.SaveToSlot(slot);
         MilestoneManager.Instance?.SaveToSlot(slot);
+        AchievementManager.Instance?.SaveToSlot(slot);
 
         SaveData(); // Ghi xuống PlayerPrefs & File backup
 
@@ -225,6 +276,10 @@ public class DataManager : MonoBehaviour
         CultivationManager.Instance?.LoadFromSlot(slot);
         CultivationManager.Instance?.SetCharacterName(slot.characterName); // Truyền tên nhân vật
         EconomyManager.Instance?.LoadFromSlot(slot);
+        PlayerStatsService.Instance?.LoadFromSlot(slot);
+        AlchemyService.Instance?.LoadFromSlot(slot);
+        ArtifactService.Instance?.LoadFromSlot(slot);
+        FormationService.Instance?.LoadFromSlot(slot);
         UpgradeManager.Instance?.LoadFromSlot(slot);
         SkillManager.Instance?.LoadFromSlot(slot);
         CombatManager.Instance?.LoadFromSlot(slot);
@@ -232,9 +287,13 @@ public class DataManager : MonoBehaviour
         MergeManager.Instance?.LoadFromSlot(slot); // Cuối cùng vì gọi CombatManager.UpdateEquippedSwords
         TutorialManager.Instance?.LoadFromSlot(slot);
         MilestoneManager.Instance?.LoadFromSlot(slot);
+        AchievementManager.Instance?.LoadFromSlot(slot);
+        OfflineEarningsManager.Instance?.ProcessOfflineEarnings(slot);
 
         // KÍCH HOẠT CỜ SESSION: Bây giờ game đã nạp dữ liệu xong, cho phép hệ thống auto-save hoạt động
         isSessionActive = true;
+        // Ghi ngay mốc UTC và phần thưởng chờ nhận; thoát game trước khi claim vẫn giữ được thưởng.
+        SaveCurrentGame(silent: true);
 
         Debug.Log($"✅ Đã load thành công [{slot.characterName}] - {slot.stageName} | Tầng {slot.combatStage} | PlayTime: {slot.playTime:F0}s");
     }
@@ -277,6 +336,21 @@ public class DataManager : MonoBehaviour
             catch
             {
                 gameSaveData = new GameSaveData();
+            }
+        }
+
+        // V3: Chạy migration cho cả 3 slot một lần khi load
+        bool migrationOccurred = false;
+        if (gameSaveData != null && gameSaveData.slots != null)
+        {
+            foreach (var slot in gameSaveData.slots)
+            {
+                if (SaveMigration.Run(slot)) migrationOccurred = true;
+            }
+            if (migrationOccurred)
+            {
+                Debug.Log("[DataManager] Migration hoàn tất. Đang lưu lại toàn bộ 3 slot...");
+                SaveData();
             }
         }
     }

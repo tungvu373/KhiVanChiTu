@@ -166,12 +166,14 @@ public class TribulationModalUI : MonoBehaviour
     {
         string curRealm = "Luyện Khí Tầng 15";
         string nxtRealm = "Trúc Cơ Sơ Kỳ";
+        int realm = 0;
 
         if (CultivationManager.Instance != null)
         {
             var curData = CultivationManager.Instance.GetCurrentStageData();
             if (curData != null) curRealm = curData.stageName;
             nxtRealm = CultivationManager.Instance.GetNextRealmName();
+            realm = (int)CultivationManager.Instance.CurrentRealm;
         }
 
         if (titleText != null) titleText.text = "⚡ THIÊN KIẾP HÀNG LÂM ⚡";
@@ -180,9 +182,33 @@ public class TribulationModalUI : MonoBehaviour
         if (targetRealmText != null) targetRealmText.text = $"• Đột phá tấn thăng: <color=#66FFB2>{nxtRealm}</color>";
         if (warningText != null)
         {
+            // Cảnh giới LuyenKhi (realm=0): Đan Đột Phá là optional, chỉ boost tỷ lệ
+            bool needsPill = realm > 0;
+            bool hasPill = AlchemyService.Instance != null && AlchemyService.Instance.HasBreakthroughPill(realm);
+            PillQuality highestQuality = AlchemyService.Instance != null
+                ? AlchemyService.Instance.GetHighestBreakthroughPillQuality(realm)
+                : PillQuality.Waste;
+
+            string qualityBonus = highestQuality switch
+            {
+                PillQuality.Supreme => "<color=#FFE666>Cực Phẩm (+50% Sát Thương)</color>",
+                PillQuality.Refined => "<color=#B266FF>Trung Phẩm (+30% Sát Thương)</color>",
+                PillQuality.Basic   => "<color=#66FF99>Hạ Phẩm (+15% Sát Thương)</color>",
+                _                   => "<color=#FF5555>Chưa có</color>"
+            };
+
+            string pillNote = needsPill
+                ? (hasPill
+                    ? $"⚗️ Đan Đột Phá: {qualityBonus} (sẽ tự động kích hoạt).\n"
+                    : "⚗️ <color=#FF5555>Cần một viên Đan Đột Phá cùng cảnh giới để bắt đầu.</color>\n")
+                : (hasPill
+                    ? $"⚗️ Đan Đột Phá: {qualityBonus} (tăng uy lực ngự kiếm).\n"
+                    : "⚗️ <color=#66FF99>Luyện Khí: Đan Đột Phá tăng tỷ lệ thắng (không bắt buộc).</color>\n");
+
             warningText.text = "⚔️ <color=#FFD700>Thành công:</color> Tấn thăng đại cảnh giới, mở khóa sức mạnh mới!\n" +
-                               "⚠️ <color=#FF5555>Thất bại:</color> Bị Thiên Kiếp phản phệ, <color=#FF3333><b>tổn thất 25% Tu Vi</b></color>!\n" +
-                               "💡 <i>Nếu chưa tự tin, hãy chọn 'Củng Cố' để nâng cấp phi kiếm. Hệ thống sẽ hỏi lại sau mỗi khi vượt tầng.</i>";
+                               "⚠️ <color=#FF5555>Thất bại:</color> Bị Thiên Kiếp phản phệ, <color=#FF3333><b>tổn thất 30% Tu Vi</b></color>!\n" +
+                               pillNote +
+                               "💡 <i>Nếu chưa tự tin, hãy chọn 'Củng Cố' để nâng cấp phi kiếm.</i>";
         }
     }
 
@@ -251,6 +277,30 @@ public class TribulationModalUI : MonoBehaviour
 
     public void OnConfirmClicked()
     {
+        int realm = CultivationManager.Instance != null ? (int)CultivationManager.Instance.CurrentRealm : 0;
+
+        // ── Lỗ hổng 1 Fix: Cảnh giới LuyenKhi (realm=0) KHÔNG bắt buộc cần đan.
+        // Đan Đột Phá chỉ là optional boost; nếu có thì dùng, không có thì vẫn cho phép độ kiếp.
+        if (realm > 0)
+        {
+            // Từ TrucCo trở lên: BẮT BUỘC phải có đan mới được phép độ kiếp
+            if (AlchemyService.Instance == null || !AlchemyService.Instance.TryConsumeBreakthroughPill(realm))
+            {
+                if (GameLogger.Instance != null)
+                {
+                    GameLogger.Instance.Log("⚠️ Cần luyện Đan Đột Phá trước khi độ kiếp! Mở Lò Luyện Đan...", Color.yellow);
+                }
+                CloseModal();
+                MobileDrawerUIController.Instance?.OpenDrawer(2);
+                return;
+            }
+        }
+        else
+        {
+            // LuyenKhi: tiêu đan nếu có để hưởng buff tỷ lệ, nhưng không bắt buộc
+            AlchemyService.Instance?.TryConsumeBreakthroughPill(realm); // optional, bỏ qua kết quả
+        }
+
         CloseModal();
 
         if (AudioManager.Instance != null)

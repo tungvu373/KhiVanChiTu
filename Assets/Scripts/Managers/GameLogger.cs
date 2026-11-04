@@ -37,6 +37,11 @@ public class GameLogger : MonoBehaviour
 
         // Tìm Panel đã được tạo từ Editor Tool
         Transform logPanelTransform = canvas.transform.Find("CombatLogPanel");
+        if (logPanelTransform == null)
+        {
+            Transform mobileRoot = canvas.transform.Find("MobileUIRoot");
+            if (mobileRoot != null) logPanelTransform = mobileRoot.Find("CombatLogPanel");
+        }
         if (logPanelTransform != null)
         {
             logPanel = logPanelTransform.gameObject;

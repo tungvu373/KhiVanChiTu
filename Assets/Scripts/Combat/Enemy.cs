@@ -30,6 +30,12 @@ public class Enemy : MonoBehaviour
     // UI Damage Popup (Cộng dồn sát thương tránh đè chữ)
     protected DamagePopup activePopup;
 
+    // Hit Recoil & Game Feel Spring
+    protected Vector3 currentRecoilOffset = Vector3.zero;
+    protected float scalePunchTimer = 0f;
+    protected Vector3 originalLocalScale = Vector3.one;
+    protected bool hasCapturedScale = false;
+
     [Header("Crowd Control (Khống Chế)")]
     public float stunTimer = 0f;
     public bool IsStunned => stunTimer > 0f;
@@ -82,6 +88,18 @@ public class Enemy : MonoBehaviour
         attackTimer = 0.5f;
         activePopup = null;
         stunTimer = 0f;
+        currentRecoilOffset = Vector3.zero;
+        scalePunchTimer = 0f;
+
+        if (!hasCapturedScale)
+        {
+            originalLocalScale = transform.localScale;
+            hasCapturedScale = true;
+        }
+        else
+        {
+            transform.localScale = originalLocalScale;
+        }
 
         SetupHPBar();
 
@@ -199,6 +217,7 @@ public class Enemy : MonoBehaviour
     {
         UpdateHpBar();
         UpdateFlashEffect();
+        UpdateGameFeelRecoil();
 
         // Xử lý Choáng (Stun): Quái vật đứng im hoàn toàn, không di chuyển và không đánh
         if (stunTimer > 0f)
@@ -252,6 +271,43 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    protected virtual void UpdateGameFeelRecoil()
+    {
+        // 1. Phục hồi lò xo đẩy lùi đàn hồi (Elastic Spring-Back)
+        if (currentRecoilOffset.sqrMagnitude > 0.0001f)
+        {
+            transform.position -= currentRecoilOffset;
+            currentRecoilOffset = Vector3.Lerp(currentRecoilOffset, Vector3.zero, Time.deltaTime * 16f);
+            transform.position += currentRecoilOffset;
+        }
+        else if (currentRecoilOffset != Vector3.zero)
+        {
+            transform.position -= currentRecoilOffset;
+            currentRecoilOffset = Vector3.zero;
+        }
+
+        // 2. Phục hồi Squash & Stretch (Co giãn mô hình khi trúng đòn)
+        if (scalePunchTimer > 0f)
+        {
+            scalePunchTimer -= Time.deltaTime;
+            float progress = Mathf.Clamp01(scalePunchTimer / 0.12f);
+            Vector3 targetPunchScale = new Vector3(
+                originalLocalScale.x * (1f + 0.15f * progress),
+                originalLocalScale.y * (1f - 0.20f * progress),
+                originalLocalScale.z * (1f + 0.15f * progress)
+            );
+            transform.localScale = targetPunchScale;
+        }
+        else if (transform.localScale != originalLocalScale)
+        {
+            transform.localScale = Vector3.Lerp(transform.localScale, originalLocalScale, Time.deltaTime * 20f);
+            if ((transform.localScale - originalLocalScale).sqrMagnitude < 0.0001f)
+            {
+                transform.localScale = originalLocalScale;
+            }
+        }
+    }
+
     protected virtual void UpdateMovementAndCombat()
     {
         if (playerTarget == null || isDead) return;
@@ -271,7 +327,8 @@ public class Enemy : MonoBehaviour
         if (dist > attackRange)
         {
             // Cả quái thường lẫn Boss đều di chuyển tiến lại gần sát người chơi
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            float formationSlow = isBoss && FormationService.Instance != null ? FormationService.Instance.BossSpeedMultiplier : 1f;
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * formationSlow * Time.deltaTime);
             
             if (animator != null && hasIsMovingParam) animator.SetBool("IsMoving", true);
         }
@@ -298,22 +355,55 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public virtual void TakeDamage(float amount, bool isCrit = false)
+    public virtual void TakeDamage(float amount, bool isCrit = false, Vector3 hitDirection = default)
     {
         hp -= amount;
         
-        // Game Feel: Flash trắng cho toàn bộ Model 3D
+        // Game Feel 1: Flash trắng cho toàn bộ Model 3D
         flashTimer = 0.1f;
-        foreach (var r in renderers)
+        if (renderers != null)
         {
-            if (r != null)
+            foreach (var r in renderers)
             {
-                if (r.material.HasProperty("_Color"))
-                    r.material.color = Color.white;
-                else if (r.material.HasProperty("_BaseColor"))
-                    r.material.SetColor("_BaseColor", Color.white);
+                if (r != null)
+                {
+                    if (r.material.HasProperty("_Color"))
+                        r.material.color = Color.white;
+                    else if (r.material.HasProperty("_BaseColor"))
+                        r.material.SetColor("_BaseColor", Color.white);
+                }
             }
         }
+
+        // Game Feel 2: Hiệu ứng va chạm (Sparks / Crit Burst)
+        if (HitVFXManager.Instance != null)
+        {
+            Vector3 hitPoint = transform.position + Vector3.up * 1.0f;
+            HitVFXManager.Instance.SpawnHitImpact(hitPoint, hitDirection, isCrit);
+        }
+
+        // Game Feel 3: Giật lùi đàn hồi & Squash-and-Stretch
+        if (hitDirection == default || hitDirection.sqrMagnitude < 0.001f)
+        {
+            Vector3 pPos = CombatManager.Instance != null && CombatManager.Instance.playerTransform != null
+                ? CombatManager.Instance.playerTransform.position
+                : transform.position - Vector3.forward;
+            hitDirection = (transform.position - pPos).normalized;
+        }
+        hitDirection.y = 0f;
+        if (hitDirection.sqrMagnitude > 0.001f) hitDirection.Normalize();
+
+        float recoilDist = isBoss ? 0.16f : (isCrit ? 0.65f : 0.38f);
+        Vector3 impulse = hitDirection * recoilDist;
+        transform.position += impulse;
+        currentRecoilOffset += impulse;
+        float maxRecoil = isBoss ? 0.30f : 0.85f;
+        if (currentRecoilOffset.magnitude > maxRecoil)
+        {
+            currentRecoilOffset = currentRecoilOffset.normalized * maxRecoil;
+        }
+
+        scalePunchTimer = 0.12f;
         
         // Hiển thị sát thương (Gộp tổng dame nhận từ nhiều kiếm chém vào cùng mục tiêu)
         ShowDamagePopup(amount, isCrit);
@@ -387,7 +477,8 @@ public class Enemy : MonoBehaviour
         
         if (EconomyManager.Instance != null)
         {
-            EconomyManager.Instance.AddLinhThach(baseDrop + tuLinhBonus);
+            float artifactDrop = ArtifactService.Instance != null ? ArtifactService.Instance.StoneDropMultiplier : 1f;
+            EconomyManager.Instance.AddLinhThach((baseDrop + tuLinhBonus) * artifactDrop);
         }
         
         // Cộng Tu Vi nếu người chơi chưa đạt 100% tu vi (Boss thưởng tu vi gấp 5 lần quái thường)
@@ -395,8 +486,14 @@ public class Enemy : MonoBehaviour
         {
             float tuViBonus = 5f * Mathf.Pow(1.2f, stageIndex);
             if (isBoss) tuViBonus *= 5f;
-            CultivationManager.Instance.AddTuVi(tuViBonus);
+            float formationGain = FormationService.Instance != null ? FormationService.Instance.CultivationMultiplier : 1f;
+            CultivationManager.Instance.AddTuVi(tuViBonus * formationGain);
         }
+
+        int combatStage = StageManager.Instance != null ? StageManager.Instance.currentStage : 1;
+        AlchemyService.Instance?.OnEnemyDefeated(isBoss, combatStage);
+        ArtifactService.Instance?.OnEnemyDefeated(isBoss, combatStage);
+        AchievementManager.Instance?.OnEnemyKilled(isBoss);
         
         if (CombatManager.Instance != null)
         {

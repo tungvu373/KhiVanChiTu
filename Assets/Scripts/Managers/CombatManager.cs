@@ -74,6 +74,8 @@ public class CombatManager : MonoBehaviour
             // Tính toán lượng máu ban đầu theo Cảnh Giới và Tu Vi
             RecalculateMaxHp(false);
         }
+        if (PlayerStatsService.Instance != null)
+            PlayerStatsService.Instance.OnStatsChanged += HandleStatsChanged;
 
         // Tự động kích hoạt Hệ thống Mây Tiên (Particle System đi theo Player) nếu chưa có
         if (FindObjectOfType<TuTienCloudSystem>() == null)
@@ -140,6 +142,8 @@ public class CombatManager : MonoBehaviour
             CultivationManager.Instance.OnStageChanged -= HandleStageChanged;
             CultivationManager.Instance.OnTuViChanged -= HandleTuViChanged;
         }
+        if (PlayerStatsService.Instance != null)
+            PlayerStatsService.Instance.OnStatsChanged -= HandleStatsChanged;
     }
 
     /// <summary>
@@ -160,7 +164,9 @@ public class CombatManager : MonoBehaviour
         float tuVi = CultivationManager.Instance.currentTuVi;
         float statMult = CultivationManager.Instance.permanentStatMultiplier;
 
-        float baseHp = 1000f + (stageIdx * 200f) + (tuVi * 0.5f);
+        float bodyHp = PlayerStatsService.Instance != null ? PlayerStatsService.Instance.BaseMaxHp : 1000f;
+        float artifactHp = ArtifactService.Instance != null ? ArtifactService.Instance.MaxHpBonus : 0f;
+        float baseHp = bodyHp + artifactHp + (stageIdx * 200f) + (tuVi * 0.5f);
         playerMaxHp = Mathf.Round(baseHp * (statMult > 0 ? statMult : 1f));
 
         if (fullHeal)
@@ -194,6 +200,11 @@ public class CombatManager : MonoBehaviour
     {
         // Khi tăng Tu Vi (farm quái, cắn đan...): HP lập tức tăng theo
         RecalculateMaxHp(fullHeal: false);
+    }
+
+    private void HandleStatsChanged()
+    {
+        RecalculateMaxHp(false);
     }
 
     private void HandleStateChanged(GameManager.GameState state)
@@ -514,6 +525,10 @@ public class CombatManager : MonoBehaviour
         if (playerCurrentHp > 0 && playerCurrentHp < playerMaxHp)
         {
             HealPlayer(playerMaxHp * 0.01f * Time.deltaTime);
+            if (PlayerStatsService.Instance != null)
+                HealPlayer(PlayerStatsService.Instance.HpRegenPerSec * Time.deltaTime);
+            if (ArtifactService.Instance != null)
+                HealPlayer(ArtifactService.Instance.HpRegenPerSec * Time.deltaTime);
         }
 
         // Há»“i mÃ¡u tá»« Shop (Há»“i Huyáº¿t Äan: 5% má»—i giÃ¢y)
@@ -651,6 +666,7 @@ public class CombatManager : MonoBehaviour
             {
                 StopTribulationStorm();
                 isTribulationBossActive = false;
+                AlchemyService.Instance?.EndTribulation();
 
                 // Hiển thị lại UI Stage tầng
                 if (StageManager.Instance != null)
@@ -700,6 +716,7 @@ public class CombatManager : MonoBehaviour
     public void DamagePlayer(float amount, bool isBoss = false)
     {
         if (isPlayerDead) return;
+        if (ArtifactService.Instance != null && Random.value < ArtifactService.Instance.DodgeChance) return;
 
         // Nếu bị Boss tấn công: Kích hoạt hiệu ứng chớp đỏ viền màn hình combat
         if (isBoss)
@@ -707,7 +724,20 @@ public class CombatManager : MonoBehaviour
             BossDamageVignette.TriggerFlash();
         }
 
-        playerCurrentHp -= amount;
+        float reduction = PlayerStatsService.Instance != null ? PlayerStatsService.Instance.DamageReduction : 0f;
+        if (isBoss && ArtifactService.Instance != null)
+            reduction = 1f - (1f - reduction) * (1f - ArtifactService.Instance.BossDamageReduction);
+        float tenacity = (PlayerStatsService.Instance != null ? PlayerStatsService.Instance.TenacityPercent : 0f)
+            + (ArtifactService.Instance != null ? ArtifactService.Instance.Tenacity : 0f);
+        if (isBoss && tenacity > 0f)
+        {
+            // Định Tâm: Giảm bớt sát thương bộc phát từ Boss (tối đa giảm thêm 40%)
+            float tenacityReduction = Mathf.Min(0.40f, tenacity * 0.5f);
+            reduction = 1f - (1f - reduction) * (1f - tenacityReduction);
+        }
+        if (FormationService.Instance != null && FormationService.Instance.DamageReduction > 0f)
+            reduction = 1f - (1f - reduction) * (1f - FormationService.Instance.DamageReduction);
+        playerCurrentHp -= amount * (1f - Mathf.Clamp01(reduction));
         if (playerCurrentHp <= 0)
         {
             playerCurrentHp = 0;
@@ -739,6 +769,7 @@ public class CombatManager : MonoBehaviour
             {
                 StopTribulationStorm();
                 isTribulationBossActive = false;
+                AlchemyService.Instance?.EndTribulation();
 
                 // Hiển thị lại UI Stage tầng
                 if (StageManager.Instance != null)
@@ -746,7 +777,7 @@ public class CombatManager : MonoBehaviour
                     StageManager.Instance.SetStageUIVisible(true);
                 }
 
-                // Độ kiếp thất bại: Bị thiên kiếp phản phệ, tổn thất 25% điểm Tu Vi
+                // Độ kiếp thất bại: Bị thiên kiếp phản phệ, tổn thất 30% điểm Tu Vi
                 float lostTuVi = 0f;
                 if (CultivationManager.Instance != null)
                 {
@@ -758,7 +789,7 @@ public class CombatManager : MonoBehaviour
 
                 if (GameLogger.Instance != null)
                 {
-                    GameLogger.Instance.Log($"⚡ ĐỘ KIẾP THẤT BẠI! Bị Thiên Kiếp phản phệ, tổn thất {lostTuVi:F0} Tu Vi (-25%)!", Color.red);
+                    GameLogger.Instance.Log($"⚡ ĐỘ KIẾP THẤT BẠI! Bị Thiên Kiếp phản phệ, tổn thất {lostTuVi:F0} Tu Vi (-30%)!", Color.red);
                 }
 
                 if (StageManager.Instance != null)
@@ -818,6 +849,7 @@ public class CombatManager : MonoBehaviour
         // 3. Reset toàn bộ màn hình Combat:
         StopTribulationStorm();
         isTribulationBossActive = false;
+        AlchemyService.Instance?.EndTribulation();
         if (StageManager.Instance != null)
         {
             StageManager.Instance.SetStageUIVisible(true);
@@ -1044,58 +1076,48 @@ public class CombatManager : MonoBehaviour
     }
 
     public GameObject swordPrefab;
-    private FlyingSword[] activeSwords = new FlyingSword[4];
+    private FlyingSword[] activeSwords = new FlyingSword[SwordLoadoutService.MAX_SWORD_CAPACITY];
 
     public void UpdateEquippedSwords(int[] levels)
     {
-        if (playerTransform == null)
+        if (playerTransform == null || swordPrefab == null) return;
+
+        int capacity = (SwordLoadoutService.Instance != null)
+            ? SwordLoadoutService.Instance.GetCurrentCapacity()
+            : Mathf.Min(levels != null ? levels.Length : 0, SwordLoadoutService.MAX_SWORD_CAPACITY);
+
+        for (int i = 0; i < activeSwords.Length; i++)
         {
-            Debug.LogError("[Combat] playerTransform bá»‹ NULL! KhÃ´ng thá»ƒ hiá»ƒn thá»‹ kiáº¿m.");
-            return;
-        }
-        
-        if (swordPrefab == null)
-        {
-            Debug.LogError("[Combat] swordPrefab bá»‹ NULL! CombatManager bá»‹ máº¥t Prefab Phi Kiáº¿m.");
-            return;
-        }
-        
-        for (int i = 0; i < 4; i++)
-        {
-            if (levels[i] > 0) // Ã” cÃ³ kiáº¿m
+            bool isSlotUnlocked = (i < capacity);
+            bool hasSword = (levels != null && i < levels.Length && levels[i] > 0);
+
+            if (isSlotUnlocked && hasSword)
             {
                 if (activeSwords[i] == null)
                 {
                     GameObject go = Instantiate(swordPrefab, playerTransform.position, Quaternion.identity);
                     activeSwords[i] = go.GetComponent<FlyingSword>();
-                    Debug.Log($"[Combat] ÄÃ£ Spawn thÃ nh cÃ´ng kiáº¿m váº­t lÃ½ 3D cho slot {i}");
+                    Debug.Log($"[Combat] Spawn kiếm slot {i}");
                 }
-                
+
                 if (activeSwords[i] != null)
                 {
                     activeSwords[i].gameObject.SetActive(true);
-                    activeSwords[i].swordIndex = i; // GÃ¡n vá»‹ trÃ­ cho kiáº¿m Ä‘á»ƒ khÃ´ng bá»‹ trÃ¹ng láº¥p
-                    
-                    // Láº¥y data cÆ¡ báº£n (Damage, Speed) chuáº©n tá»« thiáº¿t káº¿ cá»§a Kiáº¿m
-                    activeSwords[i].baseDamage = FlyingSword.CalculateBaseDamage(levels[i]); 
-                    activeSwords[i].baseSpeed = FlyingSword.CalculateBaseSpeed(levels[i]); 
-                    
-                    // Äá»•i hÃ¬nh áº£nh kiáº¿m 2D khá»›p vá»›i Level
+                    activeSwords[i].swordIndex = i;
+                    activeSwords[i].formationCount = capacity; // chia góc đều theo số kiếm
+                    activeSwords[i].baseDamage = FlyingSword.CalculateBaseDamage(levels[i]);
+                    activeSwords[i].baseSpeed = FlyingSword.CalculateBaseSpeed(levels[i]);
                     activeSwords[i].SetLevelVisual(levels[i]);
-                    
-                    // Äá»•i mÃ u Ä‘uÃ´i sÃ¡ng bay theo level cho Ä‘áº¹p
                     float hue = (levels[i] * 0.15f) % 1f;
                     Color swordColor = Color.HSVToRGB(hue, 0.7f, 0.9f);
                     TrailRenderer trail = activeSwords[i].GetComponent<TrailRenderer>();
                     if (trail != null) trail.startColor = swordColor;
                 }
             }
-            else // Ã” trá»‘ng
+            else
             {
                 if (activeSwords[i] != null)
-                {
                     activeSwords[i].gameObject.SetActive(false);
-                }
             }
         }
     }

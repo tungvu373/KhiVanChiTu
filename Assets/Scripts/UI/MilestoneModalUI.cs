@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class MilestoneModalUI : MonoBehaviour
 {
     public static MilestoneModalUI Instance { get; private set; }
+    public bool IsModalOpen => (modalPanel != null && modalPanel.activeInHierarchy) || gameObject.activeInHierarchy;
 
     [Header("Cấu trúc UI Modal")]
     public GameObject modalPanel;
@@ -16,6 +17,7 @@ public class MilestoneModalUI : MonoBehaviour
     public Text txtTotalProgress;
     public Button btnClose;
     public Button btnClaimAll;
+    public Button btnSwitchToAchievements;
 
     [Header("Prefab / Mẫu Hàng Nhiệm Vụ")]
     public GameObject rowTemplate;
@@ -53,11 +55,7 @@ public class MilestoneModalUI : MonoBehaviour
             if (foundProg != null) txtTotalProgress = foundProg.GetComponent<Text>();
         }
 
-        if (btnClose != null)
-        {
-            btnClose.onClick.RemoveAllListeners();
-            btnClose.onClick.AddListener(Close);
-        }
+        EnsureButtonsWired();
 
         if (btnClaimAll != null)
         {
@@ -71,6 +69,73 @@ public class MilestoneModalUI : MonoBehaviour
         }
 
         modalPanel.SetActive(false);
+    }
+
+    private void EnsureButtonsWired()
+    {
+        // 1. Chạm vào nền đen bên ngoài để đóng modal
+        Button backdropBtn = GetComponent<Button>();
+        if (backdropBtn == null) backdropBtn = gameObject.AddComponent<Button>();
+        backdropBtn.onClick.RemoveAllListeners();
+        backdropBtn.onClick.AddListener(Close);
+
+        // Đảm bảo nền ModalBox chặn raycast không kích hoạt backdrop click
+        Transform modalBox = transform.Find("ModalBox");
+        if (modalBox != null)
+        {
+            Image boxImg = modalBox.GetComponent<Image>();
+            if (boxImg != null) boxImg.raycastTarget = true;
+        }
+
+        // 2. Nút Đóng [✕] góc phải ModalBox
+        if (btnClose == null && modalBox != null)
+        {
+            Transform foundClose = modalBox.Find("BtnClose");
+            if (foundClose != null) btnClose = foundClose.GetComponent<Button>();
+        }
+
+        if (btnClose != null)
+        {
+            // BẮT BUỘC có Image component để raycast nhận diện vùng bấm chuẩn xác
+            Image btnImg = btnClose.GetComponent<Image>();
+            if (btnImg == null)
+            {
+                btnImg = btnClose.gameObject.AddComponent<Image>();
+                btnImg.color = new Color(0.85f, 0.25f, 0.25f, 0.95f); // Đỏ nổi bật
+            }
+            btnImg.raycastTarget = true;
+
+            // Kích thước chuẩn Mobile tối thiểu 56x56
+            RectTransform cRt = btnClose.GetComponent<RectTransform>();
+            if (cRt != null)
+            {
+                cRt.sizeDelta = new Vector2(56f, 56f);
+            }
+
+            Text cTxt = btnClose.GetComponentInChildren<Text>();
+            if (cTxt != null)
+            {
+                cTxt.text = "✕";
+                cTxt.fontSize = 26;
+                cTxt.color = Color.white;
+                cTxt.alignment = TextAnchor.MiddleCenter;
+                cTxt.raycastTarget = false; // Để Image nhận diện raycast
+            }
+
+            btnClose.transform.SetAsLastSibling(); // BẮT BUỘC để nút đóng luôn nằm trên cùng mọi nội dung bên trong ModalBox
+            if (btnSwitchToAchievements == null && modalBox != null)
+            {
+                Transform foundSw = modalBox.Find("BtnSwitchAchievements");
+                if (foundSw != null) btnSwitchToAchievements = foundSw.GetComponent<Button>();
+            }
+            if (btnSwitchToAchievements != null)
+            {
+                btnSwitchToAchievements.onClick.RemoveAllListeners();
+                btnSwitchToAchievements.onClick.AddListener(SwitchToAchievements);
+            }
+            btnClose.onClick.RemoveAllListeners();
+            btnClose.onClick.AddListener(Close);
+        }
     }
 
     private void Start()
@@ -98,14 +163,23 @@ public class MilestoneModalUI : MonoBehaviour
 
         modalPanel.SetActive(true);
         transform.SetAsLastSibling(); // Luôn nổi lên trên cùng
+        EnsureButtonsWired();
         RefreshUI();
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
     }
 
+    public void SwitchToAchievements()
+    {
+        Close();
+        AchievementModalUI.Open();
+    }
+
     public void Close()
     {
         if (modalPanel != null) modalPanel.SetActive(false);
+        gameObject.SetActive(false);
+        Debug.Log("[MilestoneModalUI] Đã đóng Bảng Nhiệm Vụ Mốc!");
         if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
     }
 

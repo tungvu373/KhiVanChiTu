@@ -46,6 +46,8 @@ public class TutorialManager : MonoBehaviour
     public Button btnClaimQuick;
     public Text txtClaimQuick;
     public ScrollRect descScrollRect;
+    public Button btnAchievement;
+    public GameObject achievementBadgeObj;
 
     [Header("Pointer Arrow References")]
     public GameObject pointerObj;
@@ -147,6 +149,21 @@ public class TutorialManager : MonoBehaviour
             else
             {
                 btnClaimQuick.transform.localScale = Vector3.one;
+            }
+        }
+
+        if (achievementBadgeObj != null && AchievementManager.Instance != null)
+        {
+            int readyAchCount = AchievementManager.Instance.GetReadyToClaimCount();
+            achievementBadgeObj.SetActive(readyAchCount > 0);
+            if (readyAchCount > 0 && btnAchievement != null)
+            {
+                float s = 1.0f + Mathf.PingPong(Time.unscaledTime * 2.0f, 0.08f);
+                btnAchievement.transform.localScale = new Vector3(s, s, 1f);
+            }
+            else if (btnAchievement != null)
+            {
+                btnAchievement.transform.localScale = Vector3.one;
             }
         }
     }
@@ -395,6 +412,65 @@ public class TutorialManager : MonoBehaviour
         btnClaimQuick.onClick.RemoveAllListeners();
         btnClaimQuick.onClick.AddListener(OnQuestBarClicked);
 
+        // Nút Thành Tựu [🏆] (BtnAchievement)
+        Transform achTr = questBarObj.transform.Find("BtnAchievement");
+        GameObject btnAchObj = achTr != null ? achTr.gameObject : null;
+        if (btnAchObj == null)
+        {
+            btnAchObj = new GameObject("BtnAchievement", typeof(RectTransform), typeof(Button), typeof(Image), typeof(Outline));
+            btnAchObj.transform.SetParent(questBarObj.transform, false);
+        }
+        RectTransform achRt = btnAchObj.GetComponent<RectTransform>();
+        achRt.anchorMin = new Vector2(1f, 0.5f);
+        achRt.anchorMax = new Vector2(1f, 0.5f);
+        achRt.pivot = new Vector2(1f, 0.5f);
+        achRt.anchoredPosition = new Vector2(-104f, 0f);
+        achRt.sizeDelta = new Vector2(32f, 32f);
+
+        Image achImg = btnAchObj.GetComponent<Image>();
+        achImg.color = new Color(0.12f, 0.16f, 0.24f, 0.95f);
+
+        Outline achOl = btnAchObj.GetComponent<Outline>();
+        achOl.effectColor = new Color(0.96f, 0.77f, 0.26f, 0.85f);
+        achOl.effectDistance = new Vector2(1f, -1f);
+
+        Transform achTxtTr = btnAchObj.transform.Find("Text");
+        GameObject achTxtObj = achTxtTr != null ? achTxtTr.gameObject : null;
+        if (achTxtObj == null)
+        {
+            achTxtObj = new GameObject("Text", typeof(RectTransform), typeof(Text));
+            achTxtObj.transform.SetParent(btnAchObj.transform, false);
+        }
+        RectTransform atRt = achTxtObj.GetComponent<RectTransform>();
+        atRt.anchorMin = Vector2.zero;
+        atRt.anchorMax = Vector2.one;
+        atRt.sizeDelta = Vector2.zero;
+
+        Text atTxt = achTxtObj.GetComponent<Text>();
+        atTxt.font = defaultFont;
+        atTxt.fontSize = 16;
+        atTxt.alignment = TextAnchor.MiddleCenter;
+        atTxt.text = "🏆";
+
+        btnAchievement = btnAchObj.GetComponent<Button>();
+        btnAchievement.onClick.RemoveAllListeners();
+        btnAchievement.onClick.AddListener(OnAchievementButtonClicked);
+
+        Transform badgeTr = btnAchObj.transform.Find("Badge");
+        achievementBadgeObj = badgeTr != null ? badgeTr.gameObject : null;
+        if (achievementBadgeObj == null)
+        {
+            achievementBadgeObj = new GameObject("Badge", typeof(RectTransform), typeof(Image));
+            achievementBadgeObj.transform.SetParent(btnAchObj.transform, false);
+        }
+        RectTransform badgeRt = achievementBadgeObj.GetComponent<RectTransform>();
+        badgeRt.anchorMin = badgeRt.anchorMax = new Vector2(1f, 1f);
+        badgeRt.pivot = new Vector2(1f, 1f);
+        badgeRt.anchoredPosition = new Vector2(4f, 4f);
+        badgeRt.sizeDelta = new Vector2(12f, 12f);
+        achievementBadgeObj.GetComponent<Image>().color = new Color(0.95f, 0.25f, 0.25f, 1f);
+        achievementBadgeObj.SetActive(false);
+
         // Vô hiệu hóa nút BtnMilestone cũ nếu còn tồn tại để tránh trùng lặp
         Transform oldBtnM = questBarObj.transform.Find("BtnMilestone");
         if (oldBtnM != null) oldBtnM.gameObject.SetActive(false);
@@ -432,6 +508,7 @@ public class TutorialManager : MonoBehaviour
             else if (txtQuestReward != null) txtQuestReward.gameObject.SetActive(!isCollapsed);
             if (pBgObj != null) pBgObj.SetActive(!isCollapsed);
             if (btnClaimQuick != null) btnClaimQuick.gameObject.SetActive(!isCollapsed);
+            if (btnAchievement != null) btnAchievement.gameObject.SetActive(!isCollapsed);
             if (qRt != null) qRt.sizeDelta = isCollapsed ? new Vector2(42f, 42f) : (originalQuestBarSize != Vector2.zero ? originalQuestBarSize : new Vector2(430f, 56f));
         });
 
@@ -1039,6 +1116,24 @@ public class TutorialManager : MonoBehaviour
         }
 
         Debug.LogWarning("[TutorialManager] Không tìm thấy MilestoneModalUI trên Scene! Hãy dùng menu TuTien/UI/Tạo Sẵn Bảng Nhiệm Vụ Mốc.");
+    }
+
+    public void OnAchievementButtonClicked()
+    {
+        if (AchievementModalUI.Instance != null)
+        {
+            AchievementModalUI.Instance.OpenModal();
+            return;
+        }
+
+        AchievementModalUI found = FindObjectOfType<AchievementModalUI>(true);
+        if (found != null)
+        {
+            found.OpenModal();
+            return;
+        }
+
+        Debug.LogWarning("[TutorialManager] Không tìm thấy AchievementModalUI trên Scene!");
     }
 
     private IEnumerator CompleteStepFeedback(string message, int rewardLinhThach)

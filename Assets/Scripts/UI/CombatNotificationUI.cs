@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Hiển thị thông báo uy nghiêm ở chính giữa màn hình Combat 3D (nửa trái màn hình)
+/// Hiển thị thông báo đột phá/tử trận ở giữa vùng gameplay mobile.
 /// khi Đột phá Cảnh Giới thành công hoặc Nhân vật Tử Trận.
 /// Được tạo sẵn trên Canvas để Designer/User tự do kéo thả, căn chỉnh tọa độ và kích thước trong Scene View.
 /// </summary>

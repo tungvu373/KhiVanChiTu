@@ -10,14 +10,14 @@ public class DamagePopup : MonoBehaviour
     private TextMesh textMesh;
     private float moveYSpeed = 2.2f;
     private float disappearTimer;
-    private const float DISAPPEAR_TIMER_MAX = 0.85f;
+    private const float DISAPPEAR_TIMER_MAX = 0.95f;
     private Color textColor;
     private Camera mainCamera;
 
     private float totalDamage = 0f;
     private bool isCritical = false;
     private float accumulateTimer = 0f;
-    private const float ACCUMULATE_WINDOW = 0.18f; // Cửa sổ 0.18s gom dồn các kiếm cùng đâm tới trong 1 đợt
+    private const float ACCUMULATE_WINDOW = 0.42f; // Gom một nhịp chém, không sinh chữ theo từng frame.
     private float currentScale = 1f;
 
     /// <summary>
@@ -65,16 +65,16 @@ public class DamagePopup : MonoBehaviour
         // Thêm dấu '-' đằng trước lượng sát thương theo yêu cầu
         textMesh.text = "-" + Mathf.RoundToInt(totalDamage).ToString();
 
-        // Màu đỏ tươi (Pure Bright Red), không pha xanh/hồng
-        if (isCritical || totalDamage >= 500f)
+        // Đòn thường trắng; crit và kỹ năng (được truyền isCrit) đỏ rõ ràng.
+        if (isCritical)
         {
             textColor = new Color(1f, 0f, 0f, 1f); // Đỏ tươi rực rỡ bạo kích
-            textMesh.characterSize = 0.32f;
+            textMesh.characterSize = 0.28f;
         }
         else
         {
-            textColor = new Color(0.95f, 0.05f, 0.05f, 1f); // Đỏ tươi sắc nét
-            textMesh.characterSize = 0.24f;
+            textColor = Color.white;
+            textMesh.characterSize = 0.22f;
         }
 
         textMesh.color = textColor;

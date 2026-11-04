@@ -5,6 +5,7 @@ public class FlyingSword : MonoBehaviour
     public float baseDamage = 10f;
     public float baseSpeed = 5f;
     public int swordIndex = 0; // Biến phân bổ vị trí bay
+    public int formationCount = 4; // tổng số kiếm đang active; dùng để tính góc orbit đều nhau
     public bool isUltimateClone = false; // Đánh dấu đây là kiếm của Ultimate
     
     [Header("Sprites cho từng Level (1-8)")]
@@ -22,6 +23,7 @@ public class FlyingSword : MonoBehaviour
     private const float ATTACK_COOLDOWN_TIME = 0.45f; // Thời gian hồi chiêu giữa 2 nhát chém (giây)
     private const float RETREAT_DURATION = 0.25f; // Thời gian bay lùi ra xa sau khi chém
     private float retreatTimer = 0f;
+    private float bladePunchTimer = 0f;
 
     public float GetExpectedDamage()
     {
@@ -30,7 +32,10 @@ public class FlyingSword : MonoBehaviour
         if (ShopManager.Instance != null) bonusMultiplier *= ShopManager.Instance.GetDamageMultiplier();
         if (EconomyManager.Instance != null) bonusMultiplier *= (1f + EconomyManager.Instance.currentKiemY * 0.5f);
         if (CombatManager.Instance != null && CombatManager.Instance.IsAmDuongTranActive) bonusMultiplier *= CombatManager.Instance.GetAmDuongTranDamageMultiplier();
-        return (baseDamage + kiemY) * bonusMultiplier;
+        if (CombatManager.Instance != null && CombatManager.Instance.isTribulationBossActive && AlchemyService.Instance != null)
+            bonusMultiplier *= AlchemyService.Instance.TribulationDamageMultiplier;
+        float bodyDamage = PlayerStatsService.Instance != null ? PlayerStatsService.Instance.BonusSwordDamage : 0f;
+        return (baseDamage + kiemY + bodyDamage) * bonusMultiplier;
     }
 
     private void Start()
@@ -54,13 +59,25 @@ public class FlyingSword : MonoBehaviour
         if (attackCooldown > 0f) attackCooldown -= Time.deltaTime;
         if (searchTimer > 0f) searchTimer -= Time.deltaTime;
 
+        // Game Feel: Lực chém đanh thép của kiếm khi chạm địch (Blade Punch Scale)
+        if (bladePunchTimer > 0f)
+        {
+            bladePunchTimer -= Time.deltaTime;
+            float p = Mathf.Clamp01(bladePunchTimer / 0.08f);
+            transform.localScale = Vector3.one * (1f + 0.35f * p);
+        }
+        else if (transform.localScale != Vector3.one)
+        {
+            transform.localScale = Vector3.one;
+        }
+
         // === PHASE 1: RETREAT (Bay lùi về quỹ đạo quanh Player sau khi chém) ===
         if (retreatTimer > 0f)
         {
             retreatTimer -= Time.deltaTime;
             Vector3 center = CombatManager.Instance != null ? CombatManager.Instance.playerTransform.position + Vector3.up * 1.5f : Vector3.up * 1.5f;
             float currentRadius = isUltimateClone ? 4f : 2f;
-            float angleOffset = isUltimateClone ? (360f / 20f) : 90f;
+            float angleOffset = isUltimateClone ? (360f / 20f) : (360f / Mathf.Max(1, formationCount));
             float angle = Time.time * (isUltimateClone ? 200f : 150f) + (swordIndex * angleOffset);
             Vector3 retreatPos = center + Quaternion.Euler(0, angle, 0) * new Vector3(currentRadius, 0, 0);
             transform.position = Vector3.MoveTowards(transform.position, retreatPos, 18f * Time.deltaTime);
@@ -89,7 +106,7 @@ public class FlyingSword : MonoBehaviour
             
             // Xếp đội hình quỹ đạo: Kiếm thường bay vòng trong (2m, 4 góc vuông). Kiếm Ultimate bay vòng ngoài (4m, 20 góc).
             float currentRadius = isUltimateClone ? 4f : 2f;
-            float angleOffset = isUltimateClone ? (360f / 20f) : 90f;
+            float angleOffset = isUltimateClone ? (360f / 20f) : (360f / Mathf.Max(1, formationCount));
             float angle = Time.time * (isUltimateClone ? 200f : 150f) + (swordIndex * angleOffset);
             
             Vector3 targetOrbitPos = center + Quaternion.Euler(0, angle, 0) * new Vector3(currentRadius, 0, 0);
@@ -114,6 +131,8 @@ public class FlyingSword : MonoBehaviour
         float finalSpeed = baseSpeed + thanThuc;
         if (ShopManager.Instance != null) finalSpeed *= ShopManager.Instance.GetSpeedMultiplier();
         if (CombatManager.Instance != null && CombatManager.Instance.IsAmDuongTranActive) finalSpeed *= CombatManager.Instance.GetAmDuongTranSpeedMultiplier();
+        if (ArtifactService.Instance != null) finalSpeed *= ArtifactService.Instance.SwordSpeedMultiplier;
+        if (FormationService.Instance != null) finalSpeed *= FormationService.Instance.SwordSpeedMultiplier;
         
         if (TargetEnemy == null) return;
         Vector3 targetPos = TargetEnemy.transform.position + Vector3.up * 1.5f;
@@ -145,7 +164,8 @@ public class FlyingSword : MonoBehaviour
         float finalDamage = Random.Range(minDamage, maxDamage);
         
         // Tỉ lệ Crit 20%, Crit x2 sát thương
-        bool isCrit = Random.value <= 0.2f;
+        float artifactCrit = ArtifactService.Instance != null ? ArtifactService.Instance.CritChanceBonus : 0f;
+        bool isCrit = Random.value <= 0.2f + artifactCrit;
         if (isCrit) 
         {
             finalDamage *= 2f;
@@ -164,7 +184,26 @@ public class FlyingSword : MonoBehaviour
             }
         }
 
-        hitEnemy.TakeDamage(finalDamage, isCrit);
+        Vector3 slashDir = transform.forward;
+        if (slashDir.sqrMagnitude < 0.001f)
+        {
+            slashDir = (hitEnemy.transform.position - transform.position).normalized;
+        }
+        slashDir.y = 0f;
+        if (slashDir.sqrMagnitude > 0.001f) slashDir.Normalize();
+
+        Vector3 contactPoint = hitEnemy.transform.position + Vector3.up * 1.0f;
+        if (HitVFXManager.Instance != null)
+        {
+            HitVFXManager.Instance.SpawnHitImpact(contactPoint, slashDir, isCrit);
+        }
+
+        bladePunchTimer = 0.08f;
+        hitEnemy.TakeDamage(finalDamage, isCrit, slashDir);
+        if (!isUltimateClone && CombatManager.Instance != null && PlayerStatsService.Instance != null)
+            CombatManager.Instance.HealPlayer(finalDamage * PlayerStatsService.Instance.LifestealPercent);
+        if (!isUltimateClone && FormationService.Instance != null)
+            FormationService.Instance.OnSwordHitEnemy(finalDamage);
 
         // VẠN KIẾM QUY TÔNG: Đẩy lùi mục tiêu về phía sau (ra xa khỏi Player) - Trừ Boss không bị đẩy lùi
         if (isUltimateClone && !hitEnemy.isBoss)
@@ -209,4 +248,3 @@ public class FlyingSword : MonoBehaviour
         retreatTimer = 0f;
     }
 }
-

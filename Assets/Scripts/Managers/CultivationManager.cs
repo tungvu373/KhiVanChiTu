@@ -28,6 +28,13 @@ public class CultivationManager : MonoBehaviour
     public event Action<float, float> OnTuViChanged; // current, max
     public event Action<CultivationStageData> OnStageChanged;
 
+    // ── V3: Realm/SubLevel (song song stageIndex trong giai đoạn chuyển tiếp) ──
+    public RealmId CurrentRealm    { get; private set; } = RealmId.LuyenKhi;
+    public int     CurrentSubLevel { get; private set; } = 1; // 1 → 10
+
+    /// <summary>True khi SubLevel == 10: cần đan để đột phá.</summary>
+    public bool IsAtBottleneck => CurrentSubLevel == 10;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -171,20 +178,21 @@ public class CultivationManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Áp dụng hình phạt khi Độ Kiếp thất bại: Bị Thiên Kiếp phản phệ, tổn thất 25% điểm Tu Vi.
+    /// Áp dụng hình phạt khi Độ Kiếp thất bại: Bị Thiên Kiếp phản phệ, tổn thất 30% điểm Tu Vi.
     /// </summary>
     public float ApplyTribulationFailurePenalty()
     {
         if (allStages == null || currentStageIndex >= allStages.Length) return 0f;
 
         CultivationStageData currentStageData = allStages[currentStageIndex];
-        float penalty = currentStageData.requiredTuVi * 0.25f;
-        currentTuVi = Mathf.Max(0f, currentTuVi - penalty);
+        // V3 Spec: Đột phá thất bại = còn 70% tu vi sub-level 10 (không rớt sub-level)
+        currentTuVi = currentStageData.requiredTuVi * 0.70f;
+        float penalty = currentStageData.requiredTuVi * 0.30f; // chỉ dùng cho log
 
         UpdateDashboardUI(currentStageData);
         OnTuViChanged?.Invoke(currentTuVi, currentStageData.requiredTuVi);
 
-        Debug.Log($"⚡ [CultivationManager] Độ kiếp thất bại! Bị thiên kiếp phản phệ, tổn thất 25% Tu Vi (-{penalty:F0}). Tu vi hiện tại: {currentTuVi:F0}/{currentStageData.requiredTuVi}");
+        Debug.Log($"⚡ [CultivationManager] Độ kiếp thất bại! Bị thiên kiếp phản phệ, tổn thất 30% Tu Vi (-{penalty:F0}). Tu vi hiện tại: {currentTuVi:F0}/{currentStageData.requiredTuVi}");
         return penalty;
     }
 
@@ -277,6 +285,11 @@ public class CultivationManager : MonoBehaviour
         permanentStatMultiplier *= currentStageData.statMultiplierBonus;
 
         currentStageIndex++;
+        SaveMigration.MapLegacyStage(currentStageIndex, out RealmId newRealm, out int newSubLevel);
+        CurrentRealm = newRealm;
+        CurrentSubLevel = newSubLevel;
+        SwordLoadoutService.Instance?.UpdateCapacity(CurrentRealm, CurrentSubLevel);
+        AchievementManager.Instance?.OnTribulationSuccess();
         Debug.Log($"✨ ĐỘT PHÁ THÀNH CÔNG! Thưởng: {coDuyenBonus} Cơ Duyên. Hệ số SM: {permanentStatMultiplier:F2}");
 
         if (GameLogger.Instance != null && currentStageIndex < allStages.Length)
@@ -296,7 +309,10 @@ public class CultivationManager : MonoBehaviour
             Debug.Log("🏆 BẠN ĐÃ ĐẠT ĐỈNH PHONG CỦA THẾ GIỚI TU TIÊN (Hóa Thần Hậu Kỳ)!");
         }
 
-        GameManager.Instance.ChangeState(GameManager.GameState.Breakthrough);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ChangeState(GameManager.GameState.Breakthrough);
+        }
         Invoke(nameof(ReturnToIdle), 2f);
     }
 
@@ -335,12 +351,16 @@ public class CultivationManager : MonoBehaviour
             ? allStages[currentStageIndex].stageName : "Luyện Khí Kỳ Tầng 1";
         slot.currentTuVi = currentTuVi;
         slot.permanentStatMultiplier = permanentStatMultiplier;
+        slot.realmId = (int)CurrentRealm;
+        slot.subLevel = CurrentSubLevel;
     }
 
     public void LoadFromSlot(CharacterSaveData slot)
     {
         currentStageIndex = Mathf.Clamp(slot.stageIndex, 0, allStages != null ? allStages.Length - 1 : 0);
         currentTuVi = slot.currentTuVi;
+        // V3: Sync realm từ migration data
+        UpdateRealmFromSave(slot);
         permanentStatMultiplier = Mathf.Max(1f, slot.permanentStatMultiplier);
 
         if (allStages != null && currentStageIndex < allStages.Length)
@@ -368,5 +388,33 @@ public class CultivationManager : MonoBehaviour
         OnTuViChanged?.Invoke(currentTuVi, stageData.requiredTuVi);
     }
 #endif
+
+    /// <summary>
+    /// Đồng bộ CurrentRealm/SubLevel từ slot đã qua migration (saveVersion >= 3).
+    /// Gọi sau LoadFromSlot.
+    /// </summary>
+    public void UpdateRealmFromSave(CharacterSaveData slot)
+    {
+        if (slot == null || slot.isSlotEmpty) return;
+        CurrentRealm    = (RealmId)Mathf.Clamp(slot.realmId, 0, (int)RealmId.DoKiep);
+        CurrentSubLevel = Mathf.Clamp(slot.subLevel, 1, 10);
+        if (SwordLoadoutService.Instance != null)
+            SwordLoadoutService.Instance.UpdateCapacity(CurrentRealm, CurrentSubLevel);
+        Debug.Log($"[CultivationManager] Realm sync: {CurrentRealm} Sub-level {CurrentSubLevel}");
+    }
+
+    /// <summary>
+    /// Tên cảnh giới hiển thị (V3 pattern: dùng enum, không đọc stageName string).
+    /// Ví dụ: "LuyenKhi - Sơ Kỳ", "TrucCo - Đỉnh Phong"
+    /// </summary>
+    public string GetDisplayRealmName()
+    {
+        string sub;
+        if      (CurrentSubLevel <= 3)  sub = "Sơ Kỳ";
+        else if (CurrentSubLevel <= 6)  sub = "Trung Kỳ";
+        else if (CurrentSubLevel <= 9)  sub = "Hậu Kỳ";
+        else                            sub = "Đỉnh Phong";
+        return $"{CurrentRealm} - {sub}";
+    }
 }
 

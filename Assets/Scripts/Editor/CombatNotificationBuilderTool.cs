@@ -36,6 +36,7 @@ public class CombatNotificationBuilderTool
 
         // 2. Kiểm tra nếu Banner đã tồn tại
         Transform existing = canvasObj.transform.Find("CombatNotificationBanner");
+        if (existing == null) existing = canvasObj.transform.Find("MobileUIRoot/CombatNotificationBanner");
         if (existing != null)
         {
             if (forceSelect)
@@ -53,9 +54,9 @@ public class CombatNotificationBuilderTool
         bannerObj.transform.SetParent(canvasObj.transform, false);
 
         RectTransform rt = bannerObj.GetComponent<RectTransform>();
-        // Căn đúng tâm của nửa màn hình Combat 3D bên trái (X từ 0 -> 0.5; tâm tại X = 0.25)
-        rt.anchorMin = new Vector2(0.25f, 0.58f);
-        rt.anchorMax = new Vector2(0.25f, 0.58f);
+        // Giữa vùng gameplay portrait.
+        rt.anchorMin = new Vector2(0.5f, 0.66f);
+        rt.anchorMax = rt.anchorMin;
         rt.pivot = new Vector2(0.5f, 0.5f);
         rt.anchoredPosition = Vector2.zero;
         rt.sizeDelta = new Vector2(460f, 125f);

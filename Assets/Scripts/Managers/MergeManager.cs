@@ -11,6 +11,20 @@ public class MergeManager : MonoBehaviour
     private int currentPage = 0;
     public GameObject mergeItemPrefab;
 
+    public int EquippedCount
+    {
+        get
+        {
+            if (equipPanel == null) return 0;
+            int count = 0;
+            foreach (Transform slot in equipPanel)
+            {
+                if (slot != null && slot.GetComponentInChildren<MergeItem>() != null) count++;
+            }
+            return count;
+        }
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -23,12 +37,22 @@ public class MergeManager : MonoBehaviour
     
     private void Start()
     {
+        if (SwordLoadoutService.Instance != null)
+            SwordLoadoutService.Instance.OnCapacityChanged += HandleCapacityChanged;
         // Kiểm tra trễ 0.5s. Nếu DataManager.LoadCurrentGame KHÔNG được gọi (do test trực tiếp Scene)
         // hoặc load bị lỗi, thì chúng ta sẽ tự tạo 1 cây kiếm mặc định để không bị kẹt game.
         Invoke(nameof(FailsafeCheckSword), 0.5f);
         
         OnEquipChanged();
     }
+
+    private void OnDestroy()
+    {
+        if (SwordLoadoutService.Instance != null)
+            SwordLoadoutService.Instance.OnCapacityChanged -= HandleCapacityChanged;
+    }
+
+    private void HandleCapacityChanged(int capacity) => OnEquipChanged();
 
     private void FailsafeCheckSword()
     {
@@ -37,7 +61,7 @@ public class MergeManager : MonoBehaviour
         bool hasSword = false;
         foreach (Transform equipSlot in equipPanel)
         {
-            if (equipSlot.childCount > 0)
+            if (equipSlot.GetComponentInChildren<MergeItem>() != null)
             {
                 hasSword = true;
                 break;
@@ -57,9 +81,9 @@ public class MergeManager : MonoBehaviour
 
     public void QuickMerge()
     {
-        if (inventoryPages == null) return;
+        if (inventoryPages == null || inventoryPages.Length == 0 || mergeItemPrefab == null) return;
         
-        // 1. Thu thập tất cả item trong kho (không tính đang trang bị)
+        // Thu thập phôi ở kho; kiếm đang trang bị giữ nguyên ô và được nâng cấp từ phôi kho.
         var allItems = new System.Collections.Generic.List<MergeItem>();
         foreach (Transform page in inventoryPages)
         {
@@ -74,7 +98,7 @@ public class MergeManager : MonoBehaviour
         int[] counts = new int[9]; // Mảng đếm phôi từ level 1 -> 8
         foreach (var item in allItems)
         {
-            counts[item.level] += item.currentPieces;
+            counts[Mathf.Clamp(item.level, 1, 8)] += Mathf.Max(1, item.currentPieces);
             item.transform.SetParent(null); // Rời khỏi slot ngay lập tức để tạo chỗ trống
             Destroy(item.gameObject); // Xóa hết item cũ (sẽ thực thi cuối frame)
         }
@@ -83,6 +107,29 @@ public class MergeManager : MonoBehaviour
         int totalUpgrades = 0;
         for (int L = 1; L < 8; L++)
         {
+            // Ưu tiên nâng kiếm đang trang bị ở cấp hiện tại; sau đó mới ghép phần kho còn lại.
+            if (equipPanel != null)
+            {
+                int maxCap = SwordLoadoutService.Instance != null 
+                    ? SwordLoadoutService.Instance.GetCurrentCapacity() 
+                    : equipPanel.childCount;
+                foreach (Transform slot in equipPanel)
+                {
+                    if (slot.GetSiblingIndex() >= maxCap) continue;
+                    MergeItem equipped = slot.GetComponentInChildren<MergeItem>();
+                    if (equipped == null || equipped.level != L) continue;
+                    int requiredPieces = equipped.GetRequiredPieces();
+                    int needed = Mathf.Max(0, requiredPieces - equipped.currentPieces);
+                    if (counts[L] < needed) continue;
+                    counts[L] -= needed;
+                    counts[L] += Mathf.Max(0, equipped.currentPieces - requiredPieces);
+                    equipped.currentPieces = 1;
+                    equipped.level++;
+                    equipped.UpdateUI();
+                    AchievementManager.Instance?.OnSwordMerged(equipped.level);
+                    totalUpgrades++;
+                }
+            }
             int required = GetRequiredPiecesForLevel(L);
             int upgrades = counts[L] / required;
             totalUpgrades += upgrades;
@@ -103,6 +150,7 @@ public class MergeManager : MonoBehaviour
         
         // 5. Sắp xếp lại kho sau khi ghép
         SortInventory();
+        OnEquipChanged();
 
         if (totalUpgrades > 0 && AudioManager.Instance != null)
         {
@@ -296,17 +344,19 @@ public class MergeManager : MonoBehaviour
     public void OnEquipChanged()
     {
         if (equipPanel == null) return;
-        
-        int[] equipLevels = new int[4];
+
+        int capacity = SwordLoadoutService.MAX_SWORD_CAPACITY; // = 10
+        int[] equipLevels = new int[capacity]; // slot 4-9 mặc định = 0 (chưa có UI)
+
         int index = 0;
         foreach (Transform slot in equipPanel)
         {
+            if (index >= capacity) break;
             MergeItem item = slot.GetComponentInChildren<MergeItem>();
-            equipLevels[index] = item != null ? item.level : 0;
+            equipLevels[index] = (item != null) ? item.level : 0;
             index++;
-            if (index >= 4) break;
         }
-        
+
         if (CombatManager.Instance != null)
         {
             CombatManager.Instance.UpdateEquippedSwords(equipLevels);
@@ -372,7 +422,7 @@ public class MergeManager : MonoBehaviour
         if (equipPanel != null)
             foreach (Transform equipSlot in equipPanel)
                 foreach (Transform child in equipSlot)
-                    Destroy(child.gameObject);
+                    if (child.GetComponent<MergeItem>() != null) Destroy(child.gameObject);
 
         // 2. Xóa sạch kho đồ
         if (inventoryPages != null)

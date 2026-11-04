@@ -367,7 +367,8 @@ public class BossEnemy : Enemy
         if (dist > attackRange)
         {
             // Ở ngoài tầm đánh: Di chuyển tiến sát Player
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            float formationSlow = FormationService.Instance != null ? FormationService.Instance.BossSpeedMultiplier : 1f;
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * formationSlow * Time.deltaTime);
             SetMoving(true);
         }
         else
@@ -458,7 +459,7 @@ public class BossEnemy : Enemy
     /// - Áp dụng Damage Cap chống bị bốc hơi one-shot giữa đường (tối đa 4% Max HP/hit).
     /// - Kiểm tra và kích hoạt chuyển 3 Phase mượt mà.
     /// </summary>
-    public override void TakeDamage(float amount, bool isCrit = false)
+    public override void TakeDamage(float amount, bool isCrit = false, Vector3 hitDirection = default)
     {
         if (isTribulationBoss)
         {
@@ -509,7 +510,7 @@ public class BossEnemy : Enemy
             SetMoving(false);
         }
 
-        base.TakeDamage(amount, isCrit);
+        base.TakeDamage(amount, isCrit, hitDirection);
     }
 
     /// <summary>

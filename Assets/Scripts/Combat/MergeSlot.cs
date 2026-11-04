@@ -13,6 +13,14 @@ public class MergeSlot : MonoBehaviour, IDropHandler
 
         MergeItem currentItem = GetComponentInChildren<MergeItem>();
         bool isEquipSlot = gameObject.name.StartsWith("Equip");
+        bool fromEquipSlot = droppedItem.originalParent != null && droppedItem.originalParent.name.StartsWith("Equip");
+        if (isEquipSlot && SwordLoadoutService.Instance != null &&
+            transform.GetSiblingIndex() >= SwordLoadoutService.Instance.GetCurrentCapacity())
+        {
+            droppedItem.transform.SetParent(droppedItem.originalParent, false);
+            droppedItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+            return;
+        }
 
         if (currentItem == null) // Ô trống
         {
@@ -25,13 +33,19 @@ public class MergeSlot : MonoBehaviour, IDropHandler
         {
             if (isEquipSlot)
             {
-                Debug.LogWarning("[Merge] KHÔNG cho phép ghép kiếm trực tiếp trên Ô Trang Bị! Vui lòng gỡ xuống Kho đồ.");
-                droppedItem.transform.SetParent(droppedItem.originalParent, false);
-                RectTransform rt = droppedItem.GetComponent<RectTransform>();
-                rt.anchoredPosition = Vector2.zero;
-                rt.localScale = Vector3.one;
+                // Hoán đổi hai thanh kiếm, tuyệt đối không ghép khi thả lên trang bị.
+                Transform origin = droppedItem.originalParent;
+                if (origin == null || origin.GetComponent<MergeSlot>() == null) return;
+                currentItem.transform.SetParent(origin, false);
+                currentItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                currentItem.transform.localScale = Vector3.one;
+                droppedItem.transform.SetParent(transform, false);
+                droppedItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                droppedItem.transform.localScale = Vector3.one;
+                currentItem.UpdateUI();
+                AchievementManager.Instance?.OnSwordMerged(currentItem.level);
             }
-            else if (currentItem.level == droppedItem.level && currentItem.level < 8)
+            else if (!fromEquipSlot && currentItem.level == droppedItem.level && currentItem.level < 8)
             {
                 // Hợp nhất (Merge) cộng dồn phôi
                 currentItem.currentPieces += droppedItem.currentPieces;
@@ -46,6 +60,7 @@ public class MergeSlot : MonoBehaviour, IDropHandler
                 }
                 
                 currentItem.UpdateUI();
+                AchievementManager.Instance?.OnSwordMerged(currentItem.level);
 
                 // Phát âm thanh ghép kiếm
                 if (AudioManager.Instance != null)

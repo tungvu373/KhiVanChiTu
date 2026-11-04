@@ -18,32 +18,50 @@ public class EncounterManager : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm) return;
+        if (Time.timeScale <= 0f ||
+            (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm) ||
+            (MobileDrawerUIController.Instance != null && MobileDrawerUIController.Instance.IsBlockingGameplay)) return;
 
         timer -= Time.deltaTime;
         if (timer <= 0)
         {
+            if (!CanSpawnEncounter()) return;
             SpawnEncounter();
             timer = Random.Range(spawnIntervalMin, spawnIntervalMax);
         }
+    }
+
+    public static bool CanSpawnEncounter()
+    {
+        if (Time.timeScale <= 0f) return false;
+        if (GameManager.Instance != null && GameManager.Instance.currentState != GameManager.GameState.IdleFarm) return false;
+        if (MobileDrawerUIController.Instance != null && MobileDrawerUIController.Instance.IsBlockingGameplay) return false;
+        return GameObject.Find("PauseMenuModal") == null && GameObject.Find("TribulationModalUI") == null &&
+               GameObject.Find("OfflineRewardPopupUI") == null && GameObject.Find("CharacterDetailModal") == null &&
+               GameObject.Find("MilestoneModalUI") == null;
     }
 
     private void SpawnEncounter()
     {
         GameObject canvas = GameObject.Find("Canvas");
         if (canvas == null) return;
+        RectTransform playArea = canvas.transform.Find("MobileUIRoot") as RectTransform;
+        if (playArea == null) playArea = canvas.transform as RectTransform;
+        if (playArea == null || playArea.rect.width <= 0f || playArea.rect.height <= 0f) return;
 
         // Tạo prefab túi quà ngẫu nhiên
         GameObject encounterObj = new GameObject("RandomEncounter", typeof(RectTransform), typeof(UnityEngine.UI.Image));
-        encounterObj.transform.SetParent(canvas.transform, false);
+        encounterObj.transform.SetParent(playArea, false);
         
         RectTransform rt = encounterObj.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(60, 60);
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.sizeDelta = new Vector2(110f, 110f);
         
         // Spawn ngẫu nhiên ở ngoài viền lề trái hoặc phải
         bool spawnLeft = Random.value > 0.5f;
-        float startX = spawnLeft ? -450f : 450f;
-        float startY = Random.Range(-200f, 200f);
+        float edgeX = Mathf.Max(0f, playArea.rect.width * 0.5f - rt.sizeDelta.x * 0.5f);
+        float startX = spawnLeft ? -edgeX : edgeX;
+        float startY = Random.Range(-playArea.rect.height * 0.20f, playArea.rect.height * 0.30f);
         rt.anchoredPosition = new Vector2(startX, startY);
 
         UnityEngine.UI.Image img = encounterObj.GetComponent<UnityEngine.UI.Image>();
@@ -68,10 +86,10 @@ public class EncounterManager : MonoBehaviour
         txt.GetComponent<RectTransform>().sizeDelta = Vector2.zero;
 
         // Di chuyển qua màn hình (đối diện)
-        float targetX = spawnLeft ? 450f : -450f;
+        float targetX = -startX;
         
         EncounterItem item = encounterObj.AddComponent<EncounterItem>();
-        item.targetPos = new Vector2(targetX, startY + Random.Range(-100f, 100f));
+        item.targetPos = new Vector2(targetX, startY);
         item.speed = 120f; // Tốc độ bay
         
         Debug.Log("[Encounter] Một Kỳ Ngộ ngẫu nhiên vừa xuất hiện!");
@@ -100,6 +118,8 @@ public class EncounterItem : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (!EncounterManager.CanSpawnEncounter()) return;
+        AchievementManager.Instance?.OnEncounterCollected();
         // Phân chia tỷ lệ cân bằng: 50% Kiếm, 40% Đan Dược (Thuốc), 10% Cơ Duyên
         float rng = Random.value;
         if (rng < 0.5f) // 50% rớt kiếm
@@ -107,7 +127,15 @@ public class EncounterItem : MonoBehaviour, IPointerClickHandler
             if (MergeManager.Instance != null)
             {
                 int lvl = Random.Range(2, 5); // Lv2 - Lv4
-                MergeManager.Instance.TryAddSword(lvl);
+                bool added = MergeManager.Instance.TryAddSword(lvl);
+                if (!added)
+                {
+                    float compensation = 500f * lvl;
+                    EconomyManager.Instance?.AddLinhThach(compensation);
+                    if (GameLogger.Instance != null) GameLogger.Instance.Log($"Túi kiếm đầy! Quy đổi Kỳ Ngộ thành {compensation:F0} Linh Thạch.", Color.yellow);
+                    Destroy(gameObject);
+                    return;
+                }
                 if (GameLogger.Instance != null) GameLogger.Instance.Log($"Kỳ Ngộ: Đã nhặt được 1 Phôi Kiếm Lv{lvl}!", Color.yellow);
             }
         }
