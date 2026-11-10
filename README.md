@@ -6,7 +6,21 @@ Khí Vận Chi Tử đưa người chơi vào hành trình tu luyện qua nhữn
 
 **Nền tảng mục tiêu:** Android và Windows PC · **Trạng thái:** đang phát triển.
 
-[Giới thiệu](#giới-thiệu) · [Cách chơi](#cách-chơi) · [Báo lỗi](#báo-lỗi)
+[Cài đặt bản mobile](#cài-đặt-bản-mobile) · [Giới thiệu](#giới-thiệu) · [Cách chơi](#cách-chơi) · [Báo lỗi](#báo-lỗi)
+
+## Cài đặt bản mobile
+
+Cài Git và Git LFS, rồi chạy các lệnh sau để tải dự án và chuyển sang nhánh Android `codex/android-release`.
+
+```bash
+git lfs install
+git clone https://github.com/tungvu373/KhiVanChiTu.git
+cd KhiVanChiTu
+git switch codex/android-release
+git lfs pull
+```
+
+Thêm thư mục `KhiVanChiTu` vừa clone vào Unity Hub và mở bằng Unity **6000.6.4f1**. Mở scene `Assets/Scenes/SampleScene_MobileWork.unity` để chạy bản mobile trong Editor.
 
 ## Giới thiệu
 
