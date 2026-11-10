@@ -66,7 +66,7 @@ public class SaveSlotUI : MonoBehaviour
             // Gán thông tin hiển thị
             if (nameText) nameText.text = currentData.characterName;
             int displayStage = Mathf.Max(1, currentData.combatStage);
-            if (cultivationText) cultivationText.text = $"Tu vi: {currentData.stageName} | Tầng {displayStage}";
+            if (cultivationText) cultivationText.text = $"Tu vi: {CultivationDisplay.NameForStage(currentData.stageIndex)} | Tầng {displayStage}";
             
             if (playTimeText)
             {

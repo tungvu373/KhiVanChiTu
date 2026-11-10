@@ -206,10 +206,15 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             bool isEquipped = transform.parent.name.StartsWith("Equip");
             if (!isEquipped)
             {
-                // TÌM Ô EQUIP TRỐNG
+                int maxCap = SwordLoadoutService.Instance != null 
+                    ? SwordLoadoutService.Instance.GetCurrentCapacity() 
+                    : (MergeManager.Instance.equipPanel != null ? MergeManager.Instance.equipPanel.childCount : 10);
+
+                // TÌM Ô EQUIP TRỐNG (Chỉ trong các ô đã mở khóa theo cảnh giới)
                 foreach (Transform slot in MergeManager.Instance.equipPanel)
                 {
-                    if (slot.childCount == 0)
+                    if (slot.GetSiblingIndex() >= maxCap) continue;
+                    if (slot.GetComponentInChildren<MergeItem>() == null)
                     {
                         transform.SetParent(slot, false);
                         rectTransform.anchoredPosition = Vector2.zero;
@@ -224,6 +229,7 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                 int lowestLevel = int.MaxValue;
                 foreach (Transform slot in MergeManager.Instance.equipPanel)
                 {
+                    if (slot.GetSiblingIndex() >= maxCap) continue;
                     MergeItem equipItem = slot.GetComponentInChildren<MergeItem>();
                     if (equipItem != null && equipItem.level < lowestLevel)
                     {

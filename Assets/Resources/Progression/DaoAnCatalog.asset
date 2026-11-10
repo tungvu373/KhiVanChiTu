@@ -1,0 +1,931 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f774e18a21d25c4bafd78fc20417ac7, type: 3}
+  m_Name: DaoAnCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::DaoAnCatalog
+  nodes:
+  - id: wealth
+    displayName: "T\u1EE5 Linh \u0110\u1EA1o \u1EA4n"
+    description: "T\u0103ng Linh Th\u1EA1ch r\u01A1i t\u1EEB qu\xE1i v\u1EADt v\xE0 Boss"
+    prerequisiteId: 
+    prerequisiteLevel: 1
+    effect: 0
+    costs:
+    - 500
+    - 1500
+    - 4500
+    - 12000
+    - 30000
+    - 80000
+    bonuses:
+    - 0.05
+    - 0.05
+    - 0.05
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 000000000000000001000000040000000500000007000000i
+    minSubLevels: 010000000400000001000000010000000100000001000000i
+    branch: wealth
+    tier: 1
+    tierName: "T\u1EA7ng 1: Luy\u1EC7n Kh\xED S\u01A1 K\u1EF3 (Kh\xED H\u1EA3i S\u01A1 \u0110\u1ECBnh)"
+    icon: "\U0001F300"
+    unit: "% Linh Th\u1EA1ch"
+  - id: sword_luck
+    displayName: "Ki\u1EBFm Duy\xEAn \u0110\u1EA1o \u1EA4n"
+    description: "T\u0103ng x\xE1c su\u1EA5t qu\xE1i r\u01A1i Phi Ki\u1EBFm (C\u1EA7n 500 ki\u1EBFm m\u1EDF Ph\xE2n Gi\u1EA3i)"
+    prerequisiteId: wealth
+    prerequisiteLevel: 1
+    effect: 3
+    costs:
+    - 800
+    - 2400
+    - 7000
+    - 20000
+    - 55000
+    - 150000
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 000000000000000001000000020000000500000007000000i
+    minSubLevels: 020000000700000001000000010000000100000001000000i
+    branch: sword
+    tier: 1
+    tierName: "T\u1EA7ng 1: Luy\u1EC7n Kh\xED S\u01A1 K\u1EF3 (Kh\xED H\u1EA3i S\u01A1 \u0110\u1ECBnh)"
+    icon: "\U0001F5E1\uFE0F"
+    unit: "% R\u01A1i Ki\u1EBFm"
+  - id: kim_thiem
+    displayName: "Kim Thi\u1EC1m \u0110\u1EA1o \u1EA4n"
+    description: "C\xF3 c\u01A1 h\u1ED9i nh\xE2n \u0111\xF4i Linh Th\u1EA1ch r\u01A1i t\u1EEB Boss"
+    prerequisiteId: wealth
+    prerequisiteLevel: 2
+    effect: 19
+    costs:
+    - 1500
+    - 4500
+    - 12000
+    - 35000
+    - 90000
+    - 250000
+    bonuses:
+    - 0.15
+    - 0.15
+    - 0.15
+    - 0.15
+    - 0.15
+    - 0.15
+    minRealms: 000000000000000001000000020000000300000004000000i
+    minSubLevels: 040000000700000001000000010000000100000001000000i
+    branch: wealth
+    tier: 2
+    tierName: "T\u1EA7ng 2: Luy\u1EC7n Kh\xED Trung & H\u1EADu K\u1EF3"
+    icon: "\U0001F438"
+    unit: "% N\u1ED5 H\u0169 LT"
+  - id: monster_cultivation
+    displayName: "H\u1ED9i Linh \u0110\u1EA1o \u1EA4n"
+    description: "Gia t\u0103ng Tu Vi nh\u1EADn \u0111\u01B0\u1EE3c khi ti\xEAu di\u1EC7t y\xEAu ma"
+    prerequisiteId: wealth
+    prerequisiteLevel: 1
+    effect: 4
+    costs:
+    - 1200
+    - 3600
+    - 10000
+    - 28000
+    - 75000
+    - 200000
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 000000000000000001000000020000000400000004000000i
+    minSubLevels: 040000000700000004000000010000000100000007000000i
+    branch: cultivation
+    tier: 2
+    tierName: "T\u1EA7ng 2: Luy\u1EC7n Kh\xED Trung & H\u1EADu K\u1EF3"
+    icon: "\U0001F4AB"
+    unit: "% Tu Vi Qu\xE1i"
+  - id: sword
+    displayName: "V\xF4 Song Ki\u1EBFm T\xE2m"
+    description: "C\u01B0\u1EDDng h\xF3a to\xE0n b\u1ED9 Phi Ki\u1EBFm xu\u1EA5t tr\u1EADn, t\u0103ng s\xE1t th\u01B0\u01A1ng c\u01A1 b\u1EA3n"
+    prerequisiteId: wealth
+    prerequisiteLevel: 2
+    effect: 2
+    costs:
+    - 2000
+    - 6000
+    - 18000
+    - 50000
+    - 130000
+    - 350000
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.02
+    - 0.02
+    - 0.02
+    minRealms: 000000000100000002000000030000000500000007000000i
+    minSubLevels: 070000000400000001000000010000000100000001000000i
+    branch: sword
+    tier: 2
+    tierName: "T\u1EA7ng 2: Luy\u1EC7n Kh\xED Trung & H\u1EADu K\u1EF3"
+    icon: "\u26A1"
+    unit: "% S\xE1t Th\u01B0\u01A1ng"
+  - id: repose
+    displayName: "B\u1EBF Quan Ng\u1ED9 \u0110\u1EA1o"
+    description: "Gia t\u0103ng hi\u1EC7u su\u1EA5t nh\u1EADn Linh Th\u1EA1ch khi treo m\xE1y offline"
+    prerequisiteId: wealth
+    prerequisiteLevel: 1
+    effect: 1
+    costs:
+    - 1000
+    - 3000
+    - 9000
+    - 25000
+    - 70000
+    - 200000
+    bonuses:
+    - 0.05
+    - 0.05
+    - 0.05
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 000000000100000002000000030000000500000007000000i
+    minSubLevels: 070000000100000001000000010000000100000001000000i
+    branch: wealth
+    tier: 2
+    tierName: "T\u1EA7ng 2: Luy\u1EC7n Kh\xED Trung & H\u1EADu K\u1EF3"
+    icon: "\U0001F9D8"
+    unit: "% LT Treo M\xE1y"
+  - id: herb_luck
+    displayName: "D\u01B0\u1EE3c Linh D\u1EABn D\u1EE5"
+    description: "D\u1EABn d\u1EE5 th\u1EA3o m\u1ED9c, t\u0103ng x\xE1c su\u1EA5t r\u01A1i D\u01B0\u1EE3c Li\u1EC7u Qu\xFD khi \u0111\xE1nh qu\xE1i"
+    prerequisiteId: 
+    prerequisiteLevel: 1
+    effect: 6
+    costs:
+    - 1600
+    - 4800
+    - 14000
+    - 40000
+    - 110000
+    - 300000
+    bonuses:
+    - 0.04
+    - 0.04
+    - 0.04
+    - 0.04
+    - 0.04
+    - 0.04
+    minRealms: 000000000100000002000000030000000400000006000000i
+    minSubLevels: 080000000100000001000000010000000100000001000000i
+    branch: alchemy
+    tier: 2
+    tierName: "T\u1EA7ng 2: Luy\u1EC7n Kh\xED Trung & H\u1EADu K\u1EF3"
+    icon: "\U0001F33F"
+    unit: "% R\u01A1i Th\u1EA3o D\u01B0\u1EE3c"
+  - id: tribulation_guard
+    displayName: "Ngh\u1ECBch M\u1EC7nh H\u1ED9 Th\xE2n"
+    description: "Kh\xED v\u1EADn ngh\u1ECBch thi\xEAn, gi\u1EA3m t\u1ED5n hao Tu Vi khi l\xF4i ki\u1EBFp th\u1EA5t b\u1EA1i"
+    prerequisiteId: monster_cultivation
+    prerequisiteLevel: 1
+    effect: 8
+    costs:
+    - 2500
+    - 7500
+    - 22000
+    - 60000
+    - 160000
+    - 450000
+    bonuses:
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    minRealms: 000000000100000002000000030000000500000007000000i
+    minSubLevels: 090000000100000001000000010000000100000001000000i
+    branch: cultivation
+    tier: 3
+    tierName: "T\u1EA7ng 3: Tr\xFAc C\u01A1 K\u1EF3 (\u0110\u1EA1o C\u01A1 V\u1EEFng Ch\u1EAFc)"
+    icon: "\U0001F6E1\uFE0F"
+    unit: "% Gi\u1EA3m M\u1EA5t Tu Vi"
+  - id: formation_cd
+    displayName: "C\u1EEDu Thi\xEAn L\xF4i Uy"
+    description: "R\xFAt ng\u1EAFn kho\u1EA3ng c\xE1ch gi\u1EEFa c\xE1c l\u1EA7n L\xF4i Tr\u1EADn gi\xE1ng s\xE9t"
+    prerequisiteId: sword
+    prerequisiteLevel: 1
+    effect: 9
+    costs:
+    - 3000
+    - 9000
+    - 26000
+    - 75000
+    - 200000
+    - 550000
+    bonuses:
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    minRealms: 010000000100000002000000030000000400000007000000i
+    minSubLevels: 010000000400000001000000010000000100000001000000i
+    branch: formation
+    tier: 3
+    tierName: "T\u1EA7ng 3: Tr\xFAc C\u01A1 K\u1EF3 (\u0110\u1EA1o C\u01A1 V\u1EEFng Ch\u1EAFc)"
+    icon: "\U0001F329\uFE0F"
+    unit: "% Gi\u1EA3m H\u1ED3i Chi\xEAu"
+  - id: ore_luck
+    displayName: "Linh Kho\xE1ng Duy\xEAn"
+    description: "Khai m\u1EDF linh nh\xE3n \u0111\u1ECBa m\u1EA1ch, t\u0103ng x\xE1c su\u1EA5t qu\xE1i r\u01A1i Qu\u1EB7ng R\xE8n"
+    prerequisiteId: 
+    prerequisiteLevel: 1
+    effect: 7
+    costs:
+    - 2800
+    - 8400
+    - 24000
+    - 70000
+    - 190000
+    - 500000
+    bonuses:
+    - 0.04
+    - 0.04
+    - 0.04
+    - 0.04
+    - 0.04
+    - 0.04
+    minRealms: 010000000100000002000000030000000400000006000000i
+    minSubLevels: 010000000700000001000000010000000100000001000000i
+    branch: body_artifact
+    tier: 3
+    tierName: "T\u1EA7ng 3: Tr\xFAc C\u01A1 K\u1EF3 (\u0110\u1EA1o C\u01A1 V\u1EEFng Ch\u1EAFc)"
+    icon: "\U0001F48E"
+    unit: "% R\u01A1i Qu\u1EB7ng"
+  - id: formation_stone_efficiency
+    displayName: "Tr\u1EADn T\xE0i Tinh Th\xF4ng"
+    description: "L\u0129nh ng\u1ED9 tr\u1EADn v\u0103n huy\u1EC1n \u1EA3o, gi\u1EA3m ti\xEAu hao Linh Th\u1EA1ch n\xE2ng c\u1EA5p Ph\xE1p Tr\u1EADn"
+    prerequisiteId: formation_cd
+    prerequisiteLevel: 1
+    effect: 10
+    costs:
+    - 4500
+    - 13500
+    - 38000
+    - 100000
+    - 270000
+    - 750000
+    bonuses:
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    minRealms: 010000000100000002000000030000000400000005000000i
+    minSubLevels: 040000000700000004000000040000000400000004000000i
+    branch: formation
+    tier: 4
+    tierName: "T\u1EA7ng 4: Kim \u0110an K\u1EF3 (Ng\u01B0ng K\u1EBFt Kim \u0110an)"
+    icon: "\U0001F4DC"
+    unit: "% Gi\u1EA3m Gi\xE1 Tr\u1EADn"
+  - id: offline_cultivation
+    displayName: "T\u0129nh Tu Minh Ng\u1ED9"
+    description: "Thi\u1EC1n \u0111\u1ECBnh nh\u1EADp \u0111\u1ECBnh t\u1EA7ng s\xE2u, gia t\u0103ng Tu Vi nh\u1EADn \u0111\u01B0\u1EE3c khi offline"
+    prerequisiteId: repose
+    prerequisiteLevel: 1
+    effect: 5
+    costs:
+    - 4200
+    - 12600
+    - 36000
+    - 95000
+    - 260000
+    - 700000
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 010000000200000003000000040000000500000007000000i
+    minSubLevels: 070000000100000001000000010000000100000001000000i
+    branch: cultivation
+    tier: 4
+    tierName: "T\u1EA7ng 4: Kim \u0110an K\u1EF3 (Ng\u01B0ng K\u1EBFt Kim \u0110an)"
+    icon: "\u262F\uFE0F"
+    unit: '% Tu Vi Offline'
+  - id: alchemy_material_efficiency
+    displayName: "Ti\u1EBFt D\u01B0\u1EE3c B\xED Thu\u1EADt"
+    description: "Gi\u1EA3m Linh Chi v\xE0 C\u1ECF Ng\u01B0ng Kh\xED, gi\u1EEF \xEDt nh\u1EA5t m\u1ED9t m\u1ED7i lo\u1EA1i"
+    prerequisiteId: herb_luck
+    prerequisiteLevel: 1
+    effect: 11
+    costs:
+    - 5000
+    - 15000
+    - 42000
+    - 110000
+    - 300000
+    - 850000
+    bonuses:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    minRealms: 020000000200000003000000040000000500000007000000i
+    minSubLevels: 010000000400000001000000010000000100000001000000i
+    branch: alchemy
+    tier: 4
+    tierName: "T\u1EA7ng 4: Kim \u0110an K\u1EF3 (Ng\u01B0ng K\u1EBFt Kim \u0110an)"
+    icon: "\U0001F9EA"
+    unit: "Th\u1EA3o D\u01B0\u1EE3c Ti\u1EBFt Ki\u1EC7m"
+  - id: boss_stone
+    displayName: "Chi\u1EBFn L\u1ED9c \u0110\u1EA1o \u1EA4n"
+    description: "S\xE1t ph\u1EA1t y\xEAu ma \u0111\u1EA7u l\u0129nh, t\u0103ng m\u1EA1nh Linh Th\u1EA1ch r\u01A1i \u0111\u1ED9c quy\u1EC1n t\u1EEB Boss"
+    prerequisiteId: kim_thiem
+    prerequisiteLevel: 1
+    effect: 12
+    costs:
+    - 5500
+    - 16500
+    - 46000
+    - 120000
+    - 330000
+    - 900000
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 020000000200000003000000040000000500000007000000i
+    minSubLevels: 040000000700000004000000040000000400000004000000i
+    branch: wealth
+    tier: 4
+    tierName: "T\u1EA7ng 4: Kim \u0110an K\u1EF3 (Ng\u01B0ng K\u1EBFt Kim \u0110an)"
+    icon: "\U0001F451"
+    unit: '% LT Boss'
+  - id: artifact_ore_efficiency
+    displayName: "Tinh Qu\u1EB7ng Chi \u0110\u1EA1o"
+    description: "R\xE8n \u0111\xFAc h\xF3a c\u1EA3nh, gi\u1EA3m ti\xEAu hao Qu\u1EB7ng R\xE8n khi n\xE2ng c\u1EA5p Ph\xE1p Kh\xED"
+    prerequisiteId: ore_luck
+    prerequisiteLevel: 1
+    effect: 13
+    costs:
+    - 7000
+    - 21000
+    - 60000
+    - 160000
+    - 420000
+    - 1200000
+    bonuses:
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    minRealms: 030000000300000003000000040000000500000007000000i
+    minSubLevels: 010000000400000007000000040000000400000004000000i
+    branch: body_artifact
+    tier: 5
+    tierName: "T\u1EA7ng 5: Nguy\xEAn Anh K\u1EF3 (Ng\u01B0ng Anh H\xF3a Th\u1EA7n)"
+    icon: "\u2692\uFE0F"
+    unit: "% Gi\u1EA3m Qu\u1EB7ng"
+  - id: sword_crit
+    displayName: "V\u1EA1n Ki\u1EBFm Quy T\xF4ng"
+    description: "Ki\u1EBFm kh\xED ng\u1EADp tr\u1EDDi, t\u0103ng t\u1EF7 l\u1EC7 k\xEDch ho\u1EA1t B\u1EA1o K\xEDch x2 s\xE1t th\u01B0\u01A1ng ki\u1EBFm"
+    prerequisiteId: sword
+    prerequisiteLevel: 2
+    effect: 18
+    costs:
+    - 8500
+    - 25000
+    - 72000
+    - 190000
+    - 500000
+    - 1400000
+    bonuses:
+    - 0.04
+    - 0.04
+    - 0.04
+    - 0.04
+    - 0.04
+    - 0.04
+    minRealms: 030000000300000004000000050000000600000007000000i
+    minSubLevels: 010000000400000001000000010000000100000001000000i
+    branch: sword
+    tier: 5
+    tierName: "T\u1EA7ng 5: Nguy\xEAn Anh K\u1EF3 (Ng\u01B0ng Anh H\xF3a Th\u1EA7n)"
+    icon: "\U0001F31F"
+    unit: "% B\u1EA1o K\xEDch"
+  - id: artifact_stone_efficiency
+    displayName: "B\u1EA3o T\xE0i H\u1ED9 M\u1EC7nh"
+    description: "Luy\u1EC7n kh\xED t\xE2m \u0111\u1EAFc, gi\u1EA3m ti\xEAu hao Linh Th\u1EA1ch khi n\xE2ng c\u1EA5p Ph\xE1p Kh\xED"
+    prerequisiteId: artifact_ore_efficiency
+    prerequisiteLevel: 1
+    effect: 14
+    costs:
+    - 7500
+    - 22500
+    - 65000
+    - 175000
+    - 460000
+    - 1300000
+    bonuses:
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    minRealms: 030000000300000004000000050000000600000007000000i
+    minSubLevels: 040000000700000001000000010000000100000001000000i
+    branch: body_artifact
+    tier: 5
+    tierName: "T\u1EA7ng 5: Nguy\xEAn Anh K\u1EF3 (Ng\u01B0ng Anh H\xF3a Th\u1EA7n)"
+    icon: "\U0001F4FF"
+    unit: "% Gi\u1EA3m LT Ph\xE1p Kh\xED"
+  - id: body_stone_efficiency
+    displayName: "Th\u1EC3 T\xE0i C\u01B0\u1EDDng H\xF3a"
+    description: "Th\xE2n th\u1EC3 kim cang, gi\u1EA3m ti\xEAu hao Linh Th\u1EA1ch khi n\xE2ng c\u1EA5p Luy\u1EC7n Th\u1EC3"
+    prerequisiteId: 
+    prerequisiteLevel: 1
+    effect: 15
+    costs:
+    - 10000
+    - 30000
+    - 85000
+    - 230000
+    - 600000
+    - 1700000
+    bonuses:
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    - 0.02
+    minRealms: 040000000400000004000000050000000600000007000000i
+    minSubLevels: 010000000400000007000000040000000400000004000000i
+    branch: body
+    tier: 6
+    tierName: "T\u1EA7ng 6: H\xF3a Th\u1EA7n K\u1EF3 (Ph\xE1 To\xE1i H\u01B0 Kh\xF4ng)"
+    icon: "\U0001F94B"
+    unit: "% Gi\u1EA3m LT Th\u1EC3"
+  - id: boss_ore
+    displayName: "B\xE1u Kho\xE1ng Th\u1EA7n T\xEDch"
+    description: "Khai s\u01A1n ph\xE1 th\u1EA1ch, t\u0103ng b\u1EA3o \u0111\u1EA3m +1 Qu\u1EB7ng R\xE8n r\u01A1i th\xEAm t\u1EEB Boss"
+    prerequisiteId: artifact_ore_efficiency
+    prerequisiteLevel: 1
+    effect: 16
+    costs:
+    - 12000
+    - 36000
+    - 100000
+    - 270000
+    - 720000
+    - 2000000
+    bonuses:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    minRealms: 040000000400000005000000050000000600000007000000i
+    minSubLevels: 040000000700000001000000070000000400000004000000i
+    branch: body_artifact
+    tier: 6
+    tierName: "T\u1EA7ng 6: H\xF3a Th\u1EA7n K\u1EF3 (Ph\xE1 To\xE1i H\u01B0 Kh\xF4ng)"
+    icon: "\u26CF\uFE0F"
+    unit: "Qu\u1EB7ng Boss Th\xEAm"
+  - id: spirit_duration
+    displayName: "D\u01B0 Tr\u1EADn Tr\u01B0\u1EDDng C\u1EEDu"
+    description: "K\xE9o d\xE0i th\u1EDDi gian hi\u1EC7u l\u1EF1c c\u1EE7a T\u1EE5 Linh Tr\u1EADn ch\u1EE7 \u0111\u1ED9ng"
+    prerequisiteId: formation_stone_efficiency
+    prerequisiteLevel: 1
+    effect: 17
+    costs:
+    - 11000
+    - 33000
+    - 95000
+    - 250000
+    - 660000
+    - 1850000
+    bonuses:
+    - 2
+    - 2
+    - 2
+    - 2
+    - 2
+    - 2
+    minRealms: 040000000400000004000000060000000600000007000000i
+    minSubLevels: 010000000400000007000000010000000700000004000000i
+    branch: formation
+    tier: 6
+    tierName: "T\u1EA7ng 6: H\xF3a Th\u1EA7n K\u1EF3 (Ph\xE1 To\xE1i H\u01B0 Kh\xF4ng)"
+    icon: "\U0001F300"
+    unit: "s Duy Tr\xEC Tr\u1EADn"
+  - id: sword_tier_weight
+    displayName: "Tr\u1EA1ch Ki\u1EBFm \u0110\u1EA1o \u1EA4n"
+    description: "Ki\u1EBFm t\u1EEB qu\xE1i th\u01B0\u1EDDng d\u1EC5 c\xF3 c\u1EA5p 2 tr\u1EDF l\xEAn trong c\xE1c c\u1EA5p \u0111\xE3 m\u1EDF"
+    prerequisiteId: sword_luck
+    prerequisiteLevel: 2
+    effect: 20
+    costs:
+    - 32000000
+    - 260000000
+    - 2.1e+9
+    bonuses:
+    - 0.04
+    - 0.04
+    - 0.04
+    minRealms: 010000000200000003000000i
+    minSubLevels: 040000000400000004000000i
+    branch: sword
+    tier: 3
+    tierName: "T\u1EA7ng 3: Tr\xFAc C\u01A1 K\u1EF3 (\u0110\u1EA1o C\u01A1 V\u1EEFng Ch\u1EAFc)"
+    icon: "\U0001F5E1\uFE0F"
+    unit: "% Tr\u1ECDng S\u1ED1 Ki\u1EBFm C\u1EA5p Cao"
+  - id: boss_herb
+    displayName: "D\u01B0\u1EE3c L\u1ED9c H\u1ED9 S\u01A1n"
+    description: "Nh\u1EADn th\xEAm Linh Chi khi \u0111\xE1nh Boss sau khi m\u1EDF Luy\u1EC7n \u0110an"
+    prerequisiteId: herb_luck
+    prerequisiteLevel: 1
+    effect: 21
+    costs:
+    - 2000000
+    - 32000000
+    - 260000000
+    bonuses:
+    - 1
+    - 1
+    - 1
+    minRealms: 000000000100000002000000i
+    minSubLevels: 090000000400000004000000i
+    branch: alchemy
+    tier: 2
+    tierName: "T\u1EA7ng 2: Luy\u1EC7n Kh\xED Trung & H\u1EADu K\u1EF3"
+    icon: "\U0001F33F"
+    unit: "Linh Chi Th\xEAm"
+  - id: alchemy_brew_speed
+    displayName: "\u0110an H\u1ECFa T\u1ED1c Luy\u1EC7n"
+    description: "R\xFAt ng\u1EAFn th\u1EDDi gian luy\u1EC7n \u0111an, t\u1ED1i thi\u1EC3u 10 gi\xE2y m\u1ED7i m\u1EBB"
+    prerequisiteId: herb_luck
+    prerequisiteLevel: 1
+    effect: 22
+    costs:
+    - 16000000
+    - 130000000
+    - 1.05e+9
+    bonuses:
+    - 0.04
+    - 0.04
+    - 0.04
+    minRealms: 010000000200000003000000i
+    minSubLevels: 010000000100000001000000i
+    branch: alchemy
+    tier: 3
+    tierName: "T\u1EA7ng 3: Tr\xFAc C\u01A1 K\u1EF3 (\u0110\u1EA1o C\u01A1 V\u1EEFng Ch\u1EAFc)"
+    icon: "\U0001F525"
+    unit: "% Gi\u1EA3m Th\u1EDDi Gian Luy\u1EC7n"
+  - id: boss_damage_reduction
+    displayName: "Kim Th\xE2n H\u1ED9 M\u1EC7nh"
+    description: "Gi\u1EA3m s\xE1t th\u01B0\u01A1ng nh\u1EADn v\xE0o t\u1EEB Boss, k\u1EC3 c\u1EA3 Boss \u0110\u1ED9 Ki\u1EBFp"
+    prerequisiteId: body_stone_efficiency
+    prerequisiteLevel: 1
+    effect: 23
+    costs:
+    - 8e+9
+    - 1.6e+10
+    - 3.3e+10
+    bonuses:
+    - 0.02
+    - 0.02
+    - 0.02
+    minRealms: 040000000400000004000000i
+    minSubLevels: 010000000400000007000000i
+    branch: body
+    tier: 6
+    tierName: "T\u1EA7ng 6: H\xF3a Th\u1EA7n K\u1EF3 (Ph\xE1 To\xE1i H\u01B0 Kh\xF4ng)"
+    icon: "\U0001F6E1\uFE0F"
+    unit: "% Gi\u1EA3m S\xE1t Th\u01B0\u01A1ng Boss"
+  - id: field_stone
+    displayName: "T\xE1n L\u1ED9c T\u1EE5 Kim"
+    description: "T\u0103ng Linh Th\u1EA1ch t\u1EEB qu\xE1i th\u01B0\u1EDDng."
+    prerequisiteId: wealth
+    prerequisiteLevel: 2
+    effect: 24
+    costs:
+    - 5000
+    - 20000000
+    - 170000000
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 000000000100000002000000i
+    minSubLevels: 040000000100000001000000i
+    branch: wealth
+    tier: 2
+    tierName: "T\u1EA7ng 2: Luy\u1EC7n Kh\xED"
+    icon: "\u262F\uFE0F"
+    unit: "% Linh Th\u1EA1ch"
+  - id: retreat_stone
+    displayName: "Kim Kh\u1ED1 B\u1EBF Quan"
+    description: "T\xEDch th\xEAm Linh Th\u1EA1ch trong th\u1EDDi gian b\u1EBF quan."
+    prerequisiteId: repose
+    prerequisiteLevel: 2
+    effect: 1
+    costs:
+    - 45000000
+    - 360000000
+    - 2.9e+9
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 010000000200000003000000i
+    minSubLevels: 040000000400000004000000i
+    branch: wealth
+    tier: 3
+    tierName: "T\u1EA7ng 3: Tr\xFAc C\u01A1"
+    icon: "\u262F\uFE0F"
+    unit: "% Linh Th\u1EA1ch offline"
+  - id: sword_flight
+    displayName: "Ng\u1EF1 Phong Ki\u1EBFm B\u1ED9"
+    description: "Phi ki\u1EBFm lao t\u1EDBi m\u1EE5c ti\xEAu nhanh h\u01A1n."
+    prerequisiteId: sword_luck
+    prerequisiteLevel: 2
+    effect: 25
+    costs:
+    - 22000000
+    - 180000000
+    - 1.45e+9
+    bonuses:
+    - 0.02
+    - 0.02
+    - 0.02
+    minRealms: 010000000200000003000000i
+    minSubLevels: 010000000100000001000000i
+    branch: sword
+    tier: 3
+    tierName: "T\u1EA7ng 3: Tr\xFAc C\u01A1"
+    icon: "\u262F\uFE0F"
+    unit: "% T\u1ED1c \u0111\u1ED9 lao ki\u1EBFm"
+  - id: sword_boss_hunt
+    displayName: "Tr\u1EA3m Y\xEAu Ki\u1EBFm Quy\u1EBFt"
+    description: "T\u0103ng s\xE1t th\u01B0\u01A1ng phi ki\u1EBFm khi \u0111\xE1nh Boss."
+    prerequisiteId: sword
+    prerequisiteLevel: 2
+    effect: 26
+    costs:
+    - 420000000
+    - 3.35e+9
+    - 2.68e+10
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 020000000300000004000000i
+    minSubLevels: 040000000400000004000000i
+    branch: sword
+    tier: 4
+    tierName: "T\u1EA7ng 4: Kim \u0110an"
+    icon: "\u262F\uFE0F"
+    unit: "% S\xE1t th\u01B0\u01A1ng ki\u1EBFm l\xEAn Boss"
+  - id: boss_tuvi
+    displayName: "H\xF3a Y\xEAu Quy Nguy\xEAn"
+    description: "T\u0103ng Tu Vi nh\u1EADn khi \u0111\xE1nh b\u1EA1i Boss."
+    prerequisiteId: monster_cultivation
+    prerequisiteLevel: 1
+    effect: 27
+    costs:
+    - 24000000
+    - 190000000
+    - 1.5e+9
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 010000000200000003000000i
+    minSubLevels: 010000000100000001000000i
+    branch: cultivation
+    tier: 3
+    tierName: "T\u1EA7ng 3: Tr\xFAc C\u01A1"
+    icon: "\u262F\uFE0F"
+    unit: "% Tu Vi t\u1EEB Boss"
+  - id: pill_tuvi
+    displayName: "\u0110an T\u1EE9c Nh\u1EADp M\u1EA1ch"
+    description: "T\u0103ng Tu Vi nh\u1EADn khi d\xF9ng Tu Vi \u0110an."
+    prerequisiteId: monster_cultivation
+    prerequisiteLevel: 2
+    effect: 28
+    costs:
+    - 700000
+    - 48000000
+    - 380000000
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 000000000100000002000000i
+    minSubLevels: 080000000400000004000000i
+    branch: cultivation
+    tier: 2
+    tierName: "T\u1EA7ng 2: Luy\u1EC7n Kh\xED"
+    icon: "\u262F\uFE0F"
+    unit: "% Tu Vi t\u1EEB \u0111an"
+  - id: alchemy_dust_cost
+    displayName: "T\u1EE5 H\u1ECFa Ti\u1EBFt Tr\u1EA7n"
+    description: "Gi\u1EA3m B\u1EE5i D\u01B0\u1EE3c d\xF9ng \u0111\u1EC3 ho\xE0n t\u1EA5t m\u1EBB \u0111an t\u1EE9c th\xEC."
+    prerequisiteId: herb_luck
+    prerequisiteLevel: 1
+    effect: 29
+    costs:
+    - 26000000
+    - 210000000
+    - 1.7e+9
+    bonuses:
+    - 1
+    - 1
+    - 1
+    minRealms: 010000000200000003000000i
+    minSubLevels: 010000000100000001000000i
+    branch: alchemy
+    tier: 3
+    tierName: "T\u1EA7ng 3: Tr\xFAc C\u01A1"
+    icon: "\u262F\uFE0F"
+    unit: "B\u1EE5i D\u01B0\u1EE3c ti\u1EBFt ki\u1EC7m"
+  - id: alchemy_waste_dust
+    displayName: "H\u1ED3i Tr\u1EA7n B\xED Ph\xE1p"
+    description: "Thu th\xEAm B\u1EE5i D\u01B0\u1EE3c khi m\u1EBB luy\u1EC7n ra Ph\u1EBF \u0110an."
+    prerequisiteId: alchemy_dust_cost
+    prerequisiteLevel: 1
+    effect: 30
+    costs:
+    - 450000000
+    - 3.6e+9
+    bonuses:
+    - 1
+    - 1
+    minRealms: 0200000003000000i
+    minSubLevels: 0400000004000000i
+    branch: alchemy
+    tier: 4
+    tierName: "T\u1EA7ng 4: Kim \u0110an"
+    icon: "\u262F\uFE0F"
+    unit: "B\u1EE5i D\u01B0\u1EE3c th\xEAm"
+  - id: spirit_recovery
+    displayName: "B\xE1t Qu\xE1i H\u1ED3i Linh"
+    description: "R\xFAt ng\u1EAFn h\u1ED3i chi\xEAu k\xEDch ho\u1EA1t T\u1EE5 Linh Tr\u1EADn."
+    prerequisiteId: formation_cd
+    prerequisiteLevel: 1
+    effect: 31
+    costs:
+    - 52000000
+    - 420000000
+    - 3.4e+9
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 010000000200000003000000i
+    minSubLevels: 040000000400000004000000i
+    branch: formation
+    tier: 3
+    tierName: "T\u1EA7ng 3: Tr\xFAc C\u01A1"
+    icon: "\u262F\uFE0F"
+    unit: "% Gi\u1EA3m h\u1ED3i chi\xEAu"
+  - id: sword_rain_recovery
+    displayName: "Ki\u1EBFm V\u0169 Li\xEAn Ho\xE0n"
+    description: "R\xFAt ng\u1EAFn chu k\u1EF3 m\u01B0a ki\u1EBFm, t\u1ED1i thi\u1EC3u 4 gi\xE2y."
+    prerequisiteId: formation_cd
+    prerequisiteLevel: 1
+    effect: 32
+    costs:
+    - 220000000
+    - 1.75e+9
+    - 1.4e+10
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 020000000300000004000000i
+    minSubLevels: 010000000100000001000000i
+    branch: formation
+    tier: 4
+    tierName: "T\u1EA7ng 4: Kim \u0110an"
+    icon: "\u262F\uFE0F"
+    unit: "% Gi\u1EA3m chu k\u1EF3"
+  - id: artifact_armor_stone
+    displayName: "B\u1EA3o Y Ti\u1EBFt T\xE0i"
+    description: "Gi\u1EA3m Linh Th\u1EA1ch c\u01B0\u1EDDng h\xF3a \u0110\u1EA1o B\xE0o v\xE0 M\u0169."
+    prerequisiteId: artifact_stone_efficiency
+    prerequisiteLevel: 1
+    effect: 33
+    costs:
+    - 3.3e+9
+    - 6.7e+9
+    - 2.7e+10
+    bonuses:
+    - 0.025
+    - 0.025
+    - 0.025
+    minRealms: 030000000300000004000000i
+    minSubLevels: 040000000700000004000000i
+    branch: body_artifact
+    tier: 5
+    tierName: "T\u1EA7ng 5: Nguy\xEAn Anh"
+    icon: "\u262F\uFE0F"
+    unit: "% Gi\u1EA3m Linh Th\u1EA1ch"
+  - id: artifact_accessory_ore
+    displayName: "Linh Ph\xF4i Tinh Luy\u1EC7n"
+    description: "Gi\u1EA3m Qu\u1EB7ng c\u01B0\u1EDDng h\xF3a Gi\xE0y v\xE0 H\u1ED9 Ph\xF9."
+    prerequisiteId: artifact_ore_efficiency
+    prerequisiteLevel: 1
+    effect: 34
+    costs:
+    - 6.8e+9
+    - 1.36e+10
+    - 2.72e+10
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 030000000400000004000000i
+    minSubLevels: 070000000100000004000000i
+    branch: body_artifact
+    tier: 5
+    tierName: "T\u1EA7ng 5: Nguy\xEAn Anh"
+    icon: "\u262F\uFE0F"
+    unit: "% Gi\u1EA3m Qu\u1EB7ng"
+  - id: body_guard_cost
+    displayName: "C\u01B0\u01A1ng Th\xE2n \u0110i\u1EC1u T\u1EE9c"
+    description: "Gi\u1EA3m Linh Th\u1EA1ch cho c\xE1c thi\xEAn ph\xFA nh\xE1nh C\u01B0\u01A1ng Th\xE2n."
+    prerequisiteId: body_stone_efficiency
+    prerequisiteLevel: 1
+    effect: 35
+    costs:
+    - 1.3e+10
+    - 2.6e+10
+    - 5.2e+10
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 040000000400000004000000i
+    minSubLevels: 010000000400000007000000i
+    branch: body
+    tier: 6
+    tierName: "T\u1EA7ng 6: H\xF3a Th\u1EA7n"
+    icon: "\u262F\uFE0F"
+    unit: "% Gi\u1EA3m Linh Th\u1EA1ch"
+  - id: body_force_cost
+    displayName: "Th\u1EA7n L\u1EF1c Luy\u1EC7n C\u1ED1t"
+    description: "Gi\u1EA3m Linh Th\u1EA1ch cho c\xE1c thi\xEAn ph\xFA nh\xE1nh Th\u1EA7n L\u1EF1c."
+    prerequisiteId: body_stone_efficiency
+    prerequisiteLevel: 1
+    effect: 36
+    costs:
+    - 1.4e+10
+    - 2.8e+10
+    - 5.6e+10
+    bonuses:
+    - 0.03
+    - 0.03
+    - 0.03
+    minRealms: 040000000400000004000000i
+    minSubLevels: 010000000400000007000000i
+    branch: body
+    tier: 6
+    tierName: "T\u1EA7ng 6: H\xF3a Th\u1EA7n"
+    icon: "\u262F\uFE0F"
+    unit: "% Gi\u1EA3m Linh Th\u1EA1ch"

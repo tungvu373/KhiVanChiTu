@@ -61,7 +61,6 @@ public class PauseMenuManager : MonoBehaviour
     public bool IsModalOpen => isPaused;
 
     private Action pendingConfirmAction;
-    private float previousTimeScale = 1f;
     private bool isPaused = false;
 
     private void Awake()
@@ -84,24 +83,6 @@ public class PauseMenuManager : MonoBehaviour
     {
         // Panel đã được tắt sẵn trong Scene, chỉ tải cấu hình âm thanh
         InitAudioSliders();
-    }
-
-    private void Update()
-    {
-        // Khi modal đang mở, nếu có popup xác nhận thì ESC chỉ đóng popup xác nhận
-        if (confirmationPopup != null && confirmationPopup.activeSelf)
-        {
-            bool isEscapePressed = false;
-            if (UnityEngine.InputSystem.Keyboard.current != null)
-            {
-                isEscapePressed = UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame;
-            }
-
-            if (isEscapePressed)
-            {
-                CloseConfirmation();
-            }
-        }
     }
 
     private void SetupEventListeners()
@@ -213,11 +194,10 @@ public class PauseMenuManager : MonoBehaviour
     // ─────────────────────────────────────────────────────────────────────────
     public void OpenPauseMenu()
     {
-        isPaused = true;
-        previousTimeScale = Time.timeScale;
-        Time.timeScale = 0f; // Đóng băng mọi tiến trình game khi tạm dừng
+        // Game vẫn tiếp tục chạy 100% thời gian thực (không dừng Time.timeScale)
 
         gameObject.SetActive(true);
+        isPaused = true;
         if (pauseModal != null) pauseModal.SetActive(true);
         transform.SetAsLastSibling();
 
@@ -227,10 +207,15 @@ public class PauseMenuManager : MonoBehaviour
         if (confirmationPopup != null) confirmationPopup.SetActive(false);
     }
 
+    internal void CloseTopLayer()
+    {
+        if (confirmationPopup != null && confirmationPopup.activeInHierarchy) CloseConfirmation();
+        else ResumeGame();
+    }
+
     public void ResumeGame()
     {
         isPaused = false;
-        Time.timeScale = previousTimeScale <= 0f ? 1f : previousTimeScale; // Khôi phục thời gian chạy game
 
         if (confirmationPopup != null) confirmationPopup.SetActive(false);
         if (pauseModal != null) pauseModal.SetActive(false);
@@ -241,7 +226,7 @@ public class PauseMenuManager : MonoBehaviour
     {
         // 1. Cập nhật thông tin nhân vật
         string charName = "Đạo Hữu";
-        string stageName = "Luyện Khí";
+        string stageName = "Luyện Khí · Sơ Kỳ";
         int combatStage = 1;
 
         if (CultivationManager.Instance != null)
@@ -252,7 +237,7 @@ public class PauseMenuManager : MonoBehaviour
             if (CultivationManager.Instance.allStages != null && 
                 CultivationManager.Instance.currentStageIndex < CultivationManager.Instance.allStages.Length)
             {
-                stageName = CultivationManager.Instance.allStages[CultivationManager.Instance.currentStageIndex].stageName;
+                stageName = CultivationManager.Instance.GetDisplayRealmName();
             }
         }
 
@@ -270,12 +255,12 @@ public class PauseMenuManager : MonoBehaviour
 
         if (txtCharacterInfo != null)
         {
-            txtCharacterInfo.text = $"🏷️ <b>{charName}</b>  |  🌟 <color=#66FFB2>{stageName}</color>  |  ⚔️ Tầng <color=#FFE666>{combatStage}</color> (Slot {slotIdx + 1})";
+            txtCharacterInfo.text = $"<b>{charName}</b>  |  <color=#66FFB2>{stageName}</color>  |  Tầng <color=#FFE666>{combatStage}</color> (Slot {slotIdx + 1})";
         }
 
         if (txtSaveStatus != null)
         {
-            txtSaveStatus.text = "💾 Trạng thái: <color=#88FF88>Tiến trình sẵn sàng đồng bộ</color>";
+            txtSaveStatus.text = "Trạng thái: <color=#88FF88>Tiến trình sẵn sàng đồng bộ</color>";
         }
     }
 
@@ -290,7 +275,7 @@ public class PauseMenuManager : MonoBehaviour
         if (txtSaveStatus != null)
         {
             string timeStr = DateTime.Now.ToString("HH:mm:ss");
-            txtSaveStatus.text = $"💾 Trạng thái: <color=#66FF66>✅ Đã lưu thành công lúc {timeStr}!</color>";
+            txtSaveStatus.text = $"Trạng thái: <color=#66FF66>Đã lưu thành công lúc {timeStr}!</color>";
         }
     }
 

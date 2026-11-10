@@ -48,8 +48,9 @@ public class BossEnemy : Enemy
     private bool isAttackingAnimation = false;
     private Coroutine attackRoutine = null;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         CacheAnimatorParameters();
     }
 
@@ -118,6 +119,13 @@ public class BossEnemy : Enemy
         this.attackInterval = 1.5f;
 
         base.Init(finalHealth, target, true);
+        var guard = GetComponent<OpeningBossGuard>();
+        if (stage == 10)
+        {
+            if (guard == null) guard = gameObject.AddComponent<OpeningBossGuard>();
+            guard.ResetGuard(finalHealth * 0.3f);
+        }
+        else if (guard != null) guard.ResetGuard(0);
 
         Transform hpCanvas = transform.Find("HPCanvas");
         if (hpCanvas != null)
@@ -138,6 +146,14 @@ public class BossEnemy : Enemy
 
         CacheAnimatorParameters();
         SetMoving(false);
+        if (animator != null)
+        {
+            animator.applyRootMotion = false;
+            animator.ResetTrigger("Die");
+            animator.ResetTrigger("Attack");
+            animator.SetBool(HashIsMoving, false);
+            animator.Play("idle", 0, 0f);
+        }
     }
 
     /// <summary>
@@ -152,6 +168,8 @@ public class BossEnemy : Enemy
 
     public void InitTribulationBoss(int realmTier, int stageIndex, string targetRealmName, Transform target)
     {
+        var openingGuard = GetComponent<OpeningBossGuard>();
+        if (openingGuard != null) openingGuard.ResetGuard(0);
         this.isBoss = true;
         this.isTribulationBoss = true;
         this.playerTarget = target;
@@ -231,6 +249,14 @@ public class BossEnemy : Enemy
 
         CacheAnimatorParameters();
         SetMoving(false);
+        if (animator != null)
+        {
+            animator.applyRootMotion = false;
+            animator.ResetTrigger("Die");
+            animator.ResetTrigger("Attack");
+            animator.SetBool(HashIsMoving, false);
+            animator.Play("idle", 0, 0f);
+        }
 
         Debug.Log($"⚡ [BossEnemy] Sinh Boss Thiên Kiếp (3 Phase)! Đột phá: {targetRealmName} (Tier {realmTier}), Tổng Máu: {hp:N0}, Kháng ST Phase 1: {dmgReduction * 100:F0}%");
     }
@@ -262,8 +288,7 @@ public class BossEnemy : Enemy
                 phaseTextUI.gameObject.SetActive(true);
             }
 
-            Font f = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (f == null) f = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            Font f = UiTextStyle.BodyFont;
             if (phaseTextUI != null && f != null) phaseTextUI.font = f;
         }
 
@@ -277,15 +302,15 @@ public class BossEnemy : Enemy
             switch (phase)
             {
                 case 1:
-                    phaseTextUI.text = "⚡ [PHASE 1/3] Kim Cương Thể";
+                    phaseTextUI.text = "[PHASE 1/3] Kim Cương Thể";
                     phaseTextUI.color = new Color(1f, 0.85f, 0.2f); // Cam vàng
                     break;
                 case 2:
-                    phaseTextUI.text = "⚡ [PHASE 2/3] Lôi Giáp Bạo Phát";
+                    phaseTextUI.text = "[PHASE 2/3] Lôi Giáp Bạo Phát";
                     phaseTextUI.color = new Color(0.9f, 0.45f, 1f); // Tím lôi điện
                     break;
                 case 3:
-                    phaseTextUI.text = "🔥 [PHASE 3/3] Cuồng Nộ Diệt Thế";
+                    phaseTextUI.text = "[PHASE 3/3] Cuồng Nộ Diệt Thế";
                     phaseTextUI.color = new Color(1f, 0.25f, 0.25f); // Đỏ rực ma lôi
                     break;
             }
@@ -367,7 +392,8 @@ public class BossEnemy : Enemy
         if (dist > attackRange)
         {
             // Ở ngoài tầm đánh: Di chuyển tiến sát Player
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            float formationSlow = FormationService.Instance != null ? FormationService.Instance.BossSpeedMultiplier : 1f;
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * formationSlow * Time.deltaTime);
             SetMoving(true);
         }
         else
@@ -407,12 +433,25 @@ public class BossEnemy : Enemy
             animator.SetTrigger(HashAttack);
         }
 
+        // Bổ sung: Wind-up Visual tại giây 0.00!
+        if (HitVFXManager.Instance != null)
+        {
+            Vector3 handPos = transform.position + transform.forward * 1.2f + Vector3.up * 2f;
+            HitVFXManager.Instance.SpawnBossWindUp(handPos);
+        }
+
         // 2. Chờ đúng thời điểm tay Boss chém chạm vào mục tiêu theo Animation (Wind-up Delay)
         yield return new WaitForSeconds(0.48f);
 
         // 3. GÂY SÁT THƯƠNG ĐÚNG THỜI ĐIỂM CHẠM ĐÍCH
         if (!isDead && playerTarget != null)
         {
+            Vector3 impactPos = (playerTarget.position + transform.position) * 0.5f + Vector3.up * 0.1f;
+            if (HitVFXManager.Instance != null)
+            {
+                HitVFXManager.Instance.SpawnBossGroundImpact(impactPos);
+            }
+
             float finalDmg = damage;
 
             // QUY TẮC CỐT LÕI: Boss Thiên Kiếp gây đúng 15% Max HP của Player mỗi đòn đánh!
@@ -458,8 +497,10 @@ public class BossEnemy : Enemy
     /// - Áp dụng Damage Cap chống bị bốc hơi one-shot giữa đường (tối đa 4% Max HP/hit).
     /// - Kiểm tra và kích hoạt chuyển 3 Phase mượt mà.
     /// </summary>
-    public override void TakeDamage(float amount, bool isCrit = false)
+    public override void TakeDamage(float amount, bool isCrit = false, Vector3 hitDirection = default)
     {
+        var guard = GetComponent<OpeningBossGuard>();
+        if (!isTribulationBoss && guard != null) amount = guard.Absorb(amount);
         if (isTribulationBoss)
         {
             // 1. Damage Cap: Mỗi đòn đánh của phi kiếm/kỹ năng chỉ được gây tối đa 4% Max HP của Boss
@@ -509,7 +550,7 @@ public class BossEnemy : Enemy
             SetMoving(false);
         }
 
-        base.TakeDamage(amount, isCrit);
+        base.TakeDamage(amount, isCrit, hitDirection);
     }
 
     /// <summary>

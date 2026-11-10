@@ -14,8 +14,7 @@ using System.Collections;
 /// 3. Hành trình 5 Bước Khai Tâm chuẩn mực:
 ///    - Bước 1: Để Phi Kiếm tiêu diệt 3 Yêu Thú.
 ///    - Bước 2: Nhấn "Ghép Nhanh" (hoặc kéo kiếm) để hợp nhất Kiếm Cấp 2.
-///    - Bước 3: Nâng cấp 1 bậc "Kiếm Ý" trong bảng Công Pháp để tăng sát thương.
-///    - Bước 4: Mở "Tiệm Đan Dược" để khám phá đan dược sinh tồn.
+///    - Bước 3–4: Mở và nâng một cấp Vận Khí trên HUD mobile.
 ///    - Bước 5: Đột Phá cảnh giới đầu tiên (thăng lên Luyện Khí Tầng 2).
 /// 4. Tự động ẩn khi vào trận chiến Độ Kiếp (Thiên Kiếp), không làm ảnh hưởng giao diện combat.
 /// </summary>
@@ -46,6 +45,8 @@ public class TutorialManager : MonoBehaviour
     public Button btnClaimQuick;
     public Text txtClaimQuick;
     public ScrollRect descScrollRect;
+    public Button btnAchievement;
+    public GameObject achievementBadgeObj;
 
     [Header("Pointer Arrow References")]
     public GameObject pointerObj;
@@ -54,14 +55,14 @@ public class TutorialManager : MonoBehaviour
     private RectTransform currentTargetRect;
     private int currentStepForOffset = 0;
 
-    [Header("⚙️ Căn Chỉnh Vị Trí Mũi Tên Chỉ Dẫn (Pointer Positioning)")]
+    [Header("Căn Chỉnh Vị Trí Mũi Tên Chỉ Dẫn (Pointer Positioning)")]
     [Tooltip("Biên độ dập dềnh nảy (Pixel)")]
     public float bounceAmplitude = 8f;
 
     [Tooltip("Tốc độ dập dềnh nảy")]
     public float bounceSpeed = 6f;
 
-    [Header("🎯 Offset Tinh Chỉnh Riêng Cho Từng Bước (X, Y)")]
+    [Header("Offset Tinh Chỉnh Riêng Cho Từng Bước (X, Y)")]
     [Tooltip("Bước 1: Quan sát trận chiến (StageUI)")]
     public Vector2 step1Offset = new Vector2(0f, 35f);
 
@@ -106,32 +107,8 @@ public class TutorialManager : MonoBehaviour
         // Hiệu ứng dập dềnh lượn sóng cho Mũi Tên Chỉ Dẫn
         UpdatePointerPosition();
 
-        // Tự động cuộn ngang (Marquee Auto-Scroll) cho phần mô tả/thưởng nếu nội dung quá dài
-        UpdateDescAutoScroll();
-
         // Hiệu ứng nhịp đập pulse cho nút [NHẬN] khi có mốc sẵn sàng nhận thưởng
         UpdateClaimButtonPulse();
-    }
-
-    private void UpdateDescAutoScroll()
-    {
-        if (descScrollRect != null && txtQuestReward != null && !isCollapsed)
-        {
-            float textWidth = txtQuestReward.preferredWidth;
-            RectTransform viewportRt = descScrollRect.GetComponent<RectTransform>();
-            float viewWidth = viewportRt != null ? viewportRt.rect.width : 250f;
-
-            if (textWidth > viewWidth + 8f)
-            {
-                // Khi text dài hơn khung nhìn: Tự động cuộn qua lại ping-pong êm ái
-                float t = Mathf.PingPong(Time.unscaledTime * 0.12f, 1f);
-                descScrollRect.horizontalNormalizedPosition = t;
-            }
-            else
-            {
-                descScrollRect.horizontalNormalizedPosition = 0f;
-            }
-        }
     }
 
     private void UpdateClaimButtonPulse()
@@ -147,6 +124,21 @@ public class TutorialManager : MonoBehaviour
             else
             {
                 btnClaimQuick.transform.localScale = Vector3.one;
+            }
+        }
+
+        if (achievementBadgeObj != null && AchievementManager.Instance != null)
+        {
+            int readyAchCount = AchievementManager.Instance.GetReadyToClaimCount();
+            achievementBadgeObj.SetActive(readyAchCount > 0);
+            if (readyAchCount > 0 && btnAchievement != null)
+            {
+                float s = 1.0f + Mathf.PingPong(Time.unscaledTime * 2.0f, 0.08f);
+                btnAchievement.transform.localScale = new Vector3(s, s, 1f);
+            }
+            else if (btnAchievement != null)
+            {
+                btnAchievement.transform.localScale = Vector3.one;
             }
         }
     }
@@ -174,8 +166,7 @@ public class TutorialManager : MonoBehaviour
         Canvas canvas = FindMainCanvas();
         if (canvas == null) return;
 
-        Font defaultFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        if (defaultFont == null) defaultFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        Font defaultFont = UiTextStyle.BodyFont;
 
         // ── 1. TÌM HOẶC TẠO THANH NHIỆM VỤ MỤC TIÊU (TARGET QUEST BAR) ──────────
         bool isNewQuestBar = false;
@@ -202,11 +193,11 @@ public class TutorialManager : MonoBehaviour
         // CHỈ GÁN MẶC ĐỊNH NẾU ĐÂY LÀ OBJECT MỚI ĐƯỢC TẠO LẦN ĐẦU
         if (isNewQuestBar)
         {
-            qRt.anchorMin = new Vector2(0f, 1f);
-            qRt.anchorMax = new Vector2(0f, 1f);
-            qRt.pivot = new Vector2(0f, 1f);
-            qRt.anchoredPosition = new Vector2(15f, -44f);
-            qRt.sizeDelta = new Vector2(430f, 56f);
+            qRt.anchorMin = new Vector2(0f, 0.52f);
+            qRt.anchorMax = new Vector2(0f, 0.52f);
+            qRt.pivot = new Vector2(0f, 0.5f);
+            qRt.anchoredPosition = new Vector2(10f, 0f);
+            qRt.sizeDelta = new Vector2(260f, 44f);
             originalQuestBarSize = qRt.sizeDelta;
         }
         else
@@ -234,6 +225,8 @@ public class TutorialManager : MonoBehaviour
         if (questBarOutline == null) questBarOutline = questBarObj.AddComponent<Outline>();
         questBarOutline.effectColor = new Color(1f, 0.82f, 0.25f, 0.85f);
         questBarOutline.effectDistance = new Vector2(1.2f, -1.2f);
+        bool wideQuestBar = originalQuestBarSize.x >= 400f;
+        float actionLaneWidth = wideQuestBar ? 232f : 140f;
 
         // Thanh tiến độ mini ở mép dưới thanh Quest
         Transform pBgTr = questBarObj.transform.Find("MiniProgressBG");
@@ -279,7 +272,10 @@ public class TutorialManager : MonoBehaviour
         }
         txtQuestTitle = txtObj.GetComponent<Text>();
         txtQuestTitle.font = defaultFont;
-        txtQuestTitle.fontSize = 13;
+        txtQuestTitle.fontSize = wideQuestBar ? 18 : 13;
+        txtQuestTitle.resizeTextForBestFit = true;
+        txtQuestTitle.resizeTextMinSize = wideQuestBar ? 15 : 11;
+        txtQuestTitle.resizeTextMaxSize = txtQuestTitle.fontSize;
         txtQuestTitle.fontStyle = FontStyle.Bold;
         txtQuestTitle.alignment = TextAnchor.MiddleLeft;
         txtQuestTitle.color = Color.white;
@@ -290,11 +286,11 @@ public class TutorialManager : MonoBehaviour
         tOl.effectDistance = new Vector2(1f, -1f);
 
         RectTransform txtRt = txtObj.GetComponent<RectTransform>();
-        txtRt.anchorMin = new Vector2(0f, 0.48f);
+        txtRt.anchorMin = new Vector2(0f, 0.4f);
         txtRt.anchorMax = new Vector2(1f, 1f);
         txtRt.pivot = new Vector2(0f, 0.5f);
         txtRt.offsetMin = new Vector2(12f, 0f);
-        txtRt.offsetMax = new Vector2(-105f, -2f);
+        txtRt.offsetMax = new Vector2(-actionLaneWidth, -2f);
 
         // DÒNG 2: Scroll View / Scroll Area Mô Tả & Phần Thưởng (QuestDescScrollView)
         Transform sTr = questBarObj.transform.Find("QuestDescScrollView");
@@ -306,10 +302,14 @@ public class TutorialManager : MonoBehaviour
         }
         RectTransform sRt = scrollObj.GetComponent<RectTransform>();
         sRt.anchorMin = new Vector2(0f, 0f);
-        sRt.anchorMax = new Vector2(1f, 0.48f);
+        sRt.anchorMax = new Vector2(1f, 0.4f);
         sRt.pivot = new Vector2(0f, 0.5f);
         sRt.offsetMin = new Vector2(12f, 4f);
-        sRt.offsetMax = new Vector2(-105f, 0f);
+        sRt.offsetMax = new Vector2(-actionLaneWidth, 0f);
+        var scrollSurface = scrollObj.GetComponent<Image>();
+        if (scrollSurface == null) scrollSurface = scrollObj.AddComponent<Image>();
+        scrollSurface.color = Color.clear;
+        scrollSurface.raycastTarget = true;
 
         descScrollRect = scrollObj.GetComponent<ScrollRect>();
         descScrollRect.horizontal = true;
@@ -330,7 +330,7 @@ public class TutorialManager : MonoBehaviour
 
         txtQuestReward = rObj.GetComponent<Text>();
         txtQuestReward.font = defaultFont;
-        txtQuestReward.fontSize = 11;
+        txtQuestReward.fontSize = wideQuestBar ? 15 : 11;
         txtQuestReward.alignment = TextAnchor.MiddleLeft;
         txtQuestReward.color = new Color(1f, 0.88f, 0.35f, 1f);
         txtQuestReward.horizontalOverflow = HorizontalWrapMode.Overflow;
@@ -347,7 +347,10 @@ public class TutorialManager : MonoBehaviour
         rRt.anchorMax = new Vector2(0f, 1f);
         rRt.pivot = new Vector2(0f, 0.5f);
         rRt.anchoredPosition = Vector2.zero;
-        rRt.sizeDelta = new Vector2(700f, 0f); // Chiều dài rộng rãi để cuộn không bị ngắt dòng
+        rRt.sizeDelta = Vector2.zero;
+        var rewardSize = rObj.GetComponent<ContentSizeFitter>();
+        if (rewardSize == null) rewardSize = rObj.AddComponent<ContentSizeFitter>();
+        rewardSize.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         descScrollRect.content = rRt;
 
         // NÚT HÀNH ĐỘNG NHANH [NHẬN] / [📜 MỐC] (BtnClaimQuick)
@@ -362,8 +365,8 @@ public class TutorialManager : MonoBehaviour
         baRt.anchorMin = new Vector2(1f, 0.5f);
         baRt.anchorMax = new Vector2(1f, 0.5f);
         baRt.pivot = new Vector2(1f, 0.5f);
-        baRt.anchoredPosition = new Vector2(-28f, 0f);
-        baRt.sizeDelta = new Vector2(74f, 34f);
+        baRt.anchoredPosition = new Vector2(wideQuestBar ? -64f : -28f, 0f);
+        baRt.sizeDelta = wideQuestBar ? new Vector2(88f, 60f) : new Vector2(74f, 34f);
 
         Image baImg = btnActionObj.GetComponent<Image>();
         baImg.color = new Color(0.2f, 0.25f, 0.35f, 0.95f);
@@ -380,10 +383,10 @@ public class TutorialManager : MonoBehaviour
         }
         txtClaimQuick = baTxtObj.GetComponent<Text>();
         txtClaimQuick.font = defaultFont;
-        txtClaimQuick.fontSize = 12;
+        txtClaimQuick.fontSize = wideQuestBar ? 17 : 12;
         txtClaimQuick.fontStyle = FontStyle.Bold;
         txtClaimQuick.alignment = TextAnchor.MiddleCenter;
-        txtClaimQuick.text = "📜 Mốc";
+        txtClaimQuick.text = "Mốc";
         txtClaimQuick.color = Color.white;
         RectTransform batRt = baTxtObj.GetComponent<RectTransform>();
         batRt.anchorMin = Vector2.zero;
@@ -394,6 +397,65 @@ public class TutorialManager : MonoBehaviour
         btnClaimQuick = btnActionObj.GetComponent<Button>();
         btnClaimQuick.onClick.RemoveAllListeners();
         btnClaimQuick.onClick.AddListener(OnQuestBarClicked);
+
+        // Nút Thành Tựu [🏆] (BtnAchievement)
+        Transform achTr = questBarObj.transform.Find("BtnAchievement");
+        GameObject btnAchObj = achTr != null ? achTr.gameObject : null;
+        if (btnAchObj == null)
+        {
+            btnAchObj = new GameObject("BtnAchievement", typeof(RectTransform), typeof(Button), typeof(Image), typeof(Outline));
+            btnAchObj.transform.SetParent(questBarObj.transform, false);
+        }
+        RectTransform achRt = btnAchObj.GetComponent<RectTransform>();
+        achRt.anchorMin = new Vector2(1f, 0.5f);
+        achRt.anchorMax = new Vector2(1f, 0.5f);
+        achRt.pivot = new Vector2(1f, 0.5f);
+        achRt.anchoredPosition = new Vector2(wideQuestBar ? -156f : -104f, 0f);
+        achRt.sizeDelta = wideQuestBar ? new Vector2(72f, 60f) : new Vector2(32f, 32f);
+
+        Image achImg = btnAchObj.GetComponent<Image>();
+        achImg.color = new Color(0.12f, 0.16f, 0.24f, 0.95f);
+
+        Outline achOl = btnAchObj.GetComponent<Outline>();
+        achOl.effectColor = new Color(0.96f, 0.77f, 0.26f, 0.85f);
+        achOl.effectDistance = new Vector2(1f, -1f);
+
+        Transform achTxtTr = btnAchObj.transform.Find("Text");
+        GameObject achTxtObj = achTxtTr != null ? achTxtTr.gameObject : null;
+        if (achTxtObj == null)
+        {
+            achTxtObj = new GameObject("Text", typeof(RectTransform), typeof(Text));
+            achTxtObj.transform.SetParent(btnAchObj.transform, false);
+        }
+        RectTransform atRt = achTxtObj.GetComponent<RectTransform>();
+        atRt.anchorMin = Vector2.zero;
+        atRt.anchorMax = Vector2.one;
+        atRt.sizeDelta = Vector2.zero;
+
+        Text atTxt = achTxtObj.GetComponent<Text>();
+        atTxt.font = defaultFont;
+        atTxt.fontSize = wideQuestBar ? 15 : 10;
+        atTxt.alignment = TextAnchor.MiddleCenter;
+        atTxt.text = wideQuestBar ? "Thành\ntựu" : "Tựu";
+
+        btnAchievement = btnAchObj.GetComponent<Button>();
+        btnAchievement.onClick.RemoveAllListeners();
+        btnAchievement.onClick.AddListener(OnAchievementButtonClicked);
+
+        Transform badgeTr = btnAchObj.transform.Find("Badge");
+        achievementBadgeObj = badgeTr != null ? badgeTr.gameObject : null;
+        if (achievementBadgeObj == null)
+        {
+            achievementBadgeObj = new GameObject("Badge", typeof(RectTransform), typeof(Image));
+            achievementBadgeObj.transform.SetParent(btnAchObj.transform, false);
+        }
+        RectTransform badgeRt = achievementBadgeObj.GetComponent<RectTransform>();
+        badgeRt.anchorMin = badgeRt.anchorMax = new Vector2(1f, 1f);
+        badgeRt.pivot = new Vector2(1f, 1f);
+        badgeRt.anchoredPosition = new Vector2(4f, 4f);
+        badgeRt.sizeDelta = new Vector2(12f, 12f);
+        achievementBadgeObj.GetComponent<Image>().color = new Color(0.95f, 0.25f, 0.25f, 1f);
+        achievementBadgeObj.SetActive(false);
 
         // Vô hiệu hóa nút BtnMilestone cũ nếu còn tồn tại để tránh trùng lặp
         Transform oldBtnM = questBarObj.transform.Find("BtnMilestone");
@@ -412,27 +474,42 @@ public class TutorialManager : MonoBehaviour
         btRt.anchorMax = new Vector2(1, 0.5f);
         btRt.pivot = new Vector2(1, 0.5f);
         btRt.anchoredPosition = new Vector2(-4f, 0f);
-        btRt.sizeDelta = new Vector2(22f, 24f);
+        btRt.sizeDelta = wideQuestBar ? new Vector2(54f, 60f) : new Vector2(22f, 24f);
 
         Text tTxt = btnToggleObj.GetComponent<Text>();
         tTxt.font = defaultFont;
-        tTxt.fontSize = 15;
-        tTxt.text = isCollapsed ? "[+]" : "[-]";
-        tTxt.color = Color.gray;
+        tTxt.fontSize = wideQuestBar ? 16 : 10;
+        tTxt.fontStyle = FontStyle.Bold;
+        tTxt.text = isCollapsed ? "Mở" : "Gọn";
+        tTxt.color = new Color(1f, 0.85f, 0.35f, 1f);
         tTxt.alignment = TextAnchor.MiddleCenter;
+        tTxt.raycastTarget = true;
+        btRt.SetAsLastSibling();
 
         Button toggleBtn = btnToggleObj.GetComponent<Button>();
         toggleBtn.onClick.RemoveAllListeners();
         toggleBtn.onClick.AddListener(() =>
         {
             isCollapsed = !isCollapsed;
-            if (tTxt != null) tTxt.text = isCollapsed ? "[+]" : "[-]";
+            if (tTxt != null) tTxt.text = isCollapsed ? "Mở" : "Gọn";
             if (txtQuestTitle != null) txtQuestTitle.gameObject.SetActive(!isCollapsed);
             if (descScrollRect != null) descScrollRect.gameObject.SetActive(!isCollapsed);
             else if (txtQuestReward != null) txtQuestReward.gameObject.SetActive(!isCollapsed);
             if (pBgObj != null) pBgObj.SetActive(!isCollapsed);
             if (btnClaimQuick != null) btnClaimQuick.gameObject.SetActive(!isCollapsed);
-            if (qRt != null) qRt.sizeDelta = isCollapsed ? new Vector2(42f, 42f) : (originalQuestBarSize != Vector2.zero ? originalQuestBarSize : new Vector2(430f, 56f));
+            if (btnAchievement != null) btnAchievement.gameObject.SetActive(!isCollapsed);
+            if (qRt != null)
+            {
+                qRt.sizeDelta = isCollapsed ? (wideQuestBar ? new Vector2(64f, 68f) : new Vector2(38f, 38f)) :
+                    (originalQuestBarSize.x > 80f ? originalQuestBarSize : new Vector2(260f, 44f));
+                if (btRt != null)
+                {
+                    btRt.anchorMin = isCollapsed ? new Vector2(0.5f, 0.5f) : new Vector2(1f, 0.5f);
+                    btRt.anchorMax = isCollapsed ? new Vector2(0.5f, 0.5f) : new Vector2(1f, 0.5f);
+                    btRt.pivot = isCollapsed ? new Vector2(0.5f, 0.5f) : new Vector2(1f, 0.5f);
+                    btRt.anchoredPosition = isCollapsed ? Vector2.zero : new Vector2(-4f, 0f);
+                }
+            }
         });
 
         // ── 2. TÌM HOẶC TẠO CON TRỎ MŨI TÊN CHỈ DẪN (POINTER ARROW) ─────────────
@@ -459,15 +536,15 @@ public class TutorialManager : MonoBehaviour
             pointerRt = pointerObj.GetComponent<RectTransform>();
             pointerRt.sizeDelta = new Vector2(80f, 80f);
 
-            // Icon Mũi tên chỉ xuống ▼ (dùng ký tự Unicode chuẩn 100% hiển thị trên mọi font)
+            // Nhãn chỉ vị trí cần nhấn.
             GameObject arrowIconObj = new GameObject("ArrowIcon", typeof(RectTransform), typeof(Text), typeof(Outline));
             arrowIconObj.transform.SetParent(pointerObj.transform, false);
             Text arrowText = arrowIconObj.GetComponent<Text>();
             arrowText.font = defaultFont;
-            arrowText.fontSize = 38;
+            arrowText.fontSize = 14;
             arrowText.fontStyle = FontStyle.Bold;
             arrowText.alignment = TextAnchor.MiddleCenter;
-            arrowText.text = "▼";
+            arrowText.text = "Đây";
             arrowText.color = new Color(1f, 0.85f, 0.2f);
             arrowText.raycastTarget = false;
             Outline arrowOutline = arrowIconObj.GetComponent<Outline>();
@@ -506,7 +583,7 @@ public class TutorialManager : MonoBehaviour
             
             // Đảm bảo icon có ký tự chuẩn
             Text aTxt = pointerObj.transform.Find("ArrowIcon")?.GetComponent<Text>();
-            if (aTxt != null && string.IsNullOrEmpty(aTxt.text)) aTxt.text = "▼";
+            if (aTxt != null && string.IsNullOrEmpty(aTxt.text)) aTxt.text = "Đây";
         }
     }
 
@@ -605,21 +682,18 @@ public class TutorialManager : MonoBehaviour
         Vector2 stepOffset = GetOffsetForStep(currentStepForOffset);
         float bounce = Mathf.Sin(Time.unscaledTime * bounceSpeed) * bounceAmplitude;
 
-        Text arrowIconText = pointerObj.transform.Find("ArrowIcon")?.GetComponent<Text>();
         Transform hintTr = pointerObj.transform.Find("TxtHint");
 
-        // Nếu offset.y >= 0: Mũi tên nằm trên đỉnh nút và cắm xuống ▼
+        // Nếu offset.y >= 0: Nhãn nằm phía trên nút
         if (stepOffset.y >= 0)
         {
             pointerObj.transform.position = targetTopCenter + new Vector3(stepOffset.x, stepOffset.y + bounce, 0f);
-            if (arrowIconText != null) arrowIconText.text = "▼";
             if (hintTr != null) ((RectTransform)hintTr).anchoredPosition = new Vector2(0f, 26f);
         }
-        // Nếu offset.y < 0: Mũi tên nằm dưới đáy nút và trỏ lên ▲ (dành cho TopBar)
+        // Nếu offset.y < 0: Nhãn nằm phía dưới nút (dành cho TopBar)
         else
         {
             pointerObj.transform.position = targetBottomCenter + new Vector3(stepOffset.x, stepOffset.y - bounce, 0f);
-            if (arrowIconText != null) arrowIconText.text = "▲";
             if (hintTr != null) ((RectTransform)hintTr).anchoredPosition = new Vector2(0f, -26f);
         }
     }
@@ -726,11 +800,11 @@ public class TutorialManager : MonoBehaviour
                 if (killedInStep >= targetKills || currentStage > 1)
                 {
                     swordDone = true;
-                    yield return CompleteStepFeedback("✓ HOÀN THÀNH BƯỚC 1", 100);
+                    yield return CompleteStepFeedback("HOÀN THÀNH BƯỚC 1", 100);
                     break;
                 }
 
-                UpdateQuestUI($"🎯 [1/5] Để Phi Kiếm diệt 3 Yêu Thú ({killedInStep}/{targetKills})", "+100 Linh Thạch", (float)killedInStep / targetKills);
+                UpdateQuestUI($"[1/5] Để Phi Kiếm diệt 3 Yêu Thú ({killedInStep}/{targetKills})", "+100 Linh Thạch", (float)killedInStep / targetKills);
                 
                 if (stageUiTr != null) PointToTarget(stageUiTr, "Quan sát trận chiến!", 1);
                 else HidePointer();
@@ -755,11 +829,11 @@ public class TutorialManager : MonoBehaviour
                 if (HasSwordLevel(2))
                 {
                     coDuyenDone = true;
-                    yield return CompleteStepFeedback("✓ GHÉP KIẾM THÀNH CÔNG!", 100);
+                    yield return CompleteStepFeedback("GHÉP KIẾM THÀNH CÔNG!", 100);
                     break;
                 }
 
-                UpdateQuestUI("🎯 [2/5] Nhấn 'Ghép Nhanh' để tạo Kiếm Cấp 2", "+100 Linh Thạch", 0.5f);
+                UpdateQuestUI("[2/5] Nhấn 'Ghép Nhanh' để tạo Kiếm Cấp 2", "+100 Linh Thạch", 0.5f);
 
                 // Mũi tên chỉ thẳng vào nút Ghép Nhanh (btn_QuickMerge)
                 RectTransform btnMergeTr = FindButtonRect("btn_QuickMerge");
@@ -777,8 +851,9 @@ public class TutorialManager : MonoBehaviour
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // BƯỚC 3: CĂN CƠ KHÍ THỂ (NÂNG CẤP 1 BẬC KIẾM Ý)
+        // BƯỚC 3: KHÁM PHÁ VẬN KHÍ (CÔNG PHÁP KIẾM Ý TRÊN HUD CŨ)
         // ═══════════════════════════════════════════════════════════════════
+        bool mobileHud = MobileDrawerUIController.Instance != null;
         if (!upgradeDone)
         {
             while (!upgradeDone)
@@ -786,20 +861,20 @@ public class TutorialManager : MonoBehaviour
                 CheckTribulationVisibility();
 
                 int curKiemYLevel = UpgradeManager.Instance != null ? UpgradeManager.Instance.kiemYLevel : 1;
-                if (curKiemYLevel >= 2)
+                if (mobileHud ? DaoAnModalUI.Instance?.IsModalOpen == true || HasDaoAnUpgrade() : curKiemYLevel >= 2)
                 {
                     upgradeDone = true;
-                    yield return CompleteStepFeedback("✓ TĂNG CẤP KIẾM Ý THÀNH CÔNG!", 150);
+                    yield return CompleteStepFeedback(mobileHud ? "ĐÃ MỞ BẢNG VẬN KHÍ!" : "TĂNG CẤP KIẾM Ý THÀNH CÔNG!", 150);
                     break;
                 }
 
-                UpdateQuestUI("🎯 [3/5] Nâng cấp 1 bậc 'Kiếm Ý' tăng sát thương", "+150 Linh Thạch", 0.5f);
+                UpdateQuestUI(mobileHud ? "[3/5] Mở bảng Vận Khí" : "[3/5] Nâng cấp 1 bậc Kiếm Ý", "+150 Linh Thạch", 0.5f);
 
                 // Mũi tên chỉ thẳng vào nút Kiếm Ý trong Upgrade Panel
-                RectTransform btnKiemYTr = FindKiemYButtonRect();
+                RectTransform btnKiemYTr = mobileHud ? FindButtonRect("BtnHUDDaoAn") : FindKiemYButtonRect();
                 if (btnKiemYTr != null)
                 {
-                    PointToTarget(btnKiemYTr, "Nâng Cấp Kiếm Ý!", 3);
+                    PointToTarget(btnKiemYTr, mobileHud ? "Mở Vận Khí!" : "Nâng Cấp Kiếm Ý!", 3);
                 }
                 else
                 {
@@ -811,7 +886,7 @@ public class TutorialManager : MonoBehaviour
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // BƯỚC 4: LINH ĐAN DIỆU DƯỢC (KHÁM PHÁ TIỆM ĐAN DƯỢC)
+        // BƯỚC 4: NÂNG VẬN KHÍ (TIỆM ĐAN DƯỢC TRÊN HUD CŨ)
         // ═══════════════════════════════════════════════════════════════════
         if (!shopDone)
         {
@@ -819,32 +894,33 @@ public class TutorialManager : MonoBehaviour
             {
                 CheckTribulationVisibility();
 
-                bool isShopOpened = false;
-                if (ShopManager.Instance != null && ShopManager.Instance.isShopOpen)
+                bool stepComplete;
+                if (mobileHud)
                 {
-                    isShopOpened = true;
+                    stepComplete = HasDaoAnUpgrade();
                 }
                 else
                 {
                     GameObject p = GameObject.Find("Canvas")?.transform.Find("ShopPanel")?.gameObject;
                     if (p == null) p = GameObject.Find("ShopPanel");
-                    if (p != null && p.activeInHierarchy) isShopOpened = true;
+                    stepComplete = (ShopManager.Instance != null && ShopManager.Instance.isShopOpen) ||
+                                   (p != null && p.activeInHierarchy);
                 }
 
-                if (isShopOpened)
+                if (stepComplete)
                 {
                     shopDone = true;
-                    yield return CompleteStepFeedback("✓ ĐÃ MỞ TIỆM ĐAN DƯỢC!", 150);
+                    yield return CompleteStepFeedback(mobileHud ? "ĐÃ NÂNG CẤP VẬN KHÍ!" : "ĐÃ MỞ TIỆM ĐAN DƯỢC!", 150);
                     break;
                 }
 
-                UpdateQuestUI("🎯 [4/5] Mở 'Tiệm Đan Dược' mua đồ trợ chiến", "+150 Linh Thạch", 0.5f);
+                UpdateQuestUI(mobileHud ? "[4/5] Nâng 1 cấp Vận Khí" : "[4/5] Mở Tiệm Đan Dược", "+150 Linh Thạch", 0.5f);
 
                 // Mũi tên chỉ thẳng vào nút btn_OpenShop
-                RectTransform btnShopTr = FindButtonRect("btn_OpenShop");
-                if (btnShopTr != null)
+                RectTransform btnShopTr = mobileHud ? FindButtonRect("BtnHUDDaoAn") : FindButtonRect("btn_OpenShop");
+                if (btnShopTr != null && (!mobileHud || DaoAnModalUI.Instance?.IsModalOpen != true))
                 {
-                    PointToTarget(btnShopTr, "Mở Tiệm Đan Dược!", 4);
+                    PointToTarget(btnShopTr, mobileHud ? "Mở Vận Khí!" : "Mở Tiệm Đan Dược!", 4);
                 }
                 else
                 {
@@ -868,14 +944,14 @@ public class TutorialManager : MonoBehaviour
                 if (currentStageIdx >= 1)
                 {
                     breakthroughDone = true;
-                    yield return CompleteStepFeedback("🎉 ĐỘT PHÁ THÀNH CÔNG! HOÀN TẤT TÂN THỦ!", 300);
+                    yield return CompleteStepFeedback("ĐỘT PHÁ THÀNH CÔNG! HOÀN TẤT TÂN THỦ!", 300);
                     break;
                 }
 
-                UpdateQuestUI("🎯 [5/5] Thu thập Tu Vi để Đột Phá Luyện Khí Tầng 2", "+300 Linh Thạch", 0.8f);
+                UpdateQuestUI("[5/5] Thu thập Tu Vi để Đột Phá Luyện Khí Tầng 2", "+300 Linh Thạch", 0.8f);
 
                 // Mũi tên chỉ vào thanh Cảnh Giới trên TopBar
-                RectTransform topBarStageTr = FindButtonRect("txt_Stage");
+                RectTransform topBarStageTr = FindButtonRect(mobileHud ? "StagePanel" : "txt_Stage");
                 if (topBarStageTr != null)
                 {
                     PointToTarget(topBarStageTr, "Đột Phá Cảnh Giới!", 5);
@@ -895,7 +971,7 @@ public class TutorialManager : MonoBehaviour
         HidePointer();
         if (questBarObj != null)
         {
-            UpdateQuestUI("🎉 Hoàn tất Khai Tâm! Mở khóa Mốc Tu Tiên", "+Quà Đan Dược & Cơ Duyên", 1f);
+            UpdateQuestUI("Hoàn tất Khai Tâm! Mở khóa Mốc Tu Tiên", "+Quà Đan Dược & Cơ Duyên", 1f);
             if (questBarOutline != null) questBarOutline.effectColor = Color.green;
             yield return new WaitForSecondsRealtime(2.5f);
         }
@@ -934,8 +1010,8 @@ public class TutorialManager : MonoBehaviour
                     if (isDone)
                     {
                         // ĐÃ HOÀN THÀNH: Hiện rõ Tên mốc + Tiến độ (target/target) và Mô tả + Phần thưởng
-                        string titleText = $"🎉 [ĐẠT MỐC] {q.title} ({target}/{target})";
-                        string rewardText = $"✨ Đã đạt mốc! Bấm [NHẬN]: {q.GetRewardSummary()}";
+                        string titleText = $"[ĐẠT MỐC] {q.title} ({target}/{target})";
+                        string rewardText = $"Đã đạt mốc! Bấm [NHẬN]: {q.GetRewardSummary()}";
                         UpdateQuestUI(titleText, rewardText, 1f, isReadyToClaim: true);
 
                         if (questBarOutline != null)
@@ -947,10 +1023,10 @@ public class TutorialManager : MonoBehaviour
                     else
                     {
                         // ĐANG LÀM: Hiện rõ Tên mốc + Tiến độ (cur/target) và Mô tả chi tiết ở Scroll View dưới
-                        string titleText = $"🎯 [Mốc] {q.title} ({Mathf.Min(cur, target)}/{target})";
+                        string titleText = $"[Mốc] {q.title} ({Mathf.Min(cur, target)}/{target})";
                         string rewardText = string.IsNullOrEmpty(q.description)
-                            ? $"🎁 Thưởng: {q.GetRewardSummary()}"
-                            : $"{q.description}  |  🎁 Thưởng: {q.GetRewardSummary()}";
+                            ? $"Thưởng: {q.GetRewardSummary()}"
+                            : $"{q.description}  |  Thưởng: {q.GetRewardSummary()}";
                         UpdateQuestUI(titleText, rewardText, ratio, isReadyToClaim: false);
 
                         if (questBarOutline != null)
@@ -961,7 +1037,7 @@ public class TutorialManager : MonoBehaviour
                 }
                 else
                 {
-                    UpdateQuestUI("🌟 Hoàn Thành Toàn Bộ Mốc Tu Đạo!", "Công Đức Viên Mãn", 1f, isReadyToClaim: false);
+                    UpdateQuestUI("Hoàn Thành Toàn Bộ Mốc Tu Đạo!", "Công Đức Viên Mãn", 1f, isReadyToClaim: false);
                     if (questBarOutline != null) questBarOutline.effectColor = Color.green;
                 }
             }
@@ -970,13 +1046,20 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
+    private static bool HasDaoAnUpgrade()
+    {
+        var progression = DaoAnProgressionService.Instance;
+        var nodes = progression?.Catalog?.nodes;
+        return nodes != null && System.Array.Exists(nodes, node => node != null && progression.GetLevel(node.id) > 0);
+    }
+
     private void UpdateQuestUI(string title, string reward, float progressRatio, bool isReadyToClaim = false)
     {
         if (questBarObj == null) EnsureUI();
         if (questBarObj != null && !questBarObj.activeSelf) questBarObj.SetActive(true);
 
         if (txtQuestTitle != null) txtQuestTitle.text = title;
-        if (txtQuestReward != null) txtQuestReward.text = reward;
+        SetQuestReward(reward);
 
         if (questProgressFill != null)
         {
@@ -996,10 +1079,21 @@ public class TutorialManager : MonoBehaviour
             }
             else
             {
-                txtClaimQuick.text = "📜 Mốc";
+                txtClaimQuick.text = "Mốc";
                 txtClaimQuick.color = Color.white;
                 if (btnImg != null) btnImg.color = new Color(0.2f, 0.25f, 0.35f, 0.95f);
             }
+        }
+    }
+
+    private void SetQuestReward(string reward)
+    {
+        if (txtQuestReward == null || txtQuestReward.text == reward) return;
+        txtQuestReward.text = reward;
+        if (descScrollRect != null && descScrollRect.content != null)
+        {
+            descScrollRect.StopMovement();
+            descScrollRect.content.anchoredPosition = Vector2.zero;
         }
     }
 
@@ -1010,6 +1104,13 @@ public class TutorialManager : MonoBehaviour
     /// </summary>
     public void OnQuestBarClicked()
     {
+        if (isCollapsed)
+        {
+            Transform bt = questBarObj != null ? questBarObj.transform.Find("BtnToggle") : null;
+            Button b = bt != null ? bt.GetComponent<Button>() : null;
+            if (b != null) { b.onClick.Invoke(); return; }
+        }
+
         if (MilestoneManager.Instance != null)
         {
             MilestoneQuest pending = MilestoneManager.Instance.GetNextPendingMilestone();
@@ -1041,6 +1142,24 @@ public class TutorialManager : MonoBehaviour
         Debug.LogWarning("[TutorialManager] Không tìm thấy MilestoneModalUI trên Scene! Hãy dùng menu TuTien/UI/Tạo Sẵn Bảng Nhiệm Vụ Mốc.");
     }
 
+    public void OnAchievementButtonClicked()
+    {
+        if (AchievementModalUI.Instance != null)
+        {
+            AchievementModalUI.Instance.OpenModal();
+            return;
+        }
+
+        AchievementModalUI found = FindObjectOfType<AchievementModalUI>(true);
+        if (found != null)
+        {
+            found.OpenModal();
+            return;
+        }
+
+        Debug.LogWarning("[TutorialManager] Không tìm thấy AchievementModalUI trên Scene!");
+    }
+
     private IEnumerator CompleteStepFeedback(string message, int rewardLinhThach)
     {
         HidePointer();
@@ -1058,7 +1177,7 @@ public class TutorialManager : MonoBehaviour
 
         // Hiệu ứng chúc mừng đổi màu xanh lá
         if (txtQuestTitle != null) txtQuestTitle.text = $"<color=#55FF55>{message}</color>";
-        if (txtQuestReward != null) txtQuestReward.text = $"+{rewardLinhThach} LT";
+        SetQuestReward($"+{rewardLinhThach} LT");
         if (questProgressFill != null) questProgressFill.color = Color.green;
 
         yield return new WaitForSecondsRealtime(1.0f);

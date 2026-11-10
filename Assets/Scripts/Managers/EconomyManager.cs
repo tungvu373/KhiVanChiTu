@@ -26,6 +26,7 @@ public class EconomyManager : MonoBehaviour
     public void AddLinhThach(float amount)
     {
         currentLinhThach += amount;
+        AchievementManager.Instance?.OnLinhThachEarned(amount);
         OnLinhThachChanged?.Invoke(currentLinhThach);
     }
 

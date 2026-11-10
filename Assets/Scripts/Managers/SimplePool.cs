@@ -14,7 +14,11 @@ public class SimplePool : MonoBehaviour
     }
 
     public List<Pool> pools;
-    public Dictionary<string, Queue<GameObject>> poolDictionary;
+    
+    // Stack chứa các đối tượng ĐANG RẢNH (Inactive) - truy xuất O(1)
+    private Dictionary<string, Stack<GameObject>> availablePools;
+    // Danh sách toàn bộ đối tượng đã tạo cho từng tag (để phục vụ DeactivateAllInPool)
+    private Dictionary<string, List<GameObject>> allSpawnedObjects;
 
     private void Awake()
     {
@@ -25,79 +29,84 @@ public class SimplePool : MonoBehaviour
         }
         Instance = this;
 
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();
+        availablePools = new Dictionary<string, Stack<GameObject>>();
+        allSpawnedObjects = new Dictionary<string, List<GameObject>>();
         if (pools == null) pools = new List<Pool>();
 
         foreach (Pool pool in pools)
         {
-            Queue<GameObject> objectPool = new Queue<GameObject>();
-
-            for (int i = 0; i < pool.size; i++)
-            {
-                GameObject obj = Instantiate(pool.prefab, transform);
-                obj.SetActive(false);
-                objectPool.Enqueue(obj);
-            }
-
-            poolDictionary.Add(pool.tag, objectPool);
+            CreatePoolInternal(pool.tag, pool.prefab, pool.size);
         }
     }
 
     public void AddPool(string tag, GameObject prefab, int size)
     {
-        if (poolDictionary == null) poolDictionary = new Dictionary<string, Queue<GameObject>>();
-        if (poolDictionary.ContainsKey(tag)) return; // Already exists
+        if (availablePools == null) availablePools = new Dictionary<string, Stack<GameObject>>();
+        if (allSpawnedObjects == null) allSpawnedObjects = new Dictionary<string, List<GameObject>>();
+        if (availablePools.ContainsKey(tag)) return; // Already exists
 
-        Queue<GameObject> objectPool = new Queue<GameObject>();
-        for (int i = 0; i < size; i++)
-        {
-            GameObject obj = Instantiate(prefab, transform);
-            obj.SetActive(false);
-            objectPool.Enqueue(obj);
-        }
-        poolDictionary.Add(tag, objectPool);
+        CreatePoolInternal(tag, prefab, size);
 
         if (pools == null) pools = new List<Pool>();
         pools.Add(new Pool { tag = tag, prefab = prefab, size = size });
     }
 
+    private void CreatePoolInternal(string tag, GameObject prefab, int size)
+    {
+        Stack<GameObject> stack = new Stack<GameObject>(size);
+        List<GameObject> allList = new List<GameObject>(size);
+
+        for (int i = 0; i < size; i++)
+        {
+            GameObject obj = Instantiate(prefab, transform);
+            var tracker = obj.AddComponent<PooledObjectTracker>();
+            tracker.Init(tag, this);
+            obj.SetActive(false);
+            stack.Push(obj);
+            allList.Add(obj);
+        }
+
+        availablePools[tag] = stack;
+        allSpawnedObjects[tag] = allList;
+    }
+
+    /// <summary>
+    /// Lấy đối tượng từ pool với độ phức tạp O(1), không xoay vòng Queue khi có nhiều object đang active.
+    /// </summary>
     public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
     {
-        if (!poolDictionary.ContainsKey(tag))
+        if (availablePools == null || !availablePools.ContainsKey(tag))
         {
             Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
             return null;
         }
 
-        Queue<GameObject> objectPool = poolDictionary[tag];
+        Stack<GameObject> stack = availablePools[tag];
         GameObject objToSpawn = null;
-        
-        // Cố gắng tìm một object không active trong queue
-        int initialCount = objectPool.Count;
-        for (int i = 0; i < initialCount; i++)
-        {
-            GameObject go = objectPool.Dequeue();
-            if (go == null) continue; // Bỏ qua nếu đã bị Destroy ngoài ý muốn
 
-            if (!go.activeSelf || !go.activeInHierarchy)
+        while (stack.Count > 0)
+        {
+            GameObject candidate = stack.Pop();
+            if (candidate != null)
             {
-                objToSpawn = go;
+                objToSpawn = candidate;
                 break;
-            }
-            else
-            {
-                // Nếu đang active thì nhét lại vào cuối hàng
-                objectPool.Enqueue(go);
             }
         }
 
-        // Nếu không tìm thấy (tất cả đều đang active), ta phải tạo mới
+        // Nếu pool hết đối tượng rảnh, tạo thêm một đối tượng mới
         if (objToSpawn == null)
         {
             Pool p = pools.Find(x => x.tag == tag);
-            if (p != null)
+            if (p != null && p.prefab != null)
             {
                 objToSpawn = Instantiate(p.prefab, transform);
+                var tracker = objToSpawn.AddComponent<PooledObjectTracker>();
+                tracker.Init(tag, this);
+                if (allSpawnedObjects.TryGetValue(tag, out var allList))
+                {
+                    allList.Add(objToSpawn);
+                }
             }
             else
             {
@@ -109,20 +118,55 @@ public class SimplePool : MonoBehaviour
         objToSpawn.transform.rotation = rotation;
         objToSpawn.SetActive(true);
 
-        // Bỏ lại vào queue để tái sử dụng sau này
-        objectPool.Enqueue(objToSpawn);
-
         return objToSpawn;
+    }
+
+    public void ReturnObject(string tag, GameObject obj)
+    {
+        if (obj == null) return;
+        if (availablePools != null && availablePools.TryGetValue(tag, out var stack))
+        {
+            if (!stack.Contains(obj))
+            {
+                stack.Push(obj);
+            }
+        }
     }
 
     public void DeactivateAllInPool(string tag)
     {
-        if (poolDictionary != null && poolDictionary.ContainsKey(tag))
+        if (allSpawnedObjects != null && allSpawnedObjects.TryGetValue(tag, out var list))
         {
-            foreach (var go in poolDictionary[tag])
+            for (int i = 0; i < list.Count; i++)
             {
-                if (go != null) go.SetActive(false);
+                if (list[i] != null && list[i].activeSelf)
+                {
+                    list[i].SetActive(false);
+                }
             }
+        }
+    }
+}
+
+/// <summary>
+/// Hook tự động thông báo khi đối tượng bị SetActive(false) để thu hồi về Stack O(1).
+/// </summary>
+public class PooledObjectTracker : MonoBehaviour
+{
+    private string poolTag;
+    private SimplePool pool;
+
+    public void Init(string tag, SimplePool poolInstance)
+    {
+        poolTag = tag;
+        pool = poolInstance;
+    }
+
+    private void OnDisable()
+    {
+        if (pool != null)
+        {
+            pool.ReturnObject(poolTag, gameObject);
         }
     }
 }

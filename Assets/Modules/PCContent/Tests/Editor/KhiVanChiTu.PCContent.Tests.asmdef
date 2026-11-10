@@ -1,0 +1,6 @@
+{
+  "name": "KhiVanChiTu.PCContent.Tests",
+  "references": ["KhiVanChiTu.Collaboration.Runtime"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

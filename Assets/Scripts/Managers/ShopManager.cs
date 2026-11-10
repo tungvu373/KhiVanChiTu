@@ -62,7 +62,13 @@ public class ShopManager : MonoBehaviour
         GameObject canvas = GameObject.Find("Canvas");
         if (canvas == null) return;
 
-        Transform abPanelT = canvas.transform.Find("ActiveBuffPanel");
+        Transform abPanelT = canvas.transform.Find("MobileUIRoot/ActiveBuffPanel");
+        if (abPanelT == null) abPanelT = canvas.transform.Find("ActiveBuffPanel");
+        if (abPanelT == null)
+        {
+            GameObject direct = GameObject.Find("ActiveBuffPanel");
+            if (direct != null) abPanelT = direct.transform;
+        }
         if (abPanelT == null) return;
 
         for (int i = 0; i < 5; i++)

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Hiển thị thông báo uy nghiêm ở chính giữa màn hình Combat 3D (nửa trái màn hình)
+/// Hiển thị thông báo đột phá/tử trận ở giữa vùng gameplay mobile.
 /// khi Đột phá Cảnh Giới thành công hoặc Nhân vật Tử Trận.
 /// Được tạo sẵn trên Canvas để Designer/User tự do kéo thả, căn chỉnh tọa độ và kích thước trong Scene View.
 /// </summary>
@@ -17,7 +17,7 @@ public class CombatNotificationUI : MonoBehaviour
         {
             if (_instance == null)
             {
-                _instance = FindObjectOfType<CombatNotificationUI>();
+                _instance = FindFirstObjectByType<CombatNotificationUI>(FindObjectsInactive.Include);
             }
             return _instance;
         }
@@ -36,6 +36,10 @@ public class CombatNotificationUI : MonoBehaviour
     private Coroutine activeAnimRoutine;
     private Vector2 userConfiguredPosition;
     private Vector3 userConfiguredScale = Vector3.one;
+
+
+
+    public bool isDisplayingTribulationResult { get; private set; }
 
     private void Awake()
     {
@@ -88,9 +92,6 @@ public class CombatNotificationUI : MonoBehaviour
     {
         if (string.IsNullOrEmpty(realmName)) return;
 
-        // Tầng 1 lúc mới bắt đầu chơi không hiển thị thông báo đột phá
-        if (realmName.Contains("Tầng 1") && realmName.Contains("Luyện Khí")) return;
-
         if (Instance == null)
         {
             Debug.LogWarning("[CombatNotificationUI] Không tìm thấy Banner trong Scene!");
@@ -116,7 +117,7 @@ public class CombatNotificationUI : MonoBehaviour
     {
         if (titleText != null)
         {
-            titleText.text = "✨ ĐỘT PHÁ THÀNH CÔNG ✨";
+            titleText.text = "ĐỘT PHÁ THÀNH CÔNG";
             titleText.color = new Color(1f, 0.92f, 0.25f); // Vàng kim hào quang
         }
 
@@ -144,14 +145,16 @@ public class CombatNotificationUI : MonoBehaviour
             CameraShake.Instance.TriggerShake(0.5f, 0.35f);
         }
 
-        PlayBannerAnimation(duration: 2.8f);
+        isDisplayingTribulationResult = true;
+
+        PlayBannerAnimation(duration: 4.0f);
     }
 
     public void DisplayDeath()
     {
         if (titleText != null)
         {
-            titleText.text = "💀 ĐẠO THÂN TỬ TRẬN 💀";
+            titleText.text = "ĐẠO THÂN TỬ TRẬN";
             titleText.color = new Color(1f, 0.25f, 0.25f); // Đỏ thẫm máu lửa
         }
 
@@ -179,6 +182,8 @@ public class CombatNotificationUI : MonoBehaviour
             CameraShake.Instance.TriggerShake(0.4f, 0.3f);
         }
 
+        isDisplayingTribulationResult = false;
+
         PlayBannerAnimation(duration: 2.2f);
     }
 
@@ -195,13 +200,13 @@ public class CombatNotificationUI : MonoBehaviour
     {
         if (titleText != null)
         {
-            titleText.text = "⚡ ĐỘ KIẾP THẤT BẠI ⚡";
+            titleText.text = "ĐỘ KIẾP THẤT BẠI";
             titleText.color = new Color(1f, 0.3f, 0.2f); // Đỏ sấm sét
         }
 
         if (subtitleText != null)
         {
-            subtitleText.text = $"[ Bị Thiên Kiếp Phản Phệ • Tổn Thất 25% Tu Vi (-{lostTuVi:F0}) ]";
+            subtitleText.text = $"[ Bị Thiên Kiếp Phản Phệ • Tổn Thất {CultivationManager.TribulationFailureLossRate:0%} Tu Vi (-{lostTuVi:F0}) ]";
             subtitleText.color = new Color(1f, 0.85f, 0.4f); // Vàng cam cảnh báo
         }
 
@@ -221,7 +226,9 @@ public class CombatNotificationUI : MonoBehaviour
             CameraShake.Instance.TriggerShake(0.6f, 0.4f);
         }
 
-        PlayBannerAnimation(duration: 3.2f);
+        isDisplayingTribulationResult = true;
+
+        PlayBannerAnimation(duration: 4.2f);
     }
 
     private void PlayBannerAnimation(float duration)
@@ -327,19 +334,41 @@ public class CombatNotificationUI : MonoBehaviour
             containerRect.anchoredPosition = basePosition;
             containerRect.localScale = baseScale;
         }
+        isDisplayingTribulationResult = false;
+
         activeAnimRoutine = null;
+
     }
 
     /// <summary>
     /// Ẩn ngay lập tức thông báo khi hồi sinh hoặc đổi màn hình
     /// </summary>
-    public void HideImmediate()
+    public void HideImmediate(bool force = false)
+
     {
-        if (activeAnimRoutine != null)
+
+        if (!force && isDisplayingTribulationResult)
+
         {
-            StopCoroutine(activeAnimRoutine);
-            activeAnimRoutine = null;
+
+            return;
+
         }
+
+
+
+        if (activeAnimRoutine != null)
+
+        {
+
+            StopCoroutine(activeAnimRoutine);
+
+            activeAnimRoutine = null;
+
+        }
+
+        isDisplayingTribulationResult = false;
+
         if (canvasGroup != null) canvasGroup.alpha = 0f;
         if (containerRect != null && userConfiguredPosition != Vector2.zero)
         {

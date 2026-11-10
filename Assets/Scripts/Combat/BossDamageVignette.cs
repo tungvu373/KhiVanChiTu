@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 /// <summary>
-/// Hiệu ứng viền chớp đỏ quanh nửa màn hình Combat 3D (bên trái) khi bị Boss tấn công.
+/// Hiệu ứng viền chớp đỏ quanh toàn bộ màn hình khi bị Boss tấn công.
 /// Hoạt động hoàn toàn tự động, độc lập (Plug & Play), không cần cấu hình thủ công trong Editor.
 /// </summary>
 public class BossDamageVignette : MonoBehaviour
@@ -61,9 +61,9 @@ public class BossDamageVignette : MonoBehaviour
         RectTransform rt = GetComponent<RectTransform>();
         if (rt == null) rt = gameObject.AddComponent<RectTransform>();
 
-        // Căn chỉnh bao trọn đúng 50% màn hình bên Trái (Khu vực Combat 3D)
+        // Mobile portrait: phủ trọn màn hình, không giữ giới hạn nửa trái của UI desktop.
         rt.anchorMin = new Vector2(0f, 0f);
-        rt.anchorMax = new Vector2(0.5f, 1f);
+        rt.anchorMax = Vector2.one;
         rt.pivot = new Vector2(0.5f, 0.5f);
         rt.offsetMin = Vector2.zero;
         rt.offsetMax = Vector2.zero;

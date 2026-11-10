@@ -133,23 +133,24 @@ public class CharacterDetailModalUI : MonoBehaviour
         {
             charName = CultivationManager.Instance.CharacterName;
         }
-        if (txtName != null) txtName.text = $"🏷️ Đạo Hiệu: <color=#FFE666>{charName}</color>";
+        if (txtName != null) txtName.text = $"Đạo Hiệu: <color=#FFE666>{charName}</color>";
 
         if (CultivationManager.Instance != null && CultivationManager.Instance.allStages != null && CultivationManager.Instance.currentStageIndex < CultivationManager.Instance.allStages.Length)
         {
             var stage = CultivationManager.Instance.allStages[CultivationManager.Instance.currentStageIndex];
             float currentTuVi = CultivationManager.Instance.currentTuVi;
             float reqTuVi = stage.requiredTuVi;
-            float progress = reqTuVi > 0 ? (currentTuVi / reqTuVi) * 100f : 100f;
+            float progress = CultivationDisplay.PhaseProgress(CultivationManager.Instance.currentStageIndex,
+                reqTuVi > 0 ? currentTuVi / reqTuVi : 0f) * 100f;
 
-            if (txtRealm != null) txtRealm.text = $"🌟 Cảnh Giới: <color=#66FFB2>{stage.stageName}</color>";
-            if (txtTuVi != null) txtTuVi.text = $"🔮 Tu Vi: <color=#66CCFF>{Mathf.FloorToInt(currentTuVi):N0} / {reqTuVi:N0}</color> (Tiến độ: <color=#FFE666>{progress:F1}%</color>)";
+            if (txtRealm != null) txtRealm.text = $"Cảnh Giới: <color=#66FFB2>{CultivationManager.Instance.GetDisplayRealmName()}</color>";
+            if (txtTuVi != null) txtTuVi.text = $"Tu Vi: <color=#66CCFF>{EconomyManager.FormatNumber(currentTuVi)} / {EconomyManager.FormatNumber(reqTuVi)}</color> (Tiến độ kỳ: <color=#FFE666>{progress:F1}%</color>)";
         }
 
         if (EconomyManager.Instance != null)
         {
-            if (txtCoDuyen != null) txtCoDuyen.text = $"✨ Cơ Duyên: <color=#FFAA33>{EconomyManager.Instance.currentCoDuyen} Điểm</color>";
-            if (txtLinhThach != null) txtLinhThach.text = $"💎 Linh Thạch: <color=#66CCFF>{EconomyManager.Instance.currentLinhThach:N0}</color>";
+            if (txtCoDuyen != null) txtCoDuyen.text = $"Cơ Duyên: <color=#FFAA33>{EconomyManager.Instance.currentCoDuyen} Điểm</color>";
+            if (txtLinhThach != null) txtLinhThach.text = $"Linh Thạch: <color=#66CCFF>{EconomyManager.Instance.currentLinhThach:N0}</color>";
         }
 
         // 2. CHỈ SỐ SINH TỒN & CHIẾN ĐẤU
@@ -157,7 +158,7 @@ public class CharacterDetailModalUI : MonoBehaviour
         {
             float hp = CombatManager.Instance.playerCurrentHp;
             float maxHp = CombatManager.Instance.playerMaxHp;
-            if (txtHp != null) txtHp.text = $"❤️ Sinh Lực: <color=#55FF55>{Mathf.Ceil(hp):N0} / {maxHp:N0}</color>";
+            if (txtHp != null) txtHp.text = $"Sinh Lực: <color=#55FF55>{Mathf.Ceil(hp):N0} / {maxHp:N0}</color>";
         }
 
         if (SkillManager.Instance != null)
@@ -165,14 +166,14 @@ public class CharacterDetailModalUI : MonoBehaviour
             float mp = SkillManager.Instance.currentLinhLuc;
             float maxMp = SkillManager.Instance.maxLinhLuc;
             float regen = SkillManager.Instance.linhLucRegenRate;
-            if (txtMp != null) txtMp.text = $"🔷 Linh Lực: <color=#66B2FF>{mp:F0} / {maxMp:F0}</color> (+{regen:F1}/s hồi phục)";
+            if (txtMp != null) txtMp.text = $"Linh Lực: <color=#66B2FF>{mp:F0} / {maxMp:F0}</color> (+{regen:F1}/s hồi phục)";
         }
 
         if (CultivationManager.Instance != null)
         {
             float mult = CultivationManager.Instance.permanentStatMultiplier;
             float bonus = (mult - 1f) * 100f;
-            if (txtMultiplier != null) txtMultiplier.text = $"⚡ Khí Tức Tiên Thiên: <color=#FFDD44>+{bonus:F1}%</color> (Hệ số x{mult:F2})";
+            if (txtMultiplier != null) txtMultiplier.text = $"Khí Tức Tiên Thiên: <color=#FFDD44>+{bonus:F1}%</color> (Hệ số x{mult:F2})";
         }
 
         // 3. PHI KIẾM ĐANG XUẤT TRẬN
@@ -196,7 +197,7 @@ public class CharacterDetailModalUI : MonoBehaviour
 
             if (txtEquipSwords != null)
             {
-                txtEquipSwords.text = $"🗡️ Phi Kiếm Đang Xuất Trận: <color=#FFE666>{equippedCount}/4 Thanh</color> (Tổng Căn Cơ: {totalDamage:N0} Dame)";
+                txtEquipSwords.text = $"Phi Kiếm Đang Xuất Trận: <color=#FFE666>{equippedCount}/4 Thanh</color> (Tổng Căn Cơ: {totalDamage:N0} Dame)";
             }
         }
 
@@ -237,16 +238,16 @@ public class CharacterDetailModalUI : MonoBehaviour
 
         // Hiển thị đầy đủ Tên, Cấp và Chỉ số thực tế
         if (txtUpgradeKiemY != null)
-            txtUpgradeKiemY.text = $"• 🗡️ <color=#FF8866>Kiếm Ý</color>: Cấp {lvlKY}  ➔  Chỉ số: <color=#FFE666>+{valKY:F1} Sát thương Kiếm</color>";
+            txtUpgradeKiemY.text = $"• <color=#FF8866>Kiếm Ý</color>: Cấp {lvlKY} · Chỉ số: <color=#FFE666>+{valKY:F1} Sát thương Kiếm</color>";
 
         if (txtUpgradeLinhLuc != null)
-            txtUpgradeLinhLuc.text = $"• 🔷 <color=#66CCFF>Linh Lực</color>: Cấp {lvlLL}  ➔  Chỉ số: <color=#66CCFF>{maxMpVal:F0} MP</color> (+{regenMpVal:F1}/s hồi phục)";
+            txtUpgradeLinhLuc.text = $"• <color=#66CCFF>Linh Lực</color>: Cấp {lvlLL} · Chỉ số: <color=#66CCFF>{maxMpVal:F0} MP</color> (+{regenMpVal:F1}/s hồi phục)";
 
         if (txtUpgradeTuLinh != null)
-            txtUpgradeTuLinh.text = $"• ✨ <color=#88FF88>Tụ Linh</color>: Cấp {lvlTL}  ➔  Chỉ số: <color=#88FF88>+{valTL:F1}% Thu nạp Linh Thạch</color>";
+            txtUpgradeTuLinh.text = $"• <color=#88FF88>Tụ Linh</color>: Cấp {lvlTL} · Chỉ số: <color=#88FF88>+{valTL:F1}% Thu nạp Linh Thạch</color>";
 
         if (txtUpgradeThanThuc != null)
-            txtUpgradeThanThuc.text = $"• 👁️ <color=#CC88FF>Thần Thức</color>: Cấp {lvlTT}  ➔  Chỉ số: <color=#CC88FF>+{valTT:F1}% Tốc độ xuất chiêu</color>";
+            txtUpgradeThanThuc.text = $"• <color=#CC88FF>Thần Thức</color>: Cấp {lvlTT} · Chỉ số: <color=#CC88FF>+{valTT:F1}% Tốc độ xuất chiêu</color>";
     }
 
     private IEnumerator AnimateOpen()

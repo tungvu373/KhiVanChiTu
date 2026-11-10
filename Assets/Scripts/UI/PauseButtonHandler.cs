@@ -30,17 +30,12 @@ public class PauseButtonHandler : MonoBehaviour
 
     private void Update()
     {
-        // Bắt phím ESC qua Input System mới
-        bool isEscapePressed = false;
-        if (UnityEngine.InputSystem.Keyboard.current != null)
-        {
-            isEscapePressed = UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame;
-        }
-
-        if (isEscapePressed)
-        {
+        var navigation = MobileUINavigationManager.Instance;
+        var menu = MainMenuManager.Instance;
+        if ((navigation == null || !navigation.isActiveAndEnabled) &&
+            (menu == null || !menu.isActiveAndEnabled) &&
+            MobileUINavigationManager.BackPressedThisFrame())
             TogglePauseMenu();
-        }
     }
 
     public void OnPauseButtonClicked()
@@ -54,14 +49,7 @@ public class PauseButtonHandler : MonoBehaviour
 
         if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsModalOpen)
         {
-            if (PauseMenuManager.Instance.confirmationPopup != null && 
-                PauseMenuManager.Instance.confirmationPopup.activeSelf)
-            {
-                PauseMenuManager.Instance.CloseConfirmation();
-                return;
-            }
-
-            PauseMenuManager.Instance.ResumeGame();
+            PauseMenuManager.Instance.CloseTopLayer();
         }
         else
         {

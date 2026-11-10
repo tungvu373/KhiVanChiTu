@@ -33,18 +33,18 @@ public class MilestoneQuest
     {
         List<string> parts = new List<string>();
         if (rewardLinhThach > 0) parts.Add($"+{rewardLinhThach:F0} LT");
-        if (rewardCoDuyen > 0) parts.Add($"✨ Cơ Duyên +{rewardCoDuyen}");
+        if (rewardCoDuyen > 0) parts.Add($"Cơ Duyên +{rewardCoDuyen}");
 
         if (rewardDanDuocIndex >= 0 && rewardDanDuocAmount > 0)
         {
             string[] danDuocNames = { "Hồi Linh Đan", "Tật Phong Đan", "Hồi Huyết Đan", "Cuồng Nộ Đan", "Tĩnh Tâm Đan" };
             string dName = (rewardDanDuocIndex < danDuocNames.Length) ? danDuocNames[rewardDanDuocIndex] : "Linh Đan";
-            parts.Add($"💊 {dName} x{rewardDanDuocAmount}");
+            parts.Add($"{dName} x{rewardDanDuocAmount}");
         }
 
         if (rewardSwordLevel > 0)
         {
-            parts.Add($"⚔️ Kiếm Cấp {rewardSwordLevel}");
+            parts.Add($"Kiếm Cấp {rewardSwordLevel}");
         }
 
         return string.Join(" | ", parts);
@@ -87,7 +87,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "kill_10",
-            title = "⚔️ Trảm Thảo Trừ Căn I",
+            title = "Trảm Thảo Trừ Căn I",
             description = "Tiêu diệt 10 Yêu Thú tại bí cảnh",
             type = MilestoneType.KillMonster,
             targetAmount = 10,
@@ -99,7 +99,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "kill_30",
-            title = "⚔️ Trảm Thảo Trừ Căn II",
+            title = "Trảm Thảo Trừ Căn II",
             description = "Tiêu diệt 30 Yêu Thú tại bí cảnh",
             type = MilestoneType.KillMonster,
             targetAmount = 30,
@@ -111,7 +111,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "kill_80",
-            title = "⚔️ Trảm Thảo Trừ Căn III",
+            title = "Trảm Thảo Trừ Căn III",
             description = "Tiêu diệt 80 Yêu Thú tại bí cảnh",
             type = MilestoneType.KillMonster,
             targetAmount = 80,
@@ -123,7 +123,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "kill_200",
-            title = "🔥 Huyết Chiến Yêu Tộc (Khó)",
+            title = "Huyết Chiến Yêu Tộc (Khó)",
             description = "Tiêu diệt 200 Yêu Thú lập uy danh chấn động",
             type = MilestoneType.KillMonster,
             targetAmount = 200,
@@ -137,7 +137,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "kill_500",
-            title = "👑 Yêu Giới Đồ Tể (Cực Khó)",
+            title = "Yêu Giới Đồ Tể (Cực Khó)",
             description = "Tiêu diệt 500 Yêu Thú, quét sạch sơn hà",
             type = MilestoneType.KillMonster,
             targetAmount = 500,
@@ -155,7 +155,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "boss_stage_1",
-            title = "⚡ Lôi Kiếp Sơ Khai",
+            title = "Lôi Kiếp Sơ Khai",
             description = "Độ kiếp đánh bại Boss, thăng tiến Luyện Khí Tầng 2",
             type = MilestoneType.DefeatBoss,
             targetAmount = 1,
@@ -167,7 +167,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "boss_stage_2",
-            title = "⚡ Củng Cố Căn Đạo",
+            title = "Củng Cố Căn Đạo",
             description = "Độ kiếp đánh bại Boss, thăng tiến Luyện Khí Tầng 3",
             type = MilestoneType.DefeatBoss,
             targetAmount = 2,
@@ -179,7 +179,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "boss_stage_3",
-            title = "⚡ Nghịch Thiên Phá Cảnh (Khó)",
+            title = "Nghịch Thiên Phá Cảnh (Khó)",
             description = "Độ kiếp đánh bại Boss, thăng tiến Luyện Khí Tầng 4",
             type = MilestoneType.DefeatBoss,
             targetAmount = 3,
@@ -193,7 +193,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "boss_stage_9",
-            title = "🌟 Đại Viên Mãn Nhập Đạo (Cực Khó)",
+            title = "Đại Viên Mãn Nhập Đạo (Cực Khó)",
             description = "Vượt qua toàn bộ kiếp nạn Luyện Khí, thăng hoa cảnh giới lớn",
             type = MilestoneType.DefeatBoss,
             targetAmount = 9,
@@ -209,7 +209,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "sword_lvl_3",
-            title = "🗡️ Đúc Kiếm Hóa Hình",
+            title = "Đúc Kiếm Hóa Hình",
             description = "Hợp nhất tạo ra Phi Kiếm Cấp 3",
             type = MilestoneType.ForgeSword,
             targetAmount = 3,
@@ -221,7 +221,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "sword_lvl_5",
-            title = "🗡️ Bảo Kiếm Xuất Hạp",
+            title = "Bảo Kiếm Xuất Hạp",
             description = "Hợp nhất tạo ra Phi Kiếm Cấp 5",
             type = MilestoneType.ForgeSword,
             targetAmount = 5,
@@ -233,7 +233,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "sword_lvl_7",
-            title = "🗡️ Kiếm Khí Trùng Tiêu (Khó)",
+            title = "Kiếm Khí Trùng Tiêu (Khó)",
             description = "Hợp nhất tạo ra Phi Kiếm Cấp 7 uy lực phi phàm",
             type = MilestoneType.ForgeSword,
             targetAmount = 7,
@@ -247,7 +247,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "sword_lvl_10",
-            title = "✨ Thần Binh Tuyệt Thế (Cực Khó)",
+            title = "Thần Binh Tuyệt Thế (Cực Khó)",
             description = "Hợp nhất tôi luyện thành công Phi Kiếm Cấp 10",
             type = MilestoneType.ForgeSword,
             targetAmount = 10,
@@ -263,7 +263,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "kiemy_lvl_3",
-            title = "🧘 Khí Quán Kiếm Phong",
+            title = "Khí Quán Kiếm Phong",
             description = "Nâng cấp Kiếm Ý lên Cấp 3 tăng sát thương",
             type = MilestoneType.UpgradeKiemY,
             targetAmount = 3,
@@ -275,7 +275,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "kiemy_lvl_5",
-            title = "🧘 Nhân Kiếm Hợp Nhất",
+            title = "Nhân Kiếm Hợp Nhất",
             description = "Nâng cấp Kiếm Ý lên Cấp 5",
             type = MilestoneType.UpgradeKiemY,
             targetAmount = 5,
@@ -287,7 +287,7 @@ public class MilestoneManager : MonoBehaviour
         allQuests.Add(new MilestoneQuest
         {
             id = "kiemy_lvl_10",
-            title = "🌌 Vạn Kiếm Quy Tâm (Khó)",
+            title = "Vạn Kiếm Quy Tâm (Khó)",
             description = "Nâng cấp Kiếm Ý lên Cấp 10 lĩnh ngộ cảnh giới tối cao",
             type = MilestoneType.UpgradeKiemY,
             targetAmount = 10,
@@ -409,7 +409,7 @@ public class MilestoneManager : MonoBehaviour
 
         if (GameLogger.Instance != null)
         {
-            GameLogger.Instance.Log($"🎉 Nhận Thưởng Mốc [{quest.title}]: {quest.GetRewardSummary()}!", Color.green);
+            GameLogger.Instance.Log($"Nhận Thưởng Mốc [{quest.title}]: {quest.GetRewardSummary()}!", Color.green);
         }
 
         // Lưu tiến trình

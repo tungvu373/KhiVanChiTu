@@ -1,0 +1,5 @@
+{
+  "name": "KhiVanChiTu.PCContent.Editor",
+  "references": ["KhiVanChiTu.Collaboration.Runtime"],
+  "includePlatforms": ["Editor"]
+}

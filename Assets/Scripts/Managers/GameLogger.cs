@@ -21,7 +21,7 @@ public class GameLogger : MonoBehaviour
             return;
         }
         Instance = this;
-        defaultFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        defaultFont = UiTextStyle.BodyFont;
     }
 
     private void Start()
@@ -37,6 +37,11 @@ public class GameLogger : MonoBehaviour
 
         // Tìm Panel đã được tạo từ Editor Tool
         Transform logPanelTransform = canvas.transform.Find("CombatLogPanel");
+        if (logPanelTransform == null)
+        {
+            Transform mobileRoot = canvas.transform.Find("MobileUIRoot");
+            if (mobileRoot != null) logPanelTransform = mobileRoot.Find("CombatLogPanel");
+        }
         if (logPanelTransform != null)
         {
             logPanel = logPanelTransform.gameObject;
@@ -71,7 +76,7 @@ public class GameLogger : MonoBehaviour
 
         Text txt = txtObj.GetComponent<Text>();
         txt.font = defaultFont;
-        txt.text = message;
+        txt.text = UiTextStyle.RemoveIcons(message);
         txt.fontSize = 14; // Chữ nhỏ lại một chút để hiển thị được nhiều hơn
         txt.alignment = TextAnchor.MiddleLeft;
         txt.color = color;

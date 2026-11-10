@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -13,6 +14,14 @@ public class MergeSlot : MonoBehaviour, IDropHandler
 
         MergeItem currentItem = GetComponentInChildren<MergeItem>();
         bool isEquipSlot = gameObject.name.StartsWith("Equip");
+        bool fromEquipSlot = droppedItem.originalParent != null && droppedItem.originalParent.name.StartsWith("Equip");
+        if (isEquipSlot && SwordLoadoutService.Instance != null &&
+            transform.GetSiblingIndex() >= SwordLoadoutService.Instance.GetCurrentCapacity())
+        {
+            droppedItem.transform.SetParent(droppedItem.originalParent, false);
+            droppedItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+            return;
+        }
 
         if (currentItem == null) // Ô trống
         {
@@ -20,18 +29,28 @@ public class MergeSlot : MonoBehaviour, IDropHandler
             RectTransform rt = droppedItem.GetComponent<RectTransform>();
             rt.anchoredPosition = Vector2.zero;
             rt.localScale = Vector3.one;
+            StartCoroutine(PunchBounce(droppedItem.transform));
         }
         else // Ô đang có kiếm
         {
             if (isEquipSlot)
             {
-                Debug.LogWarning("[Merge] KHÔNG cho phép ghép kiếm trực tiếp trên Ô Trang Bị! Vui lòng gỡ xuống Kho đồ.");
-                droppedItem.transform.SetParent(droppedItem.originalParent, false);
-                RectTransform rt = droppedItem.GetComponent<RectTransform>();
-                rt.anchoredPosition = Vector2.zero;
-                rt.localScale = Vector3.one;
+                // Hoán đổi hai thanh kiếm, tuyệt đối không ghép khi thả lên trang bị.
+                Transform origin = droppedItem.originalParent;
+                if (origin == null || origin.GetComponent<MergeSlot>() == null) return;
+                currentItem.transform.SetParent(origin, false);
+                currentItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                currentItem.transform.localScale = Vector3.one;
+                droppedItem.transform.SetParent(transform, false);
+                droppedItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                droppedItem.transform.localScale = Vector3.one;
+                currentItem.UpdateUI();
+                AchievementManager.Instance?.OnSwordMerged(currentItem.level);
+
+                StartCoroutine(PunchBounce(currentItem.transform));
+                StartCoroutine(PunchBounce(droppedItem.transform));
             }
-            else if (currentItem.level == droppedItem.level && currentItem.level < 8)
+            else if (!fromEquipSlot && currentItem.level == droppedItem.level && currentItem.level < 8)
             {
                 // Hợp nhất (Merge) cộng dồn phôi
                 currentItem.currentPieces += droppedItem.currentPieces;
@@ -46,12 +65,15 @@ public class MergeSlot : MonoBehaviour, IDropHandler
                 }
                 
                 currentItem.UpdateUI();
+                AchievementManager.Instance?.OnSwordMerged(currentItem.level);
 
                 // Phát âm thanh ghép kiếm
                 if (AudioManager.Instance != null)
                 {
                     AudioManager.Instance.PlayMergeSwordSFX();
                 }
+
+                StartCoroutine(PunchBounce(currentItem.transform));
 
                 Debug.Log($"[Merge] Tiến trình ghép kiếm: Lv.{currentItem.level} ({currentItem.currentPieces}/{currentItem.GetRequiredPieces()})!");
             }
@@ -66,5 +88,23 @@ public class MergeSlot : MonoBehaviour, IDropHandler
         }
         
         if (MergeManager.Instance != null) MergeManager.Instance.OnEquipChanged();
+    }
+
+    private IEnumerator PunchBounce(Transform target)
+    {
+        if (target == null) yield break;
+        Vector3 orig = Vector3.one;
+        float elapsed = 0f;
+        float duration = 0.16f;
+        while (elapsed < duration)
+        {
+            if (target == null) yield break;
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / duration;
+            float s = 1f + Mathf.Sin(t * Mathf.PI) * 0.20f;
+            target.localScale = orig * s;
+            yield return null;
+        }
+        if (target != null) target.localScale = orig;
     }
 }

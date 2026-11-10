@@ -10,14 +10,14 @@ public class DamagePopup : MonoBehaviour
     private TextMesh textMesh;
     private float moveYSpeed = 2.2f;
     private float disappearTimer;
-    private const float DISAPPEAR_TIMER_MAX = 0.85f;
+    private const float DISAPPEAR_TIMER_MAX = 0.95f;
     private Color textColor;
     private Camera mainCamera;
 
     private float totalDamage = 0f;
     private bool isCritical = false;
     private float accumulateTimer = 0f;
-    private const float ACCUMULATE_WINDOW = 0.18f; // Cửa sổ 0.18s gom dồn các kiếm cùng đâm tới trong 1 đợt
+    private const float ACCUMULATE_WINDOW = 0.42f; // Gom một nhịp chém, không sinh chữ theo từng frame.
     private float currentScale = 1f;
 
     /// <summary>
@@ -38,6 +38,28 @@ public class DamagePopup : MonoBehaviour
         transform.localScale = Vector3.one * currentScale;
 
         UpdateVisuals();
+        mainCamera = Camera.main;
+    }
+
+    /// <summary>
+    /// Hiển thị chữ trạng thái chiến đấu tùy chỉnh (NÉ!, TRÙNG SINH!, v.v.).
+    /// </summary>
+    public void SetupCustom(string text, Color color, float size = 0.15f)
+    {
+        if (textMesh == null) textMesh = GetComponent<TextMesh>();
+        if (textMesh == null) return;
+
+        totalDamage = 0f;
+        isCritical = false;
+        accumulateTimer = 0f;
+        disappearTimer = DISAPPEAR_TIMER_MAX;
+        currentScale = 1.4f;
+        transform.localScale = Vector3.one * currentScale;
+
+        textMesh.text = text;
+        textColor = color;
+        textMesh.color = color;
+        textMesh.characterSize = size;
         mainCamera = Camera.main;
     }
 
@@ -65,16 +87,16 @@ public class DamagePopup : MonoBehaviour
         // Thêm dấu '-' đằng trước lượng sát thương theo yêu cầu
         textMesh.text = "-" + Mathf.RoundToInt(totalDamage).ToString();
 
-        // Màu đỏ tươi (Pure Bright Red), không pha xanh/hồng
-        if (isCritical || totalDamage >= 500f)
+        // Đòn thường trắng vàng nhạt; crit đỏ cam bạo kích sắc nét, kích cỡ chuẩn Mobile F2P
+        if (isCritical)
         {
-            textColor = new Color(1f, 0f, 0f, 1f); // Đỏ tươi rực rỡ bạo kích
-            textMesh.characterSize = 0.32f;
+            textColor = new Color(1f, 0.25f, 0.15f, 1f); // Đỏ cam bạo kích rực rỡ
+            textMesh.characterSize = 0.17f;
         }
         else
         {
-            textColor = new Color(0.95f, 0.05f, 0.05f, 1f); // Đỏ tươi sắc nét
-            textMesh.characterSize = 0.24f;
+            textColor = new Color(1f, 0.95f, 0.85f, 0.95f); // Trắng ngà thanh lịch
+            textMesh.characterSize = 0.13f;
         }
 
         textMesh.color = textColor;

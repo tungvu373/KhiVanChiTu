@@ -137,16 +137,8 @@ public class StageManager : MonoBehaviour
             DataManager.Instance.SaveCurrentGame(silent: true);
         }
 
-        // Nếu người chơi đã đạt Tu Vi Đại Viên Mãn (cần độ kiếp) nhưng trước đó đã bấm Hủy (để củng cố sức mạnh),
-        // thì sau mỗi khi vượt tầng, hệ thống sẽ mở lại Panel hỏi người chơi có muốn độ kiếp thăng cấp hay không.
-        if (CultivationManager.Instance != null && CultivationManager.Instance.IsTuViMaxed())
-        {
-            var curData = CultivationManager.Instance.GetCurrentStageData();
-            if (CultivationManager.Instance.RequiresBossToBreakthrough(curData))
-            {
-                TribulationModalUI.Open();
-            }
-        }
+        // Chỉ hiện thông báo đầu tiên nếu đạt bình cảnh trong lúc đang đánh Boss tầng.
+        CultivationManager.Instance?.ShowPendingTribulationPrompt();
     }
 
     public void FailBoss()
