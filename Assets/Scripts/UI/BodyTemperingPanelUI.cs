@@ -217,7 +217,7 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
         // 1. Header Resource
         if (txtLinhThachBalance != null && economy != null)
         {
-            txtLinhThachBalance.text = $"Linh Thạch: {EconomyManager.FormatNumber(economy.currentLinhThach)} 💎";
+            txtLinhThachBalance.text = $"Linh Thạch: {EconomyManager.FormatNumber(economy.currentLinhThach)}";
         }
         if (txtTotalBodyLevel != null)
         {
@@ -237,7 +237,7 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
             // Tên và Biểu tượng
             if (i < nodeNameTexts.Length && nodeNameTexts[i] != null)
             {
-                nodeNameTexts[i].text = $"{nodeDef.iconEmoji} {nodeDef.name}";
+                nodeNameTexts[i].text = $"{nodeDef.name}";
             }
 
             // Cấp độ
@@ -258,14 +258,14 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
                 }
                 else
                 {
-                    nodeEffectTexts[i].text = $"<color=#ff7675>🔒 {stats.GetUnlockRequirementText(i)}</color>";
+                    nodeEffectTexts[i].text = $"<color=#ff7675>{stats.GetUnlockRequirementText(i)}</color>";
                 }
             }
 
             // Chi phí nút nâng nhanh / mở modal
             if (i < nodeCostTexts.Length && nodeCostTexts[i] != null)
             {
-                nodeCostTexts[i].text = isUnlocked ? $"{EconomyManager.FormatNumber(cost)} 💎" : "Khóa";
+                nodeCostTexts[i].text = isUnlocked ? $"{EconomyManager.FormatNumber(cost)} LT" : "Khóa";
                 nodeCostTexts[i].color = canAfford ? new Color(1f, 0.9f, 0.3f, 1f) : new Color(0.6f, 0.65f, 0.7f, 1f);
             }
 
@@ -319,7 +319,7 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
         // Tiêu đề
         if (txtModalTitle != null)
         {
-            txtModalTitle.text = $"{nodeDef.iconEmoji} {nodeDef.name.ToUpper()}\n<size=20><color=#ffd32a>{nodeDef.title}</color></size>";
+            txtModalTitle.text = $"{nodeDef.name.ToUpper()}\n<size=20><color=#ffd32a>{nodeDef.title}</color></size>";
         }
 
         // Nhánh & Tier
@@ -363,7 +363,7 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
             txtModalRequirement.gameObject.SetActive(!isUnlocked);
             if (!isUnlocked)
             {
-                txtModalRequirement.text = $"⚠️ {stats.GetUnlockRequirementText(selectedIndex)}";
+                txtModalRequirement.text = $"{stats.GetUnlockRequirementText(selectedIndex)}";
             }
         }
 
@@ -388,7 +388,7 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
             }
             else
             {
-                txtModalCost.text = $"CƯỜNG HÓA ({EconomyManager.FormatNumber(cost)} 💎)";
+                txtModalCost.text = $"CƯỜNG HÓA ({EconomyManager.FormatNumber(cost)} LT)";
                 txtModalCost.color = canAfford ? Color.white : new Color(0.7f, 0.7f, 0.7f, 1f);
             }
         }
@@ -403,13 +403,13 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
                 int tempLv = level;
                 for (int c = 0; c < 5; c++)
                 {
-                    cost5 += Mathf.Ceil(100f * (selectedIndex + 1) * Mathf.Pow(1.2f, tempLv++));
+                    cost5 += stats.GetUpgradeCostAtLevel(selectedIndex, tempLv++);
                 }
                 btnModalUpgrade5.interactable = economy != null && economy.currentLinhThach >= cost;
                 var textComp = btnModalUpgrade5.GetComponentInChildren<Text>();
                 if (textComp != null)
                 {
-                    textComp.text = $"NÂNG x5\n({EconomyManager.FormatNumber(cost5)} 💎)";
+                    textComp.text = $"NÂNG x5\n({EconomyManager.FormatNumber(cost5)} LT)";
                 }
             }
         }

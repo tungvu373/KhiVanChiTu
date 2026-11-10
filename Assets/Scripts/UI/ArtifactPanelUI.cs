@@ -13,8 +13,8 @@ public class ArtifactPanelUI : MonoBehaviour
     public static ArtifactPanelUI Instance { get; private set; }
 
     [Header("Thanh Tài Nguyên")]
-    public Text oreLabel;           // "⚙️ Quặng Phôi: X"
-    public Text auraLabel;          // "✨ Hào Quang: Bậc X"
+    public Text oreLabel;           // "Quặng Phôi: X"
+    public Text auraLabel;          // "Hào Quang: Bậc X"
 
     [Header("4 Thẻ Bài Pháp Khí (Robe, Crown, Boots, Amulet)")]
     public Text[]   artifactLabels;         // Tên + Cấp
@@ -24,10 +24,10 @@ public class ArtifactPanelUI : MonoBehaviour
 
     private static readonly string[] SlotNames =
     {
-        "🥋 Phi Thiên Áo",
-        "👑 Cửu Thiên Tiên Miện",
-        "👟 Vân Phong Hài",
-        "💠 Linh Ngọc Bội"
+        "Phi Thiên Áo",
+        "Cửu Thiên Tiên Miện",
+        "Vân Phong Hài",
+        "Linh Ngọc Bội"
     };
 
     private void Awake()
@@ -74,8 +74,8 @@ public class ArtifactPanelUI : MonoBehaviour
         float stone = EconomyManager.Instance?.currentLinhThach ?? 0f;
         int ore = svc.Ore;
 
-        if (oreLabel != null) oreLabel.text = $"⚙️ Quặng Phôi: <b><color=#f39c12>{ore}</color></b>";
-        if (auraLabel != null) auraLabel.text = $"✨ Hào Quang: <b><color=#ffd32a>Bậc {svc.AuraTier}</color></b>";
+        if (oreLabel != null) oreLabel.text = $"Quặng Phôi: <b><color=#f39c12>{ore}</color></b>";
+        if (auraLabel != null) auraLabel.text = $"Hào Quang: <b><color=#ffd32a>Bậc {svc.AuraTier}</color></b>";
 
         for (int i = 0; i < 4; i++)
         {
@@ -110,7 +110,7 @@ public class ArtifactPanelUI : MonoBehaviour
                 {
                     string oreColor = ore >= oreCost ? "#55efc4" : "#ff7675";
                     string stoneColor = stone >= stoneCost ? "#ffeaa7" : "#ff7675";
-                    artifactCostTexts[i].text = $"Cần: <color={oreColor}>⚙️ {oreCost}</color>  |  <color={stoneColor}>💎 {EconomyManager.FormatNumber(stoneCost)}</color>";
+                    artifactCostTexts[i].text = $"Cần: <color={oreColor}>Quặng {oreCost}</color>  |  <color={stoneColor}>LT {EconomyManager.FormatNumber(stoneCost)}</color>";
                 }
             }
 
@@ -164,12 +164,12 @@ public class ArtifactPanelUI : MonoBehaviour
         {
             if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
             if (GameLogger.Instance != null)
-                GameLogger.Instance.Log($"✨ Cường hóa thành công {SlotNames[slotIndex]}!", Color.cyan);
+                GameLogger.Instance.Log($"Cường hóa thành công {SlotNames[slotIndex]}!", Color.cyan);
         }
         else
         {
             if (GameLogger.Instance != null)
-                GameLogger.Instance.Log("⚙️ Không đủ Quặng Phôi hoặc Linh Thạch!", Color.yellow);
+                GameLogger.Instance.Log("Không đủ Quặng Phôi hoặc Linh Thạch!", Color.yellow);
         }
         RefreshUI();
     }

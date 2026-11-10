@@ -31,9 +31,10 @@ public class CharacterSaveData
     public int swordStyle;
     public bool swordStyleUnlocked;
     public int encounterKillsRemaining;
-    public int saveVersion = 0;
+    public int saveVersion = SaveMigration.CURRENT_SAVE_VERSION;
     public int realmId = 0;
     public int subLevel = 1;
+    public int monsterSwordsAcquired = 0;
     public long lastActiveUtcTicks = 0;
     public OfflineEarningsManager.OfflineRewardData pendingOfflineReward;
     public int[] bodyStatLevels = new int[6];
@@ -41,6 +42,7 @@ public class CharacterSaveData
     public AlchemySaveState alchemy = new AlchemySaveState();
     public ArtifactSaveState artifacts = new ArtifactSaveState();
     public FormationSaveState formations = new FormationSaveState();
+    public SecretRealmSaveState secretRealm = new SecretRealmSaveState();
 
     public bool isSlotEmpty = true;
     public string characterName = "";
@@ -96,6 +98,12 @@ public class CharacterSaveData
     // ── Hệ Thống Thành Tựu Tiên Lộ (Achievements) ───────────────────────────
     public AchievementSaveState achievements = new AchievementSaveState();
 
+    // Vận Khí: permanent upgrades belong to this character slot. Keep daoAn for save compatibility.
+    public DaoAnSaveState daoAn = new DaoAnSaveState();
+
+    // ── StorageManager (Kho Đồ, Bộ Lọc & Lò Phân Giải) ──────────────────────
+    public StorageSaveState storage = new StorageSaveState();
+
     // ── Tiến trình ──────────────────────────────────────────────────────────
     public float playTime = 0f;
     public string lastPlayedDate = "";
@@ -130,6 +138,34 @@ public class DataManager : MonoBehaviour
     private string BackupFilePath => System.IO.Path.Combine(Application.persistentDataPath,
         WorkspaceSaveProfile.FileName("KhiVanChiTu_SaveData.json", saveProfileId));
 
+    private void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        try
+        {
+            string detectedProfile = WorkspaceSaveProfile.Resolve(scene);
+            if (!string.IsNullOrEmpty(detectedProfile) && detectedProfile != saveProfileId)
+            {
+                Debug.Log($"[DataManager] Chuyển đổi saveProfileId từ '{saveProfileId}' sang '{detectedProfile}' theo scene '{scene.name}'");
+                saveProfileId = detectedProfile;
+                LoadData();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[DataManager] Lỗi phân giải saveProfile trên scene {scene.name}: {ex.Message}");
+        }
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -147,14 +183,28 @@ public class DataManager : MonoBehaviour
             gameObject.AddComponent<SwordLoadoutService>();
         if (PlayerStatsService.Instance == null && GetComponent<PlayerStatsService>() == null)
             gameObject.AddComponent<PlayerStatsService>();
+        if (DaoAnProgressionService.Instance == null && GetComponent<DaoAnProgressionService>() == null)
+            gameObject.AddComponent<DaoAnProgressionService>();
+        if (DaoAnModalUI.Instance == null && GetComponent<DaoAnModalUI>() == null)
+            gameObject.AddComponent<DaoAnModalUI>();
         if (AlchemyService.Instance == null && GetComponent<AlchemyService>() == null)
             gameObject.AddComponent<AlchemyService>();
         if (ArtifactService.Instance == null && GetComponent<ArtifactService>() == null)
             gameObject.AddComponent<ArtifactService>();
         if (FormationService.Instance == null && GetComponent<FormationService>() == null)
             gameObject.AddComponent<FormationService>();
+        if (SecretRealmService.Instance == null && GetComponent<SecretRealmService>() == null)
+            gameObject.AddComponent<SecretRealmService>();
         if (OfflineEarningsManager.Instance == null && GetComponent<OfflineEarningsManager>() == null)
             gameObject.AddComponent<OfflineEarningsManager>();
+        if (StorageManager.Instance == null && GetComponent<StorageManager>() == null)
+            gameObject.AddComponent<StorageManager>();
+        if (DismantleService.Instance == null && GetComponent<DismantleService>() == null)
+            gameObject.AddComponent<DismantleService>();
+        if (FeatureUnlockService.Instance == null && GetComponent<FeatureUnlockService>() == null)
+            gameObject.AddComponent<FeatureUnlockService>();
+        if (LootRewardService.Instance == null && GetComponent<LootRewardService>() == null)
+            gameObject.AddComponent<LootRewardService>();
         LoadData();
     }
 
@@ -253,6 +303,7 @@ public class DataManager : MonoBehaviour
         AlchemyService.Instance?.SaveToSlot(slot);
         ArtifactService.Instance?.SaveToSlot(slot);
         FormationService.Instance?.SaveToSlot(slot);
+        SecretRealmService.Instance?.SaveToSlot(slot);
         OfflineEarningsManager.Instance?.SaveToSlot(slot);
         UpgradeManager.Instance?.SaveToSlot(slot);
         SkillManager.Instance?.SaveToSlot(slot);
@@ -262,6 +313,8 @@ public class DataManager : MonoBehaviour
         TutorialManager.Instance?.SaveToSlot(slot);
         MilestoneManager.Instance?.SaveToSlot(slot);
         AchievementManager.Instance?.SaveToSlot(slot);
+        DaoAnProgressionService.Instance?.SaveToSlot(slot);
+        StorageManager.Instance?.SaveToSlot(slot);
 
         SaveData(); // Ghi xuống PlayerPrefs & File backup
 
@@ -292,6 +345,7 @@ public class DataManager : MonoBehaviour
         AlchemyService.Instance?.LoadFromSlot(slot);
         ArtifactService.Instance?.LoadFromSlot(slot);
         FormationService.Instance?.LoadFromSlot(slot);
+        SecretRealmService.Instance?.LoadFromSlot(slot);
         UpgradeManager.Instance?.LoadFromSlot(slot);
         SkillManager.Instance?.LoadFromSlot(slot);
         CombatManager.Instance?.LoadFromSlot(slot);
@@ -300,6 +354,8 @@ public class DataManager : MonoBehaviour
         TutorialManager.Instance?.LoadFromSlot(slot);
         MilestoneManager.Instance?.LoadFromSlot(slot);
         AchievementManager.Instance?.LoadFromSlot(slot);
+        DaoAnProgressionService.Instance?.LoadFromSlot(slot);
+        StorageManager.Instance?.LoadFromSlot(slot);
         OfflineEarningsManager.Instance?.ProcessOfflineEarnings(slot);
 
         // KÍCH HOẠT CỜ SESSION: Bây giờ game đã nạp dữ liệu xong, cho phép hệ thống auto-save hoạt động
@@ -311,44 +367,84 @@ public class DataManager : MonoBehaviour
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // LOW-LEVEL (PlayerPrefs + Sao lưu kép ra File JSON trên ổ cứng)
+    // LOW-LEVEL (Crash-safe Atomic Write + Multi-tier Fallback Recovery)
     // ─────────────────────────────────────────────────────────────────────────
     public void LoadData()
     {
-        string json = PlayerPrefs.GetString(SaveStorageKey, "");
+        gameSaveData = null;
 
-        // Nếu PlayerPrefs rỗng (hoặc bị reset), thử tìm trong file JSON sao lưu dự phòng
-        if (string.IsNullOrEmpty(json) && System.IO.File.Exists(BackupFilePath))
+        // Tier 1: Ưu tiên đọc từ file JSON chính trên ổ cứng
+        if (System.IO.File.Exists(BackupFilePath))
         {
             try
             {
-                json = System.IO.File.ReadAllText(BackupFilePath);
-                Debug.Log($"[DataManager] Đã phục hồi dữ liệu từ file sao lưu: {BackupFilePath}");
+                string json = System.IO.File.ReadAllText(BackupFilePath);
+                if (!string.IsNullOrEmpty(json))
+                {
+                    var parsed = JsonUtility.FromJson<GameSaveData>(json);
+                    if (ValidateGameSaveData(parsed))
+                    {
+                        gameSaveData = parsed;
+                        Debug.Log($"[DataManager] ✅ Đã nạp dữ liệu an toàn từ file chính: {BackupFilePath}");
+                    }
+                }
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[DataManager] Lỗi đọc file sao lưu: {ex.Message}");
+                Debug.LogWarning($"[DataManager] File chính bị lỗi/hỏng ({ex.Message}), đang chuyển sang file .bak dự phòng...");
             }
         }
 
-        if (string.IsNullOrEmpty(json))
-        {
-            gameSaveData = new GameSaveData();
-        }
-        else
+        // Tier 2: Nếu file chính hỏng hoặc không có, đọc từ file .bak (Last Known Good)
+        string bakPath = BackupFilePath + ".bak";
+        if (gameSaveData == null && System.IO.File.Exists(bakPath))
         {
             try
             {
-                gameSaveData = JsonUtility.FromJson<GameSaveData>(json);
-                if (gameSaveData == null || gameSaveData.slots == null || gameSaveData.slots.Length != 3)
+                string json = System.IO.File.ReadAllText(bakPath);
+                if (!string.IsNullOrEmpty(json))
                 {
-                    gameSaveData = new GameSaveData();
+                    var parsed = JsonUtility.FromJson<GameSaveData>(json);
+                    if (ValidateGameSaveData(parsed))
+                    {
+                        gameSaveData = parsed;
+                        Debug.Log($"[DataManager] ♻️ Đã phục hồi thành công dữ liệu từ file sao lưu .bak: {bakPath}");
+                    }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                gameSaveData = new GameSaveData();
+                Debug.LogWarning($"[DataManager] File .bak cũng không thể đọc được: {ex.Message}");
             }
+        }
+
+        // Tier 3: Nếu cả 2 file trên đĩa không được, thử phục hồi từ PlayerPrefs
+        if (gameSaveData == null)
+        {
+            string prefJson = PlayerPrefs.GetString(SaveStorageKey, "");
+            if (!string.IsNullOrEmpty(prefJson))
+            {
+                try
+                {
+                    var parsed = JsonUtility.FromJson<GameSaveData>(prefJson);
+                    if (ValidateGameSaveData(parsed))
+                    {
+                        gameSaveData = parsed;
+                        Debug.Log("[DataManager] ♻️ Đã phục hồi dữ liệu từ PlayerPrefs.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[DataManager] PlayerPrefs cũng bị lỗi cú pháp: {ex.Message}");
+                }
+            }
+        }
+
+        // Tier 4: Nếu không còn nguồn nào hợp lệ (cài mới hoàn toàn), khởi tạo dữ liệu mặc định
+        if (gameSaveData == null)
+        {
+            Debug.Log("[DataManager] Khởi tạo dữ liệu save trắng (3 slot mới hoàn toàn).");
+            gameSaveData = new GameSaveData();
         }
 
         // V3: Chạy migration cho cả 3 slot một lần khi load
@@ -367,17 +463,48 @@ public class DataManager : MonoBehaviour
         }
     }
 
+    private bool ValidateGameSaveData(GameSaveData data)
+    {
+        return data != null && data.slots != null && data.slots.Length == 3;
+    }
+
     public void SaveData()
     {
         try
         {
             string json = JsonUtility.ToJson(gameSaveData, true);
-            // 1. Lưu vào Windows Registry (PlayerPrefs)
+            if (string.IsNullOrEmpty(json)) return;
+
+            string targetPath = BackupFilePath;
+            string tmpPath = targetPath + ".tmp";
+            string bakPath = targetPath + ".bak";
+
+            // 1. Ghi ra file tạm (.tmp) trước
+            System.IO.File.WriteAllText(tmpPath, json);
+
+            // 2. Nếu file chính đã tồn tại, copy sang .bak làm lớp đệm an toàn
+            if (System.IO.File.Exists(targetPath))
+            {
+                try
+                {
+                    System.IO.File.Copy(targetPath, bakPath, true);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[DataManager] Không thể cập nhật file .bak: {ex.Message}");
+                }
+            }
+
+            // 3. Hoán đổi nguyên tử: Xóa file chính cũ (nếu có) và Move .tmp sang file chính
+            if (System.IO.File.Exists(targetPath))
+            {
+                System.IO.File.Delete(targetPath);
+            }
+            System.IO.File.Move(tmpPath, targetPath);
+
+            // 4. Lưu vào PlayerPrefs làm kênh phụ trợ
             PlayerPrefs.SetString(SaveStorageKey, json);
             PlayerPrefs.Save();
-
-            // 2. Lưu kép vào file JSON ổ cứng (AppData) để đảm bảo không bao giờ mất
-            System.IO.File.WriteAllText(BackupFilePath, json);
         }
         catch (Exception ex)
         {

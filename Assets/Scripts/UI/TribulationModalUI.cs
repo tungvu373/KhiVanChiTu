@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// Panel thông báo khi Tu Vi đạt Đại Viên Mãn (100% Tu Vi cần Đột Phá Đại Cảnh Giới).
 /// Cho phép người chơi lựa chọn:
 /// 1. XÁC NHẬN: Vào trận chiến Boss Độ Kiếp (Lôi Kiếp Hàng Lâm).
-/// 2. TỪ CHỐI: Tiếp tục farm củng cố sức mạnh. Sẽ tự động hỏi lại sau mỗi khi vượt tầng!
+/// 2. ĐỂ SAU: Tiếp tục luyện công và mở lại từ thanh cảnh giới.
 /// </summary>
 public class TribulationModalUI : MonoBehaviour
 {
@@ -38,6 +38,8 @@ public class TribulationModalUI : MonoBehaviour
 
     private Coroutine animRoutine;
     private bool isOpen = false;
+    private AlchemyService observedAlchemy;
+    public bool IsOpen => isOpen && gameObject.activeInHierarchy;
 
     private void Awake()
     {
@@ -81,11 +83,29 @@ public class TribulationModalUI : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        if (observedAlchemy != null) observedAlchemy.OnChanged -= RefreshData;
+        observedAlchemy = null;
+        isOpen = false;
+        animRoutine = null;
+    }
+
+    private static bool CanOpenForCurrentState()
+    {
+        var cultivation = CultivationManager.Instance;
+        var combat = CombatManager.Instance;
+        return cultivation != null && cultivation.IsTribulationReady && combat != null &&
+               !combat.isTribulationBossActive && !combat.isPlayerDead &&
+               (StageManager.Instance == null || !StageManager.Instance.isBossStage);
+    }
+
     /// <summary>
     /// Mở Panel Thông Báo Độ Kiếp
     /// </summary>
     public static void Open()
     {
+        if (!CanOpenForCurrentState()) return;
         if (Instance == null)
         {
             EnsureInstanceInCanvas();
@@ -110,8 +130,7 @@ public class TribulationModalUI : MonoBehaviour
 
     public void OpenModal()
     {
-        // Không mở modal nếu đang trong trận chiến Boss Độ Kiếp
-        if (CombatManager.Instance != null && CombatManager.Instance.isTribulationBossActive) return;
+        if (IsOpen || !CanOpenForCurrentState()) return;
 
         isOpen = true;
 
@@ -125,6 +144,13 @@ public class TribulationModalUI : MonoBehaviour
 
         gameObject.SetActive(true);
         transform.SetAsLastSibling();
+        CultivationManager.Instance.MarkTribulationPromptShown();
+
+        if (observedAlchemy == null)
+        {
+            observedAlchemy = AlchemyService.Instance;
+            if (observedAlchemy != null) observedAlchemy.OnChanged += RefreshData;
+        }
 
         // Đảm bảo CanvasGroup hiển thị ngay lập tức 100%, không bị tàng hình
         if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
@@ -144,8 +170,7 @@ public class TribulationModalUI : MonoBehaviour
 
         RefreshData();
 
-        // Đóng băng toàn bộ thời gian của game theo yêu cầu để người chơi quyết định
-        Time.timeScale = 0f;
+        // Giữ game chạy 100% thời gian thực khi mở modal Lôi Kiếp Đột Phá
 
         if (animRoutine != null) StopCoroutine(animRoutine);
         animRoutine = StartCoroutine(AnimateOpen());
@@ -153,10 +178,8 @@ public class TribulationModalUI : MonoBehaviour
 
     public void CloseModal()
     {
+        if (!IsOpen) return;
         isOpen = false;
-
-        // Khôi phục lại tốc độ thời gian trò chơi bình thường
-        Time.timeScale = 1f;
 
         if (animRoutine != null) StopCoroutine(animRoutine);
         animRoutine = StartCoroutine(AnimateClose());
@@ -164,51 +187,51 @@ public class TribulationModalUI : MonoBehaviour
 
     private void RefreshData()
     {
-        string curRealm = "Luyện Khí Tầng 15";
-        string nxtRealm = "Trúc Cơ Sơ Kỳ";
+        string curRealm = "Luyện Khí · Đỉnh Phong";
+        string nxtRealm = "Trúc Cơ · Sơ Kỳ";
         int realm = 0;
 
         if (CultivationManager.Instance != null)
         {
-            var curData = CultivationManager.Instance.GetCurrentStageData();
-            if (curData != null) curRealm = curData.stageName;
+            curRealm = CultivationManager.Instance.GetDisplayRealmName();
             nxtRealm = CultivationManager.Instance.GetNextRealmName();
             realm = (int)CultivationManager.Instance.CurrentRealm;
         }
 
-        if (titleText != null) titleText.text = "⚡ THIÊN KIẾP HÀNG LÂM ⚡";
-        if (subtitleText != null) subtitleText.text = "Tu vi đã đạt Đại Viên Mãn — Bạn có muốn Độ Kiếp Thăng Cấp?";
+        PillQuality highestQuality = AlchemyService.Instance != null
+            ? AlchemyService.Instance.GetHighestBreakthroughPillQuality(realm)
+            : PillQuality.Waste;
+        bool hasPill = highestQuality != PillQuality.Waste;
+        var confirmLabel = confirmButton != null ? confirmButton.GetComponentInChildren<Text>() : null;
+        if (confirmLabel != null) confirmLabel.text = hasPill ? "ĐỘ KIẾP NGAY" : "MỞ LÒ LUYỆN ĐAN";
+        var cancelLabel = cancelButton != null ? cancelButton.GetComponentInChildren<Text>() : null;
+        if (cancelLabel != null) cancelLabel.text = "ĐỂ SAU";
+
+        if (titleText != null) titleText.text = "THIÊN KIẾP HÀNG LÂM";
+        if (subtitleText != null)
+            subtitleText.text = targetRealmText != null
+                ? "Tu Vi đã đầy. Có thể mở lại từ thanh cảnh giới."
+                : $"Tấn thăng: {nxtRealm}";
         if (currentRealmText != null) currentRealmText.text = $"• Cảnh giới hiện tại: <color=#FFE666>{curRealm}</color> (Đại Viên Mãn)";
         if (targetRealmText != null) targetRealmText.text = $"• Đột phá tấn thăng: <color=#66FFB2>{nxtRealm}</color>";
         if (warningText != null)
         {
-            // Cảnh giới LuyenKhi (realm=0): Đan Đột Phá là optional, chỉ boost tỷ lệ
-            bool needsPill = realm > 0;
-            bool hasPill = AlchemyService.Instance != null && AlchemyService.Instance.HasBreakthroughPill(realm);
-            PillQuality highestQuality = AlchemyService.Instance != null
-                ? AlchemyService.Instance.GetHighestBreakthroughPillQuality(realm)
-                : PillQuality.Waste;
-
             string qualityBonus = highestQuality switch
             {
-                PillQuality.Supreme => "<color=#FFE666>Cực Phẩm (+50% Sát Thương)</color>",
-                PillQuality.Refined => "<color=#B266FF>Trung Phẩm (+30% Sát Thương)</color>",
-                PillQuality.Basic   => "<color=#66FF99>Hạ Phẩm (+15% Sát Thương)</color>",
-                _                   => "<color=#FF5555>Chưa có</color>"
+                PillQuality.Supreme => "<color=#FFE666>Cực Phẩm (+50% Sát Thương Kiếm)</color>",
+                PillQuality.Refined => "<color=#B266FF>Trung Phẩm (+30% Sát Thương Kiếm)</color>",
+                PillQuality.Basic   => "<color=#66FF99>Hạ Phẩm (+15% Sát Thương Kiếm)</color>",
+                _                   => "<color=#FF5555>Chưa có Đan</color>"
             };
 
-            string pillNote = needsPill
-                ? (hasPill
-                    ? $"⚗️ Đan Đột Phá: {qualityBonus} (sẽ tự động kích hoạt).\n"
-                    : "⚗️ <color=#FF5555>Cần một viên Đan Đột Phá cùng cảnh giới để bắt đầu.</color>\n")
-                : (hasPill
-                    ? $"⚗️ Đan Đột Phá: {qualityBonus} (tăng uy lực ngự kiếm).\n"
-                    : "⚗️ <color=#66FF99>Luyện Khí: Đan Đột Phá tăng tỷ lệ thắng (không bắt buộc).</color>\n");
+            string pillNote = hasPill
+                ? $"• Đan Đột Phá: {qualityBonus} (sẽ tự động tiêu hao để hộ thể).\n"
+                : $"<color=#FF5555>• BẮT BUỘC: Cần tiêu hao 1 Đột Phá Đan ({curRealm}) mới được độ kiếp!</color>\n";
 
-            warningText.text = "⚔️ <color=#FFD700>Thành công:</color> Tấn thăng đại cảnh giới, mở khóa sức mạnh mới!\n" +
-                               "⚠️ <color=#FF5555>Thất bại:</color> Bị Thiên Kiếp phản phệ, <color=#FF3333><b>tổn thất 30% Tu Vi</b></color>!\n" +
+            warningText.text = "<color=#FFD700>Thành công:</color> Tấn thăng đại cảnh giới, mở khóa ô kiếm và sức mạnh mới!\n" +
+                               $"<color=#FF5555>Thất bại:</color> Bị Thiên Kiếp phản phệ, <color=#FF3333><b>tổn thất {CultivationManager.TribulationFailureLossRate:0%} Tu Vi</b></color>!\n" +
                                pillNote +
-                               "💡 <i>Nếu chưa tự tin, hãy chọn 'Củng Cố' để nâng cấp phi kiếm.</i>";
+                               "<i>Nếu chưa có đan hoặc chưa tự tin, hãy vào Lò Luyện Đan để nấu đan và củng cố phi kiếm.</i>";
         }
     }
 
@@ -277,28 +300,22 @@ public class TribulationModalUI : MonoBehaviour
 
     public void OnConfirmClicked()
     {
+        if (!IsOpen || !CanOpenForCurrentState()) return;
         int realm = CultivationManager.Instance != null ? (int)CultivationManager.Instance.CurrentRealm : 0;
 
-        // ── Lỗ hổng 1 Fix: Cảnh giới LuyenKhi (realm=0) KHÔNG bắt buộc cần đan.
-        // Đan Đột Phá chỉ là optional boost; nếu có thì dùng, không có thì vẫn cho phép độ kiếp.
-        if (realm > 0)
+        // BẮT BUỘC: Mọi đại cảnh giới (kể cả Luyện Khí lên Trúc Cơ) đều phải có và tiêu hao 1 Đột Phá Đan
+        if (AlchemyService.Instance == null || !AlchemyService.Instance.TryConsumeBreakthroughPill(realm))
         {
-            // Từ TrucCo trở lên: BẮT BUỘC phải có đan mới được phép độ kiếp
-            if (AlchemyService.Instance == null || !AlchemyService.Instance.TryConsumeBreakthroughPill(realm))
+            if (GameLogger.Instance != null)
             {
-                if (GameLogger.Instance != null)
-                {
-                    GameLogger.Instance.Log("⚠️ Cần luyện Đan Đột Phá trước khi độ kiếp! Mở Lò Luyện Đan...", Color.yellow);
-                }
-                CloseModal();
-                MobileDrawerUIController.Instance?.OpenDrawer(2);
-                return;
+                GameLogger.Instance.Log("Cần luyện Đan Đột Phá phù hợp trước khi độ kiếp! Đang mở Lò Luyện Đan...", Color.yellow);
             }
-        }
-        else
-        {
-            // LuyenKhi: tiêu đan nếu có để hưởng buff tỷ lệ, nhưng không bắt buộc
-            AlchemyService.Instance?.TryConsumeBreakthroughPill(realm); // optional, bỏ qua kết quả
+            CloseModal();
+            if (FeatureUnlockService.Instance != null && FeatureUnlockService.Instance.IsFeatureUnlocked(FeatureId.Alchemy))
+            {
+                MobileDrawerUIController.Instance?.OpenDrawer(2); // Mở Drawer Lò Luyện Đan
+            }
+            return;
         }
 
         CloseModal();
@@ -326,7 +343,7 @@ public class TribulationModalUI : MonoBehaviour
 
         if (GameLogger.Instance != null)
         {
-            GameLogger.Instance.Log("🛡️ Đạo hữu quyết định tạm hoãn độ kiếp để củng cố sức mạnh! Sẽ nhắc lại sau khi vượt tầng.", Color.cyan);
+            GameLogger.Instance.Log("Đã hoãn độ kiếp. Chạm thanh cảnh giới để mở lại khi sẵn sàng.", Color.cyan);
         }
     }
 
@@ -336,12 +353,8 @@ public class TribulationModalUI : MonoBehaviour
     /// </summary>
     private static void EnsureInstanceInCanvas()
     {
-        Canvas canvas = FindObjectOfType<Canvas>(true);
-        if (canvas == null)
-        {
-            GameObject cObj = GameObject.Find("Canvas");
-            if (cObj != null) canvas = cObj.GetComponent<Canvas>();
-        }
+        Canvas canvas = CultivationManager.Instance?.stageText?.canvas?.rootCanvas;
+        if (canvas == null) canvas = GameObject.Find("Canvas")?.GetComponent<Canvas>();
         if (canvas == null)
         {
             Debug.LogError("❌ [TribulationModalUI] Không tìm thấy Canvas nào trong Scene!");
@@ -351,8 +364,7 @@ public class TribulationModalUI : MonoBehaviour
         if (!canvas.gameObject.activeSelf) canvas.gameObject.SetActive(true);
 
         // Fallback font đa tầng
-        Font fontToUse = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        if (fontToUse == null) fontToUse = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        Font fontToUse = UiTextStyle.BodyFont;
         if (fontToUse == null) fontToUse = Font.CreateDynamicFontFromOSFont("Arial", 16);
 
         GameObject modalObj = new GameObject("TribulationModalUI", typeof(RectTransform), typeof(CanvasGroup), typeof(TribulationModalUI));
@@ -392,7 +404,7 @@ public class TribulationModalUI : MonoBehaviour
         titleObj.transform.SetParent(boxObj.transform, false);
         Text titleTxt = titleObj.GetComponent<Text>();
         titleTxt.font = fontToUse;
-        titleTxt.text = "⚡ THIÊN KIẾP HÀNG LÂM ⚡";
+        titleTxt.text = "THIÊN KIẾP HÀNG LÂM";
         titleTxt.fontSize = 26;
         titleTxt.fontStyle = FontStyle.Bold;
         titleTxt.alignment = TextAnchor.MiddleCenter;
@@ -441,7 +453,7 @@ public class TribulationModalUI : MonoBehaviour
         btnConfTxtObj.transform.SetParent(btnConfObj.transform, false);
         Text btnConfTxt = btnConfTxtObj.GetComponent<Text>();
         btnConfTxt.font = fontToUse;
-        btnConfTxt.text = "⚔️ ĐỘ KIẾP NGAY";
+        btnConfTxt.text = "ĐỘ KIẾP NGAY";
         btnConfTxt.fontSize = 18;
         btnConfTxt.fontStyle = FontStyle.Bold;
         btnConfTxt.alignment = TextAnchor.MiddleCenter;
@@ -463,7 +475,7 @@ public class TribulationModalUI : MonoBehaviour
         btnCancTxtObj.transform.SetParent(btnCancObj.transform, false);
         Text btnCancTxt = btnCancTxtObj.GetComponent<Text>();
         btnCancTxt.font = fontToUse;
-        btnCancTxt.text = "🛡️ CỦNG CỐ SỨC MẠNH";
+        btnCancTxt.text = "CỦNG CỐ SỨC MẠNH";
         btnCancTxt.fontSize = 17;
         btnCancTxt.fontStyle = FontStyle.Bold;
         btnCancTxt.alignment = TextAnchor.MiddleCenter;

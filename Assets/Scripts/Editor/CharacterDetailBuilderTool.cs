@@ -272,7 +272,7 @@ public class CharacterDetailBuilderTool
 
         // --- Section 1: Thông Tin Bản Thân ---
         Text txtName = CreateLayoutText(contentObj.transform, "TxtName", 16, "🏷️ Đạo Hiệu: <color=#FFE666>Đạo Hữu</color>", fontToUse, 24f);
-        Text txtRealm = CreateLayoutText(contentObj.transform, "TxtRealm", 16, "🌟 Cảnh Giới: <color=#66FFB2>Luyện Khí Tầng 1</color>", fontToUse, 24f);
+        Text txtRealm = CreateLayoutText(contentObj.transform, "TxtRealm", 16, "🌟 Cảnh Giới: <color=#66FFB2>Luyện Khí · Sơ Kỳ</color>", fontToUse, 24f);
         Text txtTuVi = CreateLayoutText(contentObj.transform, "TxtTuVi", 16, "🔮 Tu Vi: <color=#66CCFF>0 / 100</color> (Tiến độ: <color=#FFE666>0.0%</color>)", fontToUse, 24f);
         Text txtCoDuyen = CreateLayoutText(contentObj.transform, "TxtCoDuyen", 15, "✨ Cơ Duyên: <color=#FFAA33>0 Điểm</color>", fontToUse, 22f);
         Text txtLinhThach = CreateLayoutText(contentObj.transform, "TxtLinhThach", 15, "💎 Linh Thạch: <color=#66CCFF>0</color>", fontToUse, 22f);

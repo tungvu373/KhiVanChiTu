@@ -48,8 +48,9 @@ public class BossEnemy : Enemy
     private bool isAttackingAnimation = false;
     private Coroutine attackRoutine = null;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         CacheAnimatorParameters();
     }
 
@@ -145,6 +146,14 @@ public class BossEnemy : Enemy
 
         CacheAnimatorParameters();
         SetMoving(false);
+        if (animator != null)
+        {
+            animator.applyRootMotion = false;
+            animator.ResetTrigger("Die");
+            animator.ResetTrigger("Attack");
+            animator.SetBool(HashIsMoving, false);
+            animator.Play("idle", 0, 0f);
+        }
     }
 
     /// <summary>
@@ -240,6 +249,14 @@ public class BossEnemy : Enemy
 
         CacheAnimatorParameters();
         SetMoving(false);
+        if (animator != null)
+        {
+            animator.applyRootMotion = false;
+            animator.ResetTrigger("Die");
+            animator.ResetTrigger("Attack");
+            animator.SetBool(HashIsMoving, false);
+            animator.Play("idle", 0, 0f);
+        }
 
         Debug.Log($"⚡ [BossEnemy] Sinh Boss Thiên Kiếp (3 Phase)! Đột phá: {targetRealmName} (Tier {realmTier}), Tổng Máu: {hp:N0}, Kháng ST Phase 1: {dmgReduction * 100:F0}%");
     }
@@ -271,8 +288,7 @@ public class BossEnemy : Enemy
                 phaseTextUI.gameObject.SetActive(true);
             }
 
-            Font f = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (f == null) f = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            Font f = UiTextStyle.BodyFont;
             if (phaseTextUI != null && f != null) phaseTextUI.font = f;
         }
 
@@ -286,15 +302,15 @@ public class BossEnemy : Enemy
             switch (phase)
             {
                 case 1:
-                    phaseTextUI.text = "⚡ [PHASE 1/3] Kim Cương Thể";
+                    phaseTextUI.text = "[PHASE 1/3] Kim Cương Thể";
                     phaseTextUI.color = new Color(1f, 0.85f, 0.2f); // Cam vàng
                     break;
                 case 2:
-                    phaseTextUI.text = "⚡ [PHASE 2/3] Lôi Giáp Bạo Phát";
+                    phaseTextUI.text = "[PHASE 2/3] Lôi Giáp Bạo Phát";
                     phaseTextUI.color = new Color(0.9f, 0.45f, 1f); // Tím lôi điện
                     break;
                 case 3:
-                    phaseTextUI.text = "🔥 [PHASE 3/3] Cuồng Nộ Diệt Thế";
+                    phaseTextUI.text = "[PHASE 3/3] Cuồng Nộ Diệt Thế";
                     phaseTextUI.color = new Color(1f, 0.25f, 0.25f); // Đỏ rực ma lôi
                     break;
             }
@@ -417,12 +433,25 @@ public class BossEnemy : Enemy
             animator.SetTrigger(HashAttack);
         }
 
+        // Bổ sung: Wind-up Visual tại giây 0.00!
+        if (HitVFXManager.Instance != null)
+        {
+            Vector3 handPos = transform.position + transform.forward * 1.2f + Vector3.up * 2f;
+            HitVFXManager.Instance.SpawnBossWindUp(handPos);
+        }
+
         // 2. Chờ đúng thời điểm tay Boss chém chạm vào mục tiêu theo Animation (Wind-up Delay)
         yield return new WaitForSeconds(0.48f);
 
         // 3. GÂY SÁT THƯƠNG ĐÚNG THỜI ĐIỂM CHẠM ĐÍCH
         if (!isDead && playerTarget != null)
         {
+            Vector3 impactPos = (playerTarget.position + transform.position) * 0.5f + Vector3.up * 0.1f;
+            if (HitVFXManager.Instance != null)
+            {
+                HitVFXManager.Instance.SpawnBossGroundImpact(impactPos);
+            }
+
             float finalDmg = damage;
 
             // QUY TẮC CỐT LÕI: Boss Thiên Kiếp gây đúng 15% Max HP của Player mỗi đòn đánh!

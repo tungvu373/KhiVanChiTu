@@ -289,7 +289,7 @@ public static class InGameUIRefinementTool
                     txt.lineSpacing = 1.1f;
                     txt.color = ColTextLight;
                     txt.alignment = TextAnchor.MiddleLeft;
-                    txt.text = "<b><color=#F5C842>Luyện Khí Tầng 1</color></b>\n<color=#94A3B8>Lực Chiến: 1.25K</color>";
+                    txt.text = "<b><color=#F5C842>Luyện Khí · Sơ Kỳ</color></b>\n<color=#94A3B8>Lực Chiến: 1.25K</color>";
                 }
             }
 
@@ -448,11 +448,14 @@ public static class InGameUIRefinementTool
             EditorUtility.SetDirty(manaBarTr.gameObject);
         }
 
-        // Tắt StagePanel trùng lặp
+        // Thanh tu vi theo kỳ có nội dung riêng, không ẩn cùng StagePanel legacy.
         Transform stagePanelTr = mobileRoot.Find("StagePanel");
         if (stagePanelTr != null)
         {
-            stagePanelTr.gameObject.SetActive(false);
+            bool hasPhaseBar = stagePanelTr.GetComponent<CultivationPhaseBarUI>() != null;
+            stagePanelTr.gameObject.SetActive(hasPhaseBar);
+            if (hasPhaseBar && stagePanelTr is RectTransform phaseRect)
+                phaseRect.anchoredPosition = new Vector2(0f, -138f);
             EditorUtility.SetDirty(stagePanelTr.gameObject);
         }
 

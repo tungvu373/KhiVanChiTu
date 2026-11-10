@@ -21,6 +21,7 @@ public enum AchievementRequirementType
     Stage,                // Đạt mốc tầng chiến đấu
     MergeSwordLevel,      // Ghép được kiếm đạt cấp chỉ định
     TotalMerges,          // Tổng số lần ghép kiếm
+    MonsterSwordDrops,    // Số thanh kiếm nhặt được từ quái vật rơi (mở khóa Phân Giải)
     EquippedSwords,       // Số phi kiếm trang bị cùng lúc
     BodyStatsTotal,       // Tổng cấp 6 chỉ số Luyện Thể
     CraftPillsTotal,      // Tổng số lần luyện đan thành công
@@ -53,9 +54,9 @@ public class AchievementItem
     public string GetRewardSummary()
     {
         List<string> parts = new List<string>();
-        if (rewardLinhThach > 0) parts.Add($"💎 +{rewardLinhThach:F0} LT");
-        if (rewardCoDuyen > 0) parts.Add($"✨ +{rewardCoDuyen} Cơ Duyên");
-        if (rewardOre > 0) parts.Add($"⛏️ +{rewardOre} Quặng");
+        if (rewardLinhThach > 0) parts.Add($"+{rewardLinhThach:F0} LT");
+        if (rewardCoDuyen > 0) parts.Add($"+{rewardCoDuyen} Cơ Duyên");
+        if (rewardOre > 0) parts.Add($"+{rewardOre} Quặng");
         return string.Join(" | ", parts);
     }
 }

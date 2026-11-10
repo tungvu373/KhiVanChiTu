@@ -107,21 +107,26 @@ public class OfflineEarningsManager : MonoBehaviour
 
         // Tốc độ cơ bản: ~20 + stage*5 Linh Thạch / giây
         float stonePerSec = (20f + stage * 5f) * (1f + realm * 0.25f) * stoneDropMult;
-        float totalStone = stonePerSec * effectiveSeconds;
+        float daoAnOffline = DaoAnProgressionService.Instance != null
+            ? DaoAnProgressionService.Instance.GetMultiplier(DaoAnEffect.OfflineLinhThach) : 1f;
+        float totalStone = stonePerSec * effectiveSeconds * daoAnOffline;
 
         // ── 2. Tính toán Tu Vi offline ──
         float tuViPerSec = (1.5f + stage * 0.4f) * (1f + realm * 0.2f);
-        float totalTuVi = tuViPerSec * effectiveSeconds;
+        float totalTuVi = tuViPerSec * effectiveSeconds * (1f + DaoAnProgressionService.Bonus(DaoAnEffect.OfflineTuVi));
 
-        // ── 3. Thảo dược & Quặng phôi thu gom khi bế quan ──
-        // Cứ mỗi 10 phút (600s) được 1 mẻ Linh Chi
-        int linhChi = Mathf.FloorToInt(effectiveSeconds / 600f) * (1 + stage / 30);
-        // Cứ mỗi 15 phút (900s) được 1 mẻ Cỏ Ngưng Khí
-        int ngungKhi = Mathf.FloorToInt(effectiveSeconds / 900f) * (1 + stage / 40);
-        // Cứ mỗi 30 phút (1800s) được 1 đóa Tuyết Liên
-        int tuyetLien = Mathf.FloorToInt(effectiveSeconds / 1800f);
-        // Cứ mỗi 20 phút (1200s) nhặt được Quặng Phôi
-        int ore = Mathf.FloorToInt(effectiveSeconds / 1200f) * (1 + stage / 25);
+        // ── 3. Thảo dược & Quặng phôi thu gom khi bế quan (Chặn theo cổng Tu Vi) ──
+        bool canGetHerbs = FeatureUnlockService.Instance == null || FeatureUnlockService.Instance.CanDropHerbs();
+        bool canGetOre = FeatureUnlockService.Instance == null || FeatureUnlockService.Instance.CanDropOre();
+
+        // Cứ mỗi 10 phút (600s) được 1 mẻ Linh Chi (chỉ từ LK7+)
+        int linhChi = canGetHerbs ? Mathf.FloorToInt(effectiveSeconds / 600f) * (1 + stage / 30) : 0;
+        // Cứ mỗi 15 phút (900s) được 1 mẻ Cỏ Ngưng Khí (chỉ từ LK7+)
+        int ngungKhi = canGetHerbs ? Mathf.FloorToInt(effectiveSeconds / 900f) * (1 + stage / 40) : 0;
+        // Cứ mỗi 30 phút (1800s) được 1 đóa Tuyết Liên (chỉ từ LK7+)
+        int tuyetLien = canGetHerbs ? Mathf.FloorToInt(effectiveSeconds / 1800f) : 0;
+        // Cứ mỗi 20 phút (1200s) nhặt được Quặng Phôi (chỉ từ Trúc Cơ 1+)
+        int ore = canGetOre ? Mathf.FloorToInt(effectiveSeconds / 1200f) * (1 + stage / 25) : 0;
 
         PendingReward = new OfflineRewardData
         {
@@ -193,7 +198,7 @@ public class OfflineEarningsManager : MonoBehaviour
         }
 
         string bonusNotice = multiplier > 1f ? $" <color=#FFD700>(x{multiplier:F0} Quảng Cáo)</color>" : "";
-        GameLogger.Instance?.Log($"🎁 Nhận thưởng Bế Quan{bonusNotice}: +{EconomyManager.FormatNumber(finalStone)} Linh Thạch, +{finalTuVi:F0} Tu Vi!", Color.green);
+        GameLogger.Instance?.Log($"Nhận thưởng Bế Quan{bonusNotice}: +{EconomyManager.FormatNumber(finalStone)} Linh Thạch, +{finalTuVi:F0} Tu Vi!", Color.green);
         AchievementManager.Instance?.OnOfflineClaimed();
 
         // Reset phần thưởng pending

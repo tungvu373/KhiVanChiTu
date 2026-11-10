@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -28,6 +29,7 @@ public class MergeSlot : MonoBehaviour, IDropHandler
             RectTransform rt = droppedItem.GetComponent<RectTransform>();
             rt.anchoredPosition = Vector2.zero;
             rt.localScale = Vector3.one;
+            StartCoroutine(PunchBounce(droppedItem.transform));
         }
         else // Ô đang có kiếm
         {
@@ -44,6 +46,9 @@ public class MergeSlot : MonoBehaviour, IDropHandler
                 droppedItem.transform.localScale = Vector3.one;
                 currentItem.UpdateUI();
                 AchievementManager.Instance?.OnSwordMerged(currentItem.level);
+
+                StartCoroutine(PunchBounce(currentItem.transform));
+                StartCoroutine(PunchBounce(droppedItem.transform));
             }
             else if (!fromEquipSlot && currentItem.level == droppedItem.level && currentItem.level < 8)
             {
@@ -68,6 +73,8 @@ public class MergeSlot : MonoBehaviour, IDropHandler
                     AudioManager.Instance.PlayMergeSwordSFX();
                 }
 
+                StartCoroutine(PunchBounce(currentItem.transform));
+
                 Debug.Log($"[Merge] Tiến trình ghép kiếm: Lv.{currentItem.level} ({currentItem.currentPieces}/{currentItem.GetRequiredPieces()})!");
             }
             else
@@ -81,5 +88,23 @@ public class MergeSlot : MonoBehaviour, IDropHandler
         }
         
         if (MergeManager.Instance != null) MergeManager.Instance.OnEquipChanged();
+    }
+
+    private IEnumerator PunchBounce(Transform target)
+    {
+        if (target == null) yield break;
+        Vector3 orig = Vector3.one;
+        float elapsed = 0f;
+        float duration = 0.16f;
+        while (elapsed < duration)
+        {
+            if (target == null) yield break;
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / duration;
+            float s = 1f + Mathf.Sin(t * Mathf.PI) * 0.20f;
+            target.localScale = orig * s;
+            yield return null;
+        }
+        if (target != null) target.localScale = orig;
     }
 }

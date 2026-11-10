@@ -42,6 +42,28 @@ public class DamagePopup : MonoBehaviour
     }
 
     /// <summary>
+    /// Hiển thị chữ trạng thái chiến đấu tùy chỉnh (NÉ!, TRÙNG SINH!, v.v.).
+    /// </summary>
+    public void SetupCustom(string text, Color color, float size = 0.15f)
+    {
+        if (textMesh == null) textMesh = GetComponent<TextMesh>();
+        if (textMesh == null) return;
+
+        totalDamage = 0f;
+        isCritical = false;
+        accumulateTimer = 0f;
+        disappearTimer = DISAPPEAR_TIMER_MAX;
+        currentScale = 1.4f;
+        transform.localScale = Vector3.one * currentScale;
+
+        textMesh.text = text;
+        textColor = color;
+        textMesh.color = color;
+        textMesh.characterSize = size;
+        mainCamera = Camera.main;
+    }
+
+    /// <summary>
     /// Cộng dồn sát thương từ các kiếm tiếp theo chém trúng cùng một đợt.
     /// </summary>
     public void AddDamage(float additionalAmount, bool isCrit)
@@ -65,16 +87,16 @@ public class DamagePopup : MonoBehaviour
         // Thêm dấu '-' đằng trước lượng sát thương theo yêu cầu
         textMesh.text = "-" + Mathf.RoundToInt(totalDamage).ToString();
 
-        // Đòn thường trắng; crit và kỹ năng (được truyền isCrit) đỏ rõ ràng.
+        // Đòn thường trắng vàng nhạt; crit đỏ cam bạo kích sắc nét, kích cỡ chuẩn Mobile F2P
         if (isCritical)
         {
-            textColor = new Color(1f, 0f, 0f, 1f); // Đỏ tươi rực rỡ bạo kích
-            textMesh.characterSize = 0.28f;
+            textColor = new Color(1f, 0.25f, 0.15f, 1f); // Đỏ cam bạo kích rực rỡ
+            textMesh.characterSize = 0.17f;
         }
         else
         {
-            textColor = Color.white;
-            textMesh.characterSize = 0.22f;
+            textColor = new Color(1f, 0.95f, 0.85f, 0.95f); // Trắng ngà thanh lịch
+            textMesh.characterSize = 0.13f;
         }
 
         textMesh.color = textColor;

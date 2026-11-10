@@ -72,6 +72,7 @@ public class AlchemyPanelUI : MonoBehaviour
 
         if (btnFinishWithDust != null)
         {
+            if (txtDustCost == null) txtDustCost = btnFinishWithDust.GetComponentInChildren<Text>(true);
             btnFinishWithDust.onClick.RemoveAllListeners();
             btnFinishWithDust.onClick.AddListener(OnUseDustClicked);
         }
@@ -120,19 +121,19 @@ public class AlchemyPanelUI : MonoBehaviour
         int cNgungKhi = svc.GetHerbCount(1);
         int cTuyetLien = svc.GetHerbCount(2);
 
-        if (txtHerbLinhChi != null)   txtHerbLinhChi.text   = $"🌿 Linh Chi: <b><color=#55efc4>{cLinhChi}</color></b>";
-        if (txtHerbNgungKhi != null)  txtHerbNgungKhi.text  = $"🌾 Ngưng Khí: <b><color=#ffeaa7>{cNgungKhi}</color></b>";
-        if (txtHerbTuyetLien != null) txtHerbTuyetLien.text = $"❄️ Tuyết Liên: <b><color=#74b9ff>{cTuyetLien}</color></b>";
+        if (txtHerbLinhChi != null)   txtHerbLinhChi.text   = $"Linh Chi: <b><color=#55efc4>{cLinhChi}</color></b>";
+        if (txtHerbNgungKhi != null)  txtHerbNgungKhi.text  = $"Ngưng Khí: <b><color=#ffeaa7>{cNgungKhi}</color></b>";
+        if (txtHerbTuyetLien != null) txtHerbTuyetLien.text = $"Tuyết Liên: <b><color=#74b9ff>{cTuyetLien}</color></b>";
 
         // Cấp Đan Sư & Bụi Dược
-        if (txtAlchemistRank != null) txtAlchemistRank.text = $"🎖️ Đan Sư Cấp {svc.AlchemistRank}";
-        if (txtMedicineDust != null)  txtMedicineDust.text  = $"💨 Bụi Dược: {svc.State.medicineDust}";
+        if (txtAlchemistRank != null) txtAlchemistRank.text = $"Đan Sư Cấp {svc.AlchemistRank}";
+        if (txtMedicineDust != null)  txtMedicineDust.text  = $"Bụi Dược: {svc.State.medicineDust}";
 
         // Legacy labels
-        if (linhChiLabel != null)     linhChiLabel.text     = $"🌿 Linh Chi: {cLinhChi}";
-        if (caoNgungKhiLabel != null) caoNgungKhiLabel.text = $"🌾 Ngưng Khí Thảo: {cNgungKhi}";
-        if (tuyetLienLabel != null)   tuyetLienLabel.text   = $"❄️ Tuyết Liên: {cTuyetLien}";
-        if (dustLabel != null)        dustLabel.text        = $"💨 Bụi Dược: {svc.State.medicineDust}";
+        if (linhChiLabel != null)     linhChiLabel.text     = $"Linh Chi: {cLinhChi}";
+        if (caoNgungKhiLabel != null) caoNgungKhiLabel.text = $"Ngưng Khí Thảo: {cNgungKhi}";
+        if (tuyetLienLabel != null)   tuyetLienLabel.text   = $"Tuyết Liên: {cTuyetLien}";
+        if (dustLabel != null)        dustLabel.text        = $"Bụi Dược: {svc.State.medicineDust}";
 
         // 2. Chi phí công thức
         int[] costTuVi = svc.GetRecipeCosts(PillRecipe.Cultivation, curRealm);
@@ -141,7 +142,7 @@ public class AlchemyPanelUI : MonoBehaviour
         {
             string col0 = cLinhChi >= costTuVi[0] ? "#55efc4" : "#ff7675";
             string col1 = cNgungKhi >= costTuVi[1] ? "#ffeaa7" : "#ff7675";
-            txtCostTuVi.text = $"Cần: <color={col0}>🌿x{costTuVi[0]}</color>  <color={col1}>🌾x{costTuVi[1]}</color>";
+            txtCostTuVi.text = $"Cần: <color={col0}>Chi {costTuVi[0]}</color> · <color={col1}>Ngưng {costTuVi[1]}</color>";
         }
         if (btnBrewTuVi != null) btnBrewTuVi.interactable = canBrewTuVi;
         if (brewCultivationBtn != null) brewCultivationBtn.interactable = canBrewTuVi;
@@ -153,13 +154,15 @@ public class AlchemyPanelUI : MonoBehaviour
             string col0 = cLinhChi >= costBT[0] ? "#55efc4" : "#ff7675";
             string col1 = cNgungKhi >= costBT[1] ? "#ffeaa7" : "#ff7675";
             string col2 = cTuyetLien >= costBT[2] ? "#74b9ff" : "#ff7675";
-            txtCostBreakthrough.text = $"Cần: <color={col0}>🌿x{costBT[0]}</color>  <color={col1}>🌾x{costBT[1]}</color>  <color={col2}>❄️x{costBT[2]}</color>";
+            txtCostBreakthrough.text = $"Cần: <color={col0}>Chi {costBT[0]}</color> · <color={col1}>Ngưng {costBT[1]}</color> · <color={col2}>Liên {costBT[2]}</color>";
         }
         if (btnBrewBreakthrough != null) btnBrewBreakthrough.interactable = canBrewBT;
         if (brewBreakthroughBtn != null) brewBreakthroughBtn.interactable = canBrewBT;
 
         // Nút hoàn tất bằng Bụi Dược
-        bool canDust = svc.IsBrewing && svc.State.medicineDust >= 10;
+        int dustCost = svc.DustFinishCost;
+        bool canDust = svc.IsBrewing && svc.State.medicineDust >= dustCost;
+        if (txtDustCost != null) txtDustCost.text = $"Tốc Hành ({dustCost} Bụi Dược)";
         if (btnFinishWithDust != null) btnFinishWithDust.interactable = canDust;
         if (useDustBtn != null)        useDustBtn.interactable        = canDust;
 
@@ -180,22 +183,22 @@ public class AlchemyPanelUI : MonoBehaviour
             string pillName = svc.State.brewingRecipe == 0 ? "Tu Vi Đan" : "Đột Phá Đan";
             if (remaining.TotalSeconds > 0)
             {
-                if (txtFurnaceStatus != null) txtFurnaceStatus.text = $"🔥 Đang Luyện: <b><color=#ffd32a>{pillName}</color></b>";
+                if (txtFurnaceStatus != null) txtFurnaceStatus.text = $"Đang Luyện: <b><color=#ffd32a>{pillName}</color></b>";
                 if (txtFurnaceTimer != null)  txtFurnaceTimer.text  = $"⏳ Thời gian còn: <b>{remaining.Minutes:D2}:{remaining.Seconds:D2}</b>";
                 if (brewTimerLabel != null)   brewTimerLabel.text   = $"⏳ Đang luyện {pillName}: {remaining.Minutes:D2}:{remaining.Seconds:D2}";
             }
             else
             {
-                if (txtFurnaceStatus != null) txtFurnaceStatus.text = "✅ Đan thành xuất lò!";
+                if (txtFurnaceStatus != null) txtFurnaceStatus.text = "Đan thành xuất lò!";
                 if (txtFurnaceTimer != null)  txtFurnaceTimer.text  = "Chờ thu nạp...";
-                if (brewTimerLabel != null)   brewTimerLabel.text   = "✅ Đan thành xuất lò!";
+                if (brewTimerLabel != null)   brewTimerLabel.text   = "Đan thành xuất lò!";
             }
         }
         else
         {
-            if (txtFurnaceStatus != null) txtFurnaceStatus.text = "🔥 Lò Luyện Trống";
+            if (txtFurnaceStatus != null) txtFurnaceStatus.text = "Lò Luyện Trống";
             if (txtFurnaceTimer != null)  txtFurnaceTimer.text  = "Chọn bài thuốc bên dưới để bắt đầu luyện đan";
-            if (brewTimerLabel != null)   brewTimerLabel.text   = "🔥 Lò luyện sẵn sàng";
+            if (brewTimerLabel != null)   brewTimerLabel.text   = "Lò luyện sẵn sàng";
         }
     }
 
@@ -241,9 +244,9 @@ public class AlchemyPanelUI : MonoBehaviour
         if (pillInventoryLabel != null)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.AppendLine($"<b>── Tồn Kho Đan Cảnh Giới {realm} ──</b>");
-            if (totalTuVi > 0) sb.AppendLine($"  ✨ Tu Vi Đan: {totalTuVi} viên (Sơ:{tuViBasic}, Trung:{tuViRefined}, Cực:{tuViSupreme})");
-            if (totalBT > 0)   sb.AppendLine($"  ⚡ Đột Phá Đan: {totalBT} viên (Sơ:{btBasic}, Trung:{btRefined}, Cực:{btSupreme})");
+            sb.AppendLine($"<b>Tồn kho đan cảnh giới {realm}</b>");
+            if (totalTuVi > 0) sb.AppendLine($"  Tu Vi Đan: {totalTuVi} viên (Sơ:{tuViBasic}, Trung:{tuViRefined}, Cực:{tuViSupreme})");
+            if (totalBT > 0)   sb.AppendLine($"  Đột Phá Đan: {totalBT} viên (Sơ:{btBasic}, Trung:{btRefined}, Cực:{btSupreme})");
             if (totalTuVi == 0 && totalBT == 0) sb.AppendLine("  <i>(Chưa có đan dược)</i>");
             pillInventoryLabel.text = sb.ToString();
         }
@@ -259,11 +262,11 @@ public class AlchemyPanelUI : MonoBehaviour
         if (ok)
         {
             if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
-            if (GameLogger.Instance != null) GameLogger.Instance.Log("🔥 Đã bắt đầu luyện một lò Tu Vi Đan!", Color.cyan);
+            if (GameLogger.Instance != null) GameLogger.Instance.Log("Đã bắt đầu luyện một lò Tu Vi Đan!", Color.cyan);
         }
         else
         {
-            if (GameLogger.Instance != null) GameLogger.Instance.Log("⚗️ Không đủ thảo dược hoặc lò đang bận!", Color.yellow);
+            if (GameLogger.Instance != null) GameLogger.Instance.Log("Không đủ thảo dược hoặc lò đang bận!", Color.yellow);
         }
         RefreshUI();
     }
@@ -276,23 +279,25 @@ public class AlchemyPanelUI : MonoBehaviour
         if (ok)
         {
             if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
-            if (GameLogger.Instance != null) GameLogger.Instance.Log("⚡ Đã bắt đầu luyện một lò Đột Phá Đan!", new Color(1f, 0.6f, 0.2f));
+            if (GameLogger.Instance != null) GameLogger.Instance.Log("Đã bắt đầu luyện một lò Đột Phá Đan!", new Color(1f, 0.6f, 0.2f));
         }
         else
         {
-            if (GameLogger.Instance != null) GameLogger.Instance.Log("⚗️ Không đủ thảo dược hoặc lò đang bận!", Color.yellow);
+            if (GameLogger.Instance != null) GameLogger.Instance.Log("Không đủ thảo dược hoặc lò đang bận!", Color.yellow);
         }
         RefreshUI();
     }
 
     public void OnUseDustClicked()
     {
-        if (AlchemyService.Instance == null) return;
-        bool ok = AlchemyService.Instance.TryUseDustToFinish();
+        var alchemy = AlchemyService.Instance;
+        if (alchemy == null) return;
+        int cost = alchemy.DustFinishCost;
+        bool ok = alchemy.TryUseDustToFinish();
         if (ok)
         {
             if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
-            if (GameLogger.Instance != null) GameLogger.Instance.Log("💨 Tiêu hao 10 Bụi Dược, lò luyện tức thì đại thành!", Color.green);
+            if (GameLogger.Instance != null) GameLogger.Instance.Log($"Tiêu hao {cost} Bụi Dược, lò luyện tức thì đại thành!", Color.green);
         }
         RefreshUI();
     }
@@ -310,7 +315,7 @@ public class AlchemyPanelUI : MonoBehaviour
         if (used)
         {
             if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
-            if (GameLogger.Instance != null) GameLogger.Instance.Log("✨ Uống 1 viên Tu Vi Đan, tu vi tăng mạnh!", Color.cyan);
+            if (GameLogger.Instance != null) GameLogger.Instance.Log("Uống 1 viên Tu Vi Đan, tu vi tăng mạnh!", Color.cyan);
         }
         RefreshUI();
     }

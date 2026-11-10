@@ -43,16 +43,23 @@ public class AlchemyService : MonoBehaviour
     public int[] GetRecipeCosts(PillRecipe recipe, int realm)
     {
         if (realm < 0 || realm >= 9 || (int)recipe < 0 || (int)recipe > 1) return new int[3];
-        return new[]
+        var costs = new[]
         {
             2 + realm + (recipe == PillRecipe.Breakthrough ? 2 : 0),
             1 + realm / 2 + (recipe == PillRecipe.Breakthrough ? 1 : 0),
             recipe == PillRecipe.Breakthrough ? 1 + realm / 3 : 0
         };
+        int discount = Mathf.FloorToInt(DaoAnProgressionService.Bonus(DaoAnEffect.AlchemyCostReduction));
+        int linhChiDiscount = Mathf.Min(discount, costs[0] - 1);
+        costs[0] -= linhChiDiscount;
+        costs[1] = Mathf.Max(1, costs[1] - (discount - linhChiDiscount));
+        return costs;
     }
 
     public void OnEnemyDefeated(bool boss, int stage)
     {
+        if (FeatureUnlockService.Instance != null && !FeatureUnlockService.Instance.CanDropHerbs()) return;
+
         if (boss)
         {
             AddHerb(0, 2 + stage / 20);
@@ -65,6 +72,7 @@ public class AlchemyService : MonoBehaviour
 
     public bool TryStartBrew(PillRecipe recipe, int realm)
     {
+        if (FeatureUnlockService.Instance != null && !FeatureUnlockService.Instance.IsFeatureUnlocked(FeatureId.Alchemy)) return false;
         if (IsBrewing || realm < 0 || realm >= 9 || (int)recipe < 0 || (int)recipe > 1) return false;
         if (CultivationManager.Instance != null && realm > (int)CultivationManager.Instance.CurrentRealm) return false;
         int[] costs = GetRecipeCosts(recipe, realm);
@@ -73,15 +81,19 @@ public class AlchemyService : MonoBehaviour
         for (int i = 0; i < costs.Length; i++) State.herbs[i] -= costs[i];
         State.brewingRecipe = (int)recipe;
         State.brewingRealm = realm;
-        State.brewEndUtcTicks = DateTime.UtcNow.AddSeconds(Math.Max(10, 30 + realm * 15 - AlchemistRank * 2)).Ticks;
+        float duration = (30 + realm * 15 - AlchemistRank * 2) * DaoAnProgressionService.ReductionMultiplier(DaoAnEffect.AlchemyBrewSpeed);
+        State.brewEndUtcTicks = DateTime.UtcNow.AddSeconds(Mathf.Max(10f, duration)).Ticks;
         OnChanged?.Invoke();
         return true;
     }
 
+    public int DustFinishCost => 10 - Mathf.Clamp(Mathf.FloorToInt(DaoAnProgressionService.Bonus(DaoAnEffect.AlchemyDustCostReduction)), 0, 3);
+
     public bool TryUseDustToFinish()
     {
-        if (!IsBrewing || State.medicineDust < 10) return false;
-        State.medicineDust -= 10;
+        int cost = DustFinishCost;
+        if (!IsBrewing || State.medicineDust < cost) return false;
+        State.medicineDust -= cost;
         State.brewEndUtcTicks = DateTime.UtcNow.Ticks;
         CompleteBrew();
         return true;
@@ -97,7 +109,8 @@ public class AlchemyService : MonoBehaviour
             ? PillQuality.Supreme : roll < supremeChance + 0.25f
                 ? PillQuality.Refined : roll < 1f - wasteChance
                     ? PillQuality.Basic : PillQuality.Waste;
-        if (quality == PillQuality.Waste) State.medicineDust += 2;
+        if (quality == PillQuality.Waste)
+            State.medicineDust += 2 + Mathf.Clamp(Mathf.FloorToInt(DaoAnProgressionService.Bonus(DaoAnEffect.AlchemyWasteDust)), 0, 2);
         else State.pills[PillIndex(State.brewingRealm, (PillRecipe)State.brewingRecipe, quality)]++;
         State.craftsWithoutSupreme = quality == PillQuality.Supreme ? 0 : State.craftsWithoutSupreme + 1;
         State.masteryXp += 1 + (int)quality;
@@ -124,7 +137,8 @@ public class AlchemyService : MonoBehaviour
         var stage = cultivation.GetCurrentStageData();
         if (stage == null) return false;
         State.pills[index]--;
-        cultivation.AddTuVi(stage.requiredTuVi * 0.08f * QualityMultiplier(quality));
+        float daoAnMultiplier = 1f + DaoAnProgressionService.Bonus(DaoAnEffect.PillTuVi);
+        cultivation.AddTuVi(stage.requiredTuVi * 0.08f * QualityMultiplier(quality) * daoAnMultiplier);
         OnChanged?.Invoke();
         return true;
     }

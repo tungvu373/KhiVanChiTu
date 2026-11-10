@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class MilestoneModalUI : MonoBehaviour
 {
     public static MilestoneModalUI Instance { get; private set; }
-    public bool IsModalOpen => (modalPanel != null && modalPanel.activeInHierarchy) || gameObject.activeInHierarchy;
+    public bool IsModalOpen => (modalPanel != null ? modalPanel : gameObject).activeInHierarchy;
 
     [Header("Cấu trúc UI Modal")]
     public GameObject modalPanel;
@@ -68,7 +68,7 @@ public class MilestoneModalUI : MonoBehaviour
             modalPanel = gameObject;
         }
 
-        modalPanel.SetActive(false);
+        if (modalPanel != gameObject) modalPanel.SetActive(false);
     }
 
     private void EnsureButtonsWired()
@@ -115,8 +115,8 @@ public class MilestoneModalUI : MonoBehaviour
             Text cTxt = btnClose.GetComponentInChildren<Text>();
             if (cTxt != null)
             {
-                cTxt.text = "✕";
-                cTxt.fontSize = 26;
+                cTxt.text = "Đóng";
+                cTxt.fontSize = 13;
                 cTxt.color = Color.white;
                 cTxt.alignment = TextAnchor.MiddleCenter;
                 cTxt.raycastTarget = false; // Để Image nhận diện raycast
@@ -211,7 +211,7 @@ public class MilestoneModalUI : MonoBehaviour
             Text btnTxt = btnClaimAll.GetComponentInChildren<Text>();
             if (btnTxt != null)
             {
-                btnTxt.text = readyToClaimCount > 0 ? $"✨ NHẬN TOÀN BỘ ({readyToClaimCount})" : "Không Có Thưởng Chờ";
+                btnTxt.text = readyToClaimCount > 0 ? $"NHẬN TOÀN BỘ ({readyToClaimCount})" : "Không Có Thưởng Chờ";
             }
         }
 
@@ -222,8 +222,7 @@ public class MilestoneModalUI : MonoBehaviour
         }
         spawnedRows.Clear();
 
-        Font defaultFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        if (defaultFont == null) defaultFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        Font defaultFont = UiTextStyle.BodyFont;
 
         // 3. Sinh các hàng nhiệm vụ
         foreach (var quest in MilestoneManager.Instance.allQuests)
@@ -299,7 +298,7 @@ public class MilestoneModalUI : MonoBehaviour
         titleTxt.fontSize = 13;
         titleTxt.fontStyle = FontStyle.Bold;
         titleTxt.color = quest.isHard ? new Color(1f, 0.9f, 0.3f) : Color.white;
-        titleTxt.text = quest.isHard ? $"{quest.title} <color=#FFD700>[✨ Cơ Duyên]</color>" : quest.title;
+        titleTxt.text = quest.isHard ? $"{quest.title} <color=#FFD700>[Cơ Duyên]</color>" : quest.title;
         titleTxt.alignment = TextAnchor.MiddleLeft;
         titleObj.GetComponent<Outline>().effectColor = Color.black;
         titleObj.GetComponent<Outline>().effectDistance = new Vector2(1f, -1f);
@@ -319,7 +318,7 @@ public class MilestoneModalUI : MonoBehaviour
         descTxt.fontSize = 11;
         descTxt.alignment = TextAnchor.MiddleLeft;
         descTxt.color = new Color(0.78f, 0.88f, 1f);
-        descTxt.text = $"{quest.description}\n<color=#FFD700>🎁 Thưởng: {quest.GetRewardSummary()}</color>";
+        descTxt.text = $"{quest.description}\n<color=#FFD700>Thưởng: {quest.GetRewardSummary()}</color>";
 
         RectTransform dRt = descObj.GetComponent<RectTransform>();
         dRt.anchorMin = new Vector2(0f, 0f);
@@ -402,7 +401,7 @@ public class MilestoneModalUI : MonoBehaviour
         {
             btnImg.color = new Color(0.18f, 0.28f, 0.2f, 0.7f);
             btnOutline.effectColor = Color.black;
-            bTxt.text = "✓ Đã Nhận";
+            bTxt.text = "Đã Nhận";
             bTxt.color = new Color(0.7f, 0.95f, 0.7f);
             btn.interactable = false;
         }
@@ -410,7 +409,7 @@ public class MilestoneModalUI : MonoBehaviour
         {
             btnImg.color = new Color(1f, 0.82f, 0.15f, 1f);
             btnOutline.effectColor = new Color(1f, 1f, 0.6f, 1f);
-            bTxt.text = "🎁 NHẬN";
+            bTxt.text = "NHẬN";
             bTxt.color = new Color(0.15f, 0.1f, 0.02f);
             btn.interactable = true;
 

@@ -13,6 +13,12 @@ public class CultivationUI : MonoBehaviour
         {
             CultivationManager.Instance.OnTuViChanged += UpdateTuViUI;
             CultivationManager.Instance.OnStageChanged += UpdateStageUI;
+            var stage = CultivationManager.Instance.GetCurrentStageData();
+            if (stage != null)
+            {
+                UpdateStageUI(stage);
+                UpdateTuViUI(CultivationManager.Instance.currentTuVi, stage.requiredTuVi);
+            }
         }
     }
 
@@ -27,13 +33,16 @@ public class CultivationUI : MonoBehaviour
 
     private void UpdateTuViUI(float current, float max)
     {
-        if (txtTuVi != null) txtTuVi.text = $"Tu Vi: {Mathf.FloorToInt(current)} / {Mathf.FloorToInt(max)}";
-        if (imgProgressBar != null) imgProgressBar.fillAmount = max > 0 ? (current / max) : 0;
+        if (txtTuVi != null) txtTuVi.text = $"Tu Vi: {EconomyManager.FormatNumber(current)} / {EconomyManager.FormatNumber(max)}";
+        if (imgProgressBar != null && CultivationManager.Instance != null)
+            imgProgressBar.fillAmount = CultivationDisplay.PhaseProgress(
+                CultivationManager.Instance.currentStageIndex, max > 0 ? current / max : 0f);
     }
 
     private void UpdateStageUI(CultivationStageData stageData)
     {
-        if (txtStageName != null) txtStageName.text = $"Cảnh giới: {stageData.stageName}";
+        if (txtStageName != null && CultivationManager.Instance != null)
+            txtStageName.text = $"Cảnh giới: {CultivationManager.Instance.GetDisplayRealmName()}";
     }
 
     private void Update()

@@ -17,10 +17,37 @@ public class SkillData : ScriptableObject
     public float baseCooldown; // Thời gian hồi kỹ năng
     public float baseDamage; // Sát thương cơ bản của kỹ năng
     
-    public bool isUnlocked = false; // Đã học hay chưa
-    public int level = 1; // Cấp độ kỹ năng (Lv.1 khi mở khóa, tăng dần khi nâng cấp)
+    // Runtime state (Không serialize vào file .asset trên đĩa để tránh ô nhiễm cross-slot và editor mutation)
+    [System.NonSerialized] public bool isUnlocked = false; // Đã học hay chưa
+    [System.NonSerialized] public int level = 1; // Cấp độ kỹ năng (Lv.1 khi mở khóa, tăng dần khi nâng cấp)
     public int requiredStageIndex; // Yêu cầu đạt Cảnh Giới thứ mấy (0,1,2,3...) mới được học
     public int unlockCost; // Tiêu hao điểm Cơ Duyên để mở khóa
+
+    private void OnEnable()
+    {
+        isUnlocked = false;
+        level = 1;
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.playModeStateChanged -= ResetOnPlay;
+        UnityEditor.EditorApplication.playModeStateChanged += ResetOnPlay;
+#endif
+    }
+
+#if UNITY_EDITOR
+    private void OnDisable()
+    {
+        UnityEditor.EditorApplication.playModeStateChanged -= ResetOnPlay;
+    }
+
+    private void ResetOnPlay(UnityEditor.PlayModeStateChange change)
+    {
+        if (change == UnityEditor.PlayModeStateChange.ExitingEditMode)
+        {
+            isUnlocked = false;
+            level = 1;
+        }
+    }
+#endif
 
     // Chi phí Cơ Duyên nâng cấp tiếp theo:
     // Cấp 1 -> 2: unlockCost

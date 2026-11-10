@@ -204,6 +204,71 @@ public class MergeManager : MonoBehaviour
         SortInventory();
     }
 
+    public bool HasEmptyInventorySlot()
+    {
+        if (inventoryPages == null) return false;
+        foreach (Transform page in inventoryPages)
+        {
+            if (page == null) continue;
+            foreach (Transform slot in page)
+            {
+                if (slot != null && slot.childCount == 0) return true;
+            }
+        }
+        return false;
+    }
+
+    public System.Collections.Generic.List<MergeItem> GetAllSwords(bool includeEquipped = true)
+    {
+        var list = new System.Collections.Generic.List<MergeItem>();
+        if (includeEquipped && equipPanel != null)
+        {
+            foreach (Transform slot in equipPanel)
+            {
+                if (slot == null) continue;
+                var sword = slot.GetComponentInChildren<MergeItem>();
+                if (sword != null) list.Add(sword);
+            }
+        }
+        if (inventoryPages != null)
+        {
+            foreach (Transform page in inventoryPages)
+            {
+                if (page == null) continue;
+                foreach (Transform slot in page)
+                {
+                    if (slot == null) continue;
+                    var sword = slot.GetComponentInChildren<MergeItem>();
+                    if (sword != null) list.Add(sword);
+                }
+            }
+        }
+        return list;
+    }
+
+    public bool IsSwordEquipped(MergeItem item)
+    {
+        if (item == null || equipPanel == null) return false;
+        return item.transform.IsChildOf(equipPanel);
+    }
+
+    public bool RemoveSword(MergeItem item)
+    {
+        if (item == null) return false;
+        bool isEquipped = IsSwordEquipped(item);
+        item.transform.SetParent(null);
+        Destroy(item.gameObject);
+        if (isEquipped)
+        {
+            OnEquipChanged();
+        }
+        else
+        {
+            SortInventory();
+        }
+        return true;
+    }
+
     private int GetRequiredPiecesForLevel(int level)
     {
         if (level == 1) return 2;

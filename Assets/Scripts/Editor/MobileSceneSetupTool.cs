@@ -1588,15 +1588,16 @@ public static class MobileSceneSetupTool
         Transform stagePanel = mobileRoot.Find("StagePanel");
         if (stagePanel != null)
         {
+            bool hasPhaseBar = stagePanel.GetComponent<CultivationPhaseBarUI>() != null;
             RectTransform rt = stagePanel as RectTransform;
             rt.anchorMin = new Vector2(0.05f, 1f);
             rt.anchorMax = new Vector2(0.95f, 1f);
             rt.pivot = new Vector2(0.5f, 1f);
-            rt.anchoredPosition = new Vector2(0f, -90f);
+            rt.anchoredPosition = new Vector2(0f, hasPhaseBar ? -138f : -90f);
             rt.sizeDelta = new Vector2(0f, 40f);
 
             Transform stText = stagePanel.Find("StageText");
-            if (stText != null)
+            if (stText != null && !hasPhaseBar)
             {
                 RectTransform stRt = stText as RectTransform;
                 stRt.anchorMin = Vector2.zero; stRt.anchorMax = Vector2.one;
@@ -1637,66 +1638,69 @@ public static class MobileSceneSetupTool
             }
         }
 
-        // 7. HP/MP nằm ngay dưới tiến độ, mỗi thanh có khoảng cách 8 px cố định.
+        // 7. HP Bar nằm ở góc dưới bên phải (Bottom-Right), ngay trên MobileDock, tối ưu 1 ngón tay khi nằm nghiêng
         Transform hpBar = mobileRoot.Find("PlayerHPBar");
         if (hpBar != null)
         {
             RectTransform rt = hpBar as RectTransform;
-            rt.anchorMin = new Vector2(0.5f, 1f);
-            rt.anchorMax = new Vector2(0.5f, 1f);
-            rt.pivot = new Vector2(0.5f, 1f);
-            rt.anchoredPosition = new Vector2(0f, -186f);
-            rt.sizeDelta = new Vector2(560f, 20f);
+            rt.anchorMin = new Vector2(1f, 0f);
+            rt.anchorMax = new Vector2(1f, 0f);
+            rt.pivot = new Vector2(1f, 0f);
+            rt.anchoredPosition = new Vector2(-16f, 202f);
+            rt.sizeDelta = new Vector2(280f, 32f);
+
+            var img = hpBar.GetComponent<UnityEngine.UI.Image>();
+            if (img != null) img.color = new Color(0.04f, 0.07f, 0.12f, 0.85f);
         }
 
         Transform mpBar = mobileRoot.Find("PlayerManaBar");
         if (mpBar != null)
         {
             RectTransform rt = mpBar as RectTransform;
-            rt.anchorMin = new Vector2(0.5f, 1f);
-            rt.anchorMax = new Vector2(0.5f, 1f);
-            rt.pivot = new Vector2(0.5f, 1f);
-            rt.anchoredPosition = new Vector2(0f, -214f);
-            rt.sizeDelta = new Vector2(560f, 16f);
+            rt.anchorMin = new Vector2(1f, 0f);
+            rt.anchorMax = new Vector2(1f, 0f);
+            rt.pivot = new Vector2(1f, 0f);
+            rt.anchoredPosition = new Vector2(-16f, 238f);
+            rt.sizeDelta = new Vector2(280f, 16f);
         }
 
-        // 8. REPOSITION COMBAT LOG PANEL -> Nằm trên Dock Bar (y: 160)
+        // 8. REPOSITION COMBAT LOG PANEL -> Nằm bên trái trên Dock Bar (y: 202, width: 420)
         Transform logPanel = mobileRoot.Find("CombatLogPanel");
         if (logPanel != null)
         {
             RectTransform rt = logPanel as RectTransform;
-            rt.anchorMin = new Vector2(0.05f, 0f);
-            rt.anchorMax = new Vector2(0.95f, 0f);
-            rt.pivot = new Vector2(0.5f, 0f);
-            rt.anchoredPosition = new Vector2(0f, 205f);
-            rt.sizeDelta = new Vector2(0f, 88f);
+            rt.anchorMin = new Vector2(0f, 0f);
+            rt.anchorMax = new Vector2(0f, 0f);
+            rt.pivot = new Vector2(0f, 0f);
+            rt.anchoredPosition = new Vector2(16f, 202f);
+            rt.sizeDelta = new Vector2(420f, 44f);
 
             var img = logPanel.GetComponent<UnityEngine.UI.Image>();
             if (img != null) img.color = new Color(0.04f, 0.06f, 0.1f, 0.45f);
         }
 
-        // 9. REPOSITION TUTORIAL QUEST BAR (Nếu có thanh nhiệm vụ tân thủ)
+        // 9. REPOSITION TUTORIAL QUEST BAR -> Giữa - Bên Trái (Middle-Left) với nút mũi tên thu gọn/mở rộng
         Transform questBar = mobileRoot.Find("TutorialTargetQuestBar");
         if (questBar != null)
         {
             RectTransform qRt = questBar as RectTransform;
-            qRt.anchorMin = new Vector2(0.05f, 1f);
-            qRt.anchorMax = new Vector2(0.95f, 1f);
-            qRt.pivot = new Vector2(0.5f, 1f);
-            qRt.anchoredPosition = new Vector2(0f, -244f);
-            qRt.sizeDelta = new Vector2(0f, 38f);
+            qRt.anchorMin = new Vector2(0f, 0.52f);
+            qRt.anchorMax = new Vector2(0f, 0.52f);
+            qRt.pivot = new Vector2(0f, 0.5f);
+            qRt.anchoredPosition = new Vector2(10f, 0f);
+            qRt.sizeDelta = new Vector2(260f, 44f);
         }
 
-        // 10. REPOSITION ACTIVE BUFF PANEL -> Dưới thanh Quest/Mana
+        // 10. REPOSITION ACTIVE BUFF PANEL -> Dưới StageUI
         Transform buffPanel = mobileRoot.Find("ActiveBuffPanel");
         if (buffPanel != null)
         {
             RectTransform rt = buffPanel as RectTransform;
-            rt.anchorMin = new Vector2(0.05f, 1f);
-            rt.anchorMax = new Vector2(0.95f, 1f);
-            rt.pivot = new Vector2(0.5f, 1f);
-            rt.anchoredPosition = new Vector2(0f, -290f);
-            rt.sizeDelta = new Vector2(0f, 30f);
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(12f, -98f);
+            rt.sizeDelta = new Vector2(340f, 20f);
         }
 
         // 11. ĐẢM BẢO THỨ TỰ SIBLING (Z-ORDER):

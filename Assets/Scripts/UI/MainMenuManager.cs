@@ -24,6 +24,8 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Character Creation")]
     public InputField nameInput;
+    [SerializeField] private Text characterNameLabel;
+    private string characterNamePrompt;
     public Button confirmCreateButton;
     public Button cancelCreateButton;
     private int currentSlotBeingCreated = -1;
@@ -63,9 +65,36 @@ public class MainMenuManager : MonoBehaviour
 
     private System.Collections.IEnumerator HideUIRoutine()
     {
-        yield return new WaitForEndOfFrame();
+        yield return null;
         // Tự động tìm và ẨN tất cả UI của Game (Thanh HP, MP, Log...)
         HideGameplayUI();
+    }
+
+    private void Update()
+    {
+        if (MobileUINavigationManager.BackPressedThisFrame()) HandleBackNavigation();
+    }
+
+    internal bool HandleBackNavigation()
+    {
+        if (confirmationPopup != null && confirmationPopup.activeSelf)
+        {
+            confirmationPopup.SetActive(false);
+            return true;
+        }
+        if (characterCreatePanel != null && characterCreatePanel.activeSelf)
+        {
+            if (nameInput != null && nameInput.isFocused) nameInput.DeactivateInputField();
+            else OpenCharacterSelection();
+            return true;
+        }
+        if ((settingsPanel != null && settingsPanel.activeSelf) ||
+            (characterSelectPanel != null && characterSelectPanel.activeSelf))
+        {
+            ShowPanel(mainPanel);
+            return true;
+        }
+        return false;
     }
 
     private void HideGameplayUI()
@@ -153,6 +182,11 @@ public class MainMenuManager : MonoBehaviour
         
         cancelCreateButton.onClick.AddListener(() => ShowPanel(characterSelectPanel));
         confirmCreateButton.onClick.AddListener(OnConfirmCreateCharacter);
+        if (characterNameLabel != null && nameInput != null)
+        {
+            characterNamePrompt = characterNameLabel.text;
+            nameInput.onValueChanged.AddListener(_ => characterNameLabel.text = characterNamePrompt);
+        }
 
         closeSettingsButton.onClick.AddListener(() => ShowPanel(mainPanel));
 
@@ -207,6 +241,7 @@ public class MainMenuManager : MonoBehaviour
     {
         currentSlotBeingCreated = slotIndex;
         if (nameInput) nameInput.text = "";
+        if (characterNameLabel != null) characterNameLabel.text = characterNamePrompt;
         ShowPanel(characterCreatePanel);
     }
 
@@ -215,7 +250,7 @@ public class MainMenuManager : MonoBehaviour
         string charName = nameInput != null ? nameInput.text.Trim() : "";
         if (string.IsNullOrEmpty(charName))
         {
-            Debug.LogWarning("Tên không được để trống!");
+            if (characterNameLabel != null) characterNameLabel.text = "Vui lòng nhập đạo hiệu.";
             return;
         }
 

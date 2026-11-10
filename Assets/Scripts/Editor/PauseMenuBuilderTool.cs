@@ -173,7 +173,7 @@ public class PauseMenuBuilderTool
         hTitle.fontSize = 20;
         hTitle.fontStyle = FontStyle.Bold;
         hTitle.alignment = TextAnchor.MiddleCenter;
-        hTitle.text = "⏸️ TẠM DỪNG & CÀI ĐẶT ⚙️";
+        hTitle.text = "TẠM DỪNG & CÀI ĐẶT";
         hTitle.color = new Color(1f, 0.88f, 0.35f);
         hTitleObj.GetComponent<Outline>().effectColor = Color.black;
         RectTransform htRt = hTitleObj.GetComponent<RectTransform>();
@@ -181,15 +181,15 @@ public class PauseMenuBuilderTool
         htRt.anchorMax = Vector2.one;
         htRt.sizeDelta = Vector2.zero;
 
-        // Close Button [✕]
+        // Close Button [X]
         GameObject closeBtnObj = new GameObject("CloseHeaderBtn", typeof(RectTransform), typeof(Image), typeof(Button));
         closeBtnObj.transform.SetParent(headerObj.transform, false);
         RectTransform cbRt = closeBtnObj.GetComponent<RectTransform>();
         cbRt.anchorMin = new Vector2(1, 0.5f);
         cbRt.anchorMax = new Vector2(1, 0.5f);
         cbRt.pivot = new Vector2(1, 0.5f);
-        cbRt.anchoredPosition = new Vector2(-8, 0);
-        cbRt.sizeDelta = new Vector2(32, 32);
+        cbRt.anchoredPosition = new Vector2(-4, 0);
+        cbRt.sizeDelta = new Vector2(48, 48);
 
         Image cbImg = closeBtnObj.GetComponent<Image>();
         cbImg.color = new Color(0.8f, 0.22f, 0.22f, 0.9f);
@@ -199,10 +199,10 @@ public class PauseMenuBuilderTool
         closeTxtObj.transform.SetParent(closeBtnObj.transform, false);
         Text closeTxt = closeTxtObj.GetComponent<Text>();
         closeTxt.font = fontToUse;
-        closeTxt.fontSize = 17;
+        closeTxt.fontSize = 20;
         closeTxt.fontStyle = FontStyle.Bold;
         closeTxt.alignment = TextAnchor.MiddleCenter;
-        closeTxt.text = "✕";
+        closeTxt.text = "X";
         closeTxt.color = Color.white;
         RectTransform ctxtRt = closeTxtObj.GetComponent<RectTransform>();
         ctxtRt.anchorMin = Vector2.zero;
@@ -230,7 +230,7 @@ public class PauseMenuBuilderTool
         txtCharInfo.font = fontToUse;
         txtCharInfo.fontSize = 14;
         txtCharInfo.alignment = TextAnchor.MiddleLeft;
-        txtCharInfo.text = "🏷️ <b>Đạo Hữu</b> | 🌟 <color=#66FFB2>Luyện Khí</color> | ⚔️ Tầng <color=#FFE666>1</color> (Slot 1)";
+        txtCharInfo.text = "<b>Đạo Hữu</b> | <color=#66FFB2>Luyện Khí</color> | Tầng <color=#FFE666>1</color> (Slot 1)";
         txtCharInfo.color = Color.white;
         RectTransform tciRt = tciObj.GetComponent<RectTransform>();
         tciRt.anchorMin = new Vector2(0, 0.5f);
@@ -245,7 +245,7 @@ public class PauseMenuBuilderTool
         txtSaveStatus.font = fontToUse;
         txtSaveStatus.fontSize = 13;
         txtSaveStatus.alignment = TextAnchor.MiddleLeft;
-        txtSaveStatus.text = "💾 Trạng thái: <color=#88FF88>Tiến trình sẵn sàng đồng bộ</color>";
+        txtSaveStatus.text = "Trạng thái: <color=#88FF88>Tiến trình sẵn sàng đồng bộ</color>";
         txtSaveStatus.color = new Color(0.8f, 0.9f, 1f);
         RectTransform tssRt = tssObj.GetComponent<RectTransform>();
         tssRt.anchorMin = new Vector2(0, 0);
@@ -274,7 +274,7 @@ public class PauseMenuBuilderTool
         atTxt.font = fontToUse;
         atTxt.fontSize = 14;
         atTxt.fontStyle = FontStyle.Bold;
-        atTxt.text = "🎵 CÀI ĐẶT ÂM THANH:";
+        atTxt.text = "CÀI ĐẶT ÂM THANH:";
         atTxt.color = new Color(1f, 0.85f, 0.35f);
         RectTransform atRt = atObj.GetComponent<RectTransform>();
         atRt.anchorMin = new Vector2(0, 1);
@@ -300,14 +300,14 @@ public class PauseMenuBuilderTool
         aaRt.anchoredPosition = new Vector2(0, 16);
         aaRt.sizeDelta = new Vector2(450, 225);
 
-        // 1. Nút Tiếp Tục [▶ TIẾP TỤC CHƠI]
-        Button btnResume = CreateActionButton(actionsArea.transform, "BtnResume", "▶ TIẾP TỤC CHƠI", new Vector2(0, 175), 44f, new Color(0.12f, 0.42f, 0.26f), fontToUse, 16);
-        // 2. Nút Lưu Tiến Trình [💾 LƯU TIẾN TRÌNH]
-        Button btnSave = CreateActionButton(actionsArea.transform, "BtnSave", "💾 LƯU TIẾN TRÌNH", new Vector2(0, 122), 40f, new Color(0.14f, 0.32f, 0.52f), fontToUse, 15);
-        // 3. Nút Về Main Menu [🏠 VỀ MENU CHÍNH]
-        Button btnMainMenu = CreateActionButton(actionsArea.transform, "BtnMainMenu", "🏠 VỀ MENU CHÍNH", new Vector2(0, 72), 40f, new Color(0.50f, 0.36f, 0.14f), fontToUse, 15);
-        // 4. Nút Thoát Game [🚪 THOÁT GAME]
-        Button btnQuit = CreateActionButton(actionsArea.transform, "BtnQuit", "🚪 THOÁT TRÒ CHƠI", new Vector2(0, 22), 40f, new Color(0.52f, 0.16f, 0.16f), fontToUse, 15);
+        // 1. Nút Tiếp Tục [TIẾP TỤC CHƠI]
+        Button btnResume = CreateActionButton(actionsArea.transform, "BtnResume", "TIẾP TỤC CHƠI", new Vector2(0, 175), 44f, new Color(0.12f, 0.42f, 0.26f), fontToUse, 16);
+        // 2. Nút Lưu Tiến Trình [LƯU TIẾN TRÌNH]
+        Button btnSave = CreateActionButton(actionsArea.transform, "BtnSave", "LƯU TIẾN TRÌNH", new Vector2(0, 122), 40f, new Color(0.14f, 0.32f, 0.52f), fontToUse, 15);
+        // 3. Nút Về Main Menu [VỀ MENU CHÍNH]
+        Button btnMainMenu = CreateActionButton(actionsArea.transform, "BtnMainMenu", "VỀ MENU CHÍNH", new Vector2(0, 72), 40f, new Color(0.50f, 0.36f, 0.14f), fontToUse, 15);
+        // 4. Nút Thoát Game [THOÁT TRÒ CHƠI]
+        Button btnQuit = CreateActionButton(actionsArea.transform, "BtnQuit", "THOÁT TRÒ CHƠI", new Vector2(0, 22), 40f, new Color(0.52f, 0.16f, 0.16f), fontToUse, 15);
 
         // ─────────────────────────────────────────────────────────────────────
         // 10. CONFIRMATION POPUP (HỘP XÁC NHẬN NỘI BỘ TRÁNH LỖI BẤM NHẦM)

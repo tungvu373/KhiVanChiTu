@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>SDK quảng cáo đăng ký provider khi khởi tạo; callback chỉ thành công sau khi nhận reward.</summary>
@@ -52,6 +53,12 @@ public class OfflineRewardPopupUI : MonoBehaviour
     private Coroutine animRoutine;
     private bool isOpen = false;
     private bool adInProgress;
+    internal bool IsModalOpen => isOpen && gameObject.activeInHierarchy;
+
+    internal void DismissFromBack()
+    {
+        if (!adInProgress) CloseModal();
+    }
 
     private void Awake()
     {
@@ -116,15 +123,14 @@ public class OfflineRewardPopupUI : MonoBehaviour
 
     public void OpenModal(OfflineEarningsManager.OfflineRewardData reward)
     {
+        Canvas parentCanvas = FindGameplayCanvas();
+        if (parentCanvas == null) return;
+        if (transform != parentCanvas.transform &&
+            (transform.parent == null || GetComponentInParent<Canvas>(true)?.rootCanvas != parentCanvas || !transform.parent.gameObject.activeInHierarchy))
+            transform.SetParent(parentCanvas.transform, false);
+        if (!parentCanvas.gameObject.activeSelf) parentCanvas.gameObject.SetActive(true);
+
         isOpen = true;
-
-        Canvas parentCanvas = GetComponentInParent<Canvas>(true);
-        if (parentCanvas == null) parentCanvas = FindObjectOfType<Canvas>(true);
-        if (parentCanvas != null && !parentCanvas.gameObject.activeSelf)
-        {
-            parentCanvas.gameObject.SetActive(true);
-        }
-
         gameObject.SetActive(true);
         transform.SetAsLastSibling();
 
@@ -160,7 +166,7 @@ public class OfflineRewardPopupUI : MonoBehaviour
     {
         if (titleText != null)
         {
-            titleText.text = "🧘 BẾ QUAN TU LUYỆN 🧘";
+            titleText.text = "BẾ QUAN TU LUYỆN";
         }
 
         TimeSpan span = TimeSpan.FromSeconds(reward.offlineSeconds);
@@ -183,26 +189,26 @@ public class OfflineRewardPopupUI : MonoBehaviour
         if (rewardDetailsText != null)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("<b><color=#FFE666>Thu Hoạch Khi Bế Quan:</color></b>\n");
-            sb.AppendLine($"  💎 Linh Thạch: <color=#FFE666>+{EconomyManager.FormatNumber(reward.linhThach)}</color>");
-            sb.AppendLine($"  ✨ Tu Vi: <color=#66FF99>+{reward.tuVi:F0}</color>");
+            sb.AppendLine("<b><color=#FFE666>Thu Hoạch Khi Bế Quan:</color></b>");
+            sb.AppendLine($"  Linh Thạch: <color=#FFE666>+{EconomyManager.FormatNumber(reward.linhThach)}</color>");
+            sb.AppendLine($"  Tu Vi: <color=#66FF99>+{reward.tuVi:F0}</color>");
 
             if (reward.linhChi > 0)
-                sb.AppendLine($"  🌿 Linh Chi: <color=#66FFB2>+{reward.linhChi}</color>");
+                sb.AppendLine($"  Linh Chi: <color=#66FFB2>+{reward.linhChi}</color>");
             if (reward.ngungKhi > 0)
-                sb.AppendLine($"  🌾 Cỏ Ngưng Khí: <color=#66FFB2>+{reward.ngungKhi}</color>");
+                sb.AppendLine($"  Cỏ Ngưng Khí: <color=#66FFB2>+{reward.ngungKhi}</color>");
             if (reward.tuyetLien > 0)
-                sb.AppendLine($"  ❄️ Tuyết Liên: <color=#99E6FF>+{reward.tuyetLien}</color>");
+                sb.AppendLine($"  Tuyết Liên: <color=#99E6FF>+{reward.tuyetLien}</color>");
             if (reward.ore > 0)
-                sb.AppendLine($"  ⚙️ Quặng Phôi: <color=#E0A868>+{reward.ore}</color>");
+                sb.AppendLine($"  Quặng Phôi: <color=#E0A868>+{reward.ore}</color>");
 
-            rewardDetailsText.text = sb.ToString();
+            rewardDetailsText.text = sb.ToString().TrimEnd();
         }
         if (claimDoubleButton != null)
         {
             claimDoubleButton.interactable = RewardedAdBridge.IsReady;
             Text label = claimDoubleButton.GetComponentInChildren<Text>();
-            if (label != null) label.text = RewardedAdBridge.IsReady ? "🎬 XEM QC (x2)" : "QC chưa sẵn sàng";
+            if (label != null) label.text = RewardedAdBridge.IsReady ? "XEM QC (x2)" : "QC chưa sẵn sàng";
         }
     }
 
@@ -305,18 +311,25 @@ public class OfflineRewardPopupUI : MonoBehaviour
         animRoutine = null;
     }
 
+    private static Canvas FindGameplayCanvas()
+    {
+        Canvas fallback = null;
+        foreach (var root in SceneManager.GetActiveScene().GetRootGameObjects())
+        {
+            if (!root.TryGetComponent<Canvas>(out var canvas) || canvas.renderMode == RenderMode.WorldSpace) continue;
+            if (root.name == "Canvas") return canvas;
+            if (fallback == null) fallback = canvas;
+        }
+        return fallback;
+    }
+
     /// <summary>
     /// Đảm bảo Panel tồn tại trong Canvas nếu chưa được tạo thủ công.
     /// Tự động thiết lập đầy đủ Button, Layout, Font cho Mobile Portrait.
     /// </summary>
     public static void EnsureInstanceInCanvas()
     {
-        Canvas canvas = FindObjectOfType<Canvas>(true);
-        if (canvas == null)
-        {
-            GameObject cObj = GameObject.Find("Canvas");
-            if (cObj != null) canvas = cObj.GetComponent<Canvas>();
-        }
+        Canvas canvas = FindGameplayCanvas();
         if (canvas == null)
         {
             Debug.LogError("❌ [OfflineRewardPopupUI] Không tìm thấy Canvas trong Scene!");
@@ -325,7 +338,7 @@ public class OfflineRewardPopupUI : MonoBehaviour
 
         if (!canvas.gameObject.activeSelf) canvas.gameObject.SetActive(true);
 
-        Font fontToUse = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        Font fontToUse = UiTextStyle.BodyFont;
         if (fontToUse == null) fontToUse = Font.CreateDynamicFontFromOSFont("Arial", 16);
 
         GameObject modalObj = new GameObject("OfflineRewardPopupUI", typeof(RectTransform), typeof(CanvasGroup), typeof(OfflineRewardPopupUI));
@@ -365,7 +378,7 @@ public class OfflineRewardPopupUI : MonoBehaviour
         titleObj.transform.SetParent(boxObj.transform, false);
         Text titleTxt = titleObj.GetComponent<Text>();
         titleTxt.font = fontToUse;
-        titleTxt.text = "🧘 BẾ QUAN TU LUYỆN 🧘";
+        titleTxt.text = "BẾ QUAN TU LUYỆN";
         titleTxt.fontSize = 26;
         titleTxt.fontStyle = FontStyle.Bold;
         titleTxt.alignment = TextAnchor.MiddleCenter;
@@ -421,7 +434,7 @@ public class OfflineRewardPopupUI : MonoBehaviour
         btnNormTxtObj.transform.SetParent(btnNormalObj.transform, false);
         Text btnNormTxt = btnNormTxtObj.GetComponent<Text>();
         btnNormTxt.font = fontToUse;
-        btnNormTxt.text = "🎁 THU NHẬN (x1)";
+        btnNormTxt.text = "THU NHẬN (x1)";
         btnNormTxt.fontSize = 17;
         btnNormTxt.fontStyle = FontStyle.Bold;
         btnNormTxt.alignment = TextAnchor.MiddleCenter;
@@ -443,7 +456,7 @@ public class OfflineRewardPopupUI : MonoBehaviour
         btnDblTxtObj.transform.SetParent(btnDoubleObj.transform, false);
         Text btnDblTxt = btnDblTxtObj.GetComponent<Text>();
         btnDblTxt.font = fontToUse;
-        btnDblTxt.text = "🎬 XEM QC (x2)";
+        btnDblTxt.text = "XEM QC (x2)";
         btnDblTxt.fontSize = 18;
         btnDblTxt.fontStyle = FontStyle.Bold;
         btnDblTxt.alignment = TextAnchor.MiddleCenter;

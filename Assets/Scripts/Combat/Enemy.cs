@@ -46,6 +46,39 @@ public class Enemy : MonoBehaviour
 
     public float attackRange = 1.8f; // Khoảng cách đứng đánh cận chiến sát người chơi
 
+    protected virtual void Awake()
+    {
+        CacheRenderers();
+    }
+
+    protected void CacheRenderers()
+    {
+        if (renderers == null || renderers.Length == 0)
+        {
+            renderers = GetComponentsInChildren<Renderer>(true);
+            if (renderers != null)
+            {
+                originalColors = new Color[renderers.Length];
+                for (int i = 0; i < renderers.Length; i++)
+                {
+                    if (renderers[i] != null && renderers[i].material != null)
+                    {
+                        if (renderers[i].material.HasProperty("_Color"))
+                            originalColors[i] = renderers[i].material.color;
+                        else if (renderers[i].material.HasProperty("_BaseColor"))
+                            originalColors[i] = renderers[i].material.GetColor("_BaseColor");
+                        else
+                            originalColors[i] = Color.white;
+                    }
+                    else
+                    {
+                        originalColors[i] = Color.white;
+                    }
+                }
+            }
+        }
+    }
+
     private void OnDisable()
     {
         CancelInvoke();
@@ -106,26 +139,13 @@ public class Enemy : MonoBehaviour
         SetupHPBar();
 
         // Lấy tất cả SkinnedMeshRenderer/MeshRenderer trên Model 3D
-        if (renderers == null || renderers.Length == 0)
-        {
-            renderers = GetComponentsInChildren<Renderer>();
-            originalColors = new Color[renderers.Length];
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                if (renderers[i].material.HasProperty("_Color"))
-                    originalColors[i] = renderers[i].material.color;
-                else if (renderers[i].material.HasProperty("_BaseColor"))
-                    originalColors[i] = renderers[i].material.GetColor("_BaseColor");
-                else
-                    originalColors[i] = Color.white;
-            }
-        }
-        else
+        CacheRenderers();
+        if (renderers != null && originalColors != null)
         {
             // Phục hồi lại màu ban đầu nếu từng bị Flash trắng
             for (int i = 0; i < renderers.Length; i++)
             {
-                if (renderers[i] != null && originalColors != null && i < originalColors.Length)
+                if (renderers[i] != null && i < originalColors.Length && renderers[i].material != null)
                 {
                     if (renderers[i].material.HasProperty("_Color"))
                         renderers[i].material.color = originalColors[i];
@@ -252,6 +272,8 @@ public class Enemy : MonoBehaviour
 
     protected virtual void UpdateFlashEffect()
     {
+        if (renderers == null || originalColors == null) return;
+
         // Đổi màu giật cục (Flash)
         if (flashTimer > 0)
         {
@@ -261,7 +283,7 @@ public class Enemy : MonoBehaviour
                 // Trả lại màu gốc
                 for (int i = 0; i < renderers.Length; i++)
                 {
-                    if (renderers[i] != null)
+                    if (renderers[i] != null && i < originalColors.Length && renderers[i].material != null)
                     {
                         if (renderers[i].material.HasProperty("_Color"))
                             renderers[i].material.color = originalColors[i];
@@ -349,6 +371,12 @@ public class Enemy : MonoBehaviour
                 
                 if (animator != null) animator.SetTrigger("Attack"); // Kích hoạt Anim Đánh
                 
+                if (!isBoss && HitVFXManager.Instance != null)
+                {
+                    Vector3 swipePos = transform.position + transform.forward * 0.9f + Vector3.up * 1f;
+                    HitVFXManager.Instance.SpawnEnemyAttackSwipe(swipePos, transform.forward);
+                }
+
                 if (CombatManager.Instance != null)
                 {
                     CombatManager.Instance.DamagePlayer(damage, isBoss);
@@ -367,7 +395,7 @@ public class Enemy : MonoBehaviour
         {
             foreach (var r in renderers)
             {
-                if (r != null)
+                if (r != null && r.material != null)
                 {
                     if (r.material.HasProperty("_Color"))
                         r.material.color = Color.white;
@@ -480,21 +508,38 @@ public class Enemy : MonoBehaviour
         if (EconomyManager.Instance != null)
         {
             float artifactDrop = ArtifactService.Instance != null ? ArtifactService.Instance.StoneDropMultiplier : 1f;
-            EconomyManager.Instance.AddLinhThach((baseDrop + tuLinhBonus) * artifactDrop);
+            float daoAnDrop = 1f + DaoAnProgressionService.Bonus(DaoAnEffect.MonsterLinhThach);
+            if (isBoss)
+            {
+                daoAnDrop += DaoAnProgressionService.Bonus(DaoAnEffect.BossLinhThach);
+                float jackpotChance = Mathf.Clamp01(DaoAnProgressionService.Bonus(DaoAnEffect.BossStoneJackpot));
+                if (jackpotChance > 0f && Random.value < jackpotChance) daoAnDrop *= 2f;
+            }
+            else daoAnDrop += DaoAnProgressionService.Bonus(DaoAnEffect.RegularMonsterStone);
+            EconomyManager.Instance.AddLinhThach((baseDrop + tuLinhBonus) * artifactDrop * daoAnDrop);
         }
         
         // Cộng Tu Vi nếu người chơi chưa đạt 100% tu vi (Boss thưởng tu vi gấp 5 lần quái thường)
         if (CultivationManager.Instance != null && !CultivationManager.Instance.IsTuViMaxed())
         {
-            float tuViBonus = 5f * Mathf.Pow(1.2f, stageIndex);
+            float tuViBonus = CultivationManager.Instance.GetBaseTuViPerKill();
             if (isBoss) tuViBonus *= 5f;
             float formationGain = FormationService.Instance != null ? FormationService.Instance.CultivationMultiplier : 1f;
-            CultivationManager.Instance.AddTuVi(tuViBonus * formationGain);
+            float daoAnGain = 1f + DaoAnProgressionService.Bonus(DaoAnEffect.MonsterTuVi);
+            if (isBoss) daoAnGain += DaoAnProgressionService.Bonus(DaoAnEffect.BossTuVi);
+            CultivationManager.Instance.AddTuVi(tuViBonus * formationGain * daoAnGain);
         }
 
         int combatStage = StageManager.Instance != null ? StageManager.Instance.currentStage : 1;
-        AlchemyService.Instance?.OnEnemyDefeated(isBoss, combatStage);
-        ArtifactService.Instance?.OnEnemyDefeated(isBoss, combatStage);
+        if (LootRewardService.Instance != null)
+        {
+            LootRewardService.Instance.HandleEnemyDefeated(isBoss, combatStage);
+        }
+        else
+        {
+            AlchemyService.Instance?.OnEnemyDefeated(isBoss, combatStage);
+            ArtifactService.Instance?.OnEnemyDefeated(isBoss, combatStage);
+        }
         AchievementManager.Instance?.OnEnemyKilled(isBoss);
         GameplayChoicesService.Instance?.OnEnemyDefeated(isBoss);
         
@@ -509,6 +554,11 @@ public class Enemy : MonoBehaviour
         }
         
         // Spawn Flying VFX (Game Feel)
+        if (HitVFXManager.Instance != null)
+        {
+            HitVFXManager.Instance.SpawnEnemyDeathDissolve(transform.position + Vector3.up * 0.8f);
+        }
+
         if (VFXHelper.Instance != null)
         {
             VFXHelper.Instance.SpawnFlyingLoot(transform.position, isBoss ? 5 : 1);

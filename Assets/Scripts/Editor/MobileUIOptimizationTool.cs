@@ -90,12 +90,15 @@ public static class MobileUIOptimizationTool
         }
 
         // ── 2. QUY HOẠCH TOP HUD ĐỈNH MÀN HÌNH ──────────────────────────────
-        // 2a. Ẩn StagePanel dư thừa (vì Cảnh Giới đã hiển thị ở CharacterFrame/TopBar)
+        // Giữ thanh giai đoạn tu vi mới; chỉ ẩn StagePanel legacy chưa có thanh.
         var stagePanel = mobileRoot.Find("StagePanel");
         if (stagePanel != null)
         {
-            stagePanel.gameObject.SetActive(false);
-            Debug.Log("✅ [2a] Đã tắt StagePanel trùng lặp.");
+            bool hasPhaseBar = stagePanel.GetComponent<CultivationPhaseBarUI>() != null;
+            stagePanel.gameObject.SetActive(hasPhaseBar);
+            if (hasPhaseBar && stagePanel is RectTransform phaseRect)
+                phaseRect.anchoredPosition = new Vector2(0f, -138f);
+            Debug.Log(hasPhaseBar ? "✅ [2a] Giữ thanh tu vi theo kỳ." : "✅ [2a] Đã tắt StagePanel trùng lặp.");
         }
 
         // 2b. Ẩn PlayerManaBar (game không dùng mana)

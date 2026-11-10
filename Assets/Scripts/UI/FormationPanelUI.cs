@@ -31,12 +31,12 @@ public class FormationPanelUI : MonoBehaviour
 
     public static readonly string[] FormationNames =
     {
-        "⚡ Cửu Thiên Lôi Trận",
-        "🌀 Bát Quái Tụ Linh Trận",
-        "❄️ Cực Hàn Băng Trận",
-        "🗡️ Vạn Kiếm Quy Tông Trận",
-        "🩸 Huyết Ma Hóa Sinh Trận",
-        "🛡️ Huyền Vũ Kim Cang Trận"
+        "Cửu Thiên Lôi Trận",
+        "Bát Quái Tụ Linh Trận",
+        "Cực Hàn Băng Trận",
+        "Vạn Kiếm Quy Tông Trận",
+        "Huyết Ma Hóa Sinh Trận",
+        "Huyền Vũ Kim Cang Trận"
     };
 
     public static readonly string[] FormationDescs =
@@ -97,9 +97,11 @@ public class FormationPanelUI : MonoBehaviour
         if (ArtifactService.Instance != null)
             ArtifactService.Instance.OnChanged += RefreshUI;
         if (EconomyManager.Instance != null)
-            EconomyManager.Instance.OnLinhThachChanged += _ => RefreshUI();
+            EconomyManager.Instance.OnLinhThachChanged += HandleLinhThachChanged;
         RefreshUI();
     }
+
+    private void HandleLinhThachChanged(float _) => RefreshUI();
 
     private void OnDisable()
     {
@@ -108,7 +110,7 @@ public class FormationPanelUI : MonoBehaviour
         if (ArtifactService.Instance != null)
             ArtifactService.Instance.OnChanged -= RefreshUI;
         if (EconomyManager.Instance != null)
-            EconomyManager.Instance.OnLinhThachChanged -= _ => RefreshUI();
+            EconomyManager.Instance.OnLinhThachChanged -= HandleLinhThachChanged;
     }
 
     private void Update()
@@ -124,7 +126,7 @@ public class FormationPanelUI : MonoBehaviour
         float stone = EconomyManager.Instance?.currentLinhThach ?? 0f;
         FormationId selected = svc.Selected;
 
-        if (txtOreLabel != null) txtOreLabel.text = $"⚙️ Quặng Phôi: <b><color=#f39c12>{ore}</color></b>";
+        if (txtOreLabel != null) txtOreLabel.text = $"Quặng Phôi: <b><color=#f39c12>{ore}</color></b>";
         if (txtCurrentActiveLabel != null)
         {
             int sIdx = (int)selected;
@@ -169,7 +171,7 @@ public class FormationPanelUI : MonoBehaviour
                 {
                     string oreColor = ore >= oreCost ? "#55efc4" : "#ff7675";
                     string stoneColor = stone >= stoneCost ? "#ffeaa7" : "#ff7675";
-                    formationCostTexts[i].text = $"Cần: <color={oreColor}>⚙️ {oreCost}</color> | <color={stoneColor}>💎 {EconomyManager.FormatNumber(stoneCost)}</color>";
+                    formationCostTexts[i].text = $"Cần: <color={oreColor}>Quặng {oreCost}</color> | <color={stoneColor}>LT {EconomyManager.FormatNumber(stoneCost)}</color>";
                 }
             }
 
@@ -178,15 +180,15 @@ public class FormationPanelUI : MonoBehaviour
             {
                 if (isSelected)
                 {
-                    statusBadges[i].text = "<color=#ffd32a>✦ ĐANG KÍCH HOẠT</color>";
+                    statusBadges[i].text = "<color=#ffd32a>ĐANG KÍCH HOẠT</color>";
                 }
                 else if (level == 0)
                 {
-                    statusBadges[i].text = "<color=#7f8c8d>🔒 Chưa Khai Ngộ</color>";
+                    statusBadges[i].text = "<color=#7f8c8d>Chưa Khai Ngộ</color>";
                 }
                 else
                 {
-                    statusBadges[i].text = "<color=#74b9ff>✓ Sẵn Sàng Dùng</color>";
+                    statusBadges[i].text = "<color=#74b9ff>Sẵn Sàng Dùng</color>";
                 }
             }
 
@@ -243,7 +245,7 @@ public class FormationPanelUI : MonoBehaviour
             }
             if (svc.SpiritActive)
             {
-                spiritCooldownLabel.text = "<b><color=#55efc4>✨ Tụ Linh Trận Đang Phát Huy Uy Lực (x2 Tu Vi)!</color></b>";
+                spiritCooldownLabel.text = "<b><color=#55efc4>Tụ Linh Trận Đang Phát Huy Uy Lực (x2 Tu Vi)!</color></b>";
             }
             else if (svc.SpiritCooldown > System.TimeSpan.Zero)
             {
@@ -252,7 +254,7 @@ public class FormationPanelUI : MonoBehaviour
             }
             else
             {
-                spiritCooldownLabel.text = "<b><color=#ffd32a>⚡ Tụ Linh Trận Sẵn Sàng Kích Hoạt!</color></b>";
+                spiritCooldownLabel.text = "<b><color=#ffd32a>Tụ Linh Trận Sẵn Sàng Kích Hoạt!</color></b>";
             }
         }
     }
@@ -265,7 +267,7 @@ public class FormationPanelUI : MonoBehaviour
         {
             if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
             if (GameLogger.Instance != null)
-                GameLogger.Instance.Log($"🌀 Đã chuyển sang kích hoạt {FormationNames[index]}!", Color.cyan);
+                GameLogger.Instance.Log($"Đã chuyển sang kích hoạt {FormationNames[index]}!", Color.cyan);
         }
         RefreshUI();
     }
@@ -278,12 +280,12 @@ public class FormationPanelUI : MonoBehaviour
         {
             if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
             if (GameLogger.Instance != null)
-                GameLogger.Instance.Log($"✨ Tu luyện thành công {FormationNames[index]}!", Color.yellow);
+                GameLogger.Instance.Log($"Tu luyện thành công {FormationNames[index]}!", Color.yellow);
         }
         else
         {
             if (GameLogger.Instance != null)
-                GameLogger.Instance.Log("⚙️ Không đủ Quặng Phôi hoặc Linh Thạch!", Color.yellow);
+                GameLogger.Instance.Log("Không đủ Quặng Phôi hoặc Linh Thạch!", Color.yellow);
         }
         RefreshUI();
     }
@@ -295,12 +297,12 @@ public class FormationPanelUI : MonoBehaviour
         {
             if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
             if (GameLogger.Instance != null)
-                GameLogger.Instance.Log("🌀 Tụ Linh Trận đại phát uy lực, nhân đôi tốc độ tu vi!", Color.green);
+                GameLogger.Instance.Log("Tụ Linh Trận đại phát uy lực, nhân đôi tốc độ tu vi!", Color.green);
         }
         else
         {
             if (GameLogger.Instance != null)
-                GameLogger.Instance.Log("🌀 Tụ Linh Trận đang hồi chiêu hoặc chưa chọn!", Color.yellow);
+                GameLogger.Instance.Log("Tụ Linh Trận đang hồi chiêu hoặc chưa chọn!", Color.yellow);
         }
         RefreshUI();
     }

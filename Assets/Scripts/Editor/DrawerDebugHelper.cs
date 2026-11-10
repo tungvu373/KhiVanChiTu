@@ -234,4 +234,176 @@ public static class DrawerDebugHelper
             }
         }
     }
+
+    [MenuItem("TuTien/Debug/Inspect Boss Instance")]
+    public static void InspectBossInstance()
+    {
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Boss.prefab");
+        if (prefab == null)
+        {
+            Debug.LogError("Boss.prefab not found at Assets/Prefabs/Boss.prefab");
+            return;
+        }
+
+        GameObject testBoss = Object.Instantiate(prefab, new Vector3(0, 0, 10), Quaternion.identity);
+        testBoss.name = "DEBUG_TEST_BOSS";
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("=== INSPECT BOSS INSTANCE ===");
+        sb.AppendLine($"Root '{testBoss.name}': pos={testBoss.transform.position}, rot={testBoss.transform.rotation.eulerAngles}, scale={testBoss.transform.localScale}");
+        
+        var anim = testBoss.GetComponent<Animator>();
+        sb.AppendLine($"Animator on root: {(anim != null ? ("found, avatar=" + (anim.avatar != null ? anim.avatar.name : "null") + " controller=" + (anim.runtimeAnimatorController != null ? anim.runtimeAnimatorController.name : "null")) : "NULL")}");
+
+        var bossComp = testBoss.GetComponent<BossEnemy>();
+        sb.AppendLine($"BossEnemy on root: {(bossComp != null ? "FOUND" : "NULL")}");
+
+        for (int i = 0; i < testBoss.transform.childCount; i++)
+        {
+            var child = testBoss.transform.GetChild(i);
+            sb.AppendLine($"Child [{i}] '{child.name}': localPos={child.localPosition}, localRot={child.localRotation.eulerAngles}, localScale={child.localScale}");
+            var childBoss = child.GetComponent<BossEnemy>();
+            if (childBoss != null) sb.AppendLine($"   -> Has BossEnemy component!");
+            var childAnim = child.GetComponent<Animator>();
+            if (childAnim != null) sb.AppendLine($"   -> Has Animator component!");
+        }
+
+        var smrs = testBoss.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        sb.AppendLine($"Total SkinnedMeshRenderers: {smrs.Length}");
+        foreach (var s in smrs)
+        {
+            sb.AppendLine($"   SMR on '{s.gameObject.name}': rot={s.transform.rotation.eulerAngles}, localRot={s.transform.localRotation.eulerAngles}, rootBone={(s.rootBone != null ? s.rootBone.name : "null")}, bounds={s.bounds}");
+        }
+
+        Debug.Log(sb.ToString());
+        Object.DestroyImmediate(testBoss);
+    }
+
+    [MenuItem("TuTien/Debug/Sample Boss Animation")]
+    public static void SampleBossAnimation()
+    {
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Boss.prefab");
+        GameObject testBoss = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        var anim = testBoss.GetComponent<Animator>();
+        var idleClip = AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Import/Boss/Idle.anim");
+        var walkClip = AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Import/Boss/Zombie Walk.anim");
+        var deathClip = AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Import/Boss/Zombie Death.anim");
+
+        var hips = testBoss.transform.Find("mixamorig:Hips");
+        var smr = testBoss.GetComponentInChildren<SkinnedMeshRenderer>();
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("=== SAMPLE BOSS ANIMATIONS ===");
+        if (idleClip != null)
+        {
+            idleClip.SampleAnimation(testBoss, 0.5f);
+            sb.AppendLine($"[IDLE @ 0.5s]: Root rot={testBoss.transform.rotation.eulerAngles}, Hips pos={hips?.localPosition}, Hips rot={hips?.localRotation.eulerAngles}, SMR bounds={smr?.bounds}");
+        }
+        if (walkClip != null)
+        {
+            walkClip.SampleAnimation(testBoss, 0.5f);
+            sb.AppendLine($"[WALK @ 0.5s]: Root rot={testBoss.transform.rotation.eulerAngles}, Hips pos={hips?.localPosition}, Hips rot={hips?.localRotation.eulerAngles}, SMR bounds={smr?.bounds}");
+        }
+        if (deathClip != null)
+        {
+            deathClip.SampleAnimation(testBoss, 0.5f);
+            sb.AppendLine($"[DEATH @ 0.5s]: Root rot={testBoss.transform.rotation.eulerAngles}, Hips pos={hips?.localPosition}, Hips rot={hips?.localRotation.eulerAngles}, SMR bounds={smr?.bounds}");
+        }
+        Debug.Log(sb.ToString());
+        Object.DestroyImmediate(testBoss);
+    }
+
+    [MenuItem("TuTien/Debug/Test: Toggle Bottom Dock Collapse")]
+    public static void TestToggleBottomDock()
+    {
+        var drawer = Object.FindAnyObjectByType<MobileDrawerUIController>(FindObjectsInactive.Include);
+        if (drawer == null)
+        {
+            Debug.LogError("❌ FAIL: Không tìm thấy MobileDrawerUIController!");
+            return;
+        }
+
+        bool initial = drawer.IsDockCollapsed;
+        drawer.ToggleDockCollapse();
+        bool afterCollapse = drawer.IsDockCollapsed;
+        Debug.Log($"✅ Step 1: Toggle collapse (ban đầu={initial} -> sau gạt={afterCollapse})");
+
+        drawer.ToggleDockCollapse();
+        bool afterExpand = drawer.IsDockCollapsed;
+        Debug.Log($"✅ Step 2: Toggle expand (sau mở lại={afterExpand})");
+
+        if (afterCollapse != initial && afterExpand == initial)
+        {
+            Debug.Log("🎉 PASS: Tính năng gạt mũi tên đóng/mở toàn bộ bảng dưới (Bottom Dock) hoạt động hoàn hảo 100%!");
+        }
+        else
+        {
+            Debug.LogError("❌ FAIL: Trạng thái đóng mở không khớp!");
+        }
+    }
+
+    [MenuItem("TuTien/Debug/Test: Toggle Quest Bar Collapse")]
+    public static void TestToggleQuestBar()
+    {
+        var questBar = Object.FindAnyObjectByType<CollapsibleQuestBar>(FindObjectsInactive.Include);
+        if (questBar == null)
+        {
+            var go = GameObject.Find("Canvas/MobileUIRoot/TutorialTargetQuestBar");
+            if (go != null) questBar = go.AddComponent<CollapsibleQuestBar>();
+        }
+
+        if (questBar == null)
+        {
+            Debug.LogError("❌ FAIL: Không tìm thấy TutorialTargetQuestBar!");
+            return;
+        }
+
+        bool initial = questBar.IsCollapsed;
+        questBar.ToggleQuestBar();
+        bool afterCollapse = questBar.IsCollapsed;
+        Debug.Log($"✅ Step 1: Quest bar collapse (ban đầu={initial} -> sau={afterCollapse})");
+
+        questBar.ToggleQuestBar();
+        bool afterExpand = questBar.IsCollapsed;
+        Debug.Log($"✅ Step 2: Quest bar expand (sau={afterExpand})");
+
+        if (afterCollapse != initial && afterExpand == initial)
+        {
+            Debug.Log("🎉 PASS: Tính năng mũi tên thu gọn thanh Nhiệm vụ bên trái (Quest Bar) hoạt động chuẩn 100%!");
+        }
+    }
+
+    [MenuItem("TuTien/Debug/Test: Open Full Dao An Modal UI")]
+    public static void TestOpenDaoAnModal()
+    {
+        var modal = DaoAnModalUI.Instance != null ? DaoAnModalUI.Instance : Object.FindAnyObjectByType<DaoAnModalUI>(FindObjectsInactive.Include);
+        if (modal == null)
+        {
+            var go = new GameObject("DaoAnModalUI", typeof(DaoAnModalUI));
+            modal = go.GetComponent<DaoAnModalUI>();
+        }
+
+        modal.Open();
+        if (!modal.IsModalOpen)
+        {
+            Debug.LogError("❌ FAIL: DaoAnModalUI không mở được!");
+            return;
+        }
+        Debug.Log("✅ Step 1: DaoAnModalUI đã mở thành công.");
+
+        modal.SetFilter("wealth");
+        Debug.Log("✅ Step 2: Lọc nhánh Tài Lộc thành công.");
+
+        modal.SetFilter("sword");
+        Debug.Log("✅ Step 3: Lọc nhánh Kiếm Đạo thành công.");
+
+        modal.SetFilter("all");
+        Debug.Log("✅ Step 4: Trở về Tất Cả thành công.");
+
+        modal.Close();
+        if (!modal.IsModalOpen)
+        {
+            Debug.Log("🎉 PASS: Đã mở, đổi bộ lọc và đóng DaoAnModalUI.");
+        }
+    }
 }

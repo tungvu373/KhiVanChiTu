@@ -27,13 +27,15 @@ public class CultivationManager : MonoBehaviour
 
     public event Action<float, float> OnTuViChanged; // current, max
     public event Action<CultivationStageData> OnStageChanged;
+    private CultivationPhaseBarUI phaseBar;
+    private bool tribulationPromptPending;
 
     // ── V3: Realm/SubLevel (song song stageIndex trong giai đoạn chuyển tiếp) ──
     public RealmId CurrentRealm    { get; private set; } = RealmId.LuyenKhi;
     public int     CurrentSubLevel { get; private set; } = 1; // 1 → 10
 
-    /// <summary>True khi SubLevel == 10: cần đan để đột phá.</summary>
-    public bool IsAtBottleneck => CurrentSubLevel == 10;
+    private bool HasNextStage => allStages != null && currentStageIndex >= 0 && currentStageIndex < allStages.Length - 1;
+    public bool IsAtBottleneck => HasNextStage && RequiresBossToBreakthrough(GetCurrentStageData());
 
     private void Awake()
     {
@@ -50,6 +52,7 @@ public class CultivationManager : MonoBehaviour
         // Cập nhật UI ngay lúc bắt đầu
         if (allStages != null && currentStageIndex < allStages.Length)
         {
+            UpdateDashboardUI(allStages[currentStageIndex]);
             OnStageChanged?.Invoke(allStages[currentStageIndex]);
             OnTuViChanged?.Invoke(currentTuVi, allStages[currentStageIndex].requiredTuVi);
         }
@@ -57,22 +60,22 @@ public class CultivationManager : MonoBehaviour
 
     public void AddTuVi(float amount)
     {
-        if (allStages == null || currentStageIndex >= allStages.Length) return;
+        var currentStageData = GetCurrentStageData();
+        if (currentStageData == null || !(amount > 0f) || currentTuVi >= currentStageData.requiredTuVi) return;
 
-        CultivationStageData currentStageData = allStages[currentStageIndex];
-        
-        // Kẹt ở Lôi Kiếp Boss thì không tăng tu vi nữa
-        if (currentTuVi >= currentStageData.requiredTuVi) return;
-
-        currentTuVi += amount;
-        if (currentTuVi >= currentStageData.requiredTuVi)
-        {
-            currentTuVi = currentStageData.requiredTuVi;
-        }
-
+        currentTuVi = Mathf.Min(currentTuVi + amount, currentStageData.requiredTuVi);
         UpdateDashboardUI(currentStageData);
         OnTuViChanged?.Invoke(currentTuVi, currentStageData.requiredTuVi);
         CheckBreakthrough();
+    }
+
+    internal float GetBaseTuViPerKill()
+    {
+        if (currentStageIndex < 15) return 5f * Mathf.Pow(1.2f, currentStageIndex);
+
+        // Trúc Cơ Sơ Kỳ: 120 quái thường, tăng 20 quái mỗi mốc. Boss, Đan và Đạo Vận tính riêng.
+        var stage = GetCurrentStageData();
+        return stage != null ? stage.requiredTuVi / (120f + (currentStageIndex - 15) * 20f) : 0f;
     }
 
     /// <summary>
@@ -80,7 +83,7 @@ public class CultivationManager : MonoBehaviour
     /// </summary>
     public CultivationStageData GetCurrentStageData()
     {
-        if (allStages == null || currentStageIndex >= allStages.Length) return null;
+        if (allStages == null || currentStageIndex < 0 || currentStageIndex >= allStages.Length) return null;
         return allStages[currentStageIndex];
     }
 
@@ -110,29 +113,45 @@ public class CultivationManager : MonoBehaviour
     /// </summary>
     public bool IsTuViMaxed()
     {
-        if (allStages == null || currentStageIndex >= allStages.Length) return false;
-        return currentTuVi >= allStages[currentStageIndex].requiredTuVi;
+        var stage = GetCurrentStageData();
+        return stage != null && currentTuVi >= stage.requiredTuVi;
     }
+
+    public bool IsTribulationReady => IsAtBottleneck && IsTuViMaxed();
+
+    public void ShowPendingTribulationPrompt()
+    {
+        if (tribulationPromptPending) TribulationModalUI.Open();
+    }
+
+    public void MarkTribulationPromptShown() => tribulationPromptPending = false;
 
     private void UpdateDashboardUI(CultivationStageData currentStageData)
     {
+        if (currentStageData == null) return;
+        float stageProgress = currentStageData.requiredTuVi > 0f
+            ? Mathf.Clamp01(currentTuVi / currentStageData.requiredTuVi) : 0f;
+        float phaseProgress = CultivationDisplay.PhaseProgress(currentStageIndex, stageProgress);
+        string displayName = GetDisplayRealmName();
         if (stageText != null)
         {
-            bool needBoss = RequiresBossToBreakthrough(currentStageData);
-            if (currentTuVi >= currentStageData.requiredTuVi && needBoss)
-            {
-                stageText.text = $"Cảnh Giới: {currentStageData.stageName} - 100% (Cần diệt Boss để Đột phá)";
-            }
-            else
-            {
-                float progress = (currentTuVi / currentStageData.requiredTuVi) * 100f;
-                stageText.text = $"Cảnh Giới: {currentStageData.stageName} - Tiến độ: {progress:F1}%";
-            }
+            bool tribulationReady = IsTribulationReady;
+            stageText.text = $"{displayName} · {phaseProgress * 100f:F0}%";
+            if (tribulationReady)
+                stageText.text = $"{displayName} · Độ kiếp";
+            else if (!HasNextStage && stageProgress >= 1f)
+                stageText.text = $"{displayName} · Viên Mãn";
+            if (phaseBar == null) phaseBar = CultivationPhaseBarUI.Ensure(stageText);
+            phaseBar?.Refresh(currentStageIndex, stageProgress, tribulationReady);
         }
 
         if (characterInfoText != null)
         {
-            characterInfoText.text = $"Tên: {characterName}\nCảnh giới: {currentStageData.stageName}\nTu Vi: {Mathf.FloorToInt(currentTuVi)}/{currentStageData.requiredTuVi}";
+            string nameDisplay = (string.IsNullOrEmpty(characterName) || characterName == "1") ? "Đạo Hữu" : characterName;
+            string tuViCur = EconomyManager.FormatNumber(currentTuVi);
+            string tuViReq = (currentStageData != null && currentStageData.requiredTuVi > 0) ? EconomyManager.FormatNumber(currentStageData.requiredTuVi) : "Max";
+            characterInfoText.supportRichText = true;
+            characterInfoText.text = $"<b><color=#FFD700>{nameDisplay}</color></b> · <color=#66D9EF>{displayName}</color>\n<color=#A0B0C5>Tu Vi:</color> <color=#FFFFFF>{tuViCur} / {tuViReq}</color>";
         }
     }
 
@@ -172,54 +191,42 @@ public class CultivationManager : MonoBehaviour
         int nextIdx = currentStageIndex + 1;
         if (allStages != null && nextIdx < allStages.Length)
         {
-            return allStages[nextIdx].stageName;
+            return CultivationDisplay.NameForStage(nextIdx);
         }
         return "Cảnh Giới Mới";
     }
 
-    /// <summary>
-    /// Áp dụng hình phạt khi Độ Kiếp thất bại: Bị Thiên Kiếp phản phệ, tổn thất 30% điểm Tu Vi.
-    /// </summary>
+    public static float TribulationFailureLossRate => Mathf.Max(0f, 0.30f - DaoAnProgressionService.Bonus(DaoAnEffect.TribulationProtection));
+
+    /// <summary>Áp dụng hình phạt Tu Vi sau khi độ kiếp thất bại.</summary>
     public float ApplyTribulationFailurePenalty()
     {
         if (allStages == null || currentStageIndex >= allStages.Length) return 0f;
 
+        tribulationPromptPending = false;
         CultivationStageData currentStageData = allStages[currentStageIndex];
-        // V3 Spec: Đột phá thất bại = còn 70% tu vi sub-level 10 (không rớt sub-level)
-        currentTuVi = currentStageData.requiredTuVi * 0.70f;
-        float penalty = currentStageData.requiredTuVi * 0.30f; // chỉ dùng cho log
+        float lossRate = TribulationFailureLossRate;
+        float penalty = currentTuVi * lossRate;
+        currentTuVi -= penalty;
 
         UpdateDashboardUI(currentStageData);
         OnTuViChanged?.Invoke(currentTuVi, currentStageData.requiredTuVi);
 
-        Debug.Log($"⚡ [CultivationManager] Độ kiếp thất bại! Bị thiên kiếp phản phệ, tổn thất 30% Tu Vi (-{penalty:F0}). Tu vi hiện tại: {currentTuVi:F0}/{currentStageData.requiredTuVi}");
+        Debug.Log($"⚡ [CultivationManager] Độ kiếp thất bại! Bị thiên kiếp phản phệ, tổn thất {lossRate:0%} Tu Vi (-{penalty:F0}). Tu vi hiện tại: {currentTuVi:F0}/{currentStageData.requiredTuVi}");
         return penalty;
     }
 
     private void CheckBreakthrough()
     {
-        if (allStages == null || currentStageIndex >= allStages.Length) return;
-        CultivationStageData currentStageData = allStages[currentStageIndex];
-
-        if (currentTuVi >= currentStageData.requiredTuVi)
+        if (!HasNextStage || isBreakthroughInProgress || !IsTuViMaxed()) return;
+        if (IsAtBottleneck)
         {
-            bool needBoss = RequiresBossToBreakthrough(currentStageData);
-
-            if (needBoss)
-            {
-                // MỐC ĐỘT PHÁ ĐẠI CẢNH GIỚI:
-                // Mở UI Panel hỏi ý người chơi: Xác nhận độ kiếp thăng cấp hay từ chối để củng cố sức mạnh!
-                if (CombatManager.Instance != null && CombatManager.Instance.isTribulationBossActive) return;
-                if (StageManager.Instance != null && StageManager.Instance.isBossStage) return; // Không làm phiền khi đang đánh boss tầng
-
-                TribulationModalUI.Open();
-            }
-            else
-            {
-                // TIỂU CẢNH GIỚI (Luyện Khí Tầng 1 -> 14, Trúc Cơ Sơ -> Trung...):
-                // Đủ 100% Tu Vi là TỰ ĐỘNG THĂNG TẦNG / LÊN CẤP NGAY!
-                Breakthrough();
-            }
+            tribulationPromptPending = true;
+            ShowPendingTribulationPrompt();
+        }
+        else
+        {
+            Breakthrough();
         }
     }
 
@@ -227,14 +234,14 @@ public class CultivationManager : MonoBehaviour
 
     public void Breakthrough()
     {
-        if (currentStageIndex >= allStages.Length) return;
-        if (isBreakthroughInProgress) return; // Chống double-call
+        if (!HasNextStage || isBreakthroughInProgress) return;
         isBreakthroughInProgress = true;
 
         CultivationStageData currentStageData = allStages[currentStageIndex];
+        string previousDisplayName = GetDisplayRealmName();
         
         // Rung màn hình và Sấm sét chúc mừng (Chỉ khi vượt Đại Cảnh Giới)
-        bool isMajorBreakthrough = currentStageData.stageName.Contains("Tầng 15") || currentStageData.stageName.Contains("Hậu Kỳ");
+        bool isMajorBreakthrough = RequiresBossToBreakthrough(currentStageData);
         if (isMajorBreakthrough)
         {
             if (CameraShake.Instance != null) CameraShake.Instance.TriggerShake(0.8f, 0.5f);
@@ -249,6 +256,7 @@ public class CultivationManager : MonoBehaviour
         }
 
         // Reset tu vi về 0 để lên cấp mới
+        tribulationPromptPending = false;
         currentTuVi = 0; 
 
         // Phát âm thanh nổ vang chúc mừng đột phá tu vi (bang.mp3)
@@ -271,9 +279,7 @@ public class CultivationManager : MonoBehaviour
         }
         else
         {
-            // Các cảnh giới khác: Hậu Kỳ được 2, Sơ/Trung được 1
-            if (currentStageData.stageName.Contains("Hậu Kỳ")) coDuyenBonus = 2;
-            else coDuyenBonus = 1;
+            coDuyenBonus = isMajorBreakthrough ? 2 : 1;
         }
 
         if (coDuyenBonus > 0 && EconomyManager.Instance != null) 
@@ -285,29 +291,21 @@ public class CultivationManager : MonoBehaviour
         permanentStatMultiplier *= currentStageData.statMultiplierBonus;
 
         currentStageIndex++;
-        SaveMigration.MapLegacyStage(currentStageIndex, out RealmId newRealm, out int newSubLevel);
-        CurrentRealm = newRealm;
-        CurrentSubLevel = newSubLevel;
-        SwordLoadoutService.Instance?.UpdateCapacity(CurrentRealm, CurrentSubLevel);
+        UpdateStageIdentity();
         AchievementManager.Instance?.OnTribulationSuccess();
         Debug.Log($"✨ ĐỘT PHÁ THÀNH CÔNG! Thưởng: {coDuyenBonus} Cơ Duyên. Hệ số SM: {permanentStatMultiplier:F2}");
 
-        if (GameLogger.Instance != null && currentStageIndex < allStages.Length)
+        bool phaseChanged = previousDisplayName != GetDisplayRealmName();
+        if (phaseChanged && GameLogger.Instance != null)
         {
-            GameLogger.Instance.Log($"Đột phá: {allStages[currentStageIndex].stageName}!", Color.cyan);
+            GameLogger.Instance.Log($"Đột phá: {GetDisplayRealmName()}!", Color.cyan);
         }
 
-        if (currentStageIndex < allStages.Length)
-        {
-            CombatNotificationUI.ShowBreakthrough(allStages[currentStageIndex].stageName);
-            OnStageChanged?.Invoke(allStages[currentStageIndex]);
-            OnTuViChanged?.Invoke(currentTuVi, allStages[currentStageIndex].requiredTuVi);
-            UpdateDashboardUI(allStages[currentStageIndex]);
-        }
-        else
-        {
-            Debug.Log("🏆 BẠN ĐÃ ĐẠT ĐỈNH PHONG CỦA THẾ GIỚI TU TIÊN (Hóa Thần Hậu Kỳ)!");
-        }
+        var nextStage = allStages[currentStageIndex];
+        if (phaseChanged) CombatNotificationUI.ShowBreakthrough(GetDisplayRealmName());
+        OnStageChanged?.Invoke(nextStage);
+        OnTuViChanged?.Invoke(currentTuVi, nextStage.requiredTuVi);
+        UpdateDashboardUI(nextStage);
 
         if (GameManager.Instance != null)
         {
@@ -324,6 +322,7 @@ public class CultivationManager : MonoBehaviour
         }
         isBreakthroughInProgress = false; // Mở lại sau 2s
         if (MapScroller.Instance != null) MapScroller.Instance.ResumeMoving();
+        CheckBreakthrough();
     }
 
     public void HandlePlayerDeath()
@@ -357,17 +356,27 @@ public class CultivationManager : MonoBehaviour
 
     public void LoadFromSlot(CharacterSaveData slot)
     {
-        currentStageIndex = Mathf.Clamp(slot.stageIndex, 0, allStages != null ? allStages.Length - 1 : 0);
-        currentTuVi = slot.currentTuVi;
-        // V3: Sync realm từ migration data
-        UpdateRealmFromSave(slot);
+        CancelInvoke(nameof(ReturnToIdle));
+        CancelInvoke(nameof(CheckBreakthrough));
+        isBreakthroughInProgress = false;
+        tribulationPromptPending = false;
+        int lastStage = allStages != null ? Mathf.Max(0, allStages.Length - 1) : 0;
+        currentStageIndex = Mathf.Clamp(slot.stageIndex, 0, lastStage);
+        var stage = GetCurrentStageData();
+        currentTuVi = stage != null ? Mathf.Clamp(slot.currentTuVi, 0f, stage.requiredTuVi) : slot.currentTuVi;
+        // stageIndex vẫn là mốc gốc, kể cả save cũ từng vượt qua Hóa Thần Hậu Kỳ.
+        UpdateStageIdentity();
         permanentStatMultiplier = Mathf.Max(1f, slot.permanentStatMultiplier);
 
-        if (allStages != null && currentStageIndex < allStages.Length)
+        if (stage != null)
         {
-            OnStageChanged?.Invoke(allStages[currentStageIndex]);
-            OnTuViChanged?.Invoke(currentTuVi, allStages[currentStageIndex].requiredTuVi);
-            UpdateDashboardUI(allStages[currentStageIndex]);
+            OnStageChanged?.Invoke(stage);
+            OnTuViChanged?.Invoke(currentTuVi, stage.requiredTuVi);
+            UpdateDashboardUI(stage);
+
+            // Đợi các manager còn lại nạp xong trước khi khôi phục một lần thăng cấp đang chờ.
+            if (HasNextStage && !IsAtBottleneck && IsTuViMaxed())
+                Invoke(nameof(CheckBreakthrough), 0f);
         }
     }
 
@@ -382,6 +391,7 @@ public class CultivationManager : MonoBehaviour
         currentStageIndex = Mathf.Clamp(stageIndex, 0, allStages.Length - 1);
         var stageData = allStages[currentStageIndex];
         currentTuVi = tuVi;
+        UpdateStageIdentity();
 
         UpdateDashboardUI(stageData);
         OnStageChanged?.Invoke(stageData);
@@ -389,32 +399,20 @@ public class CultivationManager : MonoBehaviour
     }
 #endif
 
-    /// <summary>
-    /// Đồng bộ CurrentRealm/SubLevel từ slot đã qua migration (saveVersion >= 3).
-    /// Gọi sau LoadFromSlot.
-    /// </summary>
-    public void UpdateRealmFromSave(CharacterSaveData slot)
+    private void UpdateStageIdentity()
     {
-        if (slot == null || slot.isSlotEmpty) return;
-        CurrentRealm    = (RealmId)Mathf.Clamp(slot.realmId, 0, (int)RealmId.DoKiep);
-        CurrentSubLevel = Mathf.Clamp(slot.subLevel, 1, 10);
-        if (SwordLoadoutService.Instance != null)
-            SwordLoadoutService.Instance.UpdateCapacity(CurrentRealm, CurrentSubLevel);
-        Debug.Log($"[CultivationManager] Realm sync: {CurrentRealm} Sub-level {CurrentSubLevel}");
+        SaveMigration.MapLegacyStage(currentStageIndex, out RealmId realm, out int subLevel);
+        CurrentRealm = realm;
+        CurrentSubLevel = subLevel;
+        SwordLoadoutService.Instance?.UpdateCapacity(realm, subLevel);
     }
 
     /// <summary>
-    /// Tên cảnh giới hiển thị (V3 pattern: dùng enum, không đọc stageName string).
-    /// Ví dụ: "LuyenKhi - Sơ Kỳ", "TrucCo - Đỉnh Phong"
+    /// Tên cảnh giới hiển thị theo stage đã lưu, không dùng stageName legacy.
     /// </summary>
     public string GetDisplayRealmName()
     {
-        string sub;
-        if      (CurrentSubLevel <= 3)  sub = "Sơ Kỳ";
-        else if (CurrentSubLevel <= 6)  sub = "Trung Kỳ";
-        else if (CurrentSubLevel <= 9)  sub = "Hậu Kỳ";
-        else                            sub = "Đỉnh Phong";
-        return $"{CurrentRealm} - {sub}";
+        return CultivationDisplay.NameForStage(currentStageIndex);
     }
 }
 

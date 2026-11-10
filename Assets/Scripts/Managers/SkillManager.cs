@@ -31,19 +31,21 @@ public class SkillManager : MonoBehaviour
         if (activeSkill == null)
         {
             activeSkill = ScriptableObject.CreateInstance<SkillData>();
+            createdActiveInstance = true;
             activeSkill.skillName = "Vạn Kiếm Quy Tông";
             activeSkill.skillType = SkillType.VanKiemQuyTong;
             activeSkill.manaCost = 100f;
-            activeSkill.baseCooldown = 10f;
-            activeSkill.baseDamage = 150f;
+            activeSkill.baseCooldown = 30f; // Cooldown 30s cân bằng
+            activeSkill.baseDamage = 200f;
             activeSkill.isUnlocked = false;
-            activeSkill.requiredStageIndex = 15; // Trúc Cơ Sơ Kỳ (Index 15)
-            activeSkill.unlockCost = 2; // 2 Cơ Duyên
+            activeSkill.requiredStageIndex = 7;
+            activeSkill.unlockCost = 2;
         }
         else
         {
-            activeSkill.baseDamage = 150f;
-            activeSkill.baseCooldown = 10f;
+            activeSkill.baseDamage = 200f;
+            activeSkill.baseCooldown = 30f;
+            activeSkill.manaCost = 100f;
             activeSkill.skillType = SkillType.VanKiemQuyTong;
         }
 
@@ -51,46 +53,79 @@ public class SkillManager : MonoBehaviour
         if (normalSkills[0] == null)
         {
             normalSkills[0] = ScriptableObject.CreateInstance<SkillData>();
+            createdNormalInstances[0] = true;
             normalSkills[0].skillName = "Ấn Chưởng";
             normalSkills[0].skillType = SkillType.AnChuong;
-            normalSkills[0].baseCooldown = 8f;
-            normalSkills[0].baseDamage = 1000f;
+            normalSkills[0].baseCooldown = 22f; // Tăng CD lên 22s
+            normalSkills[0].baseDamage = 100000f; // Thần thông Đại Thừa: 100,000 sát thương cơ bản
+            normalSkills[0].manaCost = 40f;
             normalSkills[0].isUnlocked = false;
-            normalSkills[0].requiredStageIndex = 18; // Kết Đan Sơ Kỳ
-            normalSkills[0].unlockCost = 4;
+            normalSkills[0].unlockCost = 10;
 
             normalSkills[1] = ScriptableObject.CreateInstance<SkillData>();
+            createdNormalInstances[1] = true;
             normalSkills[1].skillName = "Lôi Phạt";
             normalSkills[1].skillType = SkillType.LoiPhat;
-            normalSkills[1].baseCooldown = 12f;
-            normalSkills[1].baseDamage = 2000f;
+            normalSkills[1].baseCooldown = 25f; // Tăng CD lên 25s
+            normalSkills[1].baseDamage = 5000f; // Kỹ năng Nguyên Anh
+            normalSkills[1].manaCost = 25f;
             normalSkills[1].isUnlocked = false;
-            normalSkills[1].requiredStageIndex = 21; // Nguyên Anh Sơ Kỳ
-            normalSkills[1].unlockCost = 8;
+            normalSkills[1].unlockCost = 6;
 
             normalSkills[2] = ScriptableObject.CreateInstance<SkillData>();
+            createdNormalInstances[2] = true;
             normalSkills[2].skillName = "Âm Dương Trận";
             normalSkills[2].skillType = SkillType.AmDuongTran;
-            normalSkills[2].baseCooldown = 20f;
+            normalSkills[2].baseCooldown = 40f; // Tăng CD lên 40s
             normalSkills[2].baseDamage = 0f;
+            normalSkills[2].manaCost = 30f;
             normalSkills[2].isUnlocked = false;
-            normalSkills[2].requiredStageIndex = 24; // Hóa Thần Sơ Kỳ
-            normalSkills[2].unlockCost = 16;
+            normalSkills[2].unlockCost = 8;
         }
         else
         {
-            if (normalSkills[0] != null) normalSkills[0].baseDamage = 1000f;
-            if (normalSkills[1] != null) normalSkills[1].baseDamage = 2000f;
+            if (normalSkills[0] != null)
+            {
+                normalSkills[0].baseDamage = 100000f;
+                normalSkills[0].baseCooldown = 22f;
+                normalSkills[0].manaCost = 40f;
+            }
+            if (normalSkills[1] != null)
+            {
+                normalSkills[1].baseDamage = 5000f;
+                normalSkills[1].baseCooldown = 25f;
+                normalSkills[1].manaCost = 25f;
+            }
             if (normalSkills[2] != null)
             {
                 normalSkills[2].skillName = "Âm Dương Trận";
                 normalSkills[2].skillType = SkillType.AmDuongTran;
+                normalSkills[2].baseCooldown = 40f;
+                normalSkills[2].manaCost = 30f;
                 normalSkills[2].baseDamage = 0f;
             }
         }
     }
 
+    private bool createdActiveInstance = false;
+    private bool[] createdNormalInstances = new bool[3];
+
     private void OnDestroy()
+    {
+        if (createdActiveInstance && activeSkill != null)
+        {
+            Destroy(activeSkill);
+        }
+        for (int i = 0; i < normalSkills.Length; i++)
+        {
+            if (createdNormalInstances != null && i < createdNormalInstances.Length && createdNormalInstances[i] && normalSkills[i] != null)
+            {
+                Destroy(normalSkills[i]);
+            }
+        }
+    }
+
+    private void DummyUnusedMethod()
     {
     }
 
@@ -143,19 +178,159 @@ public class SkillManager : MonoBehaviour
         UpdateUI();
     }
 
+    public float GetSkillManaCost(int index)
+    {
+        switch (index)
+        {
+            case 0: return 40f; // Ấn Chưởng (Đại Thừa)
+            case 1: return 25f; // Lôi Phạt (Nguyên Anh)
+            case 2: return 30f; // Âm Dương Trận (4 Trận Pháp)
+            default: return 20f;
+        }
+    }
+
+    public int GetHighestSwordLevel()
+    {
+        int maxLvl = 1;
+        if (AchievementManager.Instance != null && AchievementManager.Instance.State != null)
+        {
+            maxLvl = Mathf.Max(maxLvl, AchievementManager.Instance.State.maxSwordLevelEver);
+        }
+        if (MergeManager.Instance != null)
+        {
+            if (MergeManager.Instance.equipPanel != null)
+            {
+                foreach (Transform slot in MergeManager.Instance.equipPanel)
+                {
+                    if (slot == null) continue;
+                    var item = slot.GetComponentInChildren<MergeItem>();
+                    if (item != null) maxLvl = Mathf.Max(maxLvl, item.level);
+                }
+            }
+            if (MergeManager.Instance.inventoryPages != null)
+            {
+                foreach (Transform page in MergeManager.Instance.inventoryPages)
+                {
+                    if (page == null) continue;
+                    foreach (Transform slot in page)
+                    {
+                        if (slot == null) continue;
+                        var item = slot.GetComponentInChildren<MergeItem>();
+                        if (item != null) maxLvl = Mathf.Max(maxLvl, item.level);
+                    }
+                }
+            }
+        }
+        return maxLvl;
+    }
+
+    public void UnlockAllSkillsForTesting()
+    {
+        if (activeSkill != null) activeSkill.isUnlocked = true;
+        if (normalSkills != null)
+        {
+            foreach (var s in normalSkills)
+            {
+                if (s != null) s.isUnlocked = true;
+            }
+        }
+    }
+
+    public int GetLearnedFormationCount()
+    {
+        if (FormationService.Instance == null || FormationService.Instance.State == null || FormationService.Instance.State.levels == null) return 0;
+        int count = 0;
+        for (int i = 0; i < FormationService.Instance.State.levels.Length; i++)
+        {
+            if (FormationService.Instance.State.levels[i] > 0) count++;
+        }
+        return count;
+    }
+
+    public bool CastNormalSkillManual(int index)
+    {
+        if (index < 0 || index >= normalSkills.Length) return false;
+        var skill = normalSkills[index];
+        if (skill == null || !skill.isUnlocked)
+        {
+            if (GameLogger.Instance != null) GameLogger.Instance.Log("Kỹ năng chưa mở khóa!", Color.gray);
+            return false;
+        }
+        if (isSkillActive)
+        {
+            if (GameLogger.Instance != null) GameLogger.Instance.Log("Đang trong trạng thái Vạn Kiếm Quy Tông!", Color.gray);
+            return false;
+        }
+        if (normalCooldowns[index] > 0)
+        {
+            if (GameLogger.Instance != null) GameLogger.Instance.Log($"{skill.skillName} đang hồi chiêu ({normalCooldowns[index]:F1}s)!", Color.gray);
+            return false;
+        }
+        float manaRequired = GetSkillManaCost(index);
+        if (currentLinhLuc < manaRequired)
+        {
+            if (GameLogger.Instance != null) GameLogger.Instance.Log($"Không đủ Linh Lực! Cần {manaRequired:F0} MP.", Color.cyan);
+            return false;
+        }
+
+        currentLinhLuc -= manaRequired;
+        ExecuteNormalSkill(skill);
+        normalCooldowns[index] = skill.baseCooldown;
+        normalSkillGlobalCooldown = 1.0f;
+        return true;
+    }
+
     private void CheckUnlocks()
     {
+        var realm = CultivationManager.Instance != null ? CultivationManager.Instance.CurrentRealm : RealmId.LuyenKhi;
+
+        // 1. Vạn Kiếm Quy Tông: Mở khóa khi sở hữu kiếm level >= 7
+        if (activeSkill != null && !activeSkill.isUnlocked)
+        {
+            int maxSword = GetHighestSwordLevel();
+            if (maxSword >= 7)
+            {
+                activeSkill.isUnlocked = true;
+                if (GameLogger.Instance != null) GameLogger.Instance.Log("⚔️ Sở hữu Kiếm Cấp 7: Lĩnh ngộ Tuyệt Kỹ VẠN KIẾM QUY TÔNG!", Color.yellow);
+            }
+        }
+
+        // 2. Lôi Phạt: Mở khóa khi độ kiếp thành công lên Nguyên Anh (Realm >= NguyenAnh)
+        if (normalSkills != null && normalSkills.Length > 1 && normalSkills[1] != null && !normalSkills[1].isUnlocked)
+        {
+            if (realm >= RealmId.NguyenAnh)
+            {
+                normalSkills[1].isUnlocked = true;
+                if (GameLogger.Instance != null) GameLogger.Instance.Log("⚡ Độ kiếp Nguyên Anh thành công: Lĩnh ngộ tuyệt kỹ LÔI PHẠT!", new Color(0.8f, 0.4f, 1f));
+            }
+        }
+
+        // 3. Âm Dương Trận: Mở khóa khi học được 4 loại trận khác nhau
+        if (normalSkills != null && normalSkills.Length > 2 && normalSkills[2] != null && !normalSkills[2].isUnlocked)
+        {
+            int learnedFormations = GetLearnedFormationCount();
+            if (learnedFormations >= 4)
+            {
+                normalSkills[2].isUnlocked = true;
+                if (GameLogger.Instance != null) GameLogger.Instance.Log("☯️ Đã lĩnh hội 4 loại Trận Pháp: Lĩnh ngộ tuyệt kỹ ÂM DƯƠNG TRẬN!", Color.cyan);
+            }
+        }
+
+        // 4. Ấn Chưởng: Mở khóa khi đạt cảnh giới Đại Thừa (Realm >= DaiThua)
+        if (normalSkills != null && normalSkills.Length > 0 && normalSkills[0] != null && !normalSkills[0].isUnlocked)
+        {
+            if (realm >= RealmId.DaiThua)
+            {
+                normalSkills[0].isUnlocked = true;
+                if (GameLogger.Instance != null) GameLogger.Instance.Log("🖐️ Đạt cảnh giới Đại Thừa Chí Tôn: Khai thông đại thần thông ẤN CHƯỞNG!", new Color(1f, 0.6f, 0.1f));
+            }
+        }
+
 #if UNITY_EDITOR
-        // TÃ­nh nÄƒng tá»± Ä‘á»™ng unlock Ä‘Ã£ bá», giá» pháº£i mua báº±ng CÆ¡ DuyÃªn.
-        // NHÆ¯NG thÃªm CHEAT phÃ­m 'U' Ä‘á»ƒ má»Ÿ khÃ³a toÃ n bá»™ Skill cho viá»‡c test:
         if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.uKey.wasPressedThisFrame)
         {
-            if (activeSkill != null) activeSkill.isUnlocked = true;
-            for (int i = 0; i < 3; i++)
-            {
-                if (normalSkills[i] != null) normalSkills[i].isUnlocked = true;
-            }
-            Debug.Log("[CHEAT] ÄÃ£ má»Ÿ khÃ³a toÃ n bá»™ Ká»¹ NÄƒng!");
+            UnlockAllSkillsForTesting();
+            Debug.Log("[CHEAT] Đã mở khóa toàn bộ Kỹ Năng!");
         }
 #endif
     }
@@ -164,11 +339,8 @@ public class SkillManager : MonoBehaviour
 
     private void UpdateNormalSkills()
     {
-        // Không cho Normal Skills tốn Mana khi Ulti đang active
-
         if (isSkillActive) return;
 
-        // Giảm hồi chiêu cho tất cả các kỹ năng trước
         for (int i = 0; i < 3; i++)
         {
             if (normalCooldowns[i] > 0)
@@ -177,28 +349,26 @@ public class SkillManager : MonoBehaviour
             }
         }
 
-        // Nếu đang trong thời gian chờ giữa 2 chiêu (Global Cooldown) thì không ra chiêu mới
         if (normalSkillGlobalCooldown > 0)
         {
             normalSkillGlobalCooldown -= Time.deltaTime;
             return;
         }
 
-        // Tìm kỹ năng có thể thi triển
         for (int i = 0; i < 3; i++)
         {
             if (normalSkills[i] == null || !normalSkills[i].isUnlocked) continue;
 
             if (normalCooldowns[i] <= 0)
             {
-                float manaRequired = 10f * (i + 1); // Ấn chưởng: 10, Lôi Phạt: 20, Âm Dương Trận: 30
+                float manaRequired = GetSkillManaCost(i);
                 if (currentLinhLuc >= manaRequired)
                 {
                     currentLinhLuc -= manaRequired;
                     ExecuteNormalSkill(normalSkills[i]);
                     normalCooldowns[i] = normalSkills[i].baseCooldown;
-                    normalSkillGlobalCooldown = 1.5f; // Chờ 1.5s rồi mới ra chiêu tiếp theo để tránh spam
-                    break; // Chỉ dùng 1 chiêu tại 1 thời điểm
+                    normalSkillGlobalCooldown = 1.5f;
+                    break;
                 }
             }
         }
@@ -213,12 +383,18 @@ public class SkillManager : MonoBehaviour
         float baseDmg = skill.GetCurrentDamage();
         if (baseDmg <= 0) return 0f;
 
-        // Chỉ số Kiếm Ý từ tab Nâng Cấp được chuyển hóa trực tiếp vào uy lực kỹ năng
         float kiemY = UpgradeManager.Instance != null ? UpgradeManager.Instance.GetKiemYValue() : 0f;
         
-        // Vạn Kiếm Quy Tông: Mỗi thanh kiếm nhận +100% Kiếm Ý (tổng 20 kiếm = 20x Kiếm Ý)
-        // Kỹ năng thường (Ấn Chưởng, Lôi Phạt): Nhận +200% Kiếm Ý
-        float totalBase = (skill.skillType == SkillType.VanKiemQuyTong) ? (baseDmg + kiemY) : (baseDmg + kiemY * 2f);
+        // Vạn Kiếm Quy Tông: Mỗi thanh kiếm nhận +100% Kiếm Ý
+        // Ấn Chưởng (Đại Thừa): Nhận +1500% Kiếm Ý (x15 uy lực Kiếm Ý)
+        // Lôi Phạt (Nguyên Anh): Nhận +300% Kiếm Ý
+        float totalBase;
+        if (skill.skillType == SkillType.VanKiemQuyTong)
+            totalBase = baseDmg + kiemY;
+        else if (skill.skillType == SkillType.AnChuong)
+            totalBase = baseDmg + (kiemY * 15f);
+        else
+            totalBase = baseDmg + (kiemY * 3f);
 
         float multiplier = CultivationManager.Instance != null ? CultivationManager.Instance.permanentStatMultiplier : 1f;
         if (ShopManager.Instance != null) multiplier *= ShopManager.Instance.GetDamageMultiplier();

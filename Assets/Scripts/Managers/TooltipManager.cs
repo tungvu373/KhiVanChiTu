@@ -79,7 +79,7 @@ public class TooltipManager : MonoBehaviour
         {
             try
             {
-                fontToUse = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                fontToUse = UiTextStyle.BodyFont;
             }
             catch { }
         }
@@ -115,7 +115,19 @@ public class TooltipManager : MonoBehaviour
         if (tooltipObj != null && tooltipObj.activeSelf)
         {
             // Tương thích với New Input System
-            Vector2 mousePos = Mouse.current != null ? Mouse.current.position.ReadValue() : (Vector2)Input.mousePosition;
+            Vector2 mousePos = Vector2.zero;
+            if (Mouse.current != null)
+            {
+                mousePos = Mouse.current.position.ReadValue();
+            }
+            else if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+            {
+                mousePos = Touchscreen.current.primaryTouch.position.ReadValue();
+            }
+            if (mousePos == Vector2.zero)
+            {
+                try { mousePos = (Vector2)Input.mousePosition; } catch { /* Ignore when Legacy Input is disabled */ }
+            }
             
             RectTransform canvasRt = tooltipObj.transform.parent.GetComponent<RectTransform>();
             Vector2 localPoint;

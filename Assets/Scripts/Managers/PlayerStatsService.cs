@@ -28,7 +28,19 @@ public struct BodyTalentNodeInfo
 /// </summary>
 public class PlayerStatsService : MonoBehaviour
 {
-    public static PlayerStatsService Instance { get; private set; }
+    private static PlayerStatsService _instance;
+    public static PlayerStatsService Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = UnityEngine.Object.FindAnyObjectByType<PlayerStatsService>();
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
     private readonly int[] bodyStatLevels = new int[6];
 
     public static readonly BodyTalentNodeInfo[] TalentNodes = new BodyTalentNodeInfo[]
@@ -151,10 +163,14 @@ public class PlayerStatsService : MonoBehaviour
         return index >= 0 && index < bodyStatLevels.Length ? bodyStatLevels[index] : 0;
     }
 
-    public float GetUpgradeCost(int index)
+    public float GetUpgradeCost(int index) => GetUpgradeCostAtLevel(index, GetLevel(index));
+
+    public float GetUpgradeCostAtLevel(int index, int level)
     {
         if (index < 0 || index >= bodyStatLevels.Length) return float.PositiveInfinity;
-        return Mathf.Ceil(100f * (index + 1) * Mathf.Pow(1.2f, bodyStatLevels[index]));
+        var branchDiscount = index < 3 ? DaoAnEffect.BodyGuardCostReduction : DaoAnEffect.BodyForceCostReduction;
+        float multiplier = DaoAnProgressionService.ReductionMultiplier(DaoAnEffect.BodyCostReduction, branchDiscount);
+        return Mathf.Ceil(100f * (index + 1) * Mathf.Pow(1.2f, level) * multiplier);
     }
 
     public bool IsNodeUnlocked(int index)
@@ -163,8 +179,11 @@ public class PlayerStatsService : MonoBehaviour
         // Bảo lưu cấp độ nếu save cũ đã nâng
         if (GetLevel(index) > 0) return true;
 
+        // Cổng tu vi Hóa Thần theo KE_HOACH_TAI_CAU_TRUC_MO_KHOA_THEO_TU_VI.md
+        if (FeatureUnlockService.Instance != null && !FeatureUnlockService.Instance.IsBodyNodeUnlocked(index)) return false;
+
         int pIndex = TalentNodes[index].parentIndex;
-        if (pIndex < 0) return true; // Căn bản (Tier 1) mở sẵn
+        if (pIndex < 0) return true; // Căn bản (Tier 1) mở sẵn khi đạt cảnh giới
 
         return GetLevel(pIndex) >= TalentNodes[index].requiredParentLevel;
     }
@@ -173,6 +192,10 @@ public class PlayerStatsService : MonoBehaviour
     {
         if (index < 0 || index >= TalentNodes.Length) return "";
         if (IsNodeUnlocked(index)) return "Đã mở khóa";
+        if (FeatureUnlockService.Instance != null && !FeatureUnlockService.Instance.IsBodyNodeUnlocked(index))
+        {
+            return FeatureUnlockService.Instance.GetBodyNodeUnlockRequirementText(index);
+        }
         int pIndex = TalentNodes[index].parentIndex;
         int reqLv = TalentNodes[index].requiredParentLevel;
         return $"Yêu cầu: {TalentNodes[pIndex].name} Cấp {reqLv} (Hiện có: Cấp {GetLevel(pIndex)})";
@@ -227,7 +250,7 @@ public class PlayerStatsService : MonoBehaviour
         if (index < 0 || index >= bodyStatLevels.Length || EconomyManager.Instance == null) return false;
         if (!IsNodeUnlocked(index))
         {
-            Debug.LogWarning($"[PlayerStatsService] Chưa mở khóa node {TalentNodes[index].name}! Cần nâng cấp nhánh trước.");
+            Debug.LogWarning($"[PlayerStatsService] Chưa mở khóa node {TalentNodes[index].name}!");
             return false;
         }
 
@@ -262,8 +285,13 @@ public class PlayerStatsService : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-        Instance = this;
+        if (_instance != null && _instance != this) { Destroy(gameObject); return; }
+        _instance = this;
+    }
+
+    private void OnDestroy()
+    {
+        if (_instance == this) _instance = null;
     }
 
     /// <summary>
@@ -285,8 +313,8 @@ public class PlayerStatsService : MonoBehaviour
         DamageReduction  = Mathf.Min(this.bodyStatLevels[1] * 0.005f, 0.60f);
         HpRegenPerSec    = this.bodyStatLevels[2] * 5f;
         BonusSwordDamage = this.bodyStatLevels[3] * 10f;
-        LifestealPercent = this.bodyStatLevels[4] * 0.002f;
-        TenacityPercent  = this.bodyStatLevels[5] * 0.01f;
+        LifestealPercent = Mathf.Min(this.bodyStatLevels[4] * 0.002f, 0.20f); // TBH.md: trần 20%
+        TenacityPercent  = Mathf.Min(this.bodyStatLevels[5] * 0.01f, 0.80f);  // TBH.md mục 4: trần 80% kháng choáng
 
         Debug.Log($"[PlayerStatsService] Recalc: MaxHP={BaseMaxHp}, " +
                   $"DmgReduce={DamageReduction * 100f:F1}%, BonusDmg={BonusSwordDamage}");

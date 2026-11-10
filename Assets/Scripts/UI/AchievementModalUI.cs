@@ -53,8 +53,7 @@ public class AchievementModalUI : MonoBehaviour
     private Font GetFont()
     {
         if (cachedFont != null) return cachedFont;
-        cachedFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        if (cachedFont == null) cachedFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        cachedFont = UiTextStyle.BodyFont;
         return cachedFont;
     }
 
@@ -174,7 +173,7 @@ public class AchievementModalUI : MonoBehaviour
         UpdateTabVisuals();
         RefreshUI();
 
-        Time.timeScale = 0f; // Đóng băng thế giới để người chơi duyệt thành tựu
+        // Giữ game chạy 100% thời gian thực (Time.timeScale không bị dừng khi mở modal)
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
 
@@ -185,7 +184,6 @@ public class AchievementModalUI : MonoBehaviour
     public void CloseModal()
     {
         isOpen = false;
-        Time.timeScale = 1f;
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
 
@@ -316,7 +314,7 @@ public class AchievementModalUI : MonoBehaviour
             btnClaimAll.interactable = (readyInCat > 0);
             if (txtClaimAll != null)
             {
-                txtClaimAll.text = readyInCat > 0 ? $"✨ NHẬN TOÀN BỘ ({readyInCat})" : "Không Có Thưởng Chờ";
+                txtClaimAll.text = readyInCat > 0 ? $"NHẬN TOÀN BỘ ({readyInCat})" : "Không Có Thưởng Chờ";
             }
         }
 
@@ -403,9 +401,9 @@ public class AchievementModalUI : MonoBehaviour
 
         Text iconTxt = iconTxtObj.GetComponent<Text>();
         iconTxt.font = GetFont();
-        iconTxt.fontSize = 28;
+        iconTxt.fontSize = 13;
         iconTxt.alignment = TextAnchor.MiddleCenter;
-        iconTxt.text = GetCategoryIcon(item.category);
+        iconTxt.text = GetCategoryLabel(item.category);
 
         // ── Title & Category (Dòng 1) ──
         GameObject titleObj = new GameObject("Title", typeof(RectTransform), typeof(Text), typeof(Outline));
@@ -533,7 +531,7 @@ public class AchievementModalUI : MonoBehaviour
             bImg.color = new Color(0.18f, 0.80f, 0.35f, 1f); // Xanh lục ngọc
             bOl.effectColor = new Color(0.96f, 0.77f, 0.26f, 1f);
             bOl.effectDistance = new Vector2(1.2f, -1.2f);
-            bTxt.text = "✨ NHẬN";
+            bTxt.text = "NHẬN";
             bTxt.color = Color.white;
             btn.interactable = true;
 
@@ -556,16 +554,16 @@ public class AchievementModalUI : MonoBehaviour
         return card;
     }
 
-    private string GetCategoryIcon(AchievementCategory cat)
+    private string GetCategoryLabel(AchievementCategory cat)
     {
         switch (cat)
         {
-            case AchievementCategory.Cultivation: return "⚡";
-            case AchievementCategory.Combat: return "⚔️";
-            case AchievementCategory.Sword: return "🗡️";
-            case AchievementCategory.Arts: return "⚗️";
-            case AchievementCategory.Destiny: return "💎";
-            default: return "🏆";
+            case AchievementCategory.Cultivation: return "Tu vi";
+            case AchievementCategory.Combat: return "Chiến";
+            case AchievementCategory.Sword: return "Kiếm";
+            case AchievementCategory.Arts: return "Nghệ";
+            case AchievementCategory.Destiny: return "Duyên";
+            default: return "Khác";
         }
     }
 
@@ -576,7 +574,7 @@ public class AchievementModalUI : MonoBehaviour
             int count = AchievementManager.Instance.ClaimAllCompleted(selectedCategory);
             if (count > 0 && GameLogger.Instance != null)
             {
-                GameLogger.Instance.Log($"🎉 Nhận thành công trọn bộ {count} Thành Tựu!", Color.yellow);
+                GameLogger.Instance.Log($"Nhận thành công trọn bộ {count} Thành Tựu!", Color.yellow);
             }
         }
     }

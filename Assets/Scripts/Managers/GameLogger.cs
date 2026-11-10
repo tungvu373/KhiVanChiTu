@@ -21,7 +21,7 @@ public class GameLogger : MonoBehaviour
             return;
         }
         Instance = this;
-        defaultFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        defaultFont = UiTextStyle.BodyFont;
     }
 
     private void Start()
@@ -76,7 +76,7 @@ public class GameLogger : MonoBehaviour
 
         Text txt = txtObj.GetComponent<Text>();
         txt.font = defaultFont;
-        txt.text = message;
+        txt.text = UiTextStyle.RemoveIcons(message);
         txt.fontSize = 14; // Chữ nhỏ lại một chút để hiển thị được nhiều hơn
         txt.alignment = TextAnchor.MiddleLeft;
         txt.color = color;

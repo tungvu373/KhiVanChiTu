@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>Hiển thị tiền tệ gọn, có biểu tượng và số rút gọn trên HUD mobile.</summary>
+/// <summary>Hiển thị tiền tệ gọn, có tên rút gọn và số trên HUD mobile.</summary>
 public class MobileCurrencyText : MonoBehaviour
 {
     public enum Currency { LinhThach, CoDuyen }
@@ -33,13 +33,13 @@ public class MobileCurrencyText : MonoBehaviour
         if (label == null || EconomyManager.Instance == null) return;
         if (currency == Currency.LinhThach)
         {
-            label.text = "◆ " + EconomyManager.FormatNumber(EconomyManager.Instance.currentLinhThach);
-            label.color = new Color(0.55f, 0.88f, 1f);
+            label.text = "LT " + EconomyManager.FormatNumber(EconomyManager.Instance.currentLinhThach);
+            label.color = new Color(0.40f, 0.90f, 1f, 1f);
         }
         else
         {
-            label.text = "✦ " + EconomyManager.Instance.currentCoDuyen.ToString("N0");
-            label.color = new Color(1f, 0.79f, 0.28f);
+            label.text = "CD " + EconomyManager.Instance.currentCoDuyen.ToString("N0");
+            label.color = new Color(1f, 0.85f, 0.35f, 1f);
         }
     }
 }

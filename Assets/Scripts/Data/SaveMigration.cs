@@ -3,17 +3,18 @@ using UnityEngine;
 
 public static class SaveMigration
 {
-    public const int CURRENT_SAVE_VERSION = 3;
+    public const int CURRENT_SAVE_VERSION = 5;
+    private static readonly int[] LuyenKhiSubLevelMap = { 1, 2, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 10, 10 };
 
     public static bool Run(CharacterSaveData slot)
     {
         if (slot == null || slot.isSlotEmpty) return false;
         bool isModified = false;
 
-        // Chỉ chạy khi save cũ hơn CURRENT_SAVE_VERSION
-        if (slot.saveVersion < CURRENT_SAVE_VERSION)
+        // Chỉ chạy chuyển đổi legacy này với save trước v3.
+        if (slot.saveVersion < 3)
         {
-            Debug.Log($"[SaveMigration] Phát hiện save cũ v{slot.saveVersion} ('{slot.characterName}'). Bắt đầu Migrate lên v{CURRENT_SAVE_VERSION}...");
+            Debug.Log($"[SaveMigration] Phát hiện save cũ v{slot.saveVersion} ('{slot.characterName}'). Bắt đầu Migrate lên v3...");
 
             // 1. Map 27 Stage cũ sang RealmId và SubLevel (1-10)
             MigrateCultivationStage(slot);
@@ -67,9 +68,26 @@ public static class SaveMigration
                 }
             }
 
-            slot.saveVersion = CURRENT_SAVE_VERSION;
+            slot.saveVersion = 3;
             isModified = true;
-            Debug.Log("[SaveMigration] Migrate thành công! Dữ liệu đã an toàn 100%.");
+            Debug.Log("[SaveMigration] Migrate legacy data lên v3.");
+        }
+
+        // v3 -> v4 only adds per-slot Vận Khí state. Keep daoAn serialized keys for old saves.
+        if (slot.saveVersion < 4)
+        {
+            if (slot.daoAn == null) slot.daoAn = new DaoAnSaveState();
+            if (slot.daoAn.levels == null) slot.daoAn.levels = System.Array.Empty<DaoAnLevelState>();
+            slot.saveVersion = 4;
+            isModified = true;
+        }
+
+        // v4 -> v5: Khởi tạo counter 500 kiếm rơi từ quái để mở Lò Phân Giải
+        if (slot.saveVersion < 5)
+        {
+            if (slot.monsterSwordsAcquired < 0) slot.monsterSwordsAcquired = 0;
+            slot.saveVersion = 5;
+            isModified = true;
         }
 
         return isModified;
@@ -90,28 +108,20 @@ public static class SaveMigration
         {
             realm = RealmId.LuyenKhi;
             // Bảng map tường minh: stageIndex 4 = Tầng 5 cũ → phải ra sub-level 5 (FTUE threshold)
-            int[] luyenKhiMap = { 1, 2, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 10, 10 };
-            subLevel = luyenKhiMap[oldIndex];
+            subLevel = LuyenKhiSubLevelMap[oldIndex];
         }
-        else if (oldIndex < 18) // Trúc Cơ Sơ (15), Trung (16), Hậu (17)
+        else if (oldIndex < 39)
         {
-            realm = RealmId.TrucCo;
-            subLevel = (oldIndex == 15) ? 1 : (oldIndex == 16 ? 4 : 7);
+            // Từ Trúc Cơ: mỗi cảnh giới có ba mốc Sơ, Trung, Hậu (1, 4, 7).
+            // Giữ nguyên chỉ số 15–26 của save cũ. Luyện Hư bắt đầu ở 27.
+            int offset = oldIndex - 15;
+            realm = (RealmId)((int)RealmId.TrucCo + offset / 3);
+            subLevel = 1 + offset % 3 * 3;
         }
-        else if (oldIndex < 21) // Kết Đan (Kim Đan) Sơ, Trung, Hậu
+        else
         {
-            realm = RealmId.KimDan;
-            subLevel = (oldIndex == 18) ? 1 : (oldIndex == 19 ? 4 : 7);
-        }
-        else if (oldIndex < 24) // Nguyên Anh Sơ, Trung, Hậu
-        {
-            realm = RealmId.NguyenAnh;
-            subLevel = (oldIndex == 21) ? 1 : (oldIndex == 22 ? 4 : 7);
-        }
-        else // Hóa Thần Sơ, Trung, Hậu (24, 25, 26)
-        {
-            realm = RealmId.HoaThan;
-            subLevel = (oldIndex == 24) ? 1 : (oldIndex == 25 ? 4 : 7);
+            realm = RealmId.DoKiep;
+            subLevel = 10;
         }
     }
 
@@ -120,6 +130,10 @@ public static class SaveMigration
         if (slot.swords == null) return;
         foreach (var s in slot.swords)
         {
+            if (s.level >= 2)
+            {
+                slot.swordStyleUnlocked = true;
+            }
             if (s.isEquipped)
             {
                 s.equipSlotIndex = Mathf.Clamp(s.equipSlotIndex, 0, 9);

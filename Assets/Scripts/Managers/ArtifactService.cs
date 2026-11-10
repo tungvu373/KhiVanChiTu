@@ -34,6 +34,8 @@ public class ArtifactService : MonoBehaviour
 
     public void OnEnemyDefeated(bool boss, int combatStage)
     {
+        if (FeatureUnlockService.Instance != null && !FeatureUnlockService.Instance.CanDropOre()) return;
+
         if (boss) AddOre(2 + combatStage / 10);
         else if (UnityEngine.Random.value < 0.015f) AddOre(1);
     }
@@ -42,17 +44,26 @@ public class ArtifactService : MonoBehaviour
     public int GetOreCost(ArtifactSlot slot)
     {
         int next = GetLevel(slot) + 1;
-        return Valid(slot) && next <= MaxLevel ? next * next * (1 + (int)slot) : int.MaxValue;
+        if (!Valid(slot) || next > MaxLevel) return int.MaxValue;
+        var accessoryDiscount = slot == ArtifactSlot.Boots || slot == ArtifactSlot.Amulet
+            ? DaoAnEffect.ArtifactAccessoryOreReduction : (DaoAnEffect?)null;
+        float multiplier = DaoAnProgressionService.ReductionMultiplier(DaoAnEffect.ArtifactOreReduction, accessoryDiscount);
+        return Mathf.Max(1, Mathf.CeilToInt(next * next * (1 + (int)slot) * multiplier));
     }
     public float GetStoneCost(ArtifactSlot slot)
     {
         int next = GetLevel(slot) + 1;
-        return Valid(slot) && next <= MaxLevel ? Mathf.Ceil(400f * Mathf.Pow(1.48f, next - 1)) : float.PositiveInfinity;
+        if (!Valid(slot) || next > MaxLevel) return float.PositiveInfinity;
+        var armorDiscount = slot == ArtifactSlot.Robe || slot == ArtifactSlot.Crown
+            ? DaoAnEffect.ArtifactArmorStoneReduction : (DaoAnEffect?)null;
+        float multiplier = DaoAnProgressionService.ReductionMultiplier(DaoAnEffect.ArtifactCostReduction, armorDiscount);
+        return Mathf.Ceil(400f * Mathf.Pow(1.48f, next - 1) * multiplier);
     }
 
     public bool TryUpgrade(ArtifactSlot slot)
     {
         if (!Valid(slot) || GetLevel(slot) >= MaxLevel || State.ore < GetOreCost(slot)) return false;
+        if (FeatureUnlockService.Instance != null && !FeatureUnlockService.Instance.IsArtifactSlotUnlocked(slot)) return false;
         var economy = EconomyManager.Instance;
         if (economy == null || !economy.SpendLinhThach(GetStoneCost(slot))) return false;
         SpendOre(GetOreCost(slot));

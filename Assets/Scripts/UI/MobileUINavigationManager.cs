@@ -1,12 +1,7 @@
+using System;
 using UnityEngine;
 
-/// <summary>
-/// Quản lý điều hướng tập trung chuẩn Mobile và PC (Android Back / Escape Navigation).
-/// Tuân thủ nghiêm ngặt BRIEF_ANTIGRAVITY_UI_DA_NEN_TANG_2026-11-03:
-/// - Phím Back/Escape luôn đóng lớp UI trên cùng trước.
-/// - Ngăn ngừa click xuyên màn hình (click-through) khi Modal/Drawer đang mở.
-/// - Hoạt động độc lập bằng Unscaled Time để đảm bảo luôn đóng được dù game đang Pause.
-/// </summary>
+/// <summary>Handles Android Back and Escape for the current UI layer.</summary>
 public class MobileUINavigationManager : MonoBehaviour
 {
     public static MobileUINavigationManager Instance { get; private set; }
@@ -21,104 +16,109 @@ public class MobileUINavigationManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Update()
+    internal static bool BackPressedThisFrame()
     {
-        // Kiểm tra phím Escape (PC) và nút Back hệ thống (Android)
-        bool backTriggered = false;
-
-        #if ENABLE_INPUT_SYSTEM
-        if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            backTriggered = true;
-        }
-        #endif
-
-        if (!backTriggered)
-        {
-            try
-            {
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    backTriggered = true;
-                }
-            }
-            catch (System.InvalidOperationException)
-            {
-                // New Input System is active in Player Settings; ignore safely
-            }
-        }
-
-        if (backTriggered)
-        {
-            HandleBackNavigation();
-        }
+#if ENABLE_INPUT_SYSTEM
+        if (UnityEngine.InputSystem.Keyboard.current?.escapeKey.wasPressedThisFrame == true)
+            return true;
+#endif
+#if ENABLE_LEGACY_INPUT_MANAGER
+        return Input.GetKeyDown(KeyCode.Escape);
+#else
+        return false;
+#endif
     }
 
-    /// <summary>
-    /// Xử lý đóng theo ngăn xếp ưu tiên (Layered Stack Navigation)
-    /// </summary>
+    private void Update()
+    {
+        var menu = MainMenuManager.Instance;
+        if ((menu == null || !menu.isActiveAndEnabled) && BackPressedThisFrame())
+            HandleBackNavigation();
+    }
+
     public bool HandleBackNavigation()
     {
-        // ── ƯU TIÊN 1: ĐÓNG CÁC MODAL POPUP TRUNG TÂM ────────────────────────
-        // 1a. Bảng Nhiệm Vụ Mốc (MilestoneModalUI)
-        if (MilestoneModalUI.Instance != null && MilestoneModalUI.Instance.IsModalOpen)
+        var menu = MainMenuManager.Instance;
+        if (menu != null && menu.isActiveAndEnabled)
+            return menu.HandleBackNavigation();
+
+        Transform top = null;
+        Action closeTop = null;
+        void Consider(Transform layer, Action close)
         {
-            MilestoneModalUI.Instance.Close();
+            if (layer != null && layer.gameObject.activeInHierarchy && IsInFrontOf(layer, top))
+            {
+                top = layer;
+                closeTop = close;
+            }
+        }
+
+        var daoAn = DaoAnModalUI.Instance;
+        if (daoAn != null && daoAn.IsModalOpen) Consider(daoAn.ModalTransform, daoAn.Close);
+        var dismantle = DismantleConfirmModalUI.Instance;
+        if (dismantle != null && dismantle.IsModalOpen) Consider(dismantle.transform, dismantle.Close);
+        var storage = StorageModalUI.Instance;
+        if (storage != null && storage.IsModalOpen) Consider(storage.transform, storage.Close);
+        var achievements = AchievementModalUI.Instance;
+        if (achievements != null && achievements.IsModalOpen) Consider(achievements.transform, AchievementModalUI.Close);
+        var milestones = MilestoneModalUI.Instance;
+        if (milestones != null && milestones.IsModalOpen) Consider(milestones.transform, milestones.Close);
+        var bodyDetail = transform.Find("BodyTalentDetailModal");
+        if (bodyDetail != null) Consider(bodyDetail, () => bodyDetail.gameObject.SetActive(false));
+        var character = CharacterDetailModalUI.Instance;
+        if (character != null) Consider(character.transform, character.ClosePanel);
+        var tribulation = TribulationModalUI.Instance;
+        if (tribulation != null && tribulation.IsOpen) Consider(tribulation.transform, tribulation.OnCancelClicked);
+        var offline = OfflineRewardPopupUI.Instance;
+        if (offline != null && offline.IsModalOpen) Consider(offline.transform, offline.DismissFromBack);
+        var pause = PauseMenuManager.Instance;
+        if (pause != null && pause.IsModalOpen) Consider(pause.transform, pause.CloseTopLayer);
+        var choices = GameplayChoicesService.Instance;
+        if (choices != null && choices.IsChoosing) Consider(choices.ChoiceTransform, choices.ClosePanel);
+
+        if (closeTop != null)
+        {
+            closeTop();
             return true;
         }
 
-        // 1b. Bảng Luyện Thể Chi Tiết (BodyTalentDetailModal)
-        var bodyTalentModal = GameObject.Find("Canvas/MobileUIRoot/BodyTalentDetailModal");
-        if (bodyTalentModal != null && bodyTalentModal.activeInHierarchy)
+        var drawer = MobileDrawerUIController.Instance;
+        if (drawer != null && drawer.IsBlockingGameplay)
         {
-            bodyTalentModal.SetActive(false);
-            if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
-            Debug.Log("[UINav] Đã đóng BodyTalentDetailModal qua Back/Escape.");
+            drawer.CloseActiveDrawer();
             return true;
         }
 
-        // 1c. Bảng Thông Tin Nhân Vật (CharacterDetailModal)
-        var charDetailModal = GameObject.Find("Canvas/CharacterDetailModal");
-        if (charDetailModal != null && charDetailModal.activeInHierarchy)
-        {
-            charDetailModal.SetActive(false);
-            if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
-            Debug.Log("[UINav] Đã đóng CharacterDetailModal qua Back/Escape.");
-            return true;
-        }
+        if (pause == null) return false;
+        pause.OpenPauseMenu();
+        return true;
+    }
 
-        // 1d. Bảng Độ Kiếp (TribulationModalUI)
-        if (TribulationModalUI.Instance != null && TribulationModalUI.Instance.gameObject.activeInHierarchy)
+    private static bool IsInFrontOf(Transform candidate, Transform current)
+    {
+        if (current == null) return true;
+        var candidateCanvas = candidate.GetComponentInParent<Canvas>();
+        var currentCanvas = current.GetComponentInParent<Canvas>();
+        if (candidateCanvas != null && currentCanvas != null)
         {
-            TribulationModalUI.Instance.gameObject.SetActive(false);
-            if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
-            Debug.Log("[UINav] Đã đóng TribulationModalUI qua Back/Escape.");
-            return true;
+            if (!candidateCanvas.overrideSorting) candidateCanvas = candidateCanvas.rootCanvas;
+            if (!currentCanvas.overrideSorting) currentCanvas = currentCanvas.rootCanvas;
+            int candidateLayer = SortingLayer.GetLayerValueFromID(candidateCanvas.sortingLayerID);
+            int currentLayer = SortingLayer.GetLayerValueFromID(currentCanvas.sortingLayerID);
+            if (candidateLayer != currentLayer) return candidateLayer > currentLayer;
+            if (candidateCanvas.sortingOrder != currentCanvas.sortingOrder)
+                return candidateCanvas.sortingOrder > currentCanvas.sortingOrder;
         }
-
-        // 1e. Bảng Pause Menu nếu đang mở
-        if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsModalOpen)
+        // Các nhánh cùng Canvas được vẽ theo thứ tự sibling.
+        for (var branch = candidate; branch.parent != null; branch = branch.parent)
         {
-            PauseMenuManager.Instance.ResumeGame();
-            return true;
+            if (branch.parent == current) return true;
+            var otherBranch = current;
+            while (otherBranch.parent != null && otherBranch.parent != branch.parent)
+                otherBranch = otherBranch.parent;
+            if (otherBranch.parent == branch.parent)
+                return branch.GetSiblingIndex() > otherBranch.GetSiblingIndex();
         }
-
-        // ── ƯU TIÊN 2: ĐÓNG DRAWER ĐANG MỞ (TAB 0 ĐẾN 4) ──────────────────────
-        if (MobileDrawerUIController.Instance != null && MobileDrawerUIController.Instance.IsAnyDrawerOpen)
-        {
-            MobileDrawerUIController.Instance.CloseActiveDrawer();
-            Debug.Log("[UINav] Đã trượt đóng Drawer qua Back/Escape.");
-            return true;
-        }
-
-        // ── ƯU TIÊN 3: NẾU Ở NGOÀI MÀN HÌNH CHƠI TỰ DO -> MỞ PAUSE MENU ───────
-        if (PauseMenuManager.Instance != null)
-        {
-            PauseMenuManager.Instance.OpenPauseMenu();
-            Debug.Log("[UINav] Mở Pause Menu qua Escape.");
-            return true;
-        }
-
         return false;
     }
 }

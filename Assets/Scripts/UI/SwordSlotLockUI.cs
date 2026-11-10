@@ -23,7 +23,7 @@ public class SwordSlotLockUI : MonoBehaviour
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
             stateLabel = labelObject.GetComponent<Text>();
-            stateLabel.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            stateLabel.font = UiTextStyle.BodyFont;
             stateLabel.fontSize = 24;
             stateLabel.alignment = TextAnchor.MiddleCenter;
             stateLabel.raycastTarget = false;
@@ -50,7 +50,7 @@ public class SwordSlotLockUI : MonoBehaviour
         if (stateLabel != null)
         {
             stateLabel.gameObject.SetActive(locked);
-            stateLabel.text = locked ? "🔒\nKhóa" : string.Empty;
+            stateLabel.text = locked ? "Khóa" : string.Empty;
             stateLabel.color = locked ? new Color(0.75f, 0.78f, 0.84f, 0.95f) : Color.clear;
         }
         if (background != null)
