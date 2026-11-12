@@ -1,0 +1,449 @@
+Scripts/Managers/CultivationManager.cs:18:    public UnityEngine.UI.Text stageText;
+Scripts/Managers/CultivationManager.cs:19:    public UnityEngine.UI.Text characterInfoText;
+Scripts/Managers/TutorialManager.cs:34:    [HideInInspector] public Text tutorialText;
+Scripts/Managers/TutorialManager.cs:38:    public Text txtQuestTitle;
+Scripts/Managers/TutorialManager.cs:39:    public Text txtQuestReward;
+Scripts/Managers/TutorialManager.cs:40:    public Image questBarBg;
+Scripts/Managers/TutorialManager.cs:41:    public Image questProgressFill;
+Scripts/Managers/TutorialManager.cs:45:    public Button btnClaimQuick;
+Scripts/Managers/TutorialManager.cs:46:    public Text txtClaimQuick;
+Scripts/Managers/TutorialManager.cs:47:    public ScrollRect descScrollRect;
+Scripts/Managers/TutorialManager.cs:48:    public Button btnAchievement;
+Scripts/Managers/TutorialManager.cs:54:    public Text txtPointerHint;
+Scripts/Managers/TutorialManager.cs:222:        qBtn.onClick.AddListener(OnQuestBarClicked);
+Scripts/Managers/TutorialManager.cs:399:        btnClaimQuick.onClick.AddListener(OnQuestBarClicked);
+Scripts/Managers/TutorialManager.cs:443:        btnAchievement.onClick.AddListener(OnAchievementButtonClicked);
+Scripts/Managers/TutorialManager.cs:491:        toggleBtn.onClick.AddListener(() =>
+Scripts/Managers/TutorialManager.cs:606:    public void PointToTarget(RectTransform target, string hintText = "Bấm vào đây!", int stepIndex = 0)
+Scripts/Managers/TutorialManager.cs:1145:    public void OnAchievementButtonClicked()
+Scripts/Managers/TutorialManager.cs:1245:    public RectTransform FindButtonRect(string buttonName)
+Scripts/Managers/TutorialManager.cs:1270:    public RectTransform FindKiemYButtonRect()
+Scripts/Managers/GameplayChoicesService.cs:57:            MobileDrawerUIController.Instance.OnDockCollapseChanged += OnDockCollapseChanged;
+Scripts/Managers/GameplayChoicesService.cs:72:            MobileDrawerUIController.Instance.OnDockCollapseChanged -= OnDockCollapseChanged;
+Scripts/Managers/GameplayChoicesService.cs:322:        bBtn.onClick.AddListener(ClosePanel);
+Scripts/Managers/GameplayChoicesService.cs:384:        var button = go.GetComponent<Button>(); button.onClick.AddListener(action); return button;
+Scripts/UI\AchievementButtonHandler.cs:7:public class AchievementButtonHandler : MonoBehaviour
+Scripts/UI\AchievementButtonHandler.cs:27:            btn.onClick.RemoveListener(OnAchievementButtonClicked);
+Scripts/UI\AchievementButtonHandler.cs:28:            btn.onClick.AddListener(OnAchievementButtonClicked);
+Scripts/UI\AchievementButtonHandler.cs:32:    public void OnAchievementButtonClicked()
+Scripts/UI\AlchemyPanelUI.cs:19:    public Text txtHerbLinhChi;
+Scripts/UI\AlchemyPanelUI.cs:20:    public Text txtHerbNgungKhi;
+Scripts/UI\AlchemyPanelUI.cs:21:    public Text txtHerbTuyetLien;
+Scripts/UI\AlchemyPanelUI.cs:22:    public Text txtAlchemistRank;
+Scripts/UI\AlchemyPanelUI.cs:23:    public Text txtMedicineDust;
+Scripts/UI\AlchemyPanelUI.cs:26:    public Text txtFurnaceStatus;
+Scripts/UI\AlchemyPanelUI.cs:27:    public Text txtFurnaceTimer;
+Scripts/UI\AlchemyPanelUI.cs:28:    public Image imgFurnaceProgress;
+Scripts/UI\AlchemyPanelUI.cs:29:    public Button btnFinishWithDust;
+Scripts/UI\AlchemyPanelUI.cs:30:    public Text txtDustCost;
+Scripts/UI\AlchemyPanelUI.cs:33:    public Text txtCostTuVi;
+Scripts/UI\AlchemyPanelUI.cs:34:    public Button btnBrewTuVi;
+Scripts/UI\AlchemyPanelUI.cs:37:    public Text txtCostBreakthrough;
+Scripts/UI\AlchemyPanelUI.cs:38:    public Button btnBrewBreakthrough;
+Scripts/UI\AlchemyPanelUI.cs:41:    public Text txtTuViPillsSummary;
+Scripts/UI\AlchemyPanelUI.cs:42:    public Text txtBreakthroughPillsSummary;
+Scripts/UI\AlchemyPanelUI.cs:43:    public Button btnUseTuViPill;
+Scripts/UI\AlchemyPanelUI.cs:47:    public Text linhChiLabel;
+Scripts/UI\AlchemyPanelUI.cs:48:    public Text caoNgungKhiLabel;
+Scripts/UI\AlchemyPanelUI.cs:49:    public Text tuyetLienLabel;
+Scripts/UI\AlchemyPanelUI.cs:50:    public Text brewTimerLabel;
+Scripts/UI\AlchemyPanelUI.cs:51:    public Button brewCultivationBtn;
+Scripts/UI\AlchemyPanelUI.cs:52:    public Button brewBreakthroughBtn;
+Scripts/UI\AlchemyPanelUI.cs:53:    public Button useDustBtn;
+Scripts/UI\AlchemyPanelUI.cs:54:    public Text dustLabel;
+Scripts/UI\AlchemyPanelUI.cs:55:    public Text pillInventoryLabel;
+Scripts/UI\AlchemyPanelUI.cs:64:            btnBrewTuVi.onClick.AddListener(OnBrewCultivationClicked);
+Scripts/UI\AlchemyPanelUI.cs:70:            btnBrewBreakthrough.onClick.AddListener(OnBrewBreakthroughClicked);
+Scripts/UI\AlchemyPanelUI.cs:77:            btnFinishWithDust.onClick.AddListener(OnUseDustClicked);
+Scripts/UI\AlchemyPanelUI.cs:83:            btnUseTuViPill.onClick.AddListener(OnUseTuViPillClicked);
+Scripts/UI\AlchemyPanelUI.cs:87:        if (brewCultivationBtn != null) brewCultivationBtn.onClick.AddListener(OnBrewCultivationClicked);
+Scripts/UI\AlchemyPanelUI.cs:88:        if (brewBreakthroughBtn != null) brewBreakthroughBtn.onClick.AddListener(OnBrewBreakthroughClicked);
+Scripts/UI\AlchemyPanelUI.cs:89:        if (useDustBtn != null) useDustBtn.onClick.AddListener(OnUseDustClicked);
+Scripts/UI\AlchemyPanelUI.cs:95:            AlchemyService.Instance.OnChanged += RefreshUI;
+Scripts/UI\AlchemyPanelUI.cs:102:            AlchemyService.Instance.OnChanged -= RefreshUI;
+Scripts/UI\AchievementModalUI.cs:31:    public Button btnClose;
+Scripts/UI\AchievementModalUI.cs:32:    public Button btnBackdrop;
+Scripts/UI\AchievementModalUI.cs:35:    public Text txtTotalProgress;
+Scripts/UI\AchievementModalUI.cs:36:    public Image fillTotalProgress;
+Scripts/UI\AchievementModalUI.cs:37:    public Button btnClaimAll;
+Scripts/UI\AchievementModalUI.cs:38:    public Text txtClaimAll;
+Scripts/UI\AchievementModalUI.cs:41:    public Button[] tabButtons = new Button[6]; // 0: Tất Cả, 1: Tu Luyện, 2: Chiến Đấu, 3: Kiếm Đạo, 4: Bách Nghệ, 5: Kỳ Duyên
+Scripts/UI\AchievementModalUI.cs:46:    public ScrollRect scrollRect;
+Scripts/UI\AchievementModalUI.cs:81:            AchievementManager.Instance.OnAchievementsUpdated += OnAchievementsUpdatedHandler;
+Scripts/UI\AchievementModalUI.cs:101:            AchievementManager.Instance.OnAchievementsUpdated -= OnAchievementsUpdatedHandler;
+Scripts/UI\AchievementModalUI.cs:119:            btnClose.onClick.AddListener(CloseModal);
+Scripts/UI\AchievementModalUI.cs:125:            btnBackdrop.onClick.AddListener(CloseModal);
+Scripts/UI\AchievementModalUI.cs:131:            btnClaimAll.onClick.AddListener(OnClaimAllClicked);
+Scripts/UI\AchievementModalUI.cs:142:                    tabButtons[i].onClick.AddListener(() => SelectCategory((AchievementCategory)catIndex));
+Scripts/UI\AchievementModalUI.cs:539:            btn.onClick.AddListener(() =>
+Scripts/UI\BiCanhButtonHandler.cs:8:public class BiCanhButtonHandler : MonoBehaviour
+Scripts/UI\BiCanhButtonHandler.cs:28:            btn.onClick.RemoveListener(OnBiCanhButtonClicked);
+Scripts/UI\BiCanhButtonHandler.cs:29:            btn.onClick.AddListener(OnBiCanhButtonClicked);
+Scripts/UI\BiCanhButtonHandler.cs:33:    public void OnBiCanhButtonClicked()
+Scripts/UI\ArtifactPanelUI.cs:16:    public Text oreLabel;           // "Quặng Phôi: X"
+Scripts/UI\ArtifactPanelUI.cs:17:    public Text auraLabel;          // "Hào Quang: Bậc X"
+Scripts/UI\ArtifactPanelUI.cs:20:    public Text[]   artifactLabels;         // Tên + Cấp
+Scripts/UI\ArtifactPanelUI.cs:21:    public Text[]   artifactStatsTexts;     // Chỉ số chiến đấu chi tiết
+Scripts/UI\ArtifactPanelUI.cs:22:    public Text[]   artifactCostTexts;      // Chi phí nâng cấp động
+Scripts/UI\ArtifactPanelUI.cs:23:    public Button[] upgradeButtons;         // Nút Cường Hóa
+Scripts/UI\ArtifactPanelUI.cs:48:                upgradeButtons[i].onClick.AddListener(() => OnUpgradeClicked(slotIndex));
+Scripts/UI\ArtifactPanelUI.cs:56:            ArtifactService.Instance.OnChanged += RefreshUI;
+Scripts/UI\ArtifactPanelUI.cs:58:            EconomyManager.Instance.OnLinhThachChanged += _ => RefreshUI();
+Scripts/UI\ArtifactPanelUI.cs:65:            ArtifactService.Instance.OnChanged -= RefreshUI;
+Scripts/UI\ArtifactPanelUI.cs:67:            EconomyManager.Instance.OnLinhThachChanged -= _ => RefreshUI();
+Scripts/UI\BodyTemperingPanelUI.cs:17:    public Text txtLinhThachBalance;
+Scripts/UI\BodyTemperingPanelUI.cs:18:    public Text txtTotalBodyLevel;
+Scripts/UI\BodyTemperingPanelUI.cs:21:    public ScrollRect treeScrollRect;
+Scripts/UI\BodyTemperingPanelUI.cs:26:    public Image[] nodeBackgrounds = new Image[6];
+Scripts/UI\BodyTemperingPanelUI.cs:27:    public Image[] nodeOutlines = new Image[6];
+Scripts/UI\BodyTemperingPanelUI.cs:28:    public Text[] nodeNameTexts = new Text[6];
+Scripts/UI\BodyTemperingPanelUI.cs:29:    public Text[] nodeLevelTexts = new Text[6];
+Scripts/UI\BodyTemperingPanelUI.cs:30:    public Text[] nodeEffectTexts = new Text[6];
+Scripts/UI\BodyTemperingPanelUI.cs:31:    public Text[] nodeCostTexts = new Text[6];
+Scripts/UI\BodyTemperingPanelUI.cs:32:    public Button[] nodeSelectButtons = new Button[6];
+Scripts/UI\BodyTemperingPanelUI.cs:33:    public Button[] nodeQuickUpgradeButtons = new Button[6];
+Scripts/UI\BodyTemperingPanelUI.cs:35:    public Text[] nodeLockRequirementTexts = new Text[6];
+Scripts/UI\BodyTemperingPanelUI.cs:42:    public Image[] connectorLines = new Image[4];
+Scripts/UI\BodyTemperingPanelUI.cs:47:    public Button centerModalCloseBtn;
+Scripts/UI\BodyTemperingPanelUI.cs:48:    public Button centerModalBackdropBtn;
+Scripts/UI\BodyTemperingPanelUI.cs:49:    public Text txtModalTitle;
+Scripts/UI\BodyTemperingPanelUI.cs:50:    public Text txtModalTier;
+Scripts/UI\BodyTemperingPanelUI.cs:51:    public Text txtModalLore;
+Scripts/UI\BodyTemperingPanelUI.cs:52:    public Text txtModalMechanics;
+Scripts/UI\BodyTemperingPanelUI.cs:53:    public Text txtModalCurrent;
+Scripts/UI\BodyTemperingPanelUI.cs:54:    public Text txtModalNext;
+Scripts/UI\BodyTemperingPanelUI.cs:55:    public Text txtModalRequirement;
+Scripts/UI\BodyTemperingPanelUI.cs:57:    public Button btnModalUpgrade;
+Scripts/UI\BodyTemperingPanelUI.cs:58:    public Button btnModalUpgrade5;
+Scripts/UI\BodyTemperingPanelUI.cs:59:    public Button btnModalUpgradeMax;
+Scripts/UI\BodyTemperingPanelUI.cs:60:    public Text txtModalCost;
+Scripts/UI\BodyTemperingPanelUI.cs:63:    public Text[] statLabels = new Text[6];
+Scripts/UI\BodyTemperingPanelUI.cs:64:    public Button[] upgradeButtons = new Button[6];
+Scripts/UI\BodyTemperingPanelUI.cs:89:                nodeSelectButtons[i].onClick.AddListener(() => OpenCenterModal(index));
+Scripts/UI\BodyTemperingPanelUI.cs:95:                nodeQuickUpgradeButtons[i].onClick.AddListener(() => OpenCenterModal(index));
+Scripts/UI\BodyTemperingPanelUI.cs:103:            centerModalCloseBtn.onClick.AddListener(CloseCenterModal);
+Scripts/UI\BodyTemperingPanelUI.cs:109:            centerModalBackdropBtn.onClick.AddListener(CloseCenterModal);
+Scripts/UI\BodyTemperingPanelUI.cs:115:            btnModalUpgrade.onClick.AddListener(() => UpgradeNode(selectedIndex, 1));
+Scripts/UI\BodyTemperingPanelUI.cs:121:            btnModalUpgrade5.onClick.AddListener(() => UpgradeNode(selectedIndex, 5));
+Scripts/UI\BodyTemperingPanelUI.cs:127:            btnModalUpgradeMax.onClick.AddListener(() => UpgradeMax(selectedIndex));
+Scripts/UI\BodyTemperingPanelUI.cs:143:            PlayerStatsService.Instance.OnStatsChanged += Refresh;
+Scripts/UI\BodyTemperingPanelUI.cs:145:            EconomyManager.Instance.OnLinhThachChanged += HandleCurrencyChanged;
+Scripts/UI\BodyTemperingPanelUI.cs:153:            PlayerStatsService.Instance.OnStatsChanged -= Refresh;
+Scripts/UI\BodyTemperingPanelUI.cs:155:            EconomyManager.Instance.OnLinhThachChanged -= HandleCurrencyChanged;
+Scripts/UI\CharacterDetailModalUI.cs:28:    public ScrollRect scrollRect;
+Scripts/UI\CharacterDetailModalUI.cs:29:    public Button closeButton;
+Scripts/UI\CharacterDetailModalUI.cs:30:    public Button closeOverlayButton;
+Scripts/UI\CharacterDetailModalUI.cs:31:    public Button bottomCloseButton;
+Scripts/UI\CharacterDetailModalUI.cs:34:    public Text txtName;
+Scripts/UI\CharacterDetailModalUI.cs:35:    public Text txtRealm;
+Scripts/UI\CharacterDetailModalUI.cs:36:    public Text txtTuVi;
+Scripts/UI\CharacterDetailModalUI.cs:37:    public Text txtCoDuyen;
+Scripts/UI\CharacterDetailModalUI.cs:38:    public Text txtLinhThach;
+Scripts/UI\CharacterDetailModalUI.cs:41:    public Text txtHp;
+Scripts/UI\CharacterDetailModalUI.cs:42:    public Text txtMp;
+Scripts/UI\CharacterDetailModalUI.cs:43:    public Text txtMultiplier;
+Scripts/UI\CharacterDetailModalUI.cs:44:    public Text txtEquipSwords;
+Scripts/UI\CharacterDetailModalUI.cs:47:    public Text txtUpgradeKiemY;
+Scripts/UI\CharacterDetailModalUI.cs:48:    public Text txtUpgradeLinhLuc;
+Scripts/UI\CharacterDetailModalUI.cs:49:    public Text txtUpgradeTuLinh;
+Scripts/UI\CharacterDetailModalUI.cs:50:    public Text txtUpgradeThanThuc;
+Scripts/UI\CharacterDetailModalUI.cs:71:        if (closeButton != null) closeButton.onClick.AddListener(ClosePanel);
+Scripts/UI\CharacterDetailModalUI.cs:72:        if (closeOverlayButton != null) closeOverlayButton.onClick.AddListener(ClosePanel);
+Scripts/UI\CharacterDetailModalUI.cs:73:        if (bottomCloseButton != null) bottomCloseButton.onClick.AddListener(ClosePanel);
+Scripts/UI\CharacterFrameButton.cs:9:public class CharacterFrameButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+Scripts/UI\CoDuyenUIUpdater.cs:6:    public Text txt;
+Scripts/UI\CoDuyenUIUpdater.cs:13:            EconomyManager.Instance.OnCoDuyenChanged += UpdateUI;
+Scripts/UI\CoDuyenUIUpdater.cs:22:            EconomyManager.Instance.OnCoDuyenChanged -= UpdateUI;
+Scripts/UI\CollapsibleQuestBar.cs:72:        toggleButton.onClick.AddListener(ToggleQuestBar);
+Scripts/UI\CollapsibleQuestBar.cs:75:    public void ToggleQuestBar()
+Scripts/UI\CombatNotificationUI.cs:29:    public Image backgroundImage;
+Scripts/UI\CombatNotificationUI.cs:30:    public Image borderTop;
+Scripts/UI\CombatNotificationUI.cs:31:    public Image borderBottom;
+Scripts/UI\CombatNotificationUI.cs:32:    public Text titleText;
+Scripts/UI\CombatNotificationUI.cs:33:    public Text subtitleText;
+Scripts/UI\CombatNotificationUI.cs:34:    public Text extraDetailText;
+Scripts/UI\CultivationPhaseBarUI.cs:13:    public static CultivationPhaseBarUI Ensure(UnityEngine.UI.Text title)
+Scripts/UI\CultivationPhaseBarUI.cs:39:        tribulationButton.onClick.RemoveListener(TribulationModalUI.Open);
+Scripts/UI\CultivationPhaseBarUI.cs:40:        tribulationButton.onClick.AddListener(TribulationModalUI.Open);
+Scripts/UI\CultivationUI.cs:6:    public Text txtStageName;
+Scripts/UI\CultivationUI.cs:7:    public Text txtTuVi;
+Scripts/UI\CultivationUI.cs:8:    public Image imgProgressBar;
+Scripts/UI\CultivationUI.cs:14:            CultivationManager.Instance.OnTuViChanged += UpdateTuViUI;
+Scripts/UI\CultivationUI.cs:15:            CultivationManager.Instance.OnStageChanged += UpdateStageUI;
+Scripts/UI\CultivationUI.cs:29:            CultivationManager.Instance.OnTuViChanged -= UpdateTuViUI;
+Scripts/UI\CultivationUI.cs:30:            CultivationManager.Instance.OnStageChanged -= UpdateStageUI;
+Scripts/UI\DaoAnButtonHandler.cs:8:public class DaoAnButtonHandler : MonoBehaviour
+Scripts/UI\DaoAnButtonHandler.cs:28:            btn.onClick.RemoveListener(OnDaoAnButtonClicked);
+Scripts/UI\DaoAnButtonHandler.cs:29:            btn.onClick.AddListener(OnDaoAnButtonClicked);
+Scripts/UI\DaoAnButtonHandler.cs:33:    public void OnDaoAnButtonClicked()
+Scripts/UI\DaoAnModalUI.cs:128:            entry.onClick.AddListener(Open);
+Scripts/UI\DaoAnModalUI.cs:329:            closeX.onClick.AddListener(Close);
+Scripts/UI\DaoAnModalUI.cs:345:            closeBottom.onClick.AddListener(Close);
+Scripts/UI\DaoAnModalUI.cs:368:        modalOverlay.GetComponent<Button>().onClick.AddListener(Close);
+Scripts/UI\DaoAnModalUI.cs:390:        closeX.onClick.AddListener(Close);
+Scripts/UI\DaoAnModalUI.cs:481:        closeBtn.onClick.AddListener(Close);
+Scripts/UI\DaoAnModalUI.cs:538:            button.onClick.AddListener(() => SetFilter(key));
+Scripts/UI\DaoAnModalUI.cs:863:        buyBtn.onClick.AddListener(() =>
+Scripts/UI\JadeSecondaryMenu.cs:6:    public UnityEngine.UI.Button toggle;
+Scripts/UI\JadeSecondaryMenu.cs:7:    public UnityEngine.UI.Button[] actions;
+Scripts/UI\JadeSecondaryMenu.cs:12:        toggle.onClick.AddListener(Toggle);
+Scripts/UI\JadeSecondaryMenu.cs:13:        if (dismissArea != null) dismissArea.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(Close);
+Scripts/UI\JadeSecondaryMenu.cs:14:        foreach (var action in actions) if (action != null) action.onClick.AddListener(Close);
+Scripts/UI\JadeSecondaryMenu.cs:26:    public void Toggle() => SetOpen(!IsOpen);
+Scripts/UI\FormationPanelUI.cs:17:    public Text spiritCooldownLabel;
+Scripts/UI\FormationPanelUI.cs:18:    public Button activateSpiritBtn;
+Scripts/UI\FormationPanelUI.cs:21:    public Text txtOreLabel;
+Scripts/UI\FormationPanelUI.cs:22:    public Text txtCurrentActiveLabel;
+Scripts/UI\FormationPanelUI.cs:25:    public Text[]   formationLabels;        // [6] — Tên + Cấp độ
+Scripts/UI\FormationPanelUI.cs:26:    public Text[]   formationDescTexts;     // [6] — Mô tả chiến đấu chi tiết
+Scripts/UI\FormationPanelUI.cs:27:    public Text[]   formationCostTexts;     // [6] — Chi phí Quặng + Linh Thạch
+Scripts/UI\FormationPanelUI.cs:28:    public Button[] selectButtons;          // [6] — Nút [KÍCH HOẠT]
+Scripts/UI\FormationPanelUI.cs:29:    public Button[] upgradeButtons;         // [6] — Nút [TU LUYỆN]
+Scripts/UI\FormationPanelUI.cs:30:    public Text[]   statusBadges;           // [6] — Tag "[ĐANG DÙNG]", "[SẴN SÀNG]", "[CHƯA HỌC]"
+Scripts/UI\FormationPanelUI.cs:68:                    selectButtons[i].onClick.AddListener(() => OnSelectFormation(index));
+Scripts/UI\FormationPanelUI.cs:81:                    upgradeButtons[i].onClick.AddListener(() => OnUpgradeFormation(index));
+Scripts/UI\FormationPanelUI.cs:89:            activateSpiritBtn.onClick.AddListener(OnActivateSpirit);
+Scripts/UI\FormationPanelUI.cs:96:            FormationService.Instance.OnChanged += RefreshUI;
+Scripts/UI\FormationPanelUI.cs:98:            ArtifactService.Instance.OnChanged += RefreshUI;
+Scripts/UI\FormationPanelUI.cs:100:            EconomyManager.Instance.OnLinhThachChanged += HandleLinhThachChanged;
+Scripts/UI\FormationPanelUI.cs:109:            FormationService.Instance.OnChanged -= RefreshUI;
+Scripts/UI\FormationPanelUI.cs:111:            ArtifactService.Instance.OnChanged -= RefreshUI;
+Scripts/UI\FormationPanelUI.cs:113:            EconomyManager.Instance.OnLinhThachChanged -= HandleLinhThachChanged;
+Scripts/UI\JadeButtonFeedback.cs:6:public sealed class JadeButtonFeedback : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
+Scripts/UI\DismantleConfirmModalUI.cs:31:    public Button btnCancel;
+Scripts/UI\DismantleConfirmModalUI.cs:32:    public Button btnConfirm;
+Scripts/UI\DismantleConfirmModalUI.cs:33:    public Button btnBackdrop;
+Scripts/UI\DismantleConfirmModalUI.cs:36:    public Text txtTitle;
+Scripts/UI\DismantleConfirmModalUI.cs:37:    public Text txtItemName;
+Scripts/UI\DismantleConfirmModalUI.cs:38:    public Text txtItemDetail;
+Scripts/UI\DismantleConfirmModalUI.cs:39:    public Text txtRewardSummary;
+Scripts/UI\DismantleConfirmModalUI.cs:40:    public Text txtWarning;
+Scripts/UI\DismantleConfirmModalUI.cs:87:            btnCancel.onClick.AddListener(Close);
+Scripts/UI\DismantleConfirmModalUI.cs:92:            btnBackdrop.onClick.AddListener(Close);
+Scripts/UI\DismantleConfirmModalUI.cs:97:            btnConfirm.onClick.AddListener(OnConfirmClicked);
+Scripts/UI\MilestoneModalUI.cs:17:    public Text txtTotalProgress;
+Scripts/UI\MilestoneModalUI.cs:18:    public Button btnClose;
+Scripts/UI\MilestoneModalUI.cs:19:    public Button btnClaimAll;
+Scripts/UI\MilestoneModalUI.cs:20:    public Button btnSwitchToAchievements;
+Scripts/UI\MilestoneModalUI.cs:63:            btnClaimAll.onClick.AddListener(OnClaimAllClicked);
+Scripts/UI\MilestoneModalUI.cs:80:        backdropBtn.onClick.AddListener(Close);
+Scripts/UI\MilestoneModalUI.cs:134:                btnSwitchToAchievements.onClick.AddListener(SwitchToAchievements);
+Scripts/UI\MilestoneModalUI.cs:137:            btnClose.onClick.AddListener(Close);
+Scripts/UI\MilestoneModalUI.cs:145:            MilestoneManager.Instance.OnMilestonesUpdated += RefreshUI;
+Scripts/UI\MilestoneModalUI.cs:153:            MilestoneManager.Instance.OnMilestonesUpdated -= RefreshUI;
+Scripts/UI\MilestoneModalUI.cs:417:            btn.onClick.AddListener(() =>
+Scripts/UI\MainMenuManager.cs:16:    public Button playButton; 
+Scripts/UI\MainMenuManager.cs:17:    public Text playButtonText;
+Scripts/UI\MainMenuManager.cs:18:    public Button settingsButton;
+Scripts/UI\MainMenuManager.cs:19:    public Button quitButton;
+Scripts/UI\MainMenuManager.cs:23:    public Button backFromSelectButton;
+Scripts/UI\MainMenuManager.cs:26:    public InputField nameInput;
+Scripts/UI\MainMenuManager.cs:29:    public Button confirmCreateButton;
+Scripts/UI\MainMenuManager.cs:30:    public Button cancelCreateButton;
+Scripts/UI\MainMenuManager.cs:34:    public Slider bgmSlider;
+Scripts/UI\MainMenuManager.cs:35:    public Slider sfxSlider;
+Scripts/UI\MainMenuManager.cs:36:    public Button closeSettingsButton;
+Scripts/UI\MainMenuManager.cs:39:    public Text popupTitle;
+Scripts/UI\MainMenuManager.cs:40:    public Text popupMessage;
+Scripts/UI\MainMenuManager.cs:41:    public Button popupConfirmBtn;
+Scripts/UI\MainMenuManager.cs:42:    public Button popupCancelBtn;
+Scripts/UI\MainMenuManager.cs:179:        settingsButton.onClick.AddListener(() => ShowPanel(settingsPanel));
+Scripts/UI\MainMenuManager.cs:180:        quitButton.onClick.AddListener(ConfirmQuitGame);
+Scripts/UI\MainMenuManager.cs:181:        backFromSelectButton.onClick.AddListener(() => ShowPanel(mainPanel));
+Scripts/UI\MainMenuManager.cs:183:        cancelCreateButton.onClick.AddListener(() => ShowPanel(characterSelectPanel));
+Scripts/UI\MainMenuManager.cs:184:        confirmCreateButton.onClick.AddListener(OnConfirmCreateCharacter);
+Scripts/UI\MainMenuManager.cs:188:            nameInput.onValueChanged.AddListener(_ => characterNameLabel.text = characterNamePrompt);
+Scripts/UI\MainMenuManager.cs:191:        closeSettingsButton.onClick.AddListener(() => ShowPanel(mainPanel));
+Scripts/UI\MainMenuManager.cs:200:                bgmSlider.onValueChanged.AddListener(val => AudioManager.Instance.SetBgmVolume(val));
+Scripts/UI\MainMenuManager.cs:206:                sfxSlider.onValueChanged.AddListener(val => AudioManager.Instance.SetSfxVolume(val));
+Scripts/UI\MainMenuManager.cs:225:        playButton.onClick.AddListener(OpenCharacterSelection);
+Scripts/UI\MainMenuManager.cs:359:            popupConfirmBtn.onClick.AddListener(onConfirm);
+Scripts/UI\MainMenuManager.cs:365:            popupCancelBtn.onClick.AddListener(onCancel);
+Scripts/UI\MobileCurrencyText.cs:5:public class MobileCurrencyText : MonoBehaviour
+Scripts/UI\MobileCurrencyText.cs:16:        EconomyManager.Instance.OnLinhThachChanged += OnLinhThachChanged;
+Scripts/UI\MobileCurrencyText.cs:17:        EconomyManager.Instance.OnCoDuyenChanged += OnCoDuyenChanged;
+Scripts/UI\MobileCurrencyText.cs:24:        EconomyManager.Instance.OnLinhThachChanged -= OnLinhThachChanged;
+Scripts/UI\MobileCurrencyText.cs:25:        EconomyManager.Instance.OnCoDuyenChanged -= OnCoDuyenChanged;
+Scripts/UI\JadeUITheme.cs:9:    public Sprite panel, window, slot, selectedSlot, primaryButton, secondaryButton, resourceBar, divider;
+Scripts/UI\JadeUITheme.cs:125:    public static void SetSurface(UnityEngine.UI.Image image, Sprite sprite)
+Scripts/UI\MobileDrawerUIController.cs:18:    public Button[] dockButtons;
+Scripts/UI\MobileDrawerUIController.cs:19:    public Button[] closeButtons;
+Scripts/UI\MobileDrawerUIController.cs:23:    public RectTransform dockToggleButton;
+Scripts/UI\MobileDrawerUIController.cs:24:    public Text dockToggleArrowText;
+Scripts/UI\MobileDrawerUIController.cs:25:    public Text dockToggleLabelText;
+Scripts/UI\MobileDrawerUIController.cs:134:            btn.onClick.AddListener(ToggleDockCollapse);
+Scripts/UI\MobileDrawerUIController.cs:141:                btn.onClick.RemoveListener(ToggleDockCollapse);
+Scripts/UI\MobileDrawerUIController.cs:142:                btn.onClick.AddListener(ToggleDockCollapse);
+Scripts/UI\MobileDrawerUIController.cs:161:    public void ToggleDockCollapse()
+Scripts/UI\MobileDrawerUIController.cs:221:                    dockButtons[i].onClick.AddListener(() => ToggleDrawer(index));
+Scripts/UI\MobileDrawerUIController.cs:231:                    button.onClick.AddListener(CloseActiveDrawer);
+Scripts/UI\MobileDrawerUIController.cs:240:                button.onClick.AddListener(CloseActiveDrawer);
+Scripts/UI\MobileDrawerUIController.cs:339:    public void ToggleDrawer(int index)
+Scripts/UI\MobileSkillHUD.cs:14:    public Button btnUltimate;
+Scripts/UI\MobileSkillHUD.cs:15:    public Image imgUltiFill;
+Scripts/UI\MobileSkillHUD.cs:16:    public Image imgUltiGlow;
+Scripts/UI\MobileSkillHUD.cs:17:    public Text txtUltiTitle;
+Scripts/UI\MobileSkillHUD.cs:18:    public Text txtUltiMana;
+Scripts/UI\MobileSkillHUD.cs:21:    public Button[] btnNormalSkills = new Button[3];
+Scripts/UI\MobileSkillHUD.cs:22:    public Image[] imgNormalCooldownOverlays = new Image[3];
+Scripts/UI\MobileSkillHUD.cs:23:    public Text[] txtNormalCooldownTimers = new Text[3];
+Scripts/UI\MobileSkillHUD.cs:24:    public Text[] txtNormalTitles = new Text[3];
+Scripts/UI\MobileSkillHUD.cs:25:    public Text[] txtNormalCosts = new Text[3];
+Scripts/UI\MobileSkillHUD.cs:47:    public void WireButtons()
+Scripts/UI\MobileSkillHUD.cs:52:            btnUltimate.onClick.AddListener(() =>
+Scripts/UI\MobileSkillHUD.cs:65:                btnNormalSkills[i].onClick.AddListener(() =>
+Scripts/UI\OfflineRewardPopupUI.cs:44:    public Button claimNormalButton;
+Scripts/UI\OfflineRewardPopupUI.cs:45:    public Button claimDoubleButton;
+Scripts/UI\OfflineRewardPopupUI.cs:46:    public Button closeButton;
+Scripts/UI\OfflineRewardPopupUI.cs:49:    public Text titleText;
+Scripts/UI\OfflineRewardPopupUI.cs:50:    public Text timeAwayText;
+Scripts/UI\OfflineRewardPopupUI.cs:51:    public Text rewardDetailsText;
+Scripts/UI\OfflineRewardPopupUI.cs:78:            claimNormalButton.onClick.AddListener(OnClaimNormalClicked);
+Scripts/UI\OfflineRewardPopupUI.cs:83:            claimDoubleButton.onClick.AddListener(OnClaimDoubleClicked);
+Scripts/UI\OfflineRewardPopupUI.cs:88:            closeButton.onClick.AddListener(OnCloseClicked);
+Scripts/UI\OfflineRewardPopupUI.cs:509:        bNorm.onClick.AddListener(popup.OnClaimNormalClicked);
+Scripts/UI\OfflineRewardPopupUI.cs:511:        bDbl.onClick.AddListener(popup.OnClaimDoubleClicked);
+Scripts/UI\OfflineRewardPopupUI.cs:513:        bClose.onClick.AddListener(popup.OnCloseClicked);
+Scripts/UI\PauseButtonHandler.cs:10:public class PauseButtonHandler : MonoBehaviour
+Scripts/UI\PauseButtonHandler.cs:22:            btn.onClick.AddListener(OnPauseButtonClicked);
+Scripts/UI\PauseButtonHandler.cs:41:    public void OnPauseButtonClicked()
+Scripts/UI\PauseButtonHandler.cs:46:    public void TogglePauseMenu()
+Scripts/UI\PauseMenuManager.cs:32:    public Button openPauseButton;
+Scripts/UI\PauseMenuManager.cs:35:    public Button closeHeaderButton;
+Scripts/UI\PauseMenuManager.cs:36:    public Button overlayCloseButton;
+Scripts/UI\PauseMenuManager.cs:39:    public Button resumeButton;
+Scripts/UI\PauseMenuManager.cs:40:    public Button manualSaveButton;
+Scripts/UI\PauseMenuManager.cs:41:    public Button returnMainMenuButton;
+Scripts/UI\PauseMenuManager.cs:42:    public Button quitButton;
+Scripts/UI\PauseMenuManager.cs:45:    public Slider bgmSlider;
+Scripts/UI\PauseMenuManager.cs:46:    public Text txtBgmValue;
+Scripts/UI\PauseMenuManager.cs:47:    public Slider sfxSlider;
+Scripts/UI\PauseMenuManager.cs:48:    public Text txtSfxValue;
+Scripts/UI\PauseMenuManager.cs:49:    public Toggle muteToggle;
+Scripts/UI\PauseMenuManager.cs:52:    public Text txtCharacterInfo;
+Scripts/UI\PauseMenuManager.cs:53:    public Text txtSaveStatus;
+Scripts/UI\PauseMenuManager.cs:56:    public Text txtPopupTitle;
+Scripts/UI\PauseMenuManager.cs:57:    public Text txtPopupMessage;
+Scripts/UI\PauseMenuManager.cs:58:    public Button btnPopupConfirm;
+Scripts/UI\PauseMenuManager.cs:59:    public Button btnPopupCancel;
+Scripts/UI\PauseMenuManager.cs:93:            openPauseButton.onClick.AddListener(OpenPauseMenu);
+Scripts/UI\PauseMenuManager.cs:99:            closeHeaderButton.onClick.AddListener(ResumeGame);
+Scripts/UI\PauseMenuManager.cs:105:            overlayCloseButton.onClick.AddListener(ResumeGame);
+Scripts/UI\PauseMenuManager.cs:111:            resumeButton.onClick.AddListener(ResumeGame);
+Scripts/UI\PauseMenuManager.cs:117:            manualSaveButton.onClick.AddListener(OnManualSaveClicked);
+Scripts/UI\PauseMenuManager.cs:123:            returnMainMenuButton.onClick.AddListener(OnReturnMainMenuClicked);
+Scripts/UI\PauseMenuManager.cs:129:            quitButton.onClick.AddListener(OnQuitGameClicked);
+Scripts/UI\PauseMenuManager.cs:135:            bgmSlider.onValueChanged.AddListener(OnBgmSliderChanged);
+Scripts/UI\PauseMenuManager.cs:141:            sfxSlider.onValueChanged.AddListener(OnSfxSliderChanged);
+Scripts/UI\PauseMenuManager.cs:147:            muteToggle.onValueChanged.AddListener(OnMuteToggleChanged);
+Scripts/UI\PauseMenuManager.cs:153:            btnPopupCancel.onClick.AddListener(CloseConfirmation);
+Scripts/UI\PauseMenuManager.cs:159:            btnPopupConfirm.onClick.AddListener(() =>
+Scripts/UI\SaveSlotUI.cs:14:    public Text nameText;
+Scripts/UI\SaveSlotUI.cs:15:    public Text cultivationText;
+Scripts/UI\SaveSlotUI.cs:16:    public Text playTimeText;
+Scripts/UI\SaveSlotUI.cs:19:    public Button slotButton;      // Bao trùm cả ô để bắt sự kiện click
+Scripts/UI\SaveSlotUI.cs:20:    public Button deleteButton;    // Nút [Xóa]
+Scripts/UI\SaveSlotUI.cs:40:            if(slotButton != null) slotButton.onClick.AddListener(() => menuManager.OpenCharacterCreation(slotIndex));
+Scripts/UI\SaveSlotUI.cs:45:            if(slotButton != null) slotButton.onClick.AddListener(() => menuManager.AskConfirmEnterGame(slotIndex, currentData));
+Scripts/UI\SaveSlotUI.cs:48:            if(deleteButton != null) deleteButton.onClick.AddListener(() => menuManager.AskConfirmDeleteSlot(slotIndex));
+Scripts/UI\SecretRealmModalUI.cs:92:        modalOverlay.GetComponent<Button>().onClick.AddListener(Close);
+Scripts/UI\SecretRealmModalUI.cs:128:        btnX.GetComponent<Button>().onClick.AddListener(Close);
+Scripts/UI\SecretRealmModalUI.cs:232:        closeBottom.GetComponent<Button>().onClick.AddListener(Close);
+Scripts/UI\SecretRealmModalUI.cs:335:        btn.onClick.AddListener(() =>
+Scripts/UI\SecretRealmModalUI.cs:428:            btnX.onClick.AddListener(Close);
+Scripts/UI\SecretRealmModalUI.cs:435:            btnBackdrop.onClick.AddListener(Close);
+Scripts/UI\SecretRealmModalUI.cs:442:            btnCloseBottom.onClick.AddListener(Close);
+Scripts/UI\SecretRealmModalUI.cs:467:                        btnEnter.onClick.AddListener(() => OnEnterRealmClicked(type));
+Scripts/UI\SecretRealmPlayController.cs:295:        btn.onClick.AddListener(() =>
+Scripts/UI\SecretRealmPlayController.cs:630:        btn.onClick.AddListener(() =>
+Scripts/UI\SecretRealmPlayController.cs:777:        btn.onClick.AddListener(() =>
+Scripts/UI\SecretRealmPlayController.cs:1114:                    btnConfirm.onClick.AddListener(CloseAll);
+Scripts/UI\SecretRealmPlayController.cs:1223:        btnQuit.GetComponent<Button>().onClick.AddListener(CloseAll);
+Scripts/UI\SecretRealmPlayController.cs:1321:            btnQuit.onClick.AddListener(CloseAll);
+Scripts/UI\SecretRealmPlayController.cs:1395:        actionButtonGo.GetComponent<Button>().onClick.AddListener(action);
+Scripts/UI\SecretRealmPlayController.cs:1453:        btnConfirm.GetComponent<Button>().onClick.AddListener(CloseAll);
+Scripts/UI\ShopToggleUI.cs:4:public class ShopToggleUI : MonoBehaviour
+Scripts/UI\ShopToggleUI.cs:7:    public bool isCloseButton = false;
+Scripts/UI\ShopToggleUI.cs:15:            btn.onClick.AddListener(() =>
+Scripts/UI\ShopItemUI.cs:7:    public Button buyButton;
+Scripts/UI\ShopItemUI.cs:16:            buyButton.onClick.AddListener(OnBuyClicked);
+Scripts/UI\StorageButtonHandler.cs:8:public class StorageButtonHandler : MonoBehaviour
+Scripts/UI\StorageButtonHandler.cs:19:            btn.onClick.AddListener(OnStorageButtonClicked);
+Scripts/UI\StorageButtonHandler.cs:28:            btn.onClick.AddListener(OnStorageButtonClicked);
+Scripts/UI\StorageButtonHandler.cs:32:    public void OnStorageButtonClicked()
+Scripts/UI\SkillCardUI.cs:8:    public Text titleText;
+Scripts/UI\SkillCardUI.cs:9:    public Text condText;
+Scripts/UI\SkillCardUI.cs:10:    public Button unlockButton;
+Scripts/UI\SkillCardUI.cs:11:    public Text unlockBtnText;
+Scripts/UI\SkillCardUI.cs:18:            unlockButton.onClick.AddListener(OnUnlockClicked);
+Scripts/UI\SwordSlotLockUI.cs:37:            SwordLoadoutService.Instance.OnCapacityChanged += Refresh;
+Scripts/UI\SwordSlotLockUI.cs:44:            SwordLoadoutService.Instance.OnCapacityChanged -= Refresh;
+Scripts/UI\StorageModalUI.cs:52:    public Button btnClose;
+Scripts/UI\StorageModalUI.cs:53:    public Button btnBackdrop;
+Scripts/UI\StorageModalUI.cs:56:    public Text txtLinhThach;
+Scripts/UI\StorageModalUI.cs:57:    public Text txtKiemY;
+Scripts/UI\StorageModalUI.cs:58:    public Text txtOre;
+Scripts/UI\StorageModalUI.cs:59:    public Text txtDust;
+Scripts/UI\StorageModalUI.cs:62:    public Button[] tabButtons = new Button[5]; // 0: Tất Cả, 1: Kiếm Phôi, 2: Đan Dược, 3: Nguyên Liệu, 4: Hòm Tạm
+Scripts/UI\StorageModalUI.cs:66:    public Toggle toggleSwordHighLevel;
+Scripts/UI\StorageModalUI.cs:67:    public Toggle togglePillBreakthrough;
+Scripts/UI\StorageModalUI.cs:68:    public Toggle toggleAutoDismantleLv1;
+Scripts/UI\StorageModalUI.cs:72:    public Button btnToggleView;
+Scripts/UI\StorageModalUI.cs:73:    public Text txtToggleView;
+Scripts/UI\StorageModalUI.cs:79:    public ScrollRect scrollRect;
+Scripts/UI\StorageModalUI.cs:80:    public Text txtEmptyNotice;
+Scripts/UI\StorageModalUI.cs:83:    public Button btnClaimPriority;
+Scripts/UI\StorageModalUI.cs:84:    public Text txtClaimPriority;
+Scripts/UI\StorageModalUI.cs:85:    public Button btnBatchDismantle;
+Scripts/UI\StorageModalUI.cs:86:    public Text txtBatchDismantle;
+Scripts/UI\StorageModalUI.cs:119:            StorageManager.Instance.OnStorageChanged += OnDataChanged;
+Scripts/UI\StorageModalUI.cs:121:            DismantleService.Instance.OnDismantleExecuted += OnDataChanged;
+Scripts/UI\StorageModalUI.cs:127:            StorageManager.Instance.OnStorageChanged -= OnDataChanged;
+Scripts/UI\StorageModalUI.cs:129:            DismantleService.Instance.OnDismantleExecuted -= OnDataChanged;
+Scripts/UI\StorageModalUI.cs:137:            btnClose.onClick.AddListener(Close);
+Scripts/UI\StorageModalUI.cs:142:            btnBackdrop.onClick.AddListener(Close);
+Scripts/UI\StorageModalUI.cs:153:                    tabButtons[i].onClick.AddListener(() => SelectCategory((StorageCategory)catIndex));
+Scripts/UI\StorageModalUI.cs:162:            toggleSwordHighLevel.onValueChanged.AddListener((val) =>
+Scripts/UI\StorageModalUI.cs:170:            togglePillBreakthrough.onValueChanged.AddListener((val) =>
+Scripts/UI\StorageModalUI.cs:178:            toggleAutoDismantleLv1.onValueChanged.AddListener((val) =>
+Scripts/UI\StorageModalUI.cs:188:            btnClaimPriority.onClick.AddListener(OnClaimPriorityClicked);
+Scripts/UI\StorageModalUI.cs:193:            btnBatchDismantle.onClick.AddListener(OnBatchDismantleClicked);
+Scripts/UI\StorageModalUI.cs:200:            btnToggleView.onClick.AddListener(ToggleViewMode);
+Scripts/UI\StorageModalUI.cs:211:                btn.onClick.AddListener(() => Open());
+Scripts/UI\StorageModalUI.cs:252:    public void ToggleViewMode()
+Scripts/UI\StorageModalUI.cs:794:            btn.onClick.AddListener(() =>
+Scripts/UI\StorageModalUI.cs:1003:                btn.onClick.AddListener(() =>
+Scripts/UI\StorageModalUI.cs:1013:                btn.onClick.AddListener(() => onDismantle.Invoke());
+Scripts/UI\TribulationModalUI.cs:29:    public Button confirmButton;
+Scripts/UI\TribulationModalUI.cs:30:    public Button cancelButton;
+Scripts/UI\TribulationModalUI.cs:33:    public Text titleText;
+Scripts/UI\TribulationModalUI.cs:34:    public Text subtitleText;
+Scripts/UI\TribulationModalUI.cs:35:    public Text currentRealmText;
+Scripts/UI\TribulationModalUI.cs:36:    public Text targetRealmText;
+Scripts/UI\TribulationModalUI.cs:37:    public Text warningText;
+Scripts/UI\TribulationModalUI.cs:59:            confirmButton.onClick.AddListener(OnConfirmClicked);
+Scripts/UI\TribulationModalUI.cs:64:            cancelButton.onClick.AddListener(OnCancelClicked);
+Scripts/UI\TribulationModalUI.cs:88:        if (observedAlchemy != null) observedAlchemy.OnChanged -= RefreshData;
+Scripts/UI\TribulationModalUI.cs:152:            if (observedAlchemy != null) observedAlchemy.OnChanged += RefreshData;
+Scripts/UI\TribulationModalUI.cs:501:        btnConf.onClick.AddListener(modal.OnConfirmClicked);
+Scripts/UI\TribulationModalUI.cs:503:        btnCanc.onClick.AddListener(modal.OnCancelClicked);
+Scripts/UI\UiTextStyle.cs:4:public static class UiTextStyle
+Scripts/UI\UpgradeUIPlaceholder.cs:7:    public Text txtLinhThach;
+Scripts/UI\UpgradeUIPlaceholder.cs:10:    public Text txtLinhLuc;
+Scripts/UI\UpgradeUIPlaceholder.cs:11:    public Button btnLinhLuc;
+Scripts/UI\UpgradeUIPlaceholder.cs:14:    public Text txtKiemY;
+Scripts/UI\UpgradeUIPlaceholder.cs:15:    public Button btnKiemY;
+Scripts/UI\UpgradeUIPlaceholder.cs:18:    public Text txtThanThuc;
+Scripts/UI\UpgradeUIPlaceholder.cs:19:    public Button btnThanThuc;
+Scripts/UI\UpgradeUIPlaceholder.cs:22:    public Text txtTuLinh;
+Scripts/UI\UpgradeUIPlaceholder.cs:23:    public Button btnTuLinh;
+Scripts/UI\UpgradeUIPlaceholder.cs:30:            EconomyManager.Instance.OnLinhThachChanged += UpdateEconomyUI;
+Scripts/UI\UpgradeUIPlaceholder.cs:36:            UpgradeManager.Instance.OnUpgradesChanged += UpdateUpgradesUI;
+Scripts/UI\UpgradeUIPlaceholder.cs:41:        if(btnLinhLuc != null) btnLinhLuc.onClick.AddListener(() => UpgradeManager.Instance.BuyUpgrade("LinhLuc"));
+Scripts/UI\UpgradeUIPlaceholder.cs:42:        if(btnKiemY != null) btnKiemY.onClick.AddListener(() => UpgradeManager.Instance.BuyUpgrade("KiemY"));
+Scripts/UI\UpgradeUIPlaceholder.cs:43:        if(btnThanThuc != null) btnThanThuc.onClick.AddListener(() => UpgradeManager.Instance.BuyUpgrade("ThanThuc"));
+Scripts/UI\UpgradeUIPlaceholder.cs:44:        if(btnTuLinh != null) btnTuLinh.onClick.AddListener(() => UpgradeManager.Instance.BuyUpgrade("TuLinh"));
+Scripts/UI\UpgradeUIPlaceholder.cs:50:            EconomyManager.Instance.OnLinhThachChanged -= UpdateEconomyUI;
+Scripts/UI\UpgradeUIPlaceholder.cs:53:            UpgradeManager.Instance.OnUpgradesChanged -= UpdateUpgradesUI;
+Scripts/UI\ViewModels\LeaderboardAndAuthVM.cs:14:        public string realmText = "Trúc Cơ Đỉnh Phong";
+Scripts/UI\ViewModels\SwordAndUpgradeVM.cs:47:        public string herbsRequiredText = "";

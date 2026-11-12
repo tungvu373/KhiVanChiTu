@@ -1,0 +1,5 @@
+Original components: 2187
+Current components: 2479
+Original object bindings: 3524
+Original persistent listeners: 5
+Missing contracts: 0

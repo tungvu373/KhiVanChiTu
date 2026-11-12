@@ -277,6 +277,18 @@ public class MobileDrawerUIController : MonoBehaviour
             bool isActive = (i == activeIndex);
             bool isUnlocked = IsDrawerUnlocked(i, out _);
 
+            var jadeTheme = GetComponentInParent<JadeUITheme>();
+            if (jadeTheme != null)
+            {
+                if (img != null) img.color = isUnlocked ? Color.white : new Color(.48f, .54f, .51f, .9f);
+                if (txt != null) txt.color = !isUnlocked ? new Color(.59f, .65f, .62f) : (isActive ? JadeUITheme.Gold : JadeUITheme.Ivory);
+                var selected = dockButtons[i].transform.Find("JadeSelected");
+                if (selected != null) selected.gameObject.SetActive(isActive);
+                var icon = dockButtons[i].transform.Find("JadeNavIcon");
+                if (icon != null) icon.GetComponent<Image>().color = isUnlocked ? Color.white : new Color(.55f, .6f, .56f);
+                continue;
+            }
+
             if (img != null)
             {
                 if (!isUnlocked)

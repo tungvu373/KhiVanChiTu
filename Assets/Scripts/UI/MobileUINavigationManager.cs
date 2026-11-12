@@ -55,6 +55,14 @@ public class MobileUINavigationManager : MonoBehaviour
 
         var daoAn = DaoAnModalUI.Instance;
         if (daoAn != null && daoAn.IsModalOpen) Consider(daoAn.ModalTransform, daoAn.Close);
+        var secretRealm = SecretRealmModalUI.Instance;
+        if (secretRealm != null && secretRealm.IsModalOpen)
+        {
+            var secretLayer = transform.root.Find("SecretRealmModal");
+            if (secretLayer == null && GetComponentInParent<Canvas>() != null)
+                secretLayer = GetComponentInParent<Canvas>().transform.Find("SecretRealmModal");
+            Consider(secretLayer, secretRealm.Close);
+        }
         var dismantle = DismantleConfirmModalUI.Instance;
         if (dismantle != null && dismantle.IsModalOpen) Consider(dismantle.transform, dismantle.Close);
         var storage = StorageModalUI.Instance;
@@ -79,6 +87,13 @@ public class MobileUINavigationManager : MonoBehaviour
         if (closeTop != null)
         {
             closeTop();
+            return true;
+        }
+
+        var secondaryMenu = GetComponent<JadeSecondaryMenu>();
+        if (secondaryMenu != null && secondaryMenu.IsOpen)
+        {
+            secondaryMenu.Close();
             return true;
         }
 

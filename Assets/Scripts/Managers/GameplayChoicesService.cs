@@ -40,6 +40,9 @@ public class GameplayChoicesService : MonoBehaviour
     private readonly Vector2 defaultStylePos = new Vector2(-20f, 260f);
     private readonly Vector2 collapsedStylePos = new Vector2(-20f, 85f);
     private Coroutine styleSlideCoroutine;
+    private JadeUITheme presentationTheme;
+    private Vector2 DefaultStylePosition => presentationTheme != null ? new Vector2(-24f, 450f) : defaultStylePos;
+    private Vector2 CollapsedStylePosition => presentationTheme != null ? new Vector2(-24f, 24f) : collapsedStylePos;
 
     private void Awake()
     {
@@ -55,7 +58,7 @@ public class GameplayChoicesService : MonoBehaviour
             if (styleButton != null)
             {
                 var rect = (RectTransform)styleButton.transform;
-                rect.anchoredPosition = MobileDrawerUIController.Instance.IsDockCollapsed ? collapsedStylePos : defaultStylePos;
+                rect.anchoredPosition = MobileDrawerUIController.Instance.IsDockCollapsed ? CollapsedStylePosition : DefaultStylePosition;
             }
         }
     }
@@ -89,7 +92,7 @@ public class GameplayChoicesService : MonoBehaviour
         if (styleButton == null) yield break;
         var rect = (RectTransform)styleButton.transform;
         Vector2 start = rect.anchoredPosition;
-        Vector2 target = collapse ? collapsedStylePos : defaultStylePos;
+        Vector2 target = collapse ? CollapsedStylePosition : DefaultStylePosition;
         float elapsed = 0f;
         float duration = 0.25f;
         while (elapsed < duration)
@@ -106,6 +109,7 @@ public class GameplayChoicesService : MonoBehaviour
     internal bool IsAnyModalBlocking()
     {
         if (DaoAnModalUI.Instance != null && DaoAnModalUI.Instance.IsModalOpen) return true;
+        if (SecretRealmModalUI.Instance != null && SecretRealmModalUI.Instance.IsModalOpen) return true;
         var canvas = GameObject.Find("Canvas");
         if (canvas != null)
         {
@@ -280,6 +284,7 @@ public class GameplayChoicesService : MonoBehaviour
 
     private void BuildUI()
     {
+        presentationTheme = Object.FindFirstObjectByType<JadeUITheme>(FindObjectsInactive.Include);
         var root = new GameObject("GameplayChoicesCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         root.transform.SetParent(transform, false);
         var canvas = root.GetComponent<Canvas>();
@@ -297,7 +302,7 @@ public class GameplayChoicesService : MonoBehaviour
         rect.pivot = new Vector2(1f, 0f);
         if (MobileDrawerUIController.Instance != null && MobileDrawerUIController.Instance.IsDockCollapsed)
         {
-            rect.anchoredPosition = collapsedStylePos;
+            rect.anchoredPosition = CollapsedStylePosition;
         }
         status = styleButton.GetComponentInChildren<Text>();
         if (status != null)
@@ -325,6 +330,12 @@ public class GameplayChoicesService : MonoBehaviour
         pr.sizeDelta = new Vector2(960, 580);
         panel.GetComponent<Image>().color = new Color(0.05f, 0.08f, 0.13f, 0.98f);
         panel.SetActive(false);
+        if (presentationTheme != null)
+        {
+            rect.sizeDelta = new Vector2(360f, 132f);
+            rect.anchoredPosition = MobileDrawerUIController.Instance != null && MobileDrawerUIController.Instance.IsDockCollapsed ? CollapsedStylePosition : DefaultStylePosition;
+            presentationTheme.StyleTree(root.transform);
+        }
     }
     public void OpenStyles()
     {

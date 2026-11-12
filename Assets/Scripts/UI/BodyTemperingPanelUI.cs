@@ -250,6 +250,7 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
             // Hiệu quả ngắn gọn
             if (i < nodeEffectTexts.Length && nodeEffectTexts[i] != null)
             {
+                if (GetComponentInParent<JadeUITheme>() != null) nodeEffectTexts[i].gameObject.SetActive(isUnlocked);
                 if (isUnlocked)
                 {
                     nodeEffectTexts[i].text = level > 0 
