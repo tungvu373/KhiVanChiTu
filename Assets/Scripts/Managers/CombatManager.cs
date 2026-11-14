@@ -63,14 +63,26 @@ public class CombatManager : MonoBehaviour
 
 
     [Header("Spawning & Density Control")]
+    [Tooltip("Thời gian giãn cách giữa mỗi lần sinh quái (giây) - tăng lên để quái ra thưa hơn")]
+    [Range(0.5f, 5.0f)]
+    public float spawnInterval = 1.8f; // Giãn cách 1.8 giây mới sinh 1 con quái (nhịp độ mỏng, thư thái)
 
+    [Tooltip("Số lượng quái tối đa xuất hiện đồng thời trên sân đấu - giảm xuống để không bị ngợp")]
+    [Range(1, 15)]
+    public int maxOnScreenEnemies = 3; // Tối đa 3 quái đồng thời trên sân (rất mỏng, thoáng mắt)
 
-
-    public float spawnInterval = 0.2f; // Tốc độ spawn quái (0.2s)
-
-
-
-    public int maxOnScreenEnemies = 15; // Giới hạn số lượng quái xuất hiện đồng thời trên sân (tránh lag, đè chồng)
+    [Header("Multi-Direction Spawning")]
+    [Tooltip("Bật chế độ sinh quái từ nhiều hướng (Trước, Trái, Phải, Sau)")]
+    public bool spawnFromAllDirections = true;
+    [Tooltip("Tỉ lệ xuất hiện từ phía Trước (0-100%)")]
+    [Range(0, 100)] public int frontSpawnWeight = 60;
+    [Tooltip("Tỉ lệ xuất hiện từ Cánh Trái (0-100%)")]
+    [Range(0, 100)] public int leftSpawnWeight = 15;
+    [Tooltip("Tỉ lệ xuất hiện từ Cánh Phải (0-100%)")]
+    [Range(0, 100)] public int rightSpawnWeight = 15;
+    [Tooltip("Tỉ lệ xuất hiện từ Sau Lưng (0-100%)")]
+    [Range(0, 100)] public int backSpawnWeight = 10;
+    private int lastSpawnSide = -1; // Chống lặp liên tiếp cùng 1 hướng phụ
 
 
 
@@ -2436,87 +2448,104 @@ public class CombatManager : MonoBehaviour
 
 
 
-    private void SpawnEnemy()
-
-
-
+    /// <summary>
+    /// Tính toán vị trí và góc xoay xuất hiện của quái theo nhiều hướng xung quanh người chơi.
+    /// </summary>
+    public Vector3 CalculateSpawnPosition(out Quaternion spawnRotation)
     {
+        if (playerTransform == null)
+        {
+            spawnRotation = Quaternion.identity;
+            return Vector3.zero;
+        }
 
+        Vector3 pPos = playerTransform.position;
+        Vector3 spawnPos;
 
+        if (!spawnFromAllDirections)
+        {
+            float randomX = Random.Range(-8f, 8f);
+            spawnPos = new Vector3(pPos.x + randomX, pPos.y, pPos.z + 18f);
+            spawnRotation = Quaternion.identity;
+            return spawnPos;
+        }
 
+        int totalWeight = Mathf.Max(1, frontSpawnWeight + leftSpawnWeight + rightSpawnWeight + backSpawnWeight);
+        int roll = Random.Range(0, totalWeight);
+
+        int chosenSide = 0; // 0: Trước, 1: Trái, 2: Phải, 3: Sau
+        if (roll < frontSpawnWeight) chosenSide = 0;
+        else if (roll < frontSpawnWeight + leftSpawnWeight) chosenSide = 1;
+        else if (roll < frontSpawnWeight + leftSpawnWeight + rightSpawnWeight) chosenSide = 2;
+        else chosenSide = 3;
+
+        // Chống dồn dập: Nếu lần trước vừa sinh ở hướng phụ (Trái/Phải/Sau), lần này ép về Trước
+        if (chosenSide != 0 && chosenSide == lastSpawnSide)
+        {
+            chosenSide = 0;
+        }
+        lastSpawnSide = chosenSide;
+
+        if (chosenSide == 0)
+        {
+            // Phía Trước (Front / North - 60%): Quái xuất hiện phía trên màn hình tiến xuống
+            float x = pPos.x + Random.Range(-6f, 6f);
+            float z = pPos.z + Random.Range(13f, 17f);
+            spawnPos = new Vector3(x, pPos.y, z);
+        }
+        else if (chosenSide == 1)
+        {
+            // Cánh Trái (Left / West - 15%): Quái tràn vào từ mép trái màn hình
+            float x = pPos.x - Random.Range(9.5f, 12f);
+            float z = pPos.z + Random.Range(-2f, 8f);
+            spawnPos = new Vector3(x, pPos.y, z);
+        }
+        else if (chosenSide == 2)
+        {
+            // Cánh Phải (Right / East - 15%): Quái tràn vào từ mép phải màn hình
+            float x = pPos.x + Random.Range(9.5f, 12f);
+            float z = pPos.z + Random.Range(-2f, 8f);
+            spawnPos = new Vector3(x, pPos.y, z);
+        }
+        else
+        {
+            // Sau Lưng (Back / South - 10%): Thi thoảng có 1 quái tập kích sau lưng
+            float x = pPos.x + Random.Range(-5f, 5f);
+            float z = pPos.z - Random.Range(6.5f, 8.5f);
+            spawnPos = new Vector3(x, pPos.y, z);
+        }
+
+        // Xoay hướng mặt quái về phía người chơi ngay khi vừa spawn
+        Vector3 lookDir = pPos - spawnPos;
+        lookDir.y = 0f;
+        spawnRotation = lookDir.sqrMagnitude > 0.001f ? Quaternion.LookRotation(lookDir) : Quaternion.identity;
+        return spawnPos;
+    }
+
+    private void SpawnEnemy()
+    {
+        if (normalEnemyPrefabs == null || normalEnemyPrefabs.Length == 0) return;
         GameObject enemyPrefab = normalEnemyPrefabs[Random.Range(0, normalEnemyPrefabs.Length)];
 
-
-
-        
-
-
-
-        // Sinh quÃ¡i dÃ n hÃ ng ngang (rá»™ng hÆ¡n)
-
-
-
-        float randomX = Random.Range(-8f, 8f);
-
-
-
-        Vector3 spawnPos = new Vector3(playerTransform.position.x + randomX, playerTransform.position.y, playerTransform.position.z + 18f); 
-
-
-
-        
-
-
+        Quaternion spawnRot;
+        Vector3 spawnPos = CalculateSpawnPosition(out spawnRot);
 
         GameObject go = null;
 
-
-
-        if (SimplePool.Instance != null) 
-
-
-
+        if (SimplePool.Instance != null)
         {
-
-
-
-            go = SimplePool.Instance.SpawnFromPool(enemyPrefab.name, spawnPos, Quaternion.identity);
-
-
-
+            go = SimplePool.Instance.SpawnFromPool(enemyPrefab.name, spawnPos, spawnRot);
         }
-
-
-
-        
-
-
 
         // Fallback nếu pool không có sẵn tag
-
-
-
-        if (go == null) 
-
-
-
+        if (go == null)
         {
-
-
-
-            go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-
-
-
+            go = Instantiate(enemyPrefab, spawnPos, spawnRot);
         }
 
-
-
-        
-
-
-
-        go.transform.localScale = Vector3.one; // Reset scale (vÃ¬ cÃ³ thá»ƒ tÃ¡i sá»­ dá»¥ng tá»« Boss)
+        go.transform.position = spawnPos;
+        go.transform.rotation = spawnRot;
+        go.transform.localScale = Vector3.one; // Reset scale (vì có thể tái sử dụng từ Boss)
 
 
 
