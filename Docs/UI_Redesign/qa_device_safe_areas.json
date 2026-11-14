@@ -1,0 +1,1583 @@
+[
+  {
+    "index": 0,
+    "name": "Apple iPad (5th gen)",
+    "width": 1536,
+    "height": 2048,
+    "expectedWidth": 1536.0,
+    "expectedHeight": 2048.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1536.0,
+      "height": 2048.0
+    },
+    "status": "PASS",
+    "evidence": "device-0/safe-area",
+    "error": null
+  },
+  {
+    "index": 1,
+    "name": "Apple iPad (6th gen)",
+    "width": 1536,
+    "height": 2048,
+    "expectedWidth": 1536.0,
+    "expectedHeight": 2048.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1536.0,
+      "height": 2048.0
+    },
+    "status": "PASS",
+    "evidence": "device-1/safe-area",
+    "error": null
+  },
+  {
+    "index": 2,
+    "name": "Apple iPad (7th gen)",
+    "width": 1620,
+    "height": 2160,
+    "expectedWidth": 1620.0,
+    "expectedHeight": 2160.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1620.0,
+      "height": 2160.0
+    },
+    "status": "PASS",
+    "evidence": "device-2/safe-area",
+    "error": null
+  },
+  {
+    "index": 3,
+    "name": "Apple iPad Air",
+    "width": 1536,
+    "height": 2048,
+    "expectedWidth": 1536.0,
+    "expectedHeight": 2048.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1536.0,
+      "height": 2048.0
+    },
+    "status": "PASS",
+    "evidence": "device-3/safe-area",
+    "error": null
+  },
+  {
+    "index": 4,
+    "name": "Apple iPad Air (4th generation)",
+    "width": 1640,
+    "height": 2360,
+    "expectedWidth": 1640.0,
+    "expectedHeight": 2360.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 40.0,
+      "width": 1640.0,
+      "height": 2272.0
+    },
+    "status": "PASS",
+    "evidence": "device-4/safe-area",
+    "error": null
+  },
+  {
+    "index": 5,
+    "name": "Apple iPad Air 2",
+    "width": 1536,
+    "height": 2048,
+    "expectedWidth": 1536.0,
+    "expectedHeight": 2048.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1536.0,
+      "height": 2008.0
+    },
+    "status": "PASS",
+    "evidence": "device-5/safe-area",
+    "error": null
+  },
+  {
+    "index": 6,
+    "name": "Apple iPad Mini 2",
+    "width": 1536,
+    "height": 2048,
+    "expectedWidth": 1536.0,
+    "expectedHeight": 2048.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1536.0,
+      "height": 2048.0
+    },
+    "status": "PASS",
+    "evidence": "device-6/safe-area",
+    "error": null
+  },
+  {
+    "index": 7,
+    "name": "Apple iPad Mini 4",
+    "width": 1536,
+    "height": 2048,
+    "expectedWidth": 1536.0,
+    "expectedHeight": 2048.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1536.0,
+      "height": 2048.0
+    },
+    "status": "PASS",
+    "evidence": "device-7/safe-area",
+    "error": null
+  },
+  {
+    "index": 8,
+    "name": "Apple iPad Pro 10.15",
+    "width": 1668,
+    "height": 2224,
+    "expectedWidth": 1668.0,
+    "expectedHeight": 2224.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1668.0,
+      "height": 2224.0
+    },
+    "status": "PASS",
+    "evidence": "device-8/safe-area",
+    "error": null
+  },
+  {
+    "index": 9,
+    "name": "Apple iPad Pro 11",
+    "width": 1668,
+    "height": 2388,
+    "expectedWidth": 1668.0,
+    "expectedHeight": 2388.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 40.0,
+      "width": 1668.0,
+      "height": 2348.0
+    },
+    "status": "PASS",
+    "evidence": "device-9/safe-area",
+    "error": null
+  },
+  {
+    "index": 10,
+    "name": "Apple iPad Pro 12.9 (2018)",
+    "width": 2048,
+    "height": 2732,
+    "expectedWidth": 2048.0,
+    "expectedHeight": 2732.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 40.0,
+      "width": 2048.0,
+      "height": 2692.0
+    },
+    "status": "PASS",
+    "evidence": "device-10/safe-area",
+    "error": null
+  },
+  {
+    "index": 11,
+    "name": "Apple iPhone 11",
+    "width": 828,
+    "height": 1792,
+    "expectedWidth": 828.0,
+    "expectedHeight": 1792.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 68.0,
+      "width": 828.0,
+      "height": 1636.0
+    },
+    "status": "PASS",
+    "evidence": "device-11/safe-area",
+    "error": null
+  },
+  {
+    "index": 12,
+    "name": "Apple iPhone 12",
+    "width": 1170,
+    "height": 2532,
+    "expectedWidth": 1170.0,
+    "expectedHeight": 2532.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 102.0,
+      "width": 1170.0,
+      "height": 2289.0
+    },
+    "status": "PASS",
+    "evidence": "device-12/safe-area",
+    "error": null
+  },
+  {
+    "index": 13,
+    "name": "Apple iPhone 12 Pro",
+    "width": 1170,
+    "height": 2532,
+    "expectedWidth": 1170.0,
+    "expectedHeight": 2532.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 102.0,
+      "width": 1170.0,
+      "height": 2289.0
+    },
+    "status": "PASS",
+    "evidence": "device-13/safe-area",
+    "error": null
+  },
+  {
+    "index": 14,
+    "name": "Apple iPhone 12 Pro Max",
+    "width": 1284,
+    "height": 2778,
+    "expectedWidth": 1284.0,
+    "expectedHeight": 2778.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 102.0,
+      "width": 1284.0,
+      "height": 2535.0
+    },
+    "status": "PASS",
+    "evidence": "device-14/safe-area",
+    "error": null
+  },
+  {
+    "index": 15,
+    "name": "Apple iPhone 12 mini",
+    "width": 1080,
+    "height": 2338,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2338.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 97.0,
+      "width": 1080.0,
+      "height": 2096.0
+    },
+    "status": "PASS",
+    "evidence": "device-15/safe-area",
+    "error": null
+  },
+  {
+    "index": 16,
+    "name": "Apple iPhone 13 Pro",
+    "width": 1170,
+    "height": 2532,
+    "expectedWidth": 1170.0,
+    "expectedHeight": 2532.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 102.0,
+      "width": 1170.0,
+      "height": 2289.0
+    },
+    "status": "PASS",
+    "evidence": "device-16/safe-area",
+    "error": null
+  },
+  {
+    "index": 17,
+    "name": "Apple iPhone 13 Pro Max",
+    "width": 1284,
+    "height": 2778,
+    "expectedWidth": 1284.0,
+    "expectedHeight": 2778.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 102.0,
+      "width": 1284.0,
+      "height": 2535.0
+    },
+    "status": "PASS",
+    "evidence": "device-17/safe-area",
+    "error": null
+  },
+  {
+    "index": 18,
+    "name": "Apple iPhone 6",
+    "width": 750,
+    "height": 1334,
+    "expectedWidth": 750.0,
+    "expectedHeight": 1334.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 750.0,
+      "height": 1334.0
+    },
+    "status": "PASS",
+    "evidence": "device-18/safe-area",
+    "error": null
+  },
+  {
+    "index": 19,
+    "name": "Apple iPhone 6S",
+    "width": 750,
+    "height": 1334,
+    "expectedWidth": 750.0,
+    "expectedHeight": 1334.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 750.0,
+      "height": 1334.0
+    },
+    "status": "PASS",
+    "evidence": "device-19/safe-area",
+    "error": null
+  },
+  {
+    "index": 20,
+    "name": "Apple iPhone 7",
+    "width": 750,
+    "height": 1334,
+    "expectedWidth": 750.0,
+    "expectedHeight": 1334.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 750.0,
+      "height": 1334.0
+    },
+    "status": "PASS",
+    "evidence": "device-20/safe-area",
+    "error": null
+  },
+  {
+    "index": 21,
+    "name": "Apple iPhone 7 Plus",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-21/safe-area",
+    "error": null
+  },
+  {
+    "index": 22,
+    "name": "Apple iPhone 8",
+    "width": 750,
+    "height": 1334,
+    "expectedWidth": 750.0,
+    "expectedHeight": 1334.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 750.0,
+      "height": 1334.0
+    },
+    "status": "PASS",
+    "evidence": "device-22/safe-area",
+    "error": null
+  },
+  {
+    "index": 23,
+    "name": "Apple iPhone 8 Plus",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-23/safe-area",
+    "error": null
+  },
+  {
+    "index": 24,
+    "name": "Apple iPhone SE (2nd generation)",
+    "width": 750,
+    "height": 1334,
+    "expectedWidth": 750.0,
+    "expectedHeight": 1334.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 750.0,
+      "height": 1334.0
+    },
+    "status": "PASS",
+    "evidence": "device-24/safe-area",
+    "error": null
+  },
+  {
+    "index": 25,
+    "name": "Apple iPhone X",
+    "width": 1125,
+    "height": 2436,
+    "expectedWidth": 1125.0,
+    "expectedHeight": 2436.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 102.0,
+      "width": 1125.0,
+      "height": 2202.0
+    },
+    "status": "PASS",
+    "evidence": "device-25/safe-area",
+    "error": null
+  },
+  {
+    "index": 26,
+    "name": "Apple iPhone XR",
+    "width": 828,
+    "height": 1792,
+    "expectedWidth": 828.0,
+    "expectedHeight": 1792.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 68.0,
+      "width": 828.0,
+      "height": 1636.0
+    },
+    "status": "PASS",
+    "evidence": "device-26/safe-area",
+    "error": null
+  },
+  {
+    "index": 27,
+    "name": "Apple iPhone XS",
+    "width": 1125,
+    "height": 2436,
+    "expectedWidth": 1125.0,
+    "expectedHeight": 2436.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 102.0,
+      "width": 1125.0,
+      "height": 2202.0
+    },
+    "status": "PASS",
+    "evidence": "device-27/safe-area",
+    "error": null
+  },
+  {
+    "index": 28,
+    "name": "Apple iPhone XS Max",
+    "width": 1242,
+    "height": 2688,
+    "expectedWidth": 1242.0,
+    "expectedHeight": 2688.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 102.0,
+      "width": 1242.0,
+      "height": 2454.0
+    },
+    "status": "PASS",
+    "evidence": "device-28/safe-area",
+    "error": null
+  },
+  {
+    "index": 29,
+    "name": "Apple iPod Touch 6th Gen",
+    "width": 640,
+    "height": 1136,
+    "expectedWidth": 640.0,
+    "expectedHeight": 1136.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 640.0,
+      "height": 1136.0
+    },
+    "status": "PASS",
+    "evidence": "device-29/safe-area",
+    "error": null
+  },
+  {
+    "index": 30,
+    "name": "Apple iPod Touch 7th Gen",
+    "width": 640,
+    "height": 1136,
+    "expectedWidth": 640.0,
+    "expectedHeight": 1136.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 640.0,
+      "height": 1136.0
+    },
+    "status": "PASS",
+    "evidence": "device-30/safe-area",
+    "error": null
+  },
+  {
+    "index": 31,
+    "name": "Asus ROG Phone",
+    "width": 1080,
+    "height": 2160,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2160.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2160.0
+    },
+    "status": "PASS",
+    "evidence": "device-31/safe-area",
+    "error": null
+  },
+  {
+    "index": 32,
+    "name": "Foldable Device (960x2658)",
+    "width": 960,
+    "height": 2658,
+    "expectedWidth": 960.0,
+    "expectedHeight": 2658.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 960.0,
+      "height": 2566.0
+    },
+    "status": "PASS",
+    "evidence": "device-32/safe-area",
+    "error": null
+  },
+  {
+    "index": 33,
+    "name": "Google Pixel 2",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-33/safe-area",
+    "error": null
+  },
+  {
+    "index": 34,
+    "name": "Google Pixel 2 XL",
+    "width": 1440,
+    "height": 2880,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2880.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2880.0
+    },
+    "status": "PASS",
+    "evidence": "device-34/safe-area",
+    "error": null
+  },
+  {
+    "index": 35,
+    "name": "Google Pixel 3",
+    "width": 1080,
+    "height": 2160,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2160.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2160.0
+    },
+    "status": "PASS",
+    "evidence": "device-35/safe-area",
+    "error": null
+  },
+  {
+    "index": 36,
+    "name": "Google Pixel 4",
+    "width": 1080,
+    "height": 2280,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2280.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2280.0
+    },
+    "status": "PASS",
+    "evidence": "device-36/safe-area",
+    "error": null
+  },
+  {
+    "index": 37,
+    "name": "Google Pixel 5",
+    "width": 1080,
+    "height": 2340,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2340.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2204.0
+    },
+    "status": "PASS",
+    "evidence": "device-37/safe-area",
+    "error": null
+  },
+  {
+    "index": 38,
+    "name": "Google Pixel XL",
+    "width": 1440,
+    "height": 2560,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2560.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2560.0
+    },
+    "status": "PASS",
+    "evidence": "device-38/safe-area",
+    "error": null
+  },
+  {
+    "index": 39,
+    "name": "HTC 10",
+    "width": 1440,
+    "height": 2560,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2560.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2560.0
+    },
+    "status": "PASS",
+    "evidence": "device-39/safe-area",
+    "error": null
+  },
+  {
+    "index": 40,
+    "name": "HTC One M9",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-40/safe-area",
+    "error": null
+  },
+  {
+    "index": 41,
+    "name": "Huawei P40 Pro",
+    "width": 1200,
+    "height": 2640,
+    "expectedWidth": 1200.0,
+    "expectedHeight": 2640.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1200.0,
+      "height": 2499.0
+    },
+    "status": "PASS",
+    "evidence": "device-41/safe-area",
+    "error": null
+  },
+  {
+    "index": 42,
+    "name": "Huawei P9",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-42/safe-area",
+    "error": null
+  },
+  {
+    "index": 43,
+    "name": "LG G3",
+    "width": 1440,
+    "height": 2560,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2560.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2560.0
+    },
+    "status": "PASS",
+    "evidence": "device-43/safe-area",
+    "error": null
+  },
+  {
+    "index": 44,
+    "name": "LG G4",
+    "width": 1440,
+    "height": 2560,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2560.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2560.0
+    },
+    "status": "PASS",
+    "evidence": "device-44/safe-area",
+    "error": null
+  },
+  {
+    "index": 45,
+    "name": "LG Nexus 4",
+    "width": 768,
+    "height": 1280,
+    "expectedWidth": 768.0,
+    "expectedHeight": 1280.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 768.0,
+      "height": 1280.0
+    },
+    "status": "PASS",
+    "evidence": "device-45/safe-area",
+    "error": null
+  },
+  {
+    "index": 46,
+    "name": "LG Nexus 5",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-46/safe-area",
+    "error": null
+  },
+  {
+    "index": 47,
+    "name": "Lenovo Phab2 Pro",
+    "width": 1440,
+    "height": 2560,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2560.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2560.0
+    },
+    "status": "PASS",
+    "evidence": "device-47/safe-area",
+    "error": null
+  },
+  {
+    "index": 48,
+    "name": "Motorola Moto E",
+    "width": 540,
+    "height": 960,
+    "expectedWidth": 540.0,
+    "expectedHeight": 960.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 540.0,
+      "height": 960.0
+    },
+    "status": "PASS",
+    "evidence": "device-48/safe-area",
+    "error": null
+  },
+  {
+    "index": 49,
+    "name": "Motorola Moto G7 Power",
+    "width": 720,
+    "height": 1520,
+    "expectedWidth": 720.0,
+    "expectedHeight": 1520.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 720.0,
+      "height": 1467.0
+    },
+    "status": "PASS",
+    "evidence": "device-49/safe-area",
+    "error": null
+  },
+  {
+    "index": 50,
+    "name": "Motorola Nexus 6",
+    "width": 1440,
+    "height": 2560,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2560.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2560.0
+    },
+    "status": "PASS",
+    "evidence": "device-50/safe-area",
+    "error": null
+  },
+  {
+    "index": 51,
+    "name": "Nvidia Shield Tablet",
+    "width": 1200,
+    "height": 1920,
+    "expectedWidth": 1200.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1200.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-51/safe-area",
+    "error": null
+  },
+  {
+    "index": 52,
+    "name": "OnePlus 6T",
+    "width": 1080,
+    "height": 2340,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2340.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2261.0
+    },
+    "status": "PASS",
+    "evidence": "device-52/safe-area",
+    "error": null
+  },
+  {
+    "index": 53,
+    "name": "OnePlus 7 Pro",
+    "width": 1440,
+    "height": 3120,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 3120.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 3120.0
+    },
+    "status": "PASS",
+    "evidence": "device-53/safe-area",
+    "error": null
+  },
+  {
+    "index": 54,
+    "name": "Punch Hole Center (1440x3088)",
+    "width": 1440,
+    "height": 3088,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 3088.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2999.0
+    },
+    "status": "PASS",
+    "evidence": "device-54/safe-area",
+    "error": null
+  },
+  {
+    "index": 55,
+    "name": "Punch Hole Left (1080x2340)",
+    "width": 1080,
+    "height": 2340,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2340.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2204.0
+    },
+    "status": "PASS",
+    "evidence": "device-55/safe-area",
+    "error": null
+  },
+  {
+    "index": 56,
+    "name": "Punch Hole Right (1080x2280)",
+    "width": 1080,
+    "height": 2280,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2280.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2164.0
+    },
+    "status": "PASS",
+    "evidence": "device-56/safe-area",
+    "error": null
+  },
+  {
+    "index": 57,
+    "name": "Razer Phone",
+    "width": 1440,
+    "height": 2560,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2560.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2560.0
+    },
+    "status": "PASS",
+    "evidence": "device-57/safe-area",
+    "error": null
+  },
+  {
+    "index": 58,
+    "name": "Samsung Galaxy J7 (2017)",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-58/safe-area",
+    "error": null
+  },
+  {
+    "index": 59,
+    "name": "Samsung Galaxy Note10",
+    "width": 1080,
+    "height": 2280,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2280.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2190.0
+    },
+    "status": "PASS",
+    "evidence": "device-59/safe-area",
+    "error": null
+  },
+  {
+    "index": 60,
+    "name": "Samsung Galaxy Note10+ 5G",
+    "width": 1440,
+    "height": 3040,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 3040.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2927.0
+    },
+    "status": "PASS",
+    "evidence": "device-60/safe-area",
+    "error": null
+  },
+  {
+    "index": 61,
+    "name": "Samsung Galaxy Note20 Ultra 5G",
+    "width": 1440,
+    "height": 3088,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 3088.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2999.0
+    },
+    "status": "PASS",
+    "evidence": "device-61/safe-area",
+    "error": null
+  },
+  {
+    "index": 62,
+    "name": "Samsung Galaxy Note8",
+    "width": 1440,
+    "height": 2960,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2960.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2960.0
+    },
+    "status": "PASS",
+    "evidence": "device-62/safe-area",
+    "error": null
+  },
+  {
+    "index": 63,
+    "name": "Samsung Galaxy Note9",
+    "width": 1440,
+    "height": 2960,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2960.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2960.0
+    },
+    "status": "PASS",
+    "evidence": "device-63/safe-area",
+    "error": null
+  },
+  {
+    "index": 64,
+    "name": "Samsung Galaxy S10 5G",
+    "width": 1440,
+    "height": 3040,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 3040.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2901.0
+    },
+    "status": "PASS",
+    "evidence": "device-64/safe-area",
+    "error": null
+  },
+  {
+    "index": 65,
+    "name": "Samsung Galaxy S10+",
+    "width": 1440,
+    "height": 3040,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 3040.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2898.0
+    },
+    "status": "PASS",
+    "evidence": "device-65/safe-area",
+    "error": null
+  },
+  {
+    "index": 66,
+    "name": "Samsung Galaxy S10e",
+    "width": 1080,
+    "height": 2280,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2280.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2164.0
+    },
+    "status": "PASS",
+    "evidence": "device-66/safe-area",
+    "error": null
+  },
+  {
+    "index": 67,
+    "name": "Samsung Galaxy S5 Mini",
+    "width": 720,
+    "height": 1280,
+    "expectedWidth": 720.0,
+    "expectedHeight": 1280.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 720.0,
+      "height": 1280.0
+    },
+    "status": "PASS",
+    "evidence": "device-67/safe-area",
+    "error": null
+  },
+  {
+    "index": 68,
+    "name": "Samsung Galaxy S5 Neo",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-68/safe-area",
+    "error": null
+  },
+  {
+    "index": 69,
+    "name": "Samsung Galaxy S7",
+    "width": 1440,
+    "height": 2560,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2560.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2560.0
+    },
+    "status": "PASS",
+    "evidence": "device-69/safe-area",
+    "error": null
+  },
+  {
+    "index": 70,
+    "name": "Samsung Galaxy S8",
+    "width": 1440,
+    "height": 2960,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2960.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2960.0
+    },
+    "status": "PASS",
+    "evidence": "device-70/safe-area",
+    "error": null
+  },
+  {
+    "index": 71,
+    "name": "Samsung Galaxy S9",
+    "width": 1440,
+    "height": 2960,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2960.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2960.0
+    },
+    "status": "PASS",
+    "evidence": "device-71/safe-area",
+    "error": null
+  },
+  {
+    "index": 72,
+    "name": "Samsung Galaxy Z Flip3 5G",
+    "width": 1080,
+    "height": 2640,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2640.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2546.0
+    },
+    "status": "PASS",
+    "evidence": "device-72/safe-area",
+    "error": null
+  },
+  {
+    "index": 73,
+    "name": "Samsung Galaxy Z Fold2 5G",
+    "width": 960,
+    "height": 2658,
+    "expectedWidth": 960.0,
+    "expectedHeight": 2658.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 960.0,
+      "height": 2566.0
+    },
+    "status": "PASS",
+    "evidence": "device-73/safe-area",
+    "error": null
+  },
+  {
+    "index": 74,
+    "name": "Sony Xperia XZ Premium",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-74/safe-area",
+    "error": null
+  },
+  {
+    "index": 75,
+    "name": "Sony Xperia Z2 Tablet",
+    "width": 1200,
+    "height": 1920,
+    "expectedWidth": 1200.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1200.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-75/safe-area",
+    "error": null
+  },
+  {
+    "index": 76,
+    "name": "Tablet Large (2048x2732)",
+    "width": 2048,
+    "height": 2732,
+    "expectedWidth": 2048.0,
+    "expectedHeight": 2732.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 40.0,
+      "width": 2048.0,
+      "height": 2692.0
+    },
+    "status": "PASS",
+    "evidence": "device-76/safe-area",
+    "error": null
+  },
+  {
+    "index": 77,
+    "name": "Tablet Small (1536x2048)",
+    "width": 1536,
+    "height": 2048,
+    "expectedWidth": 1536.0,
+    "expectedHeight": 2048.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1536.0,
+      "height": 2048.0
+    },
+    "status": "PASS",
+    "evidence": "device-77/safe-area",
+    "error": null
+  },
+  {
+    "index": 78,
+    "name": "Wide Pill Cutout (1200x2640)",
+    "width": 1200,
+    "height": 2640,
+    "expectedWidth": 1200.0,
+    "expectedHeight": 2640.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1200.0,
+      "height": 2499.0
+    },
+    "status": "PASS",
+    "evidence": "device-78/safe-area",
+    "error": null
+  },
+  {
+    "index": 79,
+    "name": "Xiaomi Mi 4i",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-79/safe-area",
+    "error": null
+  },
+  {
+    "index": 80,
+    "name": "Xiaomi Mi 5",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-80/safe-area",
+    "error": null
+  },
+  {
+    "index": 81,
+    "name": "Xiaomi Mi A3",
+    "width": 720,
+    "height": 1560,
+    "expectedWidth": 720.0,
+    "expectedHeight": 1560.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 720.0,
+      "height": 1507.0
+    },
+    "status": "PASS",
+    "evidence": "device-81/safe-area",
+    "error": null
+  },
+  {
+    "index": 82,
+    "name": "Xiaomi Mi Max",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-82/safe-area",
+    "error": null
+  },
+  {
+    "index": 83,
+    "name": "Xiaomi Mi Note Pro",
+    "width": 1440,
+    "height": 2560,
+    "expectedWidth": 1440.0,
+    "expectedHeight": 2560.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1440.0,
+      "height": 2560.0
+    },
+    "status": "PASS",
+    "evidence": "device-83/safe-area",
+    "error": null
+  },
+  {
+    "index": 84,
+    "name": "Xiaomi Redmi 4",
+    "width": 720,
+    "height": 1280,
+    "expectedWidth": 720.0,
+    "expectedHeight": 1280.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 720.0,
+      "height": 1280.0
+    },
+    "status": "PASS",
+    "evidence": "device-84/safe-area",
+    "error": null
+  },
+  {
+    "index": 85,
+    "name": "Xiaomi Redmi 6 Pro",
+    "width": 1080,
+    "height": 2280,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2280.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2191.0
+    },
+    "status": "PASS",
+    "evidence": "device-85/safe-area",
+    "error": null
+  },
+  {
+    "index": 86,
+    "name": "Xiaomi Redmi Note 3",
+    "width": 1080,
+    "height": 1920,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 1920.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 1920.0
+    },
+    "status": "PASS",
+    "evidence": "device-86/safe-area",
+    "error": null
+  },
+  {
+    "index": 87,
+    "name": "Xiaomi Redmi Note 7",
+    "width": 1080,
+    "height": 2340,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2340.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2260.0
+    },
+    "status": "PASS",
+    "evidence": "device-87/safe-area",
+    "error": null
+  },
+  {
+    "index": 88,
+    "name": "iOS Classic (750x1334)",
+    "width": 750,
+    "height": 1334,
+    "expectedWidth": 750.0,
+    "expectedHeight": 1334.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 750.0,
+      "height": 1334.0
+    },
+    "status": "PASS",
+    "evidence": "device-88/safe-area",
+    "error": null
+  },
+  {
+    "index": 89,
+    "name": "iOS Notch Device (1170x2532)",
+    "width": 1170,
+    "height": 2532,
+    "expectedWidth": 1170.0,
+    "expectedHeight": 2532.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 102.0,
+      "width": 1170.0,
+      "height": 2289.0
+    },
+    "status": "PASS",
+    "evidence": "device-89/safe-area",
+    "error": null
+  },
+  {
+    "index": 90,
+    "name": "iOS Notch Device Large (1284x2778)",
+    "width": 1284,
+    "height": 2778,
+    "expectedWidth": 1284.0,
+    "expectedHeight": 2778.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 102.0,
+      "width": 1284.0,
+      "height": 2535.0
+    },
+    "status": "PASS",
+    "evidence": "device-90/safe-area",
+    "error": null
+  },
+  {
+    "index": 91,
+    "name": "iOS Notch Device Small (1080x2338)",
+    "width": 1080,
+    "height": 2338,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2338.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 97.0,
+      "width": 1080.0,
+      "height": 2096.0
+    },
+    "status": "PASS",
+    "evidence": "device-91/safe-area",
+    "error": null
+  },
+  {
+    "index": 92,
+    "name": "vivo NEX 3 5G",
+    "width": 1080,
+    "height": 2256,
+    "expectedWidth": 1080.0,
+    "expectedHeight": 2256.0,
+    "safeArea": {
+      "x": 0.0,
+      "y": 0.0,
+      "width": 1080.0,
+      "height": 2256.0
+    },
+    "status": "PASS",
+    "evidence": "device-92/safe-area",
+    "error": null
+  }
+]

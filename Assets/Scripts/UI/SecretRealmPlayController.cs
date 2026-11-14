@@ -73,6 +73,10 @@ public class SecretRealmPlayController : MonoBehaviour
 
     // Result Modal
     private GameObject resultModal;
+    private Coroutine resultReveal;
+
+    public Transform ActiveNavigationLayer => resultModal != null && resultModal.activeInHierarchy
+        ? resultModal.transform : rootModal != null && rootModal.activeInHierarchy ? rootModal.transform : null;
 
     // Cached Sprites
     private Sprite spBgHorde;
@@ -125,6 +129,7 @@ public class SecretRealmPlayController : MonoBehaviour
 
     public void LaunchMiniGame(SecretRealmType type)
     {
+        StopAllCoroutines();
         LoadResourceSprites();
         activeType = type;
         currentScore = 0;
@@ -155,6 +160,9 @@ public class SecretRealmPlayController : MonoBehaviour
                 SetupSwordTomb();
                 break;
         }
+        var motionOwner=MobileUIAnimationDirector.For(this);
+        var presentation=motionOwner!=null?motionOwner.GetComponent<MobileUIReconstruction>():null;
+        if(presentation!=null)MobileUIResponsiveRepairs.ApplyTree(presentation,rootModal.transform);
     }
 
     private void Update()
@@ -1071,6 +1079,7 @@ public class SecretRealmPlayController : MonoBehaviour
     #region END GAME & RESULT MODAL
     private void EndMiniGame()
     {
+        if (!isGameRunning) return;
         isGameRunning = false;
 
         SecretRealmService.RewardResult reward = new SecretRealmService.RewardResult();
@@ -1084,22 +1093,6 @@ public class SecretRealmPlayController : MonoBehaviour
 
     public void ShowResultModal(SecretRealmService.RewardResult reward = default)
     {
-        if (reward.linhThach == 0 && reward.tuVi == 0 && reward.ore == 0 && reward.herbs0 == 0)
-        {
-            reward = new SecretRealmService.RewardResult
-            {
-                linhThach = 20000f,
-                tuVi = 50000f,
-                herbs0 = 15,
-                herbs1 = 10,
-                herbs2 = 5,
-                ore = 8,
-                bonusCoDuyen = 2,
-                swordLevel = 8,
-                specialNote = "Nổ Hũ Tuyệt Phẩm: Nhận Cổ Thần Kiếm Bậc 8 & 2 Cơ Duyên!"
-            };
-        }
-
         if (resultModal == null)
         {
             var canvas = GameObject.Find("Canvas");
@@ -1148,6 +1141,18 @@ public class SecretRealmPlayController : MonoBehaviour
 
             txtRewards.text = r;
         }
+        if(MobileUIAnimationDirector.For(this)!=null)
+        {
+            var presentation=MobileUIAnimationDirector.For(this).GetComponent<MobileUIReconstruction>();
+            if(presentation!=null)MobileUIResponsiveRepairs.ApplyTree(presentation,resultModal.transform);
+            var card=resultModal.transform.Find("Card") as RectTransform;
+            if(card!=null)
+            {
+                var group=card.GetComponent<CanvasGroup>();if(group==null)group=card.gameObject.AddComponent<CanvasGroup>();
+                if(resultReveal!=null)StopCoroutine(resultReveal);
+                resultReveal=StartCoroutine(MobileUIModalMotion.Animate(this,group,card,true,manageInput:false,hideOnClose:false,reward:true));
+            }
+        }
     }
 
     private string GetMiniGameName(SecretRealmType type)
@@ -1166,6 +1171,8 @@ public class SecretRealmPlayController : MonoBehaviour
     public void CloseAll()
     {
         isGameRunning = false;
+        StopAllCoroutines();
+        resultReveal=null;
         ClearDynamicArena();
         if (rootModal != null) rootModal.SetActive(false);
         if (resultModal != null) resultModal.SetActive(false);
@@ -1510,6 +1517,7 @@ public class SecretRealmPlayController : MonoBehaviour
         txt.color = col;
         txt.alignment = TextAnchor.MiddleCenter;
         txt.text = content;
+        txt.raycastTarget = false;
 
         var ol = go.GetComponent<Outline>();
         ol.effectColor = Color.black;
@@ -1554,6 +1562,7 @@ public class SecretRealmPlayController : MonoBehaviour
         var img = go.GetComponent<Image>();
         img.sprite = spHitSpark != null ? spHitSpark : spSoftGlow;
         img.color = col;
+        img.raycastTarget = false;
 
         StartCoroutine(AnimateHitSpark(go, rt, img));
     }

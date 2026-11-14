@@ -55,16 +55,27 @@ public class ArtifactPanelUI : MonoBehaviour
         if (ArtifactService.Instance != null)
             ArtifactService.Instance.OnChanged += RefreshUI;
         if (EconomyManager.Instance != null)
-            EconomyManager.Instance.OnLinhThachChanged += _ => RefreshUI();
+            EconomyManager.Instance.OnLinhThachChanged += HandleLinhThachChanged;
+        if (FeatureUnlockService.Instance != null)
+            FeatureUnlockService.Instance.OnUnlockStateChanged += RefreshUI;
+        if (CultivationManager.Instance != null)
+            CultivationManager.Instance.OnStageChanged += HandleStageChanged;
         RefreshUI();
     }
+
+    private void HandleLinhThachChanged(float _) => RefreshUI();
+    private void HandleStageChanged(CultivationStageData _) => RefreshUI();
 
     private void OnDisable()
     {
         if (ArtifactService.Instance != null)
             ArtifactService.Instance.OnChanged -= RefreshUI;
         if (EconomyManager.Instance != null)
-            EconomyManager.Instance.OnLinhThachChanged -= _ => RefreshUI();
+            EconomyManager.Instance.OnLinhThachChanged -= HandleLinhThachChanged;
+        if (FeatureUnlockService.Instance != null)
+            FeatureUnlockService.Instance.OnUnlockStateChanged -= RefreshUI;
+        if (CultivationManager.Instance != null)
+            CultivationManager.Instance.OnStageChanged -= HandleStageChanged;
     }
 
     public void RefreshUI()
@@ -84,7 +95,8 @@ public class ArtifactPanelUI : MonoBehaviour
             bool maxed = level >= ArtifactService.MaxLevel;
             int oreCost = svc.GetOreCost(slot);
             float stoneCost = svc.GetStoneCost(slot);
-            bool canAfford = !maxed && ore >= oreCost && stone >= stoneCost;
+            bool unlocked = FeatureUnlockService.Instance == null || FeatureUnlockService.Instance.IsArtifactSlotUnlocked(slot);
+            bool canAfford = unlocked && !maxed && ore >= oreCost && stone >= stoneCost;
 
             // 1. Tên & Cấp độ
             if (artifactLabels != null && i < artifactLabels.Length && artifactLabels[i] != null)
@@ -102,7 +114,11 @@ public class ArtifactPanelUI : MonoBehaviour
             // 3. Chi phí động
             if (artifactCostTexts != null && i < artifactCostTexts.Length && artifactCostTexts[i] != null)
             {
-                if (maxed)
+                if (!unlocked)
+                {
+                    artifactCostTexts[i].text = FeatureUnlockService.Instance.GetArtifactSlotUnlockRequirementText(slot);
+                }
+                else if (maxed)
                 {
                     artifactCostTexts[i].text = "<color=#ffd32a>Đạt Cực Hạn Cường Hóa</color>";
                 }
@@ -121,7 +137,7 @@ public class ArtifactPanelUI : MonoBehaviour
                 var btnText = upgradeButtons[i].GetComponentInChildren<Text>();
                 if (btnText != null)
                 {
-                    btnText.text = maxed ? "ĐẠI THÀNH" : (level == 0 ? "CHẾ TẠO" : "CƯỜNG HÓA");
+                    btnText.text = !unlocked ? "CHƯA MỞ KHÓA" : maxed ? "ĐẠI THÀNH" : (level == 0 ? "CHẾ TẠO" : "CƯỜNG HÓA");
                 }
             }
         }

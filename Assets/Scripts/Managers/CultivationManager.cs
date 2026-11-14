@@ -147,11 +147,13 @@ public class CultivationManager : MonoBehaviour
 
         if (characterInfoText != null)
         {
-            string nameDisplay = (string.IsNullOrEmpty(characterName) || characterName == "1") ? "Đạo Hữu" : characterName;
+            string nameDisplay = string.IsNullOrWhiteSpace(characterName) ? "Đạo Hữu" : characterName;
             string tuViCur = EconomyManager.FormatNumber(currentTuVi);
             string tuViReq = (currentStageData != null && currentStageData.requiredTuVi > 0) ? EconomyManager.FormatNumber(currentStageData.requiredTuVi) : "Max";
             characterInfoText.supportRichText = true;
             characterInfoText.text = $"<b><color=#FFD700>{nameDisplay}</color></b> · <color=#66D9EF>{displayName}</color>\n<color=#A0B0C5>Tu Vi:</color> <color=#FFFFFF>{tuViCur} / {tuViReq}</color>";
+            if (characterInfoText.GetComponentInParent<JadeUITheme>() != null)
+                characterInfoText.text = $"<size=28><b><color=#F1E8CF>{nameDisplay}</color></b></size>\n<size=26><color=#6EDDB6>{displayName}</color></size>\n<size=24><color=#CFBE9C>Tu vi {tuViCur} / {tuViReq}</color></size>";
         }
     }
 

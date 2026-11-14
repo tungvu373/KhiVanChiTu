@@ -505,17 +505,23 @@ public class PauseMenuBuilderTool
         GameObject haObj = new GameObject("Handle Slide Area", typeof(RectTransform));
         haObj.transform.SetParent(sliderObj.transform, false);
         RectTransform haRt = haObj.GetComponent<RectTransform>();
-        haRt.anchorMin = Vector2.zero;
-        haRt.anchorMax = Vector2.one;
-        haRt.offsetMin = new Vector2(8, 0);
-        haRt.offsetMax = new Vector2(-8, 0);
+        haRt.anchorMin = new Vector2(0f, 0.5f);
+        haRt.anchorMax = new Vector2(1f, 0.5f);
+        haRt.pivot = new Vector2(0.5f, 0.5f);
+        haRt.anchoredPosition = Vector2.zero;
+        haRt.sizeDelta = new Vector2(-36, 0);
 
         GameObject handleObj = new GameObject("Handle", typeof(RectTransform), typeof(Image));
         handleObj.transform.SetParent(haObj.transform, false);
         RectTransform hRt = handleObj.GetComponent<RectTransform>();
-        hRt.sizeDelta = new Vector2(16, 16);
+        hRt.anchorMin = new Vector2(0.8f, 0.5f);
+        hRt.anchorMax = new Vector2(0.8f, 0.5f);
+        hRt.pivot = new Vector2(0.5f, 0.5f);
+        hRt.anchoredPosition = Vector2.zero;
+        hRt.sizeDelta = new Vector2(36, 36);
         Image hImg = handleObj.GetComponent<Image>();
         hImg.color = new Color(1f, 0.95f, 0.65f, 1f);
+        hImg.preserveAspect = true;
 
         slider.fillRect = fillRt;
         slider.handleRect = hRt;

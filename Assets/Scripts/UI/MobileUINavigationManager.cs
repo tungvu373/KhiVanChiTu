@@ -55,7 +55,17 @@ public class MobileUINavigationManager : MonoBehaviour
 
         var daoAn = DaoAnModalUI.Instance;
         if (daoAn != null && daoAn.IsModalOpen) Consider(daoAn.ModalTransform, daoAn.Close);
+        var secretRealm = SecretRealmModalUI.Instance;
+        if (secretRealm != null && secretRealm.IsModalOpen)
+        {
+            var secretLayer = transform.root.Find("SecretRealmModal");
+            if (secretLayer == null && GetComponentInParent<Canvas>() != null)
+                secretLayer = GetComponentInParent<Canvas>().transform.Find("SecretRealmModal");
+            Consider(secretLayer, secretRealm.Close);
+        }
         var dismantle = DismantleConfirmModalUI.Instance;
+        var secretPlay = SecretRealmPlayController.Instance;
+        if (secretPlay != null) Consider(secretPlay.ActiveNavigationLayer, secretPlay.CloseAll);
         if (dismantle != null && dismantle.IsModalOpen) Consider(dismantle.transform, dismantle.Close);
         var storage = StorageModalUI.Instance;
         if (storage != null && storage.IsModalOpen) Consider(storage.transform, storage.Close);
@@ -79,6 +89,16 @@ public class MobileUINavigationManager : MonoBehaviour
         if (closeTop != null)
         {
             closeTop();
+            return true;
+        }
+
+        var portraitHud = GetComponentInChildren<PortraitHudController>(true);
+        if (portraitHud != null && portraitHud.CloseTopLayer()) return true;
+
+        var secondaryMenu = GetComponent<JadeSecondaryMenu>();
+        if (secondaryMenu != null && secondaryMenu.IsOpen)
+        {
+            secondaryMenu.Close();
             return true;
         }
 

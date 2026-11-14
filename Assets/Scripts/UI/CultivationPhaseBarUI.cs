@@ -29,7 +29,7 @@ public class CultivationPhaseBarUI : MonoBehaviour
         titleRect.anchorMax = new Vector2(0.38f, 1f);
         titleRect.offsetMin = titleRect.offsetMax = Vector2.zero;
         title.alignment = TextAnchor.MiddleLeft;
-        title.fontSize = 21;
+        title.fontSize = GetComponentInParent<JadeUITheme>() != null ? 28 : 21;
         title.raycastTarget = false;
 
         tribulationButton = GetComponent<Button>() ?? gameObject.AddComponent<Button>();
@@ -95,7 +95,7 @@ public class CultivationPhaseBarUI : MonoBehaviour
             label.offsetMin = label.offsetMax = Vector2.zero;
             labels[i] = label.GetComponent<UnityEngine.UI.Text>();
             labels[i].font = title.font;
-            labels[i].fontSize = 19;
+            labels[i].fontSize = GetComponentInParent<JadeUITheme>() != null ? 26 : 19;
             labels[i].alignment = TextAnchor.MiddleCenter;
             labels[i].text = PhaseLabels[i];
             labels[i].raycastTarget = false;

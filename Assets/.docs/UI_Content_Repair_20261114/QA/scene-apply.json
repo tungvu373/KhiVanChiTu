@@ -1,0 +1,156 @@
+{
+  "scene": "Assets/Scenes/SampleScene_MobileWork.unity",
+  "removedAvatarShortcut": true,
+  "closes": [
+    {
+      "path": "Canvas/ShopPanel/btn_Close",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/MobileUIRoot/PortraitHudShell/SecondaryOverlay/MenuCard/CloseMenu",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/MobileUIRoot/Drawer_0/P6Frame/P6Header/CloseButton",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/MobileUIRoot/Drawer_1/P6Frame/P6Header/CloseButton",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/MobileUIRoot/Drawer_2/P6Frame/P6Header/CloseButton",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/MobileUIRoot/Drawer_3/P6Frame/P6Header/CloseButton",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/MobileUIRoot/Drawer_4/P6Frame/P6Header/CloseButton",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/MobileUIRoot/BodyTalentDetailModal/ModalBox/BtnClose",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/CharacterDetailModal/ModalBox/HeaderBar/CloseButton",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/MilestoneModalUI/ModalBox/BtnClose",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/AchievementModalUI/ModalBox/BtnClose",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/StorageModalUI/ModalBox/BtnClose",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/DaoAnModal/ModalBox/BtnCloseX",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/SecretRealmModal/ModalBox/BtnCloseX",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/PauseMenuModal/PauseBox/HeaderBar/CloseHeaderBtn",
+      "labels": [
+        {
+          "text": "X",
+          "color": "FF5252FF"
+        }
+      ],
+      "persistentCallbacks": 0
+    }
+  ]
+}

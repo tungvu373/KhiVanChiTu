@@ -1,0 +1,37 @@
+PASS	settings open/close
+PASS	character selection
+PASS	create route
+PASS	empty name validation
+PASS	character creation to gameplay
+PASS	sword tab open and close button
+PASS	body/alchemy/artifact/formation tab routes
+PASS	storage category, grid/list, scrolling and tab raycast
+PASS	fate, achievement, secret realm menu routes and Back
+PASS	artifact upgrade and GraphicRaycaster hit
+PASS	formation upgrade and selection
+PASS	body detail, upgrade, close and raycast
+PASS	alchemy brew start and timer
+PASS	alchemy dust finish and inventory binding
+PASS	dock and drawer close GraphicRaycaster hits at 1080x1920
+PASS	dock and drawer close GraphicRaycaster hits at 1080x1920
+PASS	dock and drawer close GraphicRaycaster hits at 720x1280
+PASS	dock and drawer close GraphicRaycaster hits at 1080x2340
+PASS	dock and drawer close GraphicRaycaster hits at 1080x1920
+PASS	dock and drawer close GraphicRaycaster hits at 720x1280
+PASS	dock and drawer close GraphicRaycaster hits at 1080x2340
+PASS	dock and drawer close GraphicRaycaster hits at 1080x2400
+PASS	dock and drawer close GraphicRaycaster hits at 390x844
+PASS	dock and drawer close GraphicRaycaster hits at 360x640
+PASS	unscaled open and swipe close at timeScale zero
+PASS	pause resume raycast and previous time scale preserved
+PASS	dock and drawer close GraphicRaycaster hits at 1080x1920
+PASS	dock and drawer close GraphicRaycaster hits at 1170x2532
+PASS	iPhone 13 Pro Device Simulator notch/home insets and dock/close raycasts
+PASS	dock and drawer close GraphicRaycaster hits at 1170x2532
+PASS	sword valid drag merge and invalid-level drop rejection through pointer handlers
+PASS	sword pagination, sort and quick merge button routes
+PASS	skill icon integration retains mana fill and three cooldown references
+PASS	sword style 132px target, open, select and persisted service state
+PASS	secret modal suppresses external sword style HUD and enter receives raycast
+PASS	dock and drawer close GraphicRaycaster hits at 1080x1920
+PASS	dock and drawer close GraphicRaycaster hits at 720x1280

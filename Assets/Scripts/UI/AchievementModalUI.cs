@@ -204,6 +204,11 @@ public class AchievementModalUI : MonoBehaviour
 
     private IEnumerator AnimateOpen()
     {
+        if(MobileUIAnimationDirector.For(this)!=null)
+        {
+            yield return MobileUIModalMotion.Animate(this,canvasGroup,modalBox,true);
+            animRoutine=null;yield break;
+        }
         if (modalBox != null)
         {
             float duration = 0.16f;
@@ -225,6 +230,11 @@ public class AchievementModalUI : MonoBehaviour
 
     private IEnumerator AnimateClose()
     {
+        if(MobileUIAnimationDirector.For(this)!=null)
+        {
+            yield return MobileUIModalMotion.Animate(this,canvasGroup,modalBox,false);
+            animRoutine=null;yield break;
+        }
         if (modalBox != null)
         {
             float duration = 0.12f;
@@ -278,7 +288,7 @@ public class AchievementModalUI : MonoBehaviour
             }
             if (btnTxt != null)
             {
-                btnTxt.color = isSelected ? new Color(0.08f, 0.08f, 0.12f, 1f) : new Color(0.75f, 0.82f, 0.92f, 1f);
+                btnTxt.color = isSelected ? (MobileUIAnimationDirector.For(this)!=null?JadeUITheme.Ivory:new Color(0.08f, 0.08f, 0.12f, 1f)) : new Color(0.75f, 0.82f, 0.92f, 1f);
                 btnTxt.fontStyle = isSelected ? FontStyle.Bold : FontStyle.Normal;
             }
         }

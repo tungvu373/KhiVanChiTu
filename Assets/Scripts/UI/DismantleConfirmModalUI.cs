@@ -103,7 +103,7 @@ public class DismantleConfirmModalUI : MonoBehaviour
         if (Instance == null)
         {
             Debug.LogWarning("[DismantleConfirmModalUI] Không tìm thấy Instance trong Scene!");
-            onConfirm?.Invoke(); // Failsafe
+            // A missing view must never authorize the destructive action.
             return;
         }
         Instance.Show(itemName, itemDetail, reward, onConfirm);
@@ -156,6 +156,11 @@ public class DismantleConfirmModalUI : MonoBehaviour
 
     private IEnumerator AnimateOpen(bool open)
     {
+        if(MobileUIAnimationDirector.For(this)!=null)
+        {
+            yield return MobileUIModalMotion.Animate(this,canvasGroup,modalBox,open);
+            animRoutine=null;yield break;
+        }
         float elapsed = 0f;
         float duration = 0.20f;
         float startAlpha = canvasGroup != null ? canvasGroup.alpha : (open ? 0f : 1f);

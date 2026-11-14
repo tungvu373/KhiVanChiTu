@@ -118,19 +118,13 @@ public class DaoAnModalUI : MonoBehaviour
         var canvas = GameObject.Find("Canvas")?.transform;
         if (canvas == null) return;
 
-        // 1. Phím tắt Đạo Ấn trên Header của CharacterDetailModal (tương thích ngược)
-        var detailsHeader = canvas.Find("CharacterDetailModal/ModalBox/HeaderBar");
-        if (detailsHeader != null && detailsHeader.Find("BtnDaoAn") == null)
-        {
-            var entry = CreateButton("BtnDaoAn", detailsHeader, "Đạo Ấn",
-                new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(8f, 5f), new Vector2(110f, -5f),
-                new Color(0.18f, 0.25f, 0.35f, 0.95f), new Color(0.96f, 0.78f, 0.26f, 1f), 18);
-            entry.onClick.AddListener(Open);
-        }
+        // The avatar popup contains character details; Dao Van keeps its HUD entry.
 
         // 2. Phím tắt Đạo Vận trực tiếp trên Top HUD (MobileUIRoot) cạnh CharacterFrame (Top-Left)
         var mobileRoot = canvas.Find("MobileUIRoot");
-        if (mobileRoot != null)
+        // The portrait reconstruction retains the original bound shortcut in its quick-action row.
+        // Recreating the former direct-child badge produces a second, undersized hit target.
+        if (mobileRoot != null && canvas.GetComponent<MobileUIReconstruction>() == null)
         {
             var existingBtn = mobileRoot.Find("BtnHUDDaoAn");
             GameObject btnGo = existingBtn != null ? existingBtn.gameObject : null;
