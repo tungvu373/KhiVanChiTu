@@ -1,0 +1,5155 @@
+{
+  "schemaVersion": "1.0.0",
+  "phase": "03",
+  "status": "MANIFEST_ONLY_NO_NEW_IMAGES_GENERATED",
+  "project": "Khí Vận Chi Tử",
+  "outputScope": [
+    "design_system.md",
+    "design_tokens.json",
+    "image_generation_manifest.json"
+  ],
+  "referenceResolution": [
+    1080,
+    1920
+  ],
+  "provenance": {
+    "existing": "Existing generated art from earlier Jade UI work, inspected in Phase03; do not attribute its generation to this phase.",
+    "newAssetsGeneratedThisPhase": 0,
+    "newUnityImportsThisPhase": 0,
+    "toolPlan": "Future illustrative raster jobs use built-in image_gen; utility glyphs use deterministic geometry/vector authoring; no CLI/API fallback requested."
+  },
+  "generationPolicy": {
+    "executeNow": false,
+    "targetPathsAreReservedOnly": true,
+    "overwriteExisting": false,
+    "oneJobPerAsset": true,
+    "neverGenerateAsPackedAtlas": true,
+    "allTextIsRuntime": true,
+    "referenceHandling": "View local source before any future edit; current images are style references only.",
+    "saveFinalAssets": "Future approved outputs copied into workspace Assets path before being referenced; retain current .meta GUIDs.",
+    "actualDimensions": "Generator may return different dimensions; record actual size, inspect alpha, then non-destructively prepare exact native export and update borders. Current targets do not assert files exist.",
+    "exclusions": [
+      "new login/recovery implementation",
+      "leaderboard or season assets",
+      "IAP or gacha",
+      "new gameplay currencies",
+      "extra artifact or recipe types",
+      "new rarity classes",
+      "PC scene migration"
+    ]
+  },
+  "styleGuide": {
+    "paletteTokensFile": "design_tokens.json",
+    "material": "dark carved nephrite; antique brushed gold; quiet stone grain",
+    "light": "top-left45degree warm key, subtle cool rim, no conflicting glows",
+    "texture": "<=4 percent luminance variation in text centers,<=8percent decorative header opacity",
+    "composition": "80 percent visual quiet; max20percent decorative emphasis outside reading area, treat as art direction not measured pixel quota",
+    "iconScale": "one primary silhouette; optional one accent; stable optical bounds",
+    "forbidden": [
+      "baked text/stats/prices/timers",
+      "pseudo-CJK glyphs",
+      "full-screen blur/glow",
+      "multiple saturated rainbow accents per panel",
+      "thin ornate linework on tiny controls",
+      "generated checkerboard background"
+    ]
+  },
+  "importProfiles": {
+    "icon": {
+      "textureType": "Sprite(2D and UI)",
+      "spriteMode": "Single",
+      "mesh": "FullRect",
+      "filter": "Bilinear",
+      "wrap": "Clamp",
+      "sRGB": true,
+      "alphaIsTransparency": true,
+      "mipmaps": false,
+      "readWrite": false,
+      "pixelsPerUnit": 100,
+      "borderLbrt": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "maxSize": 512,
+      "compression": "platform trial and visual QA before choosing; no imports performed"
+    },
+    "frame": {
+      "textureType": "Sprite(2D and UI)",
+      "spriteMode": "Single",
+      "mesh": "FullRect",
+      "filter": "Bilinear",
+      "wrap": "Clamp",
+      "sRGB": true,
+      "alphaIsTransparency": true,
+      "mipmaps": false,
+      "readWrite": false,
+      "pixelsPerUnit": 100,
+      "borderOrder": "L,B,R,T",
+      "packingPaddingPx": 8,
+      "extrusionPx": 4,
+      "tightPacking": false,
+      "rotation": false,
+      "compression": "thin-edge QA at native and360logical scale required"
+    },
+    "existingAtlas": {
+      "path": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "actualSize": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "existingMode": "Multiple",
+      "existingPPU": 100,
+      "note": "16 subSprites;7 have non-zero borders, Divider is Simple; do not regenerate or evenly reslice 4x4 by assumption."
+    },
+    "background": {
+      "path": "Assets/Art/UI/Generated/ImmortalRealmPortrait.png",
+      "actualSize": [
+        941,
+        1672
+      ],
+      "pngColorType": 2,
+      "hasAlphaChannel": false,
+      "presentation": "cover/crop preserving aspect; avoid stretching; evaluate moon/cultivator safe crop on tall screen"
+    }
+  },
+  "assets": [
+    {
+      "id": "EX.BG.ImmortalRealm",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/ImmortalRealmPortrait.png",
+      "usage": [
+        "main-menu full bleed; do not cover live combat with this image"
+      ],
+      "sha256": "9498cce3825328e648979fc4eeb5429149271c9992805ada40b0fb7550abe6c0",
+      "actualSourceDimensionsPx": [
+        941,
+        1672
+      ],
+      "pngColorType": 2,
+      "hasAlphaChannel": false,
+      "sourceMetaSha256": "04e0dc562d31e52b019de2b411048af55e65fc4d59df75754fbf97d88a1b5fad",
+      "guid": "89e730486368c8149a726032b1072726"
+    },
+    {
+      "id": "EX.ATLAS",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "usage": [
+        "shared source atlas; keep existing GUID"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9"
+    },
+    {
+      "id": "EX.ATLAS.Panel",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "Panel",
+      "usage": [
+        "Panel"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 20.377499,
+          "y": 962.445,
+          "width": 279.01498,
+          "height": 271.1775
+        },
+        "borderLbrt": [
+          30.0,
+          30.0,
+          30.0,
+          30.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.Window",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "Window",
+      "usage": [
+        "Window"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 333.8775,
+          "y": 962.445,
+          "width": 279.01498,
+          "height": 271.1775
+        },
+        "borderLbrt": [
+          30.0,
+          30.0,
+          30.0,
+          30.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.Slot",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "Slot",
+      "usage": [
+        "Slot"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 647.3775,
+          "y": 962.445,
+          "width": 279.01498,
+          "height": 271.1775
+        },
+        "borderLbrt": [
+          30.0,
+          30.0,
+          30.0,
+          30.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.SelectedSlot",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "SelectedSlot",
+      "usage": [
+        "SelectedSlot"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 960.8775,
+          "y": 962.445,
+          "width": 279.01498,
+          "height": 271.1775
+        },
+        "borderLbrt": [
+          30.0,
+          30.0,
+          30.0,
+          30.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.PrimaryButton",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "PrimaryButton",
+      "usage": [
+        "PrimaryButton"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 7.8375,
+          "y": 727.32,
+          "width": 299.39252,
+          "height": 119.13
+        },
+        "borderLbrt": [
+          52.0,
+          16.0,
+          52.0,
+          16.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.SecondaryButton",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "SecondaryButton",
+      "usage": [
+        "SecondaryButton"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 321.3375,
+          "y": 727.32,
+          "width": 299.39252,
+          "height": 119.13
+        },
+        "borderLbrt": [
+          52.0,
+          16.0,
+          52.0,
+          16.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.ResourceBar",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "ResourceBar",
+      "usage": [
+        "ResourceBar"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 634.8375,
+          "y": 746.13,
+          "width": 299.39252,
+          "height": 75.240005
+        },
+        "borderLbrt": [
+          52.0,
+          16.0,
+          52.0,
+          16.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.Divider",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "Divider",
+      "usage": [
+        "Divider"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 948.3375,
+          "y": 727.32,
+          "width": 299.39252,
+          "height": 119.13
+        },
+        "borderLbrt": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.Sword",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "Sword",
+      "usage": [
+        "Sword"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 10.9725,
+          "y": 324.4725,
+          "width": 291.555,
+          "height": 291.555
+        },
+        "borderLbrt": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.Body",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "Body",
+      "usage": [
+        "Body"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 324.4725,
+          "y": 324.4725,
+          "width": 291.555,
+          "height": 291.555
+        },
+        "borderLbrt": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.Alchemy",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "Alchemy",
+      "usage": [
+        "Alchemy"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 637.9725,
+          "y": 324.4725,
+          "width": 291.555,
+          "height": 291.555
+        },
+        "borderLbrt": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.Artifact",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "Artifact",
+      "usage": [
+        "Artifact"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 951.4725,
+          "y": 324.4725,
+          "width": 291.555,
+          "height": 291.555
+        },
+        "borderLbrt": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.Formation",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "Formation",
+      "usage": [
+        "Formation"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 10.9725,
+          "y": 10.972508,
+          "width": 291.555,
+          "height": 291.555
+        },
+        "borderLbrt": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.SpiritStone",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "SpiritStone",
+      "usage": [
+        "SpiritStone"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 324.4725,
+          "y": 10.972508,
+          "width": 291.555,
+          "height": 291.555
+        },
+        "borderLbrt": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.SpiritFlame",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "SpiritFlame",
+      "usage": [
+        "SpiritFlame"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 637.9725,
+          "y": 10.972508,
+          "width": 291.555,
+          "height": 291.555
+        },
+        "borderLbrt": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "id": "EX.ATLAS.CultivationHalo",
+      "status": "EXISTING_REUSE_REQUIRES_CONTEXT_QA",
+      "productionMethod": "reuse",
+      "generationRequired": false,
+      "sourcePath": "Assets/Art/UI/Generated/JadeGoldAtlas.png",
+      "subSprite": "CultivationHalo",
+      "usage": [
+        "CultivationHalo"
+      ],
+      "sha256": "78fa9bf51795a109dbc993e4b331b4fc16470e513d00fc53087735819806ec3f",
+      "actualSourceDimensionsPx": [
+        1254,
+        1254
+      ],
+      "pngColorType": 6,
+      "hasAlphaChannel": true,
+      "sourceMetaSha256": "4eb13302ff4fe114fede94439cdded5c9907e117f1ee3edca46e136a3f3e717d",
+      "guid": "865101dc71ff62343a27f9d2aca664c9",
+      "existingSprite": {
+        "rect": {
+          "x": 951.4725,
+          "y": 10.972508,
+          "width": 291.555,
+          "height": 291.555
+        },
+        "borderLbrt": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "id": "IG.ICON.BODY.HP",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Khí Huyết",
+      "sourceFeature": "Assets/Scripts/Managers/PlayerStatsService.cs:TalentNodes[0]",
+      "routeIds": [
+        "workbench.body"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/BODY_HP.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: jade shield with one warm red life core.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.BODY.DEFENSE",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Cương Khí",
+      "sourceFeature": "Assets/Scripts/Managers/PlayerStatsService.cs:TalentNodes[1]",
+      "routeIds": [
+        "workbench.body"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/BODY_DEFENSE.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: interlocking jade armor plates, clear hexagonal shield silhouette.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.BODY.REGEN",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Dũ Hợp",
+      "sourceFeature": "Assets/Scripts/Managers/PlayerStatsService.cs:TalentNodes[2]",
+      "routeIds": [
+        "workbench.body"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/BODY_REGEN.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: paired healing jade leaves around soft life core.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.BODY.DAMAGE",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Kình Lực",
+      "sourceFeature": "Assets/Scripts/Managers/PlayerStatsService.cs:TalentNodes[3]",
+      "routeIds": [
+        "workbench.body"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/BODY_DAMAGE.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: gold knuckle with a single focused impact arc.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.BODY.LIFESTEAL",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Phệ Huyết",
+      "sourceFeature": "Assets/Scripts/Managers/PlayerStatsService.cs:TalentNodes[4]",
+      "routeIds": [
+        "workbench.body"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/BODY_LIFESTEAL.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: one red jade droplet returning along a gold inward arc.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.BODY.TENACITY",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Định Tâm",
+      "sourceFeature": "Assets/Scripts/Managers/PlayerStatsService.cs:TalentNodes[5]",
+      "routeIds": [
+        "workbench.body"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/BODY_TENACITY.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: still jade lotus below simple gold circle, balanced calm silhouette.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.ARTIFACT.ROBE",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Phi Thiên Áo",
+      "sourceFeature": "Assets/Scripts/UI/ArtifactPanelUI.cs:SlotNames[0] / ArtifactSlot.Robe",
+      "routeIds": [
+        "workbench.artifact"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/ARTIFACT_ROBE.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: flowing folded dark jade cultivator robe with gold collar.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.ARTIFACT.CROWN",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Cửu Thiên Tiên Miện",
+      "sourceFeature": "Assets/Scripts/UI/ArtifactPanelUI.cs:SlotNames[1] / ArtifactSlot.Crown",
+      "routeIds": [
+        "workbench.artifact"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/ARTIFACT_CROWN.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: three-point antique gold daoist crown with central jade.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.ARTIFACT.BOOTS",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Vân Phong Hài",
+      "sourceFeature": "Assets/Scripts/UI/ArtifactPanelUI.cs:SlotNames[2] / ArtifactSlot.Boots",
+      "routeIds": [
+        "workbench.artifact"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/ARTIFACT_BOOTS.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: paired jade cloud boots with gold trim.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.ARTIFACT.AMULET",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Linh Ngọc Bội",
+      "sourceFeature": "Assets/Scripts/UI/ArtifactPanelUI.cs:SlotNames[3] / ArtifactSlot.Amulet",
+      "routeIds": [
+        "workbench.artifact"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/ARTIFACT_AMULET.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: suspended oval jade pendant with restrained gold knot.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.FORMATION.THUNDER",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Cửu Thiên Lôi Trận",
+      "sourceFeature": "FormationId.Thunder",
+      "routeIds": [
+        "workbench.formation"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/FORMATION_THUNDER.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: single pale blue lightning bolt crossing a jade magic seal.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.FORMATION.SPIRIT",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Bát Quái Tụ Linh Trận",
+      "sourceFeature": "FormationId.Spirit",
+      "routeIds": [
+        "workbench.formation"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/FORMATION_SPIRIT.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: jade energy spiral held by an eight-sided gold diagram, geometric marks only.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.FORMATION.FROST",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Cực Hàn Băng Trận",
+      "sourceFeature": "FormationId.Frost",
+      "routeIds": [
+        "workbench.formation"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/FORMATION_FROST.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: six-branched ice crystal in a jade circle, pale blue accent.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.FORMATION.SWORDRAIN",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Vạn Kiếm Quy Tông Trận",
+      "sourceFeature": "FormationId.SwordRain",
+      "routeIds": [
+        "workbench.formation"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/FORMATION_SWORDRAIN.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: three gold swords falling through one jade arc.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.FORMATION.BLOOD",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Huyết Ma Hóa Sinh Trận",
+      "sourceFeature": "FormationId.BloodDrain",
+      "routeIds": [
+        "workbench.formation"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/FORMATION_BLOOD.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: dark red jade droplet surrounded by a returning double gold arc.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.FORMATION.BELL",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Huyền Vũ Kim Cang Trận",
+      "sourceFeature": "FormationId.GoldenBell",
+      "routeIds": [
+        "workbench.formation"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/FORMATION_BELL.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: antique gold protective bell with angular jade shield base.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.SKILL.ULTIMATE",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P1",
+      "label": "Vạn Kiếm Quy Tông",
+      "sourceFeature": "Assets/Scripts/UI/MobileSkillHUD.cs:btnUltimate",
+      "routeIds": [
+        "battle.home"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/SKILL_ULTIMATE.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: fan of five flying swords converging on one bright jade point.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.SKILL.PALM",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P1",
+      "label": "Ấn Chưởng",
+      "sourceFeature": "Assets/Scripts/UI/MobileSkillHUD.cs:btnNormalSkills[0]",
+      "routeIds": [
+        "battle.home"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/SKILL_PALM.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: forward open gold palm with one circular jade pressure mark.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.SKILL.LIGHTNING",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P1",
+      "label": "Lôi Phạt",
+      "sourceFeature": "Assets/Scripts/UI/MobileSkillHUD.cs:btnNormalSkills[1]",
+      "routeIds": [
+        "battle.home"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/SKILL_LIGHTNING.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: vertical purple-white lightning in a broken jade circle, distinct from formation bolt.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.SKILL.TAIJI",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P1",
+      "label": "Âm Dương",
+      "sourceFeature": "Assets/Scripts/UI/MobileSkillHUD.cs:btnNormalSkills[2]",
+      "routeIds": [
+        "battle.home"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/SKILL_TAIJI.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: two opposing jade and ivory flowing teardrops in a gold circular frame.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.HERB.0",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Linh Chi",
+      "sourceFeature": "Assets/Scripts/Data/DeepProgressionSaveData.cs:AlchemySaveState.herbs[0]",
+      "routeIds": [
+        "workbench.alchemy"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/HERB_0.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: single jade-tinted lingzhi mushroom with simple gold-lit cap.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.HERB.1",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Cỏ Ngưng Khí",
+      "sourceFeature": "Assets/Scripts/Data/DeepProgressionSaveData.cs:AlchemySaveState.herbs[1]",
+      "routeIds": [
+        "workbench.alchemy"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/HERB_1.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: three thin but bold green spirit grass leaves, gold-lit tips.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.HERB.2",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Tuyết Liên",
+      "sourceFeature": "Assets/Scripts/Data/DeepProgressionSaveData.cs:AlchemySaveState.herbs[2]",
+      "routeIds": [
+        "workbench.alchemy"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/HERB_2.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: white jade snow lotus with three broad icy petals.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.PILL.CULTIVATION",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Tu Vi Đan",
+      "sourceFeature": "PillRecipe.Cultivation",
+      "routeIds": [
+        "workbench.alchemy"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/PILL_CULTIVATION.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: one round jade pill carrying rising spiral surface engraving, no symbols or text.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.PILL.BREAKTHROUGH",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Đột Phá Đan",
+      "sourceFeature": "PillRecipe.Breakthrough",
+      "routeIds": [
+        "workbench.alchemy"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/PILL_BREAKTHROUGH.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: one round pale jade pill carrying cloud-split lightning engraving, no symbols or text.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.MATERIAL.DUST",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Dược Trần",
+      "sourceFeature": "AlchemySaveState.medicineDust",
+      "routeIds": [
+        "inventory.items"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/MATERIAL_DUST.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: small mound of jade herbal dust in shallow gold dish.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.MATERIAL.ORE",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Quặng",
+      "sourceFeature": "ArtifactService.Ore",
+      "routeIds": [
+        "workbench.artifact"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/MATERIAL_ORE.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: one rough dark iron ore crystal with subtle jade veins, no gemstone cut.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.TRIAL.HORDE",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Vạn Ma",
+      "sourceFeature": "SecretRealmPlayController actual Horde strategy",
+      "routeIds": [
+        "challenge.horde"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/TRIAL_HORDE.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: three shadow creature masks receding behind a jade shield.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.TRIAL.BARRIER",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Cấm Chế",
+      "sourceFeature": "SecretRealmPlayController actual Barrier strategy",
+      "routeIds": [
+        "challenge.barrier"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/TRIAL_BARRIER.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: sealed jade gate with one cracked antique-gold circular lock.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.TRIAL.CAULDRON",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Tam Đỉnh",
+      "sourceFeature": "SecretRealmPlayController actual Cauldron strategy",
+      "routeIds": [
+        "challenge.cauldron"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/TRIAL_CAULDRON.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: three simple bronze cauldrons grouped in triangular silhouette.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.TRIAL.LIGHTNING",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Lôi Trì",
+      "sourceFeature": "SecretRealmPlayController actual Lightning strategy",
+      "routeIds": [
+        "challenge.lightning"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/TRIAL_LIGHTNING.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: one lightning bolt striking a circular jade pool.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.ICON.TRIAL.TOMB",
+      "status": "PLANNED_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": true,
+      "priority": "P2",
+      "label": "Kiếm Chủng",
+      "sourceFeature": "SecretRealmPlayController actual SwordTomb strategy",
+      "routeIds": [
+        "challenge.sword-tomb"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "referenceRole": "style reference, not edit target",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Icons/TRIAL_TOMB.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "prompt": "Premium restrained Vietnamese xianxia mobile UI, same family as existing jade-and-antique-gold atlas. Dark nephrite #0A1F22, muted antique gold #D5B574, luminous jade #6EDDB6, warm ivory highlights. Hand-painted carved jade and brushed gold, clean silhouette readable at tiny size, top-left soft light at45 degrees, cool subtle rim. Minimal fine detail; no photorealistic product rendering, no plastic shine. Isolated centered subject, one object only, real transparent alpha, no cast shadow outside safe zone. No letters, words, numbers, UI mockup, panel, watermark, borders, checkerboard or baked background. 512x512 authoring target,64px safe inset; keep essential motif in central384px; no thin details below24px. Output dimensions are requested targets, actual generation must be inspected and separately prepared for import.\nSubject: one broad sword embedded in dark jade stone.",
+      "negativePrompt": "No baked quality/rarity border, no quantity, no pseudo-Chinese writing; quality/state applied separately.",
+      "safeInsetPx": [
+        64,
+        64,
+        64,
+        64
+      ],
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "intendedDisplayReferencePx": [
+        72,
+        120,
+        192
+      ],
+      "qualityAcceptance": [
+        "Recognizable at72 reference px",
+        "Matches family lighting",
+        "No alpha fringe over dark/ivory background",
+        "Unique silhouette relative to siblings"
+      ],
+      "currentFallback": "existing atlas category icon with explicit localized text; never replace item truth with generic icon alone"
+    },
+    {
+      "id": "IG.HEADER.SWORD",
+      "status": "PLANNED_OPTIONAL_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": false,
+      "priority": "P3",
+      "label": "Kiếm Lô",
+      "routeIds": [
+        "workbench.sword"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS",
+        "EX.BG.ImmortalRealm"
+      ],
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Ornaments/HEADER_SWORD.png",
+      "targetSizePx": [
+        768,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "prompt": "Premium restrained xianxia UI decorative fragment matching jade #0A1F22 and antique gold #D5B574. a diagonal flying sword and one quiet cloud scroll. Top-left soft lighting, no central bright bloom. Transparent background with real alpha. Keep most negative space clear, no text, runic writing, price, buttons, characters, scenery or frame. Intended opacity8 percent in a header only; do not place behind text. Produce one fragment only, not an atlas or screen mockup.",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing Divider or CultivationHalo; omit decoration if it reduces readability"
+    },
+    {
+      "id": "IG.HEADER.BODY",
+      "status": "PLANNED_OPTIONAL_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": false,
+      "priority": "P3",
+      "label": "Luyện Thể",
+      "routeIds": [
+        "workbench.body"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS",
+        "EX.BG.ImmortalRealm"
+      ],
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Ornaments/HEADER_BODY.png",
+      "targetSizePx": [
+        768,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "prompt": "Premium restrained xianxia UI decorative fragment matching jade #0A1F22 and antique gold #D5B574. carved stone meridian torso and two restrained gold branch lines. Top-left soft lighting, no central bright bloom. Transparent background with real alpha. Keep most negative space clear, no text, runic writing, price, buttons, characters, scenery or frame. Intended opacity8 percent in a header only; do not place behind text. Produce one fragment only, not an atlas or screen mockup.",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing Divider or CultivationHalo; omit decoration if it reduces readability"
+    },
+    {
+      "id": "IG.HEADER.ALCHEMY",
+      "status": "PLANNED_OPTIONAL_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": false,
+      "priority": "P3",
+      "label": "Luyện Đan",
+      "routeIds": [
+        "workbench.alchemy"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS",
+        "EX.BG.ImmortalRealm"
+      ],
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Ornaments/HEADER_ALCHEMY.png",
+      "targetSizePx": [
+        768,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "prompt": "Premium restrained xianxia UI decorative fragment matching jade #0A1F22 and antique gold #D5B574. one bronze cauldron with a jade vapor curl. Top-left soft lighting, no central bright bloom. Transparent background with real alpha. Keep most negative space clear, no text, runic writing, price, buttons, characters, scenery or frame. Intended opacity8 percent in a header only; do not place behind text. Produce one fragment only, not an atlas or screen mockup.",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing Divider or CultivationHalo; omit decoration if it reduces readability"
+    },
+    {
+      "id": "IG.HEADER.ARTIFACT",
+      "status": "PLANNED_OPTIONAL_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": false,
+      "priority": "P3",
+      "label": "Pháp Khí",
+      "routeIds": [
+        "workbench.artifact"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS",
+        "EX.BG.ImmortalRealm"
+      ],
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Ornaments/HEADER_ARTIFACT.png",
+      "targetSizePx": [
+        768,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "prompt": "Premium restrained xianxia UI decorative fragment matching jade #0A1F22 and antique gold #D5B574. one small jade pendant and gold anvil-like forging motif. Top-left soft lighting, no central bright bloom. Transparent background with real alpha. Keep most negative space clear, no text, runic writing, price, buttons, characters, scenery or frame. Intended opacity8 percent in a header only; do not place behind text. Produce one fragment only, not an atlas or screen mockup.",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing Divider or CultivationHalo; omit decoration if it reduces readability"
+    },
+    {
+      "id": "IG.HEADER.FORMATION",
+      "status": "PLANNED_OPTIONAL_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": false,
+      "priority": "P3",
+      "label": "Trận Pháp",
+      "routeIds": [
+        "workbench.formation"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS",
+        "EX.BG.ImmortalRealm"
+      ],
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Ornaments/HEADER_FORMATION.png",
+      "targetSizePx": [
+        768,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "prompt": "Premium restrained xianxia UI decorative fragment matching jade #0A1F22 and antique gold #D5B574. a partial eight-sided jade-gold geometric formation ring. Top-left soft lighting, no central bright bloom. Transparent background with real alpha. Keep most negative space clear, no text, runic writing, price, buttons, characters, scenery or frame. Intended opacity8 percent in a header only; do not place behind text. Produce one fragment only, not an atlas or screen mockup.",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing Divider or CultivationHalo; omit decoration if it reduces readability"
+    },
+    {
+      "id": "IG.MEDALLION.CULTIVATION",
+      "status": "PLANNED_OPTIONAL_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": false,
+      "priority": "P3",
+      "label": "Tu luyện",
+      "routeIds": [
+        "progression.character"
+      ],
+      "sourceReferenceIds": [
+        "EX.ATLAS",
+        "EX.BG.ImmortalRealm"
+      ],
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Ornaments/MEDALLION_CULTIVATION.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "prompt": "Premium restrained xianxia UI decorative fragment matching jade #0A1F22 and antique gold #D5B574. nine short gold outer arcs around one open jade halo, no character or letters. Top-left soft lighting, no central bright bloom. Transparent background with real alpha. Keep most negative space clear, no text, runic writing, price, buttons, characters, scenery or frame. Intended opacity8 percent in a header only; do not place behind text. Produce one fragment only, not an atlas or screen mockup.",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing Divider or CultivationHalo; omit decoration if it reduces readability"
+    },
+    {
+      "id": "IG.PANEL.NEUTRAL",
+      "status": "PLANNED_CONDITIONAL_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": false,
+      "priority": "P3",
+      "trigger": "Only if existing atlas fails small-size/9-slice/text contrast QA; preserve current art otherwise.",
+      "label": "flat dark nephrite panel, subtle natural stone grain, four restrained antique gold corners",
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Frames/PANEL_NEUTRAL.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "prompt": "Single reusable premium xianxia UI sprite: flat dark nephrite panel, subtle natural stone grain, four restrained antique gold corners. Match existing jade-and-gold atlas. Top-left soft light. Center is uniform and quiet with maximum4 percent texture luminance variation, no vignette through stretch center. Keep all ornament inside the nine-slice corner/edge bands, straight repeatable edges and flat stretchable center. True transparent exterior. No text, icons, gradients to white, button label, symbols, glowing clouds, quantity, watermark, atlas sheet or mockup. Exact requested source dimensions are an authoring target; validate and prepare before import.",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          48,
+          48,
+          48,
+          48
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "geometryAcceptance": "Requested borders must enclose every corner at final native source size; generator output is not import-ready.",
+      "currentFallback": "EX.ATLAS.Panel"
+    },
+    {
+      "id": "IG.BUTTON.NEUTRAL",
+      "status": "PLANNED_CONDITIONAL_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": false,
+      "priority": "P3",
+      "trigger": "Only if existing atlas fails small-size/9-slice/text contrast QA; preserve current art otherwise.",
+      "label": "horizontal flat neutral dark jade button face with restrained gold edge, no central medallion",
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Frames/BUTTON_NEUTRAL.png",
+      "targetSizePx": [
+        768,
+        192
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "prompt": "Single reusable premium xianxia UI sprite: horizontal flat neutral dark jade button face with restrained gold edge, no central medallion. Match existing jade-and-gold atlas. Top-left soft light. Center is uniform and quiet with maximum4 percent texture luminance variation, no vignette through stretch center. Keep all ornament inside the nine-slice corner/edge bands, straight repeatable edges and flat stretchable center. True transparent exterior. No text, icons, gradients to white, button label, symbols, glowing clouds, quantity, watermark, atlas sheet or mockup. Exact requested source dimensions are an authoring target; validate and prepare before import.",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          72,
+          36,
+          72,
+          36
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "geometryAcceptance": "Requested borders must enclose every corner at final native source size; generator output is not import-ready.",
+      "currentFallback": "EX.ATLAS.SecondaryButton"
+    },
+    {
+      "id": "IG.SLOT.NEUTRAL",
+      "status": "PLANNED_CONDITIONAL_NOT_GENERATED",
+      "productionMethod": "image_gen_builtin",
+      "generationRequired": false,
+      "priority": "P3",
+      "trigger": "Only if existing atlas fails small-size/9-slice/text contrast QA; preserve current art otherwise.",
+      "label": "square recessed neutral jade slot with clean gold corner accents, no quality color or center motif",
+      "sourceReferenceIds": [
+        "EX.ATLAS"
+      ],
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Frames/SLOT_NEUTRAL.png",
+      "targetSizePx": [
+        512,
+        512
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "prompt": "Single reusable premium xianxia UI sprite: square recessed neutral jade slot with clean gold corner accents, no quality color or center motif. Match existing jade-and-gold atlas. Top-left soft light. Center is uniform and quiet with maximum4 percent texture luminance variation, no vignette through stretch center. Keep all ornament inside the nine-slice corner/edge bands, straight repeatable edges and flat stretchable center. True transparent exterior. No text, icons, gradients to white, button label, symbols, glowing clouds, quantity, watermark, atlas sheet or mockup. Exact requested source dimensions are an authoring target; validate and prepare before import.",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          48,
+          48,
+          48,
+          48
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "geometryAcceptance": "Requested borders must enclose every corner at final native source size; generator output is not import-ready.",
+      "currentFallback": "EX.ATLAS.Slot"
+    },
+    {
+      "id": "VEC.close",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "close",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/close.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.back",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "back",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/back.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.chevron",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "chevron",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/chevron.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.expand",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "expand",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/expand.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.collapse",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "collapse",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/collapse.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.lock",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "lock",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/lock.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.check",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "check",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/check.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.warning",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "warning",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/warning.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.info",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "info",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/info.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.settings",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "settings",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/settings.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.volume",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "volume",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/volume.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.mute",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "mute",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/mute.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.save",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "save",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/save.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.delete",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "delete",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/delete.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.sort",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "sort",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/sort.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.filter",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "filter",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/filter.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.grid",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "grid",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/grid.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.list",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "list",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/list.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.inventory",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "inventory",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/inventory.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.milestone",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "milestone",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/milestone.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.arrow-up",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "arrow-up",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/arrow-up.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.hourglass",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "hourglass",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/hourglass.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.ad-play",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "ad-play",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/ad-play.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.plus",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "plus",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/plus.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    },
+    {
+      "id": "VEC.minus",
+      "status": "PLANNED_NOT_AUTHORED",
+      "productionMethod": "deterministic_vector_or_native_UI_geometry",
+      "generationRequired": false,
+      "label": "minus",
+      "targetOutputPath": "Assets/Art/UI/RedesignV3/Utility/minus.png",
+      "targetSizePx": [
+        256,
+        256
+      ],
+      "transparentBackground": true,
+      "safeInsetPx": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "style": {
+        "viewBox": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "coreBox": [
+          32,
+          32,
+          192,
+          192
+        ],
+        "strokePx": 16,
+        "cap": "round",
+        "join": "round",
+        "color": "single neutral white mask; runtime semantic tint",
+        "decorativeGold": false
+      },
+      "usage": "only existing equivalent actions; no new button or setting implied",
+      "rasterExport": "transparent PNG unless an already-supported vector import path exists; do not add a package just for this set",
+      "sprite": {
+        "mode": "Single",
+        "borderLbrt": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "pixelsPerUnit": 100
+      },
+      "currentFallback": "existing text labels/UI geometry; never emoji",
+      "acceptance": "center optical weight; silhouette survives48 reference px;24px utility icon must not imply24px hit target"
+    }
+  ],
+  "screenVariants": [
+    {
+      "id": "main-menu",
+      "name": "Vân Sơn Khởi Hành",
+      "routeIds": [
+        "title.home",
+        "title.characters",
+        "title.create"
+      ],
+      "assetIds": [
+        "EX.BG.ImmortalRealm",
+        "EX.ATLAS.Window",
+        "EX.ATLAS.PrimaryButton"
+      ],
+      "composition": "Moonlit landscape, narrow quiet scrim for character controls, one hero title; roster data stays live.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "gameplay-hud",
+      "name": "Ngự Kiếm Minh Nguyệt",
+      "routeIds": [
+        "battle.home",
+        "battle.shortcuts",
+        "hud.quest",
+        "hud.quest-guide",
+        "hud.tooltip",
+        "hud.combat-log"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Panel",
+        "EX.ATLAS.ResourceBar",
+        "EX.ATLAS.Sword",
+        "EX.ATLAS.SpiritStone",
+        "EX.ATLAS.SpiritFlame",
+        "IG.ICON.SKILL.ULTIMATE",
+        "IG.ICON.SKILL.PALM",
+        "IG.ICON.SKILL.LIGHTNING",
+        "IG.ICON.SKILL.TAIJI"
+      ],
+      "composition": "Floating dark islands; arena remains focal; clear HP/MP/tu vi and four independent skills.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "upgrade-systems",
+      "name": "Đạo Lộ Ngọc Giản",
+      "routeIds": [
+        "progression.disciplines",
+        "progression.skills",
+        "progression.daoan",
+        "progression.milestones",
+        "progression.achievements",
+        "progression.buff-shop",
+        "workbench.sword"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Panel",
+        "EX.ATLAS.PrimaryButton",
+        "EX.ATLAS.Sword",
+        "EX.ATLAS.CultivationHalo"
+      ],
+      "composition": "Reusable level/cost/stat card; actual gate/max/claim,4 legacy disciplines,4 study/CD,38 DaoAn node IDs,6 tiers/8 filters and5 local buff items.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "cultivation",
+      "name": "Cửu Cảnh Liên Đài",
+      "routeIds": [
+        "progression.character",
+        "modal.tribulation"
+      ],
+      "assetIds": [
+        "EX.ATLAS.CultivationHalo",
+        "EX.ATLAS.Window",
+        "IG.MEDALLION.CULTIVATION"
+      ],
+      "composition": "Realm seal and phase label,9 realms,capacity data,breakthrough prep/risk with real values. No invented ascension system.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "alchemy",
+      "name": "Đan Hỏa Thanh Ngọc",
+      "routeIds": [
+        "workbench.alchemy"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Alchemy",
+        "EX.ATLAS.SpiritFlame",
+        "IG.HEADER.ALCHEMY",
+        "IG.ICON.HERB.0",
+        "IG.ICON.HERB.1",
+        "IG.ICON.HERB.2",
+        "IG.ICON.PILL.CULTIVATION",
+        "IG.ICON.PILL.BREAKTHROUGH",
+        "IG.ICON.MATERIAL.DUST"
+      ],
+      "composition": "Purple spirit flame is profession accent; quality colors only on quality tags.2 recipes,3 herbs,dust,brewing timer/pills remain explicit.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "artifact-crafting",
+      "name": "Luyện Khí Kim Văn",
+      "routeIds": [
+        "workbench.artifact"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Artifact",
+        "IG.HEADER.ARTIFACT",
+        "IG.ICON.MATERIAL.ORE",
+        "IG.ICON.ARTIFACT.ROBE",
+        "IG.ICON.ARTIFACT.CROWN",
+        "IG.ICON.ARTIFACT.BOOTS",
+        "IG.ICON.ARTIFACT.AMULET"
+      ],
+      "composition": "Four existing artifact upgrade cards. This project upgrades fixed slots; do not invent crafting recipe,random roll or forge transaction.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "body-refinement",
+      "name": "Song Mạch Luyện Thể",
+      "routeIds": [
+        "workbench.body",
+        "body.node-detail"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Body",
+        "IG.HEADER.BODY",
+        "IG.ICON.BODY.HP",
+        "IG.ICON.BODY.DEFENSE",
+        "IG.ICON.BODY.REGEN",
+        "IG.ICON.BODY.DAMAGE",
+        "IG.ICON.BODY.LIFESTEAL",
+        "IG.ICON.BODY.TENACITY"
+      ],
+      "composition": "Two named branches and6 nodes,readable dependency links,locked explanation,x1/x5/max remain separate.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "formations",
+      "name": "Lục Trận Huyền Văn",
+      "routeIds": [
+        "workbench.formation"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Formation",
+        "IG.HEADER.FORMATION",
+        "IG.ICON.FORMATION.THUNDER",
+        "IG.ICON.FORMATION.SPIRIT",
+        "IG.ICON.FORMATION.FROST",
+        "IG.ICON.FORMATION.SWORDRAIN",
+        "IG.ICON.FORMATION.BLOOD",
+        "IG.ICON.FORMATION.BELL"
+      ],
+      "composition": "Six actual formations with distinct silhouettes;selected badge differs from Spirit active/cooldown.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "inventory",
+      "name": "Tàng Các",
+      "routeIds": [
+        "inventory.items",
+        "inventory.item-info",
+        "inventory.sacrifice-lv8",
+        "confirm.dismantle"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Slot",
+        "EX.ATLAS.SelectedSlot",
+        "EX.ATLAS.Panel",
+        "VEC.grid",
+        "VEC.list",
+        "VEC.filter",
+        "VEC.sort"
+      ],
+      "composition": "Five inventory groups,pending stash,3 preference toggles,grid/list,high-value warning andLv8 sacrifice preserved.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "equipment",
+      "name": "Ngự Kiếm Pháp Y",
+      "routeIds": [
+        "workbench.sword",
+        "progression.character",
+        "workbench.artifact"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Sword",
+        "EX.ATLAS.Artifact",
+        "EX.ATLAS.Slot",
+        "EX.ATLAS.SelectedSlot"
+      ],
+      "composition": "Same actual sword capacity up to10 and4 artifact slots; equipped badge independent of level/quality; no new paper-doll equipment inventory.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "combat",
+      "name": "Bí Cảnh Kiếm Ảnh",
+      "routeIds": [
+        "battle.style",
+        "battle.encounter",
+        "challenge.hub",
+        "challenge.horde",
+        "challenge.barrier",
+        "challenge.cauldron",
+        "challenge.lightning",
+        "challenge.sword-tomb",
+        "challenge.play",
+        "battle.world-damage",
+        "battle.world-overlays"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Formation",
+        "EX.ATLAS.Panel",
+        "IG.ICON.TRIAL.HORDE",
+        "IG.ICON.TRIAL.BARRIER",
+        "IG.ICON.TRIAL.CAULDRON",
+        "IG.ICON.TRIAL.LIGHTNING",
+        "IG.ICON.TRIAL.TOMB"
+      ],
+      "composition": "Distinct five actual trials,readable targets/telegraphs/timer; reuse world effects unchanged. HUD style remains primary.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "rewards",
+      "name": "Kim Quang Hồi Báo",
+      "routeIds": [
+        "challenge.result",
+        "modal.offline"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Window",
+        "EX.ATLAS.Divider",
+        "EX.ATLAS.SpiritStone",
+        "EX.ATLAS.SpiritFlame",
+        "VEC.ad-play",
+        "VEC.check"
+      ],
+      "composition": "Gold concentrated in reward header and explicit received data;no fake jackpot,pending or SDK callback shown as grant.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    },
+    {
+      "id": "settings",
+      "name": "Tĩnh Tâm Các",
+      "routeIds": [
+        "settings.audio",
+        "settings.session"
+      ],
+      "assetIds": [
+        "EX.ATLAS.Panel",
+        "EX.ATLAS.SecondaryButton",
+        "VEC.volume",
+        "VEC.mute",
+        "VEC.save",
+        "VEC.settings"
+      ],
+      "composition": "Calm low-ornament rows for actual audio/settings/save/menu/quit;no new graphics/accessibility/account controls implied.",
+      "bodySurfaceToken": "color.semantic.panel",
+      "textToken": "color.semantic.text",
+      "status": "DESIGN_ONLY"
+    }
+  ],
+  "releaseGates": [
+    "No new image file exists for PLANNED entries until generation and QA complete.",
+    "Check new alpha on dark,white,and magenta backdrops; remove baked matte without erasing ornament.",
+    "Review each isolated icon at72/120/192 reference px, utility at48/72, and whole UI at360logical width.",
+    "Check sliced frames at min/wide/tall rectangles; no corner stretch and no ornament inside stretch center.",
+    "Check actual PNG source size,border sums,content inset,import GUID,and linear edge sampling.",
+    "Run texture-level text contrast over darkest/brightest areas; token contrast alone is insufficient.",
+    "Use actual inventory states:empty/locked/insufficient/max/cooldown/selected/equipped/pending/error/success.",
+    "All generated assets need saved prompt,tool/model info when available,timestamp,actual dimensions,SHA256,QA disposition and project path.",
+    "Keep Source Sans Pro and Cormorant OFL notices. Reuse source artwork only with recorded provenance.",
+    "Physical-device overdraw/readability and motion QA remain pending after integration."
+  ],
+  "validation": {
+    "status": "PASS_STATIC_CHECKS",
+    "runtimeStatus": "NOT_IMPLEMENTED",
+    "physicalDeviceStatus": "NOT_TESTED",
+    "summary": {
+      "tokenCount": 177,
+      "resolvedReferenceCount": 148,
+      "contrastPairs": [
+        [
+          "primary-text",
+          13.948
+        ],
+        [
+          "secondary-text",
+          7.72
+        ],
+        [
+          "support-text",
+          5.46
+        ],
+        [
+          "disabled-label",
+          5.46
+        ],
+        [
+          "jade-action",
+          7.793
+        ],
+        [
+          "gold-action",
+          12.647
+        ],
+        [
+          "danger-action",
+          10.694
+        ],
+        [
+          "focus-ring",
+          9.747
+        ],
+        [
+          "error-copy",
+          8.198
+        ],
+        [
+          "info-copy",
+          9.667
+        ]
+      ],
+      "routeCount": 57,
+      "routeAssignments": 57,
+      "screenVariants": 13,
+      "assetEntries": 84,
+      "plannedImagegenJobs": 41,
+      "existingReuseEntries": 18,
+      "plannedUtilityEntries": 25,
+      "newImagesGenerated": 0,
+      "newImports": 0,
+      "existingAtlasSlicedSprites": 7,
+      "futurePathsConfirmedAbsent": 66
+    },
+    "preservation": {
+      "sourceFilesChecked": 2090,
+      "sourceChanged": [],
+      "sourceAdded": [],
+      "oldDocsChanged": [],
+      "gitHeadUnchanged": true,
+      "gitBranchUnchanged": true,
+      "gitIndexUnchanged": true,
+      "saveFilesChecked": 18,
+      "saveDataUnchanged": true
+    },
+    "editorObservation": {
+      "scene": "Assets/Scenes/SampleScene_MobileWork.unity",
+      "sceneDirty": false,
+      "rootCount": 12,
+      "playing": false,
+      "compiling": false,
+      "consoleErrors": 0,
+      "consoleWarnings": 2,
+      "note": "warnings pre-existed; no runtime view or device tests"
+    },
+    "evidenceDirectory": "Docs/UI_Redesign/Backups/Phase03-20261112-170523"
+  },
+  "sourceInputs": {
+    "sha256": {
+      "feature_inventory.json": "a14ab07f8a32bb785e5d051a45df094e9ae82d6fb065749c60da4ca103d992d0",
+      "screen_redesign_map.json": "db5ad5e89bb7b17e295ebb9f28164310220f49725519edc1a10cd8c278f46f89",
+      "ui_component_architecture.md": "0889e0cec23a3375df179ebdba2d05360e8448dcb14d2f28caf24de423290ff8",
+      "new_ui_architecture.md": "bd71524bcbd7dc7e8a3051b7d103fc3915114465b92ad285798f003a8a1332bb",
+      "navigation_flow.md": "42d4c1020c7db4aa1e140dc7364171a3a1daa7a47827aa3c84cb7180bc9146ce"
+    }
+  },
+  "createdUtc": "2026-11-12T10:20:41.604023+00:00",
+  "routeStyleAssignments": [
+    {
+      "routeId": "title.home",
+      "label": "Màn chính",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "main-menu"
+      ]
+    },
+    {
+      "routeId": "title.characters",
+      "label": "Chọn nhân vật",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "main-menu"
+      ]
+    },
+    {
+      "routeId": "title.create",
+      "label": "Tạo nhân vật",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "main-menu"
+      ]
+    },
+    {
+      "routeId": "settings.audio",
+      "label": "Âm thanh từ menu",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "settings"
+      ]
+    },
+    {
+      "routeId": "confirm.enter-character",
+      "label": "Xác nhận vào nhân vật",
+      "visibility": "production",
+      "policy": "shared-decision-dialog",
+      "variantIds": []
+    },
+    {
+      "routeId": "confirm.delete-character",
+      "label": "Xác nhận xóa nhân vật",
+      "visibility": "production",
+      "policy": "shared-decision-dialog",
+      "variantIds": []
+    },
+    {
+      "routeId": "confirm.quit-title",
+      "label": "Xác nhận thoát từ menu",
+      "visibility": "production",
+      "policy": "shared-decision-dialog",
+      "variantIds": []
+    },
+    {
+      "routeId": "battle.home",
+      "label": "Đấu trường và HUD",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "gameplay-hud"
+      ]
+    },
+    {
+      "routeId": "battle.shortcuts",
+      "label": "Lối tắt trực tiếp / chế độ gọn",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "gameplay-hud"
+      ]
+    },
+    {
+      "routeId": "workbench.sword",
+      "label": "Kiếm Lô",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "upgrade-systems",
+        "equipment"
+      ]
+    },
+    {
+      "routeId": "workbench.body",
+      "label": "Luyện Thể",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "body-refinement"
+      ]
+    },
+    {
+      "routeId": "workbench.alchemy",
+      "label": "Luyện Đan",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "alchemy"
+      ]
+    },
+    {
+      "routeId": "workbench.artifact",
+      "label": "Pháp Khí",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "artifact-crafting",
+        "equipment"
+      ]
+    },
+    {
+      "routeId": "workbench.formation",
+      "label": "Trận Pháp",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "formations"
+      ]
+    },
+    {
+      "routeId": "body.node-detail",
+      "label": "Chi tiết thiên phú",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "body-refinement"
+      ]
+    },
+    {
+      "routeId": "inventory.items",
+      "label": "Kho đồ / hòm tạm",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "inventory"
+      ]
+    },
+    {
+      "routeId": "inventory.item-info",
+      "label": "Chi tiết vật phẩm / thao tác chạm",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "inventory"
+      ]
+    },
+    {
+      "routeId": "inventory.sacrifice-lv8",
+      "label": "Tế kiếm Lv8",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "inventory"
+      ]
+    },
+    {
+      "routeId": "confirm.dismantle",
+      "label": "Xác nhận phân giải",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "inventory"
+      ]
+    },
+    {
+      "routeId": "progression.character",
+      "label": "Nhân vật",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "cultivation",
+        "equipment"
+      ]
+    },
+    {
+      "routeId": "progression.disciplines",
+      "label": "Công pháp",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "upgrade-systems"
+      ]
+    },
+    {
+      "routeId": "progression.skills",
+      "label": "Thần thông",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "upgrade-systems"
+      ]
+    },
+    {
+      "routeId": "progression.daoan",
+      "label": "Vận khí / Đạo Ấn",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "upgrade-systems"
+      ]
+    },
+    {
+      "routeId": "progression.milestones",
+      "label": "Mốc tu luyện",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "upgrade-systems"
+      ]
+    },
+    {
+      "routeId": "progression.achievements",
+      "label": "Thành tựu",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "upgrade-systems"
+      ]
+    },
+    {
+      "routeId": "progression.buff-shop",
+      "label": "Đan hỗ trợ",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "upgrade-systems"
+      ]
+    },
+    {
+      "routeId": "challenge.hub",
+      "label": "Hub bí cảnh",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "challenge.horde",
+      "label": "Vạn Ma",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "challenge.barrier",
+      "label": "Cấm Chế",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "challenge.cauldron",
+      "label": "Tam Đỉnh",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "challenge.lightning",
+      "label": "Lôi Trì",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "challenge.sword-tomb",
+      "label": "Kiếm Chủng",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "challenge.result",
+      "label": "Chiến báo bí cảnh",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "rewards"
+      ]
+    },
+    {
+      "routeId": "confirm.leave-trial",
+      "label": "Xác nhận rời ải",
+      "visibility": "production",
+      "policy": "shared-decision-dialog",
+      "variantIds": []
+    },
+    {
+      "routeId": "battle.style",
+      "label": "Kiếm pháp",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "battle.encounter",
+      "label": "Lựa chọn kỳ ngộ",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "modal.tribulation",
+      "label": "Chuẩn bị độ kiếp",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "cultivation"
+      ]
+    },
+    {
+      "routeId": "modal.offline",
+      "label": "Thưởng bế quan",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "rewards"
+      ]
+    },
+    {
+      "routeId": "settings.session",
+      "label": "Cài đặt và lưu game",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "settings"
+      ]
+    },
+    {
+      "routeId": "confirm.return-title",
+      "label": "Lưu và về menu",
+      "visibility": "production",
+      "policy": "shared-decision-dialog",
+      "variantIds": []
+    },
+    {
+      "routeId": "confirm.quit-session",
+      "label": "Lưu và thoát",
+      "visibility": "production",
+      "policy": "shared-decision-dialog",
+      "variantIds": []
+    },
+    {
+      "routeId": "hud.quest",
+      "label": "Quest gọn / nhận mốc",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "gameplay-hud"
+      ]
+    },
+    {
+      "routeId": "hud.quest-guide",
+      "label": "Hướng dẫn và chỉ mục tiêu",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "gameplay-hud"
+      ]
+    },
+    {
+      "routeId": "hud.tooltip",
+      "label": "Thông tin chạm/hover",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "gameplay-hud"
+      ]
+    },
+    {
+      "routeId": "hud.combat-log",
+      "label": "Thông báo / nhật ký",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "gameplay-hud"
+      ]
+    },
+    {
+      "routeId": "battle.world-damage",
+      "label": "Chữ sát thương",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "battle.world-overlays",
+      "label": "HP địch/boss và vignette",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "system.save",
+      "label": "Save/lifecycle",
+      "visibility": "production",
+      "policy": "nonvisual-no-art",
+      "variantIds": []
+    },
+    {
+      "routeId": "system.input",
+      "label": "Input/EventSystem",
+      "visibility": "production",
+      "policy": "nonvisual-no-art",
+      "variantIds": []
+    },
+    {
+      "routeId": "overlay.route-error",
+      "label": "Lỗi tải giao diện / thử lại",
+      "visibility": "production",
+      "policy": "shared-error-panel",
+      "variantIds": []
+    },
+    {
+      "routeId": "diagnostics.hub",
+      "label": "Công cụ kiểm chứng UI",
+      "visibility": "development-only",
+      "policy": "development-neutral-no-production-art",
+      "variantIds": []
+    },
+    {
+      "routeId": "diagnostics.online-preview",
+      "label": "Dữ liệu online minh họa",
+      "visibility": "development-only",
+      "policy": "development-neutral-no-production-art",
+      "variantIds": []
+    },
+    {
+      "routeId": "diagnostics.recovery-splash",
+      "label": "Splash recovery",
+      "visibility": "development-only",
+      "policy": "development-neutral-no-production-art",
+      "variantIds": []
+    },
+    {
+      "routeId": "diagnostics.recovery-cheats",
+      "label": "Cheat recovery",
+      "visibility": "development-only",
+      "policy": "development-neutral-no-production-art",
+      "variantIds": []
+    },
+    {
+      "routeId": "diagnostics.sword-spawn",
+      "label": "Nút sinh kiếm test cũ",
+      "visibility": "development-only",
+      "policy": "development-neutral-no-production-art",
+      "variantIds": []
+    },
+    {
+      "routeId": "challenge.play",
+      "label": "Khung thí luyện theo activeType",
+      "visibility": "production",
+      "policy": "screen-variant",
+      "variantIds": [
+        "combat"
+      ]
+    },
+    {
+      "routeId": "confirm.context",
+      "label": "Hộp xác nhận theo ngữ cảnh",
+      "visibility": "production",
+      "policy": "shared-decision-dialog",
+      "variantIds": []
+    }
+  ]
+}

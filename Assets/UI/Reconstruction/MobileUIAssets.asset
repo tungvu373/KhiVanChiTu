@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9bdd63eee9b61548916ab843df22782, type: 3}
+  m_Name: MobileUIAssets
+  m_EditorClassIdentifier: Assembly-CSharp::MobileUIAssetLibrary
+  panel: {fileID: 560880379, guid: 2e22a8bd7cc421744b98f516c6e681c0, type: 3}
+  border: {fileID: -1499093629, guid: 65d98d17d38996146b996257a8bd487e, type: 3}
+  popup: {fileID: -1449503492, guid: 747098a8c7ae0384aba097130600a140, type: 3}
+  hud: {fileID: -914242678, guid: b87a7f5813f33aa4981a9329eaa17510, type: 3}
+  navigation: {fileID: -1079613726, guid: 54f45e56ae7c2534d891a07dae52c93c, type: 3}
+  upgrade: {fileID: 508764426, guid: 5a37763d73c74f343909ed6b36447db1, type: 3}
+  slot: {fileID: -332078081, guid: d448d9ebbf7e0794ea5cbd7e904026b2, type: 3}
+  selection: {fileID: 1899475782, guid: 29c37302ecef2ba43997957acf8811a8, type: 3}
+  reward: {fileID: 1349205841, guid: 9b02964abf582e9469570e7d9bac5b78, type: 3}
+  tab: {fileID: 907414722, guid: 2f1632057bf156b4688dd9ae35e59cf1, type: 3}
+  track: {fileID: -1809654655, guid: 31a077464e6a2fc4ab88e14a0fd02caa, type: 3}
+  divider: {fileID: -1568192995, guid: e205b3e4003894e45a73117f5f736e20, type: 3}
+  stone: {fileID: -261319116, guid: 600f4904d6dc01b49bb458a76f1b854c, type: 3}
+  fate: {fileID: 1986697073, guid: f9d12e1712175fe4ab906b5b5f086057, type: 3}
+  ore: {fileID: -1879976577, guid: e15dc4075e5525c499c65aaebf94b082, type: 3}
+  dust: {fileID: -1474040513, guid: eff00f21732b23a45aadb9ebd4bbb0f1, type: 3}
+  cultivation: {fileID: 1001747856, guid: 6930089c69195f0468f4956f35c7cf0e, type: 3}
+  alchemy: {fileID: 775144521, guid: b29e702c6910dc841ade13f28b67a90c, type: 3}
+  formation: {fileID: -1751035321, guid: 0e226a5935f618744afe78ddcb1e9e5f, type: 3}
+  rarity:
+  - {fileID: -1033814779, guid: 62f805427b08f0048b6adb0452a14e7a, type: 3}
+  - {fileID: 1759240603, guid: f249cd9982c5536428aa4072bcfc5e20, type: 3}
+  - {fileID: 1968010742, guid: 431708edaa6f1c74db39a54e23a28ebd, type: 3}
+  - {fileID: -917107512, guid: 890497f935196fb49a35b81c838b3690, type: 3}
+  - {fileID: 240814778, guid: a6ca1405b6d130240a93032ecbafda64, type: 3}
+  - {fileID: -1992093063, guid: 662b5b91e8a0a4a43978fbef260f7915, type: 3}
+  workbenchPrefab: {fileID: 6660638649921824298, guid: ecee057b1668665499215d29640e797e, type: 3}
+  modalPrefab: {fileID: 4227419784497964402, guid: a9f1d9998442af848a1c579965b8ea1e, type: 3}
+  pagePrefab: {fileID: 969651901242789195, guid: 975fcd9149d22d048b34491d2fec7b6c, type: 3}
+  scrollPrefab: {fileID: 5555289590436682441, guid: a8b040d210c609142bb178df1ee88d68, type: 3}
+  regular: {fileID: 12800000, guid: df80e50432fa9a44e9229bc91b379eb5, type: 3}
+  semibold: {fileID: 12800000, guid: 026713e9430c4b747a76547367da36d4, type: 3}

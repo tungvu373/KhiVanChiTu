@@ -93,13 +93,23 @@ public class AlchemyPanelUI : MonoBehaviour
     {
         if (AlchemyService.Instance != null)
             AlchemyService.Instance.OnChanged += RefreshUI;
+        if (FeatureUnlockService.Instance != null)
+            FeatureUnlockService.Instance.OnUnlockStateChanged += RefreshUI;
+        if (CultivationManager.Instance != null)
+            CultivationManager.Instance.OnStageChanged += HandleStageChanged;
         RefreshUI();
     }
+
+    private void HandleStageChanged(CultivationStageData _) => RefreshUI();
 
     private void OnDisable()
     {
         if (AlchemyService.Instance != null)
             AlchemyService.Instance.OnChanged -= RefreshUI;
+        if (FeatureUnlockService.Instance != null)
+            FeatureUnlockService.Instance.OnUnlockStateChanged -= RefreshUI;
+        if (CultivationManager.Instance != null)
+            CultivationManager.Instance.OnStageChanged -= HandleStageChanged;
     }
 
     private void Update()
@@ -137,7 +147,8 @@ public class AlchemyPanelUI : MonoBehaviour
 
         // 2. Chi phí công thức
         int[] costTuVi = svc.GetRecipeCosts(PillRecipe.Cultivation, curRealm);
-        bool canBrewTuVi = !svc.IsBrewing && cLinhChi >= costTuVi[0] && cNgungKhi >= costTuVi[1];
+        bool unlocked = FeatureUnlockService.Instance == null || FeatureUnlockService.Instance.IsFeatureUnlocked(FeatureId.Alchemy);
+        bool canBrewTuVi = unlocked && !svc.IsBrewing && cLinhChi >= costTuVi[0] && cNgungKhi >= costTuVi[1];
         if (txtCostTuVi != null)
         {
             string col0 = cLinhChi >= costTuVi[0] ? "#55efc4" : "#ff7675";
@@ -148,7 +159,7 @@ public class AlchemyPanelUI : MonoBehaviour
         if (brewCultivationBtn != null) brewCultivationBtn.interactable = canBrewTuVi;
 
         int[] costBT = svc.GetRecipeCosts(PillRecipe.Breakthrough, curRealm);
-        bool canBrewBT = !svc.IsBrewing && cLinhChi >= costBT[0] && cNgungKhi >= costBT[1] && cTuyetLien >= costBT[2];
+        bool canBrewBT = unlocked && !svc.IsBrewing && cLinhChi >= costBT[0] && cNgungKhi >= costBT[1] && cTuyetLien >= costBT[2];
         if (txtCostBreakthrough != null)
         {
             string col0 = cLinhChi >= costBT[0] ? "#55efc4" : "#ff7675";

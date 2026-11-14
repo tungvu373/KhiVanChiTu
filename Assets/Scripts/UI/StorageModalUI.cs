@@ -89,6 +89,10 @@ public class StorageModalUI : MonoBehaviour
     private Coroutine animRoutine;
     private bool isOpen = false;
     private Font cachedFont;
+    private const int ItemsPerPage = 48;
+    private int currentPage;
+    private int pageCount = 1;
+    private bool listRefreshPending;
 
     private Font GetFont()
     {
@@ -226,6 +230,7 @@ public class StorageModalUI : MonoBehaviour
     public void Show(StorageCategory category = StorageCategory.All)
     {
         selectedCategory = category;
+        currentPage = 0;
         gameObject.SetActive(true);
         transform.SetAsLastSibling();
         isOpen = true;
@@ -234,7 +239,7 @@ public class StorageModalUI : MonoBehaviour
         UpdateTabVisuals();
         UpdateViewModeVisuals();
         RefreshWalletStats();
-        RefreshItemList();
+        RebuildItemList();
 
         Canvas.ForceUpdateCanvases();
         if (scrollRect != null)
@@ -304,6 +309,7 @@ public class StorageModalUI : MonoBehaviour
     public void SelectCategory(StorageCategory cat)
     {
         selectedCategory = cat;
+        currentPage = 0;
         UpdateTabVisuals();
         RefreshItemList();
         if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
@@ -312,9 +318,9 @@ public class StorageModalUI : MonoBehaviour
     private void SyncToggles()
     {
         if (StorageManager.Instance == null) return;
-        if (toggleSwordHighLevel != null) toggleSwordHighLevel.isOn = StorageManager.Instance.FilterSwordsHighLevel;
-        if (togglePillBreakthrough != null) togglePillBreakthrough.isOn = StorageManager.Instance.FilterPillsBreakthrough;
-        if (toggleAutoDismantleLv1 != null) toggleAutoDismantleLv1.isOn = StorageManager.Instance.AutoDismantleLv1SwordsWhenFull;
+        if (toggleSwordHighLevel != null) toggleSwordHighLevel.SetIsOnWithoutNotify(StorageManager.Instance.FilterSwordsHighLevel);
+        if (togglePillBreakthrough != null) togglePillBreakthrough.SetIsOnWithoutNotify(StorageManager.Instance.FilterPillsBreakthrough);
+        if (toggleAutoDismantleLv1 != null) toggleAutoDismantleLv1.SetIsOnWithoutNotify(StorageManager.Instance.AutoDismantleLv1SwordsWhenFull);
     }
 
     private void UpdateTabVisuals()
@@ -334,7 +340,7 @@ public class StorageModalUI : MonoBehaviour
             Text txt = tabButtons[i].GetComponentInChildren<Text>();
             if (txt != null)
             {
-                txt.color = isActive ? new Color(0.08f, 0.05f, 0.02f, 1f) : new Color(0.85f, 0.88f, 0.92f, 1f);
+                txt.color = isActive ? (MobileUIAnimationDirector.For(this)!=null?JadeUITheme.Ivory:new Color(0.08f, 0.05f, 0.02f, 1f)) : new Color(0.85f, 0.88f, 0.92f, 1f);
                 txt.fontStyle = isActive ? FontStyle.Bold : FontStyle.Normal;
 
                 // Cập nhật số lượng hòm tạm trên Tab 4
@@ -389,9 +395,34 @@ public class StorageModalUI : MonoBehaviour
 
     private void RefreshItemList()
     {
+        // Storage and dismantle can both signal during the same transaction.
+        // Rebuilding here used to allocate the whole queue after EACH removed item.
+        listRefreshPending = true;
+    }
+
+    private void LateUpdate()
+    {
+        if (!listRefreshPending || !isOpen || !gameObject.activeInHierarchy) return;
+        RebuildItemList();
+        RefreshWalletStats();
+        UpdateTabVisuals();
+    }
+
+    private bool IsOnCurrentPage(int itemIndex)
+    {
+        return itemIndex >= currentPage * ItemsPerPage && itemIndex < (currentPage + 1) * ItemsPerPage;
+    }
+
+    private void RebuildItemList()
+    {
+        listRefreshPending = false;
         foreach (var go in spawnedRows)
         {
-            if (go != null) Destroy(go);
+            if (go == null) continue;
+            // Destroy is deferred until the end of the frame. Keep old rows out
+            // of layout/raycast rebuilds while their replacements are created.
+            go.SetActive(false);
+            Destroy(go);
         }
         spawnedRows.Clear();
 
@@ -409,8 +440,7 @@ public class StorageModalUI : MonoBehaviour
                 {
                     if (s == null) continue;
                     bool isEquipped = MergeManager.Instance.IsSwordEquipped(s);
-                    CreateSwordCard(s, isEquipped);
-                    totalItemsShown++;
+                    if (IsOnCurrentPage(totalItemsShown++)) CreateSwordCard(s, isEquipped);
                 }
             }
         }
@@ -436,8 +466,7 @@ public class StorageModalUI : MonoBehaviour
 
                             if (count > 0)
                             {
-                                CreatePillCard(r, (PillRecipe)rec, (PillQuality)q, count);
-                                totalItemsShown++;
+                                if (IsOnCurrentPage(totalItemsShown++)) CreatePillCard(r, (PillRecipe)rec, (PillQuality)q, count);
                             }
                         }
                     }
@@ -456,21 +485,18 @@ public class StorageModalUI : MonoBehaviour
                     int hCount = AlchemyService.Instance.GetHerbCount(h);
                     if (hCount > 0)
                     {
-                        CreateHerbCard(h, herbNames[h], hCount);
-                        totalItemsShown++;
+                        if (IsOnCurrentPage(totalItemsShown++)) CreateHerbCard(h, herbNames[h], hCount);
                     }
                 }
                 if (AlchemyService.Instance.State.medicineDust > 0)
                 {
-                    CreateDustCard(AlchemyService.Instance.State.medicineDust);
-                    totalItemsShown++;
+                    if (IsOnCurrentPage(totalItemsShown++)) CreateDustCard(AlchemyService.Instance.State.medicineDust);
                 }
             }
 
             if (ArtifactService.Instance != null && ArtifactService.Instance.Ore > 0)
             {
-                CreateOreCard(ArtifactService.Instance.Ore);
-                totalItemsShown++;
+                if (IsOnCurrentPage(totalItemsShown++)) CreateOreCard(ArtifactService.Instance.Ore);
             }
         }
 
@@ -484,11 +510,38 @@ public class StorageModalUI : MonoBehaviour
                 {
                     if (p != null)
                     {
-                        CreatePendingCard(p);
-                        totalItemsShown++;
+                        if (IsOnCurrentPage(totalItemsShown++)) CreatePendingCard(p);
                     }
                 }
             }
+        }
+
+        pageCount = Mathf.Max(1, Mathf.CeilToInt(totalItemsShown / (float)ItemsPerPage));
+        if (currentPage >= pageCount)
+        {
+            currentPage = pageCount - 1;
+            RebuildItemList();
+            return;
+        }
+        if (pageCount > 1)
+        {
+            Transform navigation = null;
+            if (currentViewMode == StorageViewMode.CompactList)
+            {
+                var row = new GameObject("StoragePageNavigation", typeof(RectTransform), typeof(UnityEngine.UI.LayoutElement), typeof(UnityEngine.UI.HorizontalLayoutGroup));
+                row.transform.SetParent(contentContainer, false);
+                spawnedRows.Add(row);
+                row.GetComponent<UnityEngine.UI.LayoutElement>().preferredHeight = 132f;
+                var layout = row.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+                layout.spacing = 8f;
+                layout.childControlWidth = layout.childControlHeight = true;
+                layout.childForceExpandWidth = true;
+                layout.childForceExpandHeight = false;
+                navigation = row.transform;
+            }
+            CreatePageControl("StoragePreviousPage", "‹ Trước", currentPage > 0 ? (Action)(() => SelectPage(currentPage - 1)) : null, navigation);
+            CreatePageControl("StoragePageNumber", $"Trang {currentPage + 1}/{pageCount}", null, navigation);
+            CreatePageControl("StorageNextPage", "Tiếp ›", currentPage < pageCount - 1 ? (Action)(() => SelectPage(currentPage + 1)) : null, navigation);
         }
 
         if (txtEmptyNotice != null)
@@ -501,6 +554,50 @@ public class StorageModalUI : MonoBehaviour
                     : "Không có vật phẩm nào trong danh mục này.";
             }
         }
+    }
+
+    public void SelectPage(int page)
+    {
+        currentPage = Mathf.Clamp(page, 0, pageCount - 1);
+        RefreshItemList();
+        if (scrollRect != null)
+        {
+            scrollRect.StopMovement();
+            scrollRect.verticalNormalizedPosition = 1f;
+        }
+    }
+
+    private void CreatePageControl(string objectName, string label, Action onClick, Transform navigation = null)
+    {
+        var control = new GameObject(objectName, typeof(RectTransform), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.LayoutElement));
+        control.transform.SetParent(navigation != null ? navigation : contentContainer, false);
+        if (navigation == null) spawnedRows.Add(control);
+        var layout = control.GetComponent<UnityEngine.UI.LayoutElement>();
+        layout.minHeight = layout.preferredHeight = 132f;
+        layout.minWidth = layout.preferredWidth = 132f;
+        var background = control.GetComponent<UnityEngine.UI.Image>();
+        background.color = new Color(0.12f, 0.20f, 0.23f, 1f);
+        background.raycastTarget = onClick != null;
+        if (onClick != null)
+        {
+            var button = control.AddComponent<UnityEngine.UI.Button>();
+            button.targetGraphic = background;
+            button.onClick.AddListener(() => onClick());
+        }
+        var labelObject = new GameObject("Label", typeof(RectTransform), typeof(UnityEngine.UI.Text));
+        labelObject.transform.SetParent(control.transform, false);
+        var rect = (RectTransform)labelObject.transform;
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = new Vector2(6, 6);
+        rect.offsetMax = new Vector2(-6, -6);
+        var text = labelObject.GetComponent<UnityEngine.UI.Text>();
+        text.font = GetFont();
+        text.fontSize = 24;
+        text.alignment = TextAnchor.MiddleCenter;
+        text.color = onClick != null ? JadeUITheme.Gold : JadeUITheme.Ivory;
+        text.raycastTarget = false;
+        text.text = label;
     }
 
     private void CreateSwordCard(MergeItem sword, bool isEquipped)
@@ -543,7 +640,9 @@ public class StorageModalUI : MonoBehaviour
         {
             Color rarityColor = GetRarityColorForLevel(level, isEquipped);
             string countBadge = pieces > 1 ? $"+{pieces}" : $"Lv.{level}";
-            CreateGridSlot("Kiếm", $"Lv.{level}", isEquipped ? "TRANG BỊ" : "", countBadge, rarityColor, isEquipped, isHighValue, doDismantle);
+            var presentation = GetComponentInParent<MobileUIReconstruction>();
+            CreateGridSlot("Kiếm", $"Lv.{level}", isEquipped ? "TRANG BỊ" : "", countBadge, rarityColor, isEquipped, isHighValue, doDismantle,
+                presentation != null && presentation.assets != null ? presentation.assets.SwordRarity(level) : null);
         }
         else
         {
@@ -589,7 +688,9 @@ public class StorageModalUI : MonoBehaviour
         if (currentViewMode == StorageViewMode.GridSlots)
         {
             Color rarityCol = GetQualityColorValue(quality);
-            CreateGridSlot("Đan", $"{recipeStr}", "", $"x{count}", rarityCol, false, isHighValue, doDismantle);
+            var presentation = GetComponentInParent<MobileUIReconstruction>();
+            CreateGridSlot("Đan", $"{recipeStr}", "", $"x{count}", rarityCol, false, isHighValue, doDismantle,
+                presentation != null && presentation.assets != null ? presentation.assets.PillRarity(quality) : null);
         }
         else
         {
@@ -763,7 +864,7 @@ public class StorageModalUI : MonoBehaviour
     // TẠO THẺ VẬT PHẨM TRỰC QUAN (CARD & SLOT BUILDER)
     // ─────────────────────────────────────────────────────────────────────────
 
-    private void CreateGridSlot(string icon, string label, string ribbonTag, string countBadge, Color rarityColor, bool isEquipped, bool isHighValue, Action onClick)
+    private void CreateGridSlot(string icon, string label, string ribbonTag, string countBadge, Color rarityColor, bool isEquipped, bool isHighValue, Action onClick, Sprite rarityFrame = null)
     {
         Font font = GetFont();
 
@@ -782,6 +883,19 @@ public class StorageModalUI : MonoBehaviour
 
         Image img = slotObj.GetComponent<Image>();
         img.color = new Color(0.08f, 0.11f, 0.16f, 0.96f);
+
+        if (rarityFrame != null)
+        {
+            var frame = new GameObject("P6Rarity", typeof(RectTransform), typeof(Image));
+            frame.transform.SetParent(slotObj.transform, false);
+            var frameRect = (RectTransform)frame.transform;
+            frameRect.anchorMin = Vector2.zero; frameRect.anchorMax = Vector2.one;
+            frameRect.offsetMin = Vector2.zero; frameRect.offsetMax = Vector2.zero;
+            var frameImage = frame.GetComponent<Image>();
+            frameImage.sprite = rarityFrame; frameImage.type = Image.Type.Sliced; frameImage.raycastTarget = false;
+            MobileUISlicedSurface.Configure(frameImage);
+            if(isHighValue)MobileUIAnimationDirector.For(this)?.Accent(frameImage);
+        }
 
         Outline ol = slotObj.GetComponent<Outline>();
         ol.effectColor = isHighValue ? new Color(1f, 0.82f, 0.25f, 0.95f) : rarityColor;
@@ -819,6 +933,7 @@ public class StorageModalUI : MonoBehaviour
 
             Image ribImg = ribObj.GetComponent<Image>();
             ribImg.color = new Color(0.85f, 0.35f, 0.10f, 0.95f);
+            ribImg.raycastTarget = false;
 
             GameObject rTextObj = new GameObject("Text", typeof(RectTransform), typeof(Text));
             rTextObj.transform.SetParent(ribObj.transform, false);
@@ -886,6 +1001,7 @@ public class StorageModalUI : MonoBehaviour
 
             Image cntImg = cntObj.GetComponent<Image>();
             cntImg.color = new Color(0.04f, 0.06f, 0.08f, 0.88f);
+            cntImg.raycastTarget = false;
 
             GameObject cntTxtObj = new GameObject("Text", typeof(RectTransform), typeof(Text));
             cntTxtObj.transform.SetParent(cntObj.transform, false);
@@ -937,6 +1053,7 @@ public class StorageModalUI : MonoBehaviour
 
         Image ibImg = iconBadge.GetComponent<Image>();
         ibImg.color = new Color(0.04f, 0.06f, 0.09f, 0.90f);
+        ibImg.raycastTarget = false;
 
         GameObject ibTxtObj = new GameObject("Text", typeof(RectTransform), typeof(Text));
         ibTxtObj.transform.SetParent(iconBadge.transform, false);
@@ -1071,6 +1188,11 @@ public class StorageModalUI : MonoBehaviour
 
     private IEnumerator AnimateOpen(bool open)
     {
+        if(MobileUIAnimationDirector.For(this)!=null)
+        {
+            yield return MobileUIModalMotion.Animate(this,canvasGroup,modalBox,open);
+            animRoutine=null;yield break;
+        }
         float elapsed = 0f;
         float duration = 0.22f;
         float startAlpha = canvasGroup != null ? canvasGroup.alpha : (open ? 0f : 1f);

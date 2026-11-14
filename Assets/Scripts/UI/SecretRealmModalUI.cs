@@ -269,7 +269,7 @@ public class SecretRealmModalUI : MonoBehaviour
         CreateOneRealmCard(content, SecretRealmType.SwordTomb,
             "🗡️ KIẾM CHỦNG CỔ THẦN (Rút Kiếm Cực Phẩm)",
             "3 lượt rút kiếm cổ! Canh đúng vạch Hoàng Kim ở giữa để rút ngay Phi Kiếm Bậc Cao.",
-            "🎁 Thưởng: Phi Kiếm Cấp 5 -> Cấp 8 thẳng vào kho đồ",
+            "🎁 Thưởng: Phi Kiếm Cấp 4, 6 hoặc 8 thẳng vào kho đồ",
             new Color(0.12f, 0.16f, 0.24f, 0.96f),
             new Color(1f, 0.8f, 0.2f, 1f));
     }
@@ -460,6 +460,11 @@ public class SecretRealmModalUI : MonoBehaviour
                 var card = content.Find("Card_" + type);
                 if (card != null)
                 {
+                    if (type == SecretRealmType.SwordTomb)
+                    {
+                        var rewardLabel = card.Find("Reward")?.GetComponent<Text>();
+                        if (rewardLabel != null) rewardLabel.text = "🎁 Thưởng: Phi Kiếm Cấp 4, 6 hoặc 8 thẳng vào kho đồ";
+                    }
                     var btnEnter = card.Find("BtnEnter")?.GetComponent<Button>();
                     if (btnEnter != null)
                     {

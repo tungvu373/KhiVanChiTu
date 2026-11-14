@@ -1,0 +1,2072 @@
+[
+  {
+    "name": "numeric-character-name",
+    "screen": "HUD",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "RefreshProfile"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 2,
+    "clicked": [],
+    "observations": {},
+    "frame": 180,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 1920,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:41.3998287Z"
+  },
+  {
+    "name": "live-character-name",
+    "screen": "HUD",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "LateUpdate",
+      "RefreshProfile"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 1,
+    "clicked": [],
+    "observations": {},
+    "frame": 206,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 1920,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:41.6130036Z"
+  },
+  {
+    "name": "720x1280/hud",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-hud.json",
+      "screenshot": "720x1280-hud.png"
+    },
+    "frame": 305,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:42.4410708Z"
+  },
+  {
+    "name": "720x1280/hud-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 24,
+    "clicked": [],
+    "observations": {},
+    "frame": 305,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:42.4435772Z"
+  },
+  {
+    "name": "720x1280/framed-hud",
+    "screen": "HUD",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "LayoutRealm",
+      "LayoutStage"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 10,
+    "clicked": [],
+    "observations": {},
+    "frame": 312,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:42.5705165Z"
+  },
+  {
+    "name": "720x1280/hud-boss",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-hud-boss.json",
+      "screenshot": "720x1280-hud-boss.png"
+    },
+    "frame": 382,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:43.1642732Z"
+  },
+  {
+    "name": "720x1280/hud-boss-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 24,
+    "clicked": [],
+    "observations": {},
+    "frame": 382,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:43.1647831Z"
+  },
+  {
+    "name": "720x1280/boss-caption-separation",
+    "screen": "HUD",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "LayoutStage"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 1,
+    "clicked": [],
+    "observations": {},
+    "frame": 391,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:43.2872850Z"
+  },
+  {
+    "name": "720x1280/character",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-character.json",
+      "screenshot": "720x1280-character.png"
+    },
+    "frame": 474,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:43.9915459Z"
+  },
+  {
+    "name": "720x1280/character-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 6,
+    "clicked": [],
+    "observations": {},
+    "frame": 474,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:43.9925519Z"
+  },
+  {
+    "name": "720x1280/avatar-popup",
+    "screen": "CHARACTER",
+    "script": "Assets/Scripts/UI/DaoAnModalUI.cs",
+    "methods": [
+      "BuildIfNeeded"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 5,
+    "clicked": [
+      "Canvas/CharacterDetailModal/ModalBox/HeaderBar/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/CharacterDetailModal/ModalBox/HeaderBar/CloseButton"
+      ]
+    },
+    "frame": 485,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:44.1202557Z"
+  },
+  {
+    "name": "720x1280/avatar-closed",
+    "screen": "CHARACTER",
+    "script": "Assets/Scripts/UI/CharacterDetailModalUI.cs",
+    "methods": [
+      "ClosePanel"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 1,
+    "clicked": [],
+    "observations": {},
+    "frame": 510,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:44.3288776Z"
+  },
+  {
+    "name": "720x1280/daoan",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-daoan.json",
+      "screenshot": "720x1280-daoan.png"
+    },
+    "frame": 579,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:45.0857964Z"
+  },
+  {
+    "name": "720x1280/daoan-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 6,
+    "clicked": [],
+    "observations": {},
+    "frame": 579,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:45.0857964Z"
+  },
+  {
+    "name": "720x1280/daoan-framing",
+    "screen": "DAOAN",
+    "script": "Assets/Scripts/UI/JadeUIAdaptiveSkin.cs",
+    "methods": [
+      "Apply"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 6,
+    "clicked": [
+      "Canvas/DaoAnModal/ModalBox/BtnCloseX"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/DaoAnModal/ModalBox/BtnCloseX"
+      ]
+    },
+    "frame": 588,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:45.2099215Z"
+  },
+  {
+    "name": "720x1280/secret",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-secret.json",
+      "screenshot": "720x1280-secret.png"
+    },
+    "frame": 688,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:46.1141236Z"
+  },
+  {
+    "name": "720x1280/secret-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 10,
+    "clicked": [],
+    "observations": {},
+    "frame": 688,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:46.1141236Z"
+  },
+  {
+    "name": "720x1280/secret-close",
+    "screen": "SECRET",
+    "script": "Assets/Scripts/UI/SecretRealmModalUI.cs",
+    "methods": [
+      "Close"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/SecretRealmModal/ModalBox/BtnCloseX"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/SecretRealmModal/ModalBox/BtnCloseX"
+      ]
+    },
+    "frame": 698,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:46.2411451Z"
+  },
+  {
+    "name": "720x1280/drawer-0",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-drawer-0.json",
+      "screenshot": "720x1280-drawer-0.png"
+    },
+    "frame": 798,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:47.1501230Z"
+  },
+  {
+    "name": "720x1280/drawer-0-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [],
+    "observations": {},
+    "frame": 798,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:47.1501230Z"
+  },
+  {
+    "name": "720x1280/drawer-close-0",
+    "screen": "DRAWER",
+    "script": "Assets/Scripts/UI/MobileDrawerUIController.cs",
+    "methods": [
+      "CloseAllInstant"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MobileUIRoot/Drawer_0/P6Frame/P6Header/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MobileUIRoot/Drawer_0/P6Frame/P6Header/CloseButton"
+      ]
+    },
+    "frame": 808,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:47.2781195Z"
+  },
+  {
+    "name": "720x1280/drawer-1",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-drawer-1.json",
+      "screenshot": "720x1280-drawer-1.png"
+    },
+    "frame": 925,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:48.2841850Z"
+  },
+  {
+    "name": "720x1280/drawer-1-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 10,
+    "clicked": [],
+    "observations": {},
+    "frame": 925,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:48.2841850Z"
+  },
+  {
+    "name": "720x1280/drawer-close-1",
+    "screen": "DRAWER",
+    "script": "Assets/Scripts/UI/MobileDrawerUIController.cs",
+    "methods": [
+      "CloseAllInstant"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MobileUIRoot/Drawer_1/P6Frame/P6Header/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MobileUIRoot/Drawer_1/P6Frame/P6Header/CloseButton"
+      ]
+    },
+    "frame": 935,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:48.4076591Z"
+  },
+  {
+    "name": "720x1280/drawer-2",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-drawer-2.json",
+      "screenshot": "720x1280-drawer-2.png"
+    },
+    "frame": 1055,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:49.4125084Z"
+  },
+  {
+    "name": "720x1280/drawer-2-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 2,
+    "clicked": [],
+    "observations": {},
+    "frame": 1055,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:49.4135087Z"
+  },
+  {
+    "name": "720x1280/drawer-close-2",
+    "screen": "DRAWER",
+    "script": "Assets/Scripts/UI/MobileDrawerUIController.cs",
+    "methods": [
+      "CloseAllInstant"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MobileUIRoot/Drawer_2/P6Frame/P6Header/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MobileUIRoot/Drawer_2/P6Frame/P6Header/CloseButton"
+      ]
+    },
+    "frame": 1065,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:49.5355628Z"
+  },
+  {
+    "name": "720x1280/drawer-3",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-drawer-3.json",
+      "screenshot": "720x1280-drawer-3.png"
+    },
+    "frame": 1186,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:50.5403687Z"
+  },
+  {
+    "name": "720x1280/drawer-3-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [],
+    "observations": {},
+    "frame": 1186,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:50.5413728Z"
+  },
+  {
+    "name": "720x1280/drawer-close-3",
+    "screen": "DRAWER",
+    "script": "Assets/Scripts/UI/MobileDrawerUIController.cs",
+    "methods": [
+      "CloseAllInstant"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MobileUIRoot/Drawer_3/P6Frame/P6Header/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MobileUIRoot/Drawer_3/P6Frame/P6Header/CloseButton"
+      ]
+    },
+    "frame": 1196,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:50.6737682Z"
+  },
+  {
+    "name": "720x1280/drawer-4",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-drawer-4.json",
+      "screenshot": "720x1280-drawer-4.png"
+    },
+    "frame": 1315,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:51.6785479Z"
+  },
+  {
+    "name": "720x1280/drawer-4-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [],
+    "observations": {},
+    "frame": 1315,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:51.6800535Z"
+  },
+  {
+    "name": "720x1280/drawer-close-4",
+    "screen": "DRAWER",
+    "script": "Assets/Scripts/UI/MobileDrawerUIController.cs",
+    "methods": [
+      "CloseAllInstant"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MobileUIRoot/Drawer_4/P6Frame/P6Header/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MobileUIRoot/Drawer_4/P6Frame/P6Header/CloseButton"
+      ]
+    },
+    "frame": 1324,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:51.8071573Z"
+  },
+  {
+    "name": "720x1280/storage",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-storage.json",
+      "screenshot": "720x1280-storage.png"
+    },
+    "frame": 1434,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:52.8432719Z"
+  },
+  {
+    "name": "720x1280/storage-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 66,
+    "clicked": [],
+    "observations": {},
+    "frame": 1434,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:52.8442743Z"
+  },
+  {
+    "name": "720x1280/storage-close",
+    "screen": "STORAGE",
+    "script": "Assets/Scripts/UI/StorageModalUI.cs",
+    "methods": [
+      "Close"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/StorageModalUI/ModalBox/BtnClose"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/StorageModalUI/ModalBox/BtnClose"
+      ]
+    },
+    "frame": 1444,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:52.9801217Z"
+  },
+  {
+    "name": "720x1280/achievement",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-achievement.json",
+      "screenshot": "720x1280-achievement.png"
+    },
+    "frame": 1536,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:53.9580722Z"
+  },
+  {
+    "name": "720x1280/achievement-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 18,
+    "clicked": [],
+    "observations": {},
+    "frame": 1536,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:53.9580722Z"
+  },
+  {
+    "name": "720x1280/achievement-close",
+    "screen": "ACHIEVEMENT",
+    "script": "Assets/Scripts/UI/AchievementModalUI.cs",
+    "methods": [
+      "Close"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/AchievementModalUI/ModalBox/BtnClose"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/AchievementModalUI/ModalBox/BtnClose"
+      ]
+    },
+    "frame": 1545,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:54.0950374Z"
+  },
+  {
+    "name": "720x1280/milestone",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-milestone.json",
+      "screenshot": "720x1280-milestone.png"
+    },
+    "frame": 1633,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:55.0102210Z"
+  },
+  {
+    "name": "720x1280/milestone-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 10,
+    "clicked": [],
+    "observations": {},
+    "frame": 1633,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:55.0113227Z"
+  },
+  {
+    "name": "720x1280/milestone-close",
+    "screen": "MILESTONE",
+    "script": "Assets/Scripts/UI/MilestoneModalUI.cs",
+    "methods": [
+      "Close"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MilestoneModalUI/ModalBox/BtnClose"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MilestoneModalUI/ModalBox/BtnClose"
+      ]
+    },
+    "frame": 1643,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:55.1432821Z"
+  },
+  {
+    "name": "720x1280/pause",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "720x1280-pause.json",
+      "screenshot": "720x1280-pause.png"
+    },
+    "frame": 1742,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:56.0392300Z"
+  },
+  {
+    "name": "720x1280/pause-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 10,
+    "clicked": [],
+    "observations": {},
+    "frame": 1742,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:56.0402291Z"
+  },
+  {
+    "name": "720x1280/pause-close",
+    "screen": "PAUSE",
+    "script": "Assets/Scripts/UI/PauseMenuManager.cs",
+    "methods": [
+      "ResumeGame"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/PauseMenuModal/PauseBox/HeaderBar/CloseHeaderBtn"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/PauseMenuModal/PauseBox/HeaderBar/CloseHeaderBtn"
+      ]
+    },
+    "frame": 1752,
+    "timeScale": 0.0,
+    "width": 720,
+    "height": 1280,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:56.1655996Z"
+  },
+  {
+    "name": "1080x2340/hud",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-hud.json",
+      "screenshot": "1080x2340-hud.png"
+    },
+    "frame": 1869,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:57.1697680Z"
+  },
+  {
+    "name": "1080x2340/hud-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 24,
+    "clicked": [],
+    "observations": {},
+    "frame": 1869,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:57.1702723Z"
+  },
+  {
+    "name": "1080x2340/framed-hud",
+    "screen": "HUD",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "LayoutRealm",
+      "LayoutStage"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 10,
+    "clicked": [],
+    "observations": {},
+    "frame": 1870,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:57.3119154Z"
+  },
+  {
+    "name": "1080x2340/hud-boss",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-hud-boss.json",
+      "screenshot": "1080x2340-hud-boss.png"
+    },
+    "frame": 1939,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:57.9083411Z"
+  },
+  {
+    "name": "1080x2340/hud-boss-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 24,
+    "clicked": [],
+    "observations": {},
+    "frame": 1939,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:57.9088512Z"
+  },
+  {
+    "name": "1080x2340/boss-caption-separation",
+    "screen": "HUD",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "LayoutStage"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 1,
+    "clicked": [],
+    "observations": {},
+    "frame": 1940,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:58.0557234Z"
+  },
+  {
+    "name": "1080x2340/character",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-character.json",
+      "screenshot": "1080x2340-character.png"
+    },
+    "frame": 2018,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:58.7515845Z"
+  },
+  {
+    "name": "1080x2340/character-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 6,
+    "clicked": [],
+    "observations": {},
+    "frame": 2018,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:58.7535900Z"
+  },
+  {
+    "name": "1080x2340/avatar-popup",
+    "screen": "CHARACTER",
+    "script": "Assets/Scripts/UI/DaoAnModalUI.cs",
+    "methods": [
+      "BuildIfNeeded"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 5,
+    "clicked": [
+      "Canvas/CharacterDetailModal/ModalBox/HeaderBar/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/CharacterDetailModal/ModalBox/HeaderBar/CloseButton"
+      ]
+    },
+    "frame": 2023,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:58.8842671Z"
+  },
+  {
+    "name": "1080x2340/avatar-closed",
+    "screen": "CHARACTER",
+    "script": "Assets/Scripts/UI/CharacterDetailModalUI.cs",
+    "methods": [
+      "ClosePanel"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 1,
+    "clicked": [],
+    "observations": {},
+    "frame": 2046,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:59.0900517Z"
+  },
+  {
+    "name": "1080x2340/daoan",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-daoan.json",
+      "screenshot": "1080x2340-daoan.png"
+    },
+    "frame": 2122,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:59.8422318Z"
+  },
+  {
+    "name": "1080x2340/daoan-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 6,
+    "clicked": [],
+    "observations": {},
+    "frame": 2122,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:59.8499157Z"
+  },
+  {
+    "name": "1080x2340/daoan-framing",
+    "screen": "DAOAN",
+    "script": "Assets/Scripts/UI/JadeUIAdaptiveSkin.cs",
+    "methods": [
+      "Apply"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 6,
+    "clicked": [
+      "Canvas/DaoAnModal/ModalBox/BtnCloseX"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/DaoAnModal/ModalBox/BtnCloseX"
+      ]
+    },
+    "frame": 2126,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:14:59.9744155Z"
+  },
+  {
+    "name": "1080x2340/secret",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-secret.json",
+      "screenshot": "1080x2340-secret.png"
+    },
+    "frame": 2225,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:00.8781269Z"
+  },
+  {
+    "name": "1080x2340/secret-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 12,
+    "clicked": [],
+    "observations": {},
+    "frame": 2225,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:00.8791247Z"
+  },
+  {
+    "name": "1080x2340/secret-close",
+    "screen": "SECRET",
+    "script": "Assets/Scripts/UI/SecretRealmModalUI.cs",
+    "methods": [
+      "Close"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/SecretRealmModal/ModalBox/BtnCloseX"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/SecretRealmModal/ModalBox/BtnCloseX"
+      ]
+    },
+    "frame": 2229,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:01.0079964Z"
+  },
+  {
+    "name": "1080x2340/drawer-0",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-drawer-0.json",
+      "screenshot": "1080x2340-drawer-0.png"
+    },
+    "frame": 2325,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:01.9018330Z"
+  },
+  {
+    "name": "1080x2340/drawer-0-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [],
+    "observations": {},
+    "frame": 2325,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:01.9028496Z"
+  },
+  {
+    "name": "1080x2340/drawer-close-0",
+    "screen": "DRAWER",
+    "script": "Assets/Scripts/UI/MobileDrawerUIController.cs",
+    "methods": [
+      "CloseAllInstant"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MobileUIRoot/Drawer_0/P6Frame/P6Header/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MobileUIRoot/Drawer_0/P6Frame/P6Header/CloseButton"
+      ]
+    },
+    "frame": 2327,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:02.0399294Z"
+  },
+  {
+    "name": "1080x2340/drawer-1",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-drawer-1.json",
+      "screenshot": "1080x2340-drawer-1.png"
+    },
+    "frame": 2440,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:03.0515466Z"
+  },
+  {
+    "name": "1080x2340/drawer-1-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 10,
+    "clicked": [],
+    "observations": {},
+    "frame": 2440,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:03.0525532Z"
+  },
+  {
+    "name": "1080x2340/drawer-close-1",
+    "screen": "DRAWER",
+    "script": "Assets/Scripts/UI/MobileDrawerUIController.cs",
+    "methods": [
+      "CloseAllInstant"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MobileUIRoot/Drawer_1/P6Frame/P6Header/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MobileUIRoot/Drawer_1/P6Frame/P6Header/CloseButton"
+      ]
+    },
+    "frame": 2443,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:03.1887439Z"
+  },
+  {
+    "name": "1080x2340/drawer-2",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-drawer-2.json",
+      "screenshot": "1080x2340-drawer-2.png"
+    },
+    "frame": 2554,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:04.1878145Z"
+  },
+  {
+    "name": "1080x2340/drawer-2-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 2,
+    "clicked": [],
+    "observations": {},
+    "frame": 2554,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:04.1888192Z"
+  },
+  {
+    "name": "1080x2340/drawer-close-2",
+    "screen": "DRAWER",
+    "script": "Assets/Scripts/UI/MobileDrawerUIController.cs",
+    "methods": [
+      "CloseAllInstant"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MobileUIRoot/Drawer_2/P6Frame/P6Header/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MobileUIRoot/Drawer_2/P6Frame/P6Header/CloseButton"
+      ]
+    },
+    "frame": 2556,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:04.3191094Z"
+  },
+  {
+    "name": "1080x2340/drawer-3",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-drawer-3.json",
+      "screenshot": "1080x2340-drawer-3.png"
+    },
+    "frame": 2672,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:05.3235717Z"
+  },
+  {
+    "name": "1080x2340/drawer-3-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 6,
+    "clicked": [],
+    "observations": {},
+    "frame": 2672,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:05.3245660Z"
+  },
+  {
+    "name": "1080x2340/drawer-close-3",
+    "screen": "DRAWER",
+    "script": "Assets/Scripts/UI/MobileDrawerUIController.cs",
+    "methods": [
+      "CloseAllInstant"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MobileUIRoot/Drawer_3/P6Frame/P6Header/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MobileUIRoot/Drawer_3/P6Frame/P6Header/CloseButton"
+      ]
+    },
+    "frame": 2674,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:05.4553651Z"
+  },
+  {
+    "name": "1080x2340/drawer-4",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-drawer-4.json",
+      "screenshot": "1080x2340-drawer-4.png"
+    },
+    "frame": 2787,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:06.4538568Z"
+  },
+  {
+    "name": "1080x2340/drawer-4-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [],
+    "observations": {},
+    "frame": 2787,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:06.4553631Z"
+  },
+  {
+    "name": "1080x2340/drawer-close-4",
+    "screen": "DRAWER",
+    "script": "Assets/Scripts/UI/MobileDrawerUIController.cs",
+    "methods": [
+      "CloseAllInstant"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MobileUIRoot/Drawer_4/P6Frame/P6Header/CloseButton"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MobileUIRoot/Drawer_4/P6Frame/P6Header/CloseButton"
+      ]
+    },
+    "frame": 2789,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:06.5927632Z"
+  },
+  {
+    "name": "1080x2340/storage",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-storage.json",
+      "screenshot": "1080x2340-storage.png"
+    },
+    "frame": 2893,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:07.6307004Z"
+  },
+  {
+    "name": "1080x2340/storage-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 66,
+    "clicked": [],
+    "observations": {},
+    "frame": 2893,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:07.6317083Z"
+  },
+  {
+    "name": "1080x2340/storage-close",
+    "screen": "STORAGE",
+    "script": "Assets/Scripts/UI/StorageModalUI.cs",
+    "methods": [
+      "Close"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/StorageModalUI/ModalBox/BtnClose"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/StorageModalUI/ModalBox/BtnClose"
+      ]
+    },
+    "frame": 2895,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:07.7612939Z"
+  },
+  {
+    "name": "1080x2340/achievement",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-achievement.json",
+      "screenshot": "1080x2340-achievement.png"
+    },
+    "frame": 2979,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:08.7451887Z"
+  },
+  {
+    "name": "1080x2340/achievement-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 18,
+    "clicked": [],
+    "observations": {},
+    "frame": 2979,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:08.7456936Z"
+  },
+  {
+    "name": "1080x2340/achievement-close",
+    "screen": "ACHIEVEMENT",
+    "script": "Assets/Scripts/UI/AchievementModalUI.cs",
+    "methods": [
+      "Close"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/AchievementModalUI/ModalBox/BtnClose"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/AchievementModalUI/ModalBox/BtnClose"
+      ]
+    },
+    "frame": 2981,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:08.8785899Z"
+  },
+  {
+    "name": "1080x2340/milestone",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-milestone.json",
+      "screenshot": "1080x2340-milestone.png"
+    },
+    "frame": 3072,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:09.7924693Z"
+  },
+  {
+    "name": "1080x2340/milestone-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 10,
+    "clicked": [],
+    "observations": {},
+    "frame": 3072,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:09.7929773Z"
+  },
+  {
+    "name": "1080x2340/milestone-close",
+    "screen": "MILESTONE",
+    "script": "Assets/Scripts/UI/MilestoneModalUI.cs",
+    "methods": [
+      "Close"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/MilestoneModalUI/ModalBox/BtnClose"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/MilestoneModalUI/ModalBox/BtnClose"
+      ]
+    },
+    "frame": 3077,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:09.9285688Z"
+  },
+  {
+    "name": "1080x2340/pause",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "1080x2340-pause.json",
+      "screenshot": "1080x2340-pause.png"
+    },
+    "frame": 3177,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:10.8218956Z"
+  },
+  {
+    "name": "1080x2340/pause-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 10,
+    "clicked": [],
+    "observations": {},
+    "frame": 3177,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:10.8229016Z"
+  },
+  {
+    "name": "1080x2340/pause-close",
+    "screen": "PAUSE",
+    "script": "Assets/Scripts/UI/PauseMenuManager.cs",
+    "methods": [
+      "ResumeGame"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 4,
+    "clicked": [
+      "Canvas/PauseMenuModal/PauseBox/HeaderBar/CloseHeaderBtn"
+    ],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/PauseMenuModal/PauseBox/HeaderBar/CloseHeaderBtn"
+      ]
+    },
+    "frame": 3181,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:10.9553777Z"
+  },
+  {
+    "name": "all-corner-closes",
+    "screen": "ALL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIContentSafety.cs",
+    "methods": [
+      "Apply"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 31,
+    "clicked": [],
+    "observations": {
+      "cornerCloses": [
+        "Canvas/ShopPanel/btn_Close",
+        "Canvas/MobileUIRoot/PortraitHudShell/SecondaryOverlay/MenuCard/CloseMenu",
+        "Canvas/MobileUIRoot/Drawer_0/P6Frame/P6Header/CloseButton",
+        "Canvas/MobileUIRoot/Drawer_1/P6Frame/P6Header/CloseButton",
+        "Canvas/MobileUIRoot/Drawer_2/P6Frame/P6Header/CloseButton",
+        "Canvas/MobileUIRoot/Drawer_3/P6Frame/P6Header/CloseButton",
+        "Canvas/MobileUIRoot/Drawer_4/P6Frame/P6Header/CloseButton",
+        "Canvas/MobileUIRoot/BodyTalentDetailModal/ModalBox/BtnClose",
+        "Canvas/CharacterDetailModal/ModalBox/HeaderBar/CloseButton",
+        "Canvas/DaoAnModal/ModalBox/BtnCloseX",
+        "Canvas/SecretRealmModal/ModalBox/BtnCloseX",
+        "Canvas/StorageModalUI/ModalBox/BtnClose",
+        "Canvas/AchievementModalUI/ModalBox/BtnClose",
+        "Canvas/MilestoneModalUI/ModalBox/BtnClose",
+        "Canvas/PauseMenuModal/PauseBox/HeaderBar/CloseHeaderBtn"
+      ]
+    },
+    "frame": 3205,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:11.1671543Z"
+  },
+  {
+    "name": "pixel5-insets/hud",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "pixel5-insets-hud.json",
+      "screenshot": "pixel5-insets-hud.png"
+    },
+    "frame": 3297,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:12.6930161Z"
+  },
+  {
+    "name": "pixel5-insets/hud-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 24,
+    "clicked": [],
+    "observations": {},
+    "frame": 3297,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:12.6950454Z"
+  },
+  {
+    "name": "pixel5-insets/daoan",
+    "screen": "VISUAL",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "ApplyLayout"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 3,
+    "clicked": [],
+    "observations": {
+      "geometry": "pixel5-insets-daoan.json",
+      "screenshot": "pixel5-insets-daoan.png"
+    },
+    "frame": 3356,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:13.6119290Z"
+  },
+  {
+    "name": "pixel5-insets/daoan-input-geometry",
+    "screen": "VISUAL",
+    "script": "Assets/UI/Reconstruction/Runtime/MobileUIResponsiveRepairs.cs",
+    "methods": [
+      "ApplyTree"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 6,
+    "clicked": [],
+    "observations": {},
+    "frame": 3356,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:13.6129402Z"
+  },
+  {
+    "name": "pixel5-insets/corner-close",
+    "screen": "SAFE_AREA",
+    "script": "Assets/Scripts/UI/SafeAreaFitter.cs",
+    "methods": [
+      "Refresh"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 6,
+    "clicked": [],
+    "observations": {
+      "safeArea": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1080.0,
+        "height": 2204.0
+      },
+      "cornerCloses": [
+        "Canvas/DaoAnModal/ModalBox/BtnCloseX"
+      ]
+    },
+    "frame": 3360,
+    "timeScale": 0.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:13.7499904Z"
+  },
+  {
+    "name": "unpaused-player-loop",
+    "screen": "HUD",
+    "script": "Assets/Scripts/UI/PortraitHudController.cs",
+    "methods": [
+      "LateUpdate"
+    ],
+    "passed": true,
+    "error": null,
+    "assertions": 1,
+    "clicked": [],
+    "observations": {},
+    "frame": 3396,
+    "timeScale": 1.0,
+    "width": 1080,
+    "height": 2340,
+    "profile": "ui-content-repair-20261114-qa",
+    "utc": "2026-11-13T18:15:14.2975063Z"
+  }
+]

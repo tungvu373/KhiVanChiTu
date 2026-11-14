@@ -98,10 +98,15 @@ public class FormationPanelUI : MonoBehaviour
             ArtifactService.Instance.OnChanged += RefreshUI;
         if (EconomyManager.Instance != null)
             EconomyManager.Instance.OnLinhThachChanged += HandleLinhThachChanged;
+        if (FeatureUnlockService.Instance != null)
+            FeatureUnlockService.Instance.OnUnlockStateChanged += RefreshUI;
+        if (CultivationManager.Instance != null)
+            CultivationManager.Instance.OnStageChanged += HandleStageChanged;
         RefreshUI();
     }
 
     private void HandleLinhThachChanged(float _) => RefreshUI();
+    private void HandleStageChanged(CultivationStageData _) => RefreshUI();
 
     private void OnDisable()
     {
@@ -111,6 +116,10 @@ public class FormationPanelUI : MonoBehaviour
             ArtifactService.Instance.OnChanged -= RefreshUI;
         if (EconomyManager.Instance != null)
             EconomyManager.Instance.OnLinhThachChanged -= HandleLinhThachChanged;
+        if (FeatureUnlockService.Instance != null)
+            FeatureUnlockService.Instance.OnUnlockStateChanged -= RefreshUI;
+        if (CultivationManager.Instance != null)
+            CultivationManager.Instance.OnStageChanged -= HandleStageChanged;
     }
 
     private void Update()
@@ -143,7 +152,8 @@ public class FormationPanelUI : MonoBehaviour
             float stoneCost = svc.GetStoneCost(id);
             bool isSelected = selected == id && level > 0;
             bool maxed = level >= FormationService.MaxLevel;
-            bool canAfford = !maxed && ore >= oreCost && stone >= stoneCost;
+            bool unlocked = FeatureUnlockService.Instance == null || FeatureUnlockService.Instance.IsFormationUnlocked(id);
+            bool canAfford = unlocked && !maxed && ore >= oreCost && stone >= stoneCost;
 
             // 1. Tên & Cấp
             if (formationLabels != null && i < formationLabels.Length && formationLabels[i] != null)
@@ -163,7 +173,11 @@ public class FormationPanelUI : MonoBehaviour
             // 3. Chi phí
             if (formationCostTexts != null && i < formationCostTexts.Length && formationCostTexts[i] != null)
             {
-                if (maxed)
+                if (!unlocked)
+                {
+                    formationCostTexts[i].text = FeatureUnlockService.Instance.GetFormationUnlockRequirementText(id);
+                }
+                else if (maxed)
                 {
                     formationCostTexts[i].text = "<color=#ffd32a>Đại Trận Đã Đại Thành</color>";
                 }
@@ -178,7 +192,11 @@ public class FormationPanelUI : MonoBehaviour
             // 4. Tag trạng thái
             if (statusBadges != null && i < statusBadges.Length && statusBadges[i] != null)
             {
-                if (isSelected)
+                if (!unlocked)
+                {
+                    statusBadges[i].text = "CHƯA MỞ KHÓA";
+                }
+                else if (isSelected)
                 {
                     statusBadges[i].text = "<color=#ffd32a>ĐANG KÍCH HOẠT</color>";
                 }
@@ -195,7 +213,7 @@ public class FormationPanelUI : MonoBehaviour
             // 5. Nút Kích Hoạt
             if (selectButtons != null && i < selectButtons.Length && selectButtons[i] != null)
             {
-                selectButtons[i].interactable = level > 0 && !isSelected;
+                selectButtons[i].interactable = unlocked && level > 0 && !isSelected;
                 var bText = selectButtons[i].GetComponentInChildren<Text>();
                 if (bText != null)
                 {
@@ -232,7 +250,8 @@ public class FormationPanelUI : MonoBehaviour
 
         if (activateSpiritBtn != null)
         {
-            activateSpiritBtn.interactable = spiritSelected && svc.SpiritCooldown == System.TimeSpan.Zero && !svc.SpiritActive;
+            bool unlocked = FeatureUnlockService.Instance == null || FeatureUnlockService.Instance.IsFormationUnlocked(FormationId.Spirit);
+            activateSpiritBtn.interactable = unlocked && spiritSelected && svc.SpiritCooldown == System.TimeSpan.Zero && !svc.SpiritActive;
             activateSpiritBtn.gameObject.SetActive(spiritSelected);
         }
 

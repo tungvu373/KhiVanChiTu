@@ -187,11 +187,23 @@ public class StorageManager : MonoBehaviour
 
     public void RemovePendingItem(PendingLootItem item)
     {
-        if (State.pendingLoot != null && item != null)
-        {
-            State.pendingLoot.Remove(item);
-            OnStorageChanged?.Invoke();
-        }
+        TryRemovePendingItem(item);
+    }
+
+    public bool TryRemovePendingItem(PendingLootItem item)
+    {
+        if (item == null || State.pendingLoot == null || !State.pendingLoot.Remove(item)) return false;
+        OnStorageChanged?.Invoke();
+        return true;
+    }
+
+    /// <summary>Compact the queue once and notify only after the whole batch has been removed.</summary>
+    public int RemovePendingItems(Predicate<PendingLootItem> shouldRemove)
+    {
+        if (shouldRemove == null || State.pendingLoot == null) return 0;
+        int removed = State.pendingLoot.RemoveAll(shouldRemove);
+        if (removed > 0) OnStorageChanged?.Invoke();
+        return removed;
     }
 
     public void ClearPendingLoot()

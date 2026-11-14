@@ -1,0 +1,18 @@
+{
+  "utc": "2026-11-13T18:01:12.3518563Z",
+  "scene": "E31284F70F24AEBFD2F51CE8FFD5B62F860F6C587CE7077F05DA75C8ACBB73ED",
+  "saveRoot": "C:\\Users\\Admin\\AppData\\LocalLow\\DefaultCompany\\ThienVanChiTu",
+  "files": [
+    {
+      "name": "KhiVanChiTu_SaveData.json",
+      "sha256": "C57BC3DCDDF886BCC8CF3FEE95B8D19174E3BF466CD0EDFF8A88F6FCFEE5F106",
+      "bytes": 467888
+    },
+    {
+      "name": "KhiVanChiTu_SaveData.json.bak",
+      "sha256": "E7A91DB3CFFEE1D59CD61A7F89B8AFC104DC7930F4B494CABF76C85258E7DAEC",
+      "bytes": 467886
+    }
+  ],
+  "disposableProfile": "ui-content-repair-20261114-qa"
+}

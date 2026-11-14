@@ -1,0 +1,50 @@
+{
+  "utc": "2026-11-13T18:16:08.4337084Z",
+  "total": 95,
+  "passed": 95,
+  "failed": 0,
+  "assertions": 687.0,
+  "viewports": [
+    "1080x1920",
+    "1080x2340",
+    "720x1280"
+  ],
+  "safeArea": [
+    {
+      "name": "pixel5-insets/corner-close",
+      "passed": true,
+      "observations": {
+        "safeArea": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 1080.0,
+          "height": 2204.0
+        },
+        "cornerCloses": [
+          "Canvas/DaoAnModal/ModalBox/BtnCloseX"
+        ]
+      }
+    }
+  ],
+  "cleanup": {
+    "productionPrefsUnchanged": true,
+    "playing": false,
+    "qaMarkers": 0,
+    "background": false
+  },
+  "saveFiles": [
+    {
+      "name": "KhiVanChiTu_SaveData.json",
+      "before": "C57BC3DCDDF886BCC8CF3FEE95B8D19174E3BF466CD0EDFF8A88F6FCFEE5F106",
+      "after": "C57BC3DCDDF886BCC8CF3FEE95B8D19174E3BF466CD0EDFF8A88F6FCFEE5F106",
+      "unchanged": true
+    },
+    {
+      "name": "KhiVanChiTu_SaveData.json.bak",
+      "before": "E7A91DB3CFFEE1D59CD61A7F89B8AFC104DC7930F4B494CABF76C85258E7DAEC",
+      "after": "E7A91DB3CFFEE1D59CD61A7F89B8AFC104DC7930F4B494CABF76C85258E7DAEC",
+      "unchanged": true
+    }
+  ],
+  "sceneHash": "1B85436F207FC305F4C8C1384C62E1626889CE30351CDE31745F63EE28F15436"
+}

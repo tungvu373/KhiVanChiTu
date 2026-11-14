@@ -181,7 +181,9 @@ public class CharacterDetailModalUI : MonoBehaviour
         {
             int equippedCount = 0;
             float totalDamage = 0f;
-            for (int i = 0; i < 4; i++)
+            int capacity = SwordLoadoutService.Instance != null
+                ? SwordLoadoutService.Instance.GetCurrentCapacity() : MergeManager.Instance.equipPanel.childCount;
+            for (int i = 0; i < MergeManager.Instance.equipPanel.childCount; i++)
             {
                 if (i < MergeManager.Instance.equipPanel.childCount)
                 {
@@ -197,7 +199,7 @@ public class CharacterDetailModalUI : MonoBehaviour
 
             if (txtEquipSwords != null)
             {
-                txtEquipSwords.text = $"Phi Kiếm Đang Xuất Trận: <color=#FFE666>{equippedCount}/4 Thanh</color> (Tổng Căn Cơ: {totalDamage:N0} Dame)";
+                txtEquipSwords.text = $"Phi Kiếm Đang Xuất Trận: <color=#FFE666>{equippedCount}/{capacity} Thanh</color> (Tổng Căn Cơ: {totalDamage:N0} Dame)";
             }
         }
 
@@ -252,6 +254,13 @@ public class CharacterDetailModalUI : MonoBehaviour
 
     private IEnumerator AnimateOpen()
     {
+        if(MobileUIAnimationDirector.For(this)!=null)
+        {
+            if(canvasGroup==null)canvasGroup=GetComponent<CanvasGroup>();
+            if(modalBox==null)modalBox=transform.Find("ModalBox") as RectTransform;
+            yield return MobileUIModalMotion.Animate(this,canvasGroup,modalBox,true);
+            animRoutine=null;yield break;
+        }
         if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
         if (modalBox == null) modalBox = transform.Find("ModalBox") as RectTransform;
 
@@ -261,7 +270,7 @@ public class CharacterDetailModalUI : MonoBehaviour
 
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += PortraitHudController.Instance != null ? Time.unscaledDeltaTime : Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
 
             // Pop bounce nhẹ nhàng
@@ -278,6 +287,11 @@ public class CharacterDetailModalUI : MonoBehaviour
 
     private IEnumerator AnimateClose()
     {
+        if(MobileUIAnimationDirector.For(this)!=null)
+        {
+            yield return MobileUIModalMotion.Animate(this,canvasGroup,modalBox,false);
+            animRoutine=null;yield break;
+        }
         if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
         if (modalBox == null) modalBox = transform.Find("ModalBox") as RectTransform;
 
@@ -287,7 +301,7 @@ public class CharacterDetailModalUI : MonoBehaviour
 
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += PortraitHudController.Instance != null ? Time.unscaledDeltaTime : Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
 
             float scale = Mathf.Lerp(1.0f, 0.9f, t);

@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "installed_on": "2026-11-05",
+  "scope": "project",
+  "project": "KhiVanChiTu",
+  "discovery_directory": ".agents/skills",
+  "routing_file": "AGENTS.md",
+  "skills": [
+    {
+      "name": "balance-check",
+      "repository": "https://github.com/Donchitos/Claude-Code-Game-Studios",
+      "commit": "05ad7c8a5b8aa2aa86bbd3439ae7cf7295cac418",
+      "source_path": ".claude/skills/balance-check",
+      "source_url": "https://github.com/Donchitos/Claude-Code-Game-Studios/tree/05ad7c8a5b8aa2aa86bbd3439ae7cf7295cac418/.claude/skills/balance-check",
+      "installed_path": ".agents/skills/balance-check",
+      "license": "MIT",
+      "adapted_files": [
+        "SKILL.md"
+      ],
+      "sha256": {
+        "SKILL.md": "fec60f215a9458f8bcab862e6114187b0e0f0f6d218312b5d72434b04350f98b"
+      },
+      "upstream_skill_sha256": "1081b0a21d197310c7ea244c8ac1cf1832b95b0235c6288fcf1575fceacdfa44",
+      "adaptation": "Standalone Unity/Codex balance review using existing project files; removed Claude-only hooks, configuration and model metadata."
+    },
+    {
+      "name": "game-feel",
+      "repository": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills",
+      "commit": "19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9",
+      "source_path": "skills/disciplines/game-feel",
+      "source_url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/tree/19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9/skills/disciplines/game-feel",
+      "installed_path": ".agents/skills/game-feel",
+      "license": "Apache-2.0",
+      "adapted_files": [],
+      "sha256": {
+        "references/feedback-recipes.md": "f8cca962733b0b1f5d1db75fe966f6e13bf11015e39a04a849d6ff5c3e0e835e",
+        "SKILL.md": "48971c7ad1fbb39069cb165f0e45f88c13776585870d69d5de8a04bbe0988e28"
+      }
+    },
+    {
+      "name": "performance-optimization",
+      "repository": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills",
+      "commit": "19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9",
+      "source_path": "skills/disciplines/performance-optimization",
+      "source_url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/tree/19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9/skills/disciplines/performance-optimization",
+      "installed_path": ".agents/skills/performance-optimization",
+      "license": "Apache-2.0",
+      "adapted_files": [],
+      "sha256": {
+        "references/profiling-and-budgets.md": "e68c43d5e66ec0f2fe60e0c0121c85360144ab7da5876ce6e2e3f26a2244e284",
+        "SKILL.md": "287161d2ed49670a051271c8fade5a7265fda5109d39c218c02598dca7983e2a"
+      }
+    },
+    {
+      "name": "save-systems",
+      "repository": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills",
+      "commit": "19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9",
+      "source_path": "skills/disciplines/save-systems",
+      "source_url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/tree/19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9/skills/disciplines/save-systems",
+      "installed_path": ".agents/skills/save-systems",
+      "license": "Apache-2.0",
+      "adapted_files": [],
+      "sha256": {
+        "references/versioning-and-migration.md": "a95ee265936b5bb332934ae19a90c02c70f927adb3898e5a95ce1877abe9873c",
+        "SKILL.md": "17a7e580cdb8ee2fe654fe1b2d9ba3066c57ef1ea6a8cd9cc69141ebaea16224"
+      }
+    },
+    {
+      "name": "unity-input-system",
+      "repository": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills",
+      "commit": "19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9",
+      "source_path": "skills/unity/unity-input-system",
+      "source_url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/tree/19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9/skills/unity/unity-input-system",
+      "installed_path": ".agents/skills/unity-input-system",
+      "license": "Apache-2.0",
+      "adapted_files": [],
+      "sha256": {
+        "references/rebinding.md": "a2ce5f56bb27058527323298f4a72fa364afd47fd7d410a9b6bc1c0ce52cb691",
+        "SKILL.md": "e8ed83bbdb8e9c7cb21022005fd2fd6088465240373742111977a47a07b577d1"
+      }
+    },
+    {
+      "name": "unity-scriptableobjects",
+      "repository": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills",
+      "commit": "19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9",
+      "source_path": "skills/unity/unity-scriptableobjects",
+      "source_url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/tree/19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9/skills/unity/unity-scriptableobjects",
+      "installed_path": ".agents/skills/unity-scriptableobjects",
+      "license": "Apache-2.0",
+      "adapted_files": [],
+      "sha256": {
+        "references/event-channels.md": "e5515ebbf5c3406ad72f1bce45d1b9bf4bc36cf69e8f5bbaf682880f7942d0eb",
+        "SKILL.md": "72d1e13c6a6878f525e531da3f1cdea86215623c309226c790aa8f3ffb93e8f0"
+      }
+    },
+    {
+      "name": "unity-vfx",
+      "repository": "https://github.com/scenario-labs/skills",
+      "commit": "6e4a6f00939102bdccbf7d34a7fa8a3e2d22c8c6",
+      "source_path": "skills/game-engines/unity/scenario-unity-vfx",
+      "source_url": "https://github.com/scenario-labs/skills/tree/6e4a6f00939102bdccbf7d34a7fa8a3e2d22c8c6/skills/game-engines/unity/scenario-unity-vfx",
+      "installed_path": ".agents/skills/unity-vfx",
+      "license": "MIT",
+      "adapted_files": [
+        "SKILL.md"
+      ],
+      "sha256": {
+        "SKILL.md": "4776f40e258f285516bac4846b16e374ed93745f8ddb2761b93bbe60fe1129ab"
+      },
+      "upstream_skill_sha256": "f9426cc0522cd94c97cfc57b27f4ab61f2c7ed02689f150cebf64dad57952af5",
+      "adaptation": "Project-local Windows workflow for Codex and Antigravity using Shuriken and the existing Unity CLI and Pipeline connection. Omits the Scenario scripts and AgentKit."
+    }
+  ]
+}

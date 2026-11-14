@@ -1,0 +1,432 @@
+{
+  "schemaVersion": 1,
+  "phase": "08",
+  "scene": "Assets/Scenes/SampleScene_MobileWork.unity",
+  "runtimeImplementation": "Native coroutines + Graphic/RectTransform; all motion uses unscaled time",
+  "profilePolicy": "Runtime reads the preset curves; Preview_*.anim are standalone authoring snapshots, not Animator controllers attached to live controls.",
+  "assets": [
+    {
+      "name": "ButtonDown",
+      "path": "Assets/UI/Animation/Profiles/ButtonDown.asset",
+      "guid": "0a0105845e08e0e4482f84ae3441bb9a",
+      "duration": 0.07,
+      "scaleFrom": 1.0,
+      "scaleTo": 0.97,
+      "alphaFrom": 1.0,
+      "alphaTo": 1.0,
+      "ease": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 3.0,
+          "outTangent": 3.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ],
+      "preview": "Assets/UI/Animation/Clips/Preview_ButtonDown.anim",
+      "previewDuration": 0.07,
+      "loop": false,
+      "events": 0,
+      "bindings": [
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.x"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.y"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.CanvasGroup",
+          "property": "m_Alpha"
+        }
+      ]
+    },
+    {
+      "name": "ButtonUp",
+      "path": "Assets/UI/Animation/Profiles/ButtonUp.asset",
+      "guid": "8fcc6bd842fc9524ea95a1b8a4c611dd",
+      "duration": 0.1,
+      "scaleFrom": 0.97,
+      "scaleTo": 1.0,
+      "alphaFrom": 1.0,
+      "alphaTo": 1.0,
+      "ease": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 3.0,
+          "outTangent": 3.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ],
+      "preview": "Assets/UI/Animation/Clips/Preview_ButtonUp.anim",
+      "previewDuration": 0.1,
+      "loop": false,
+      "events": 0,
+      "bindings": [
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.x"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.y"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.CanvasGroup",
+          "property": "m_Alpha"
+        }
+      ]
+    },
+    {
+      "name": "ModalClose",
+      "path": "Assets/UI/Animation/Profiles/ModalClose.asset",
+      "guid": "2dab2996a5a94974ab9ed5973b9df550",
+      "duration": 0.12,
+      "scaleFrom": 1.0,
+      "scaleTo": 0.98,
+      "alphaFrom": 1.0,
+      "alphaTo": 0.0,
+      "ease": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 3.0,
+          "outTangent": 3.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ],
+      "preview": "Assets/UI/Animation/Clips/Preview_ModalClose.anim",
+      "previewDuration": 0.12,
+      "loop": false,
+      "events": 0,
+      "bindings": [
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.x"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.y"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.CanvasGroup",
+          "property": "m_Alpha"
+        }
+      ]
+    },
+    {
+      "name": "ModalOpen",
+      "path": "Assets/UI/Animation/Profiles/ModalOpen.asset",
+      "guid": "5ab4e59656daf894aa090c12ad6067fb",
+      "duration": 0.14,
+      "scaleFrom": 0.98,
+      "scaleTo": 1.0,
+      "alphaFrom": 0.0,
+      "alphaTo": 1.0,
+      "ease": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 3.0,
+          "outTangent": 3.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ],
+      "preview": "Assets/UI/Animation/Clips/Preview_ModalOpen.anim",
+      "previewDuration": 0.14,
+      "loop": false,
+      "events": 0,
+      "bindings": [
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.x"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.y"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.CanvasGroup",
+          "property": "m_Alpha"
+        }
+      ]
+    },
+    {
+      "name": "ProgressAccent",
+      "path": "Assets/UI/Animation/Profiles/ProgressAccent.asset",
+      "guid": "ef0d02c581929ef459f3ee1fad7c15e1",
+      "duration": 0.18,
+      "scaleFrom": 1.0,
+      "scaleTo": 1.0,
+      "alphaFrom": 0.65,
+      "alphaTo": 1.0,
+      "ease": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 3.0,
+          "outTangent": 3.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ],
+      "preview": "Assets/UI/Animation/Clips/Preview_ProgressAccent.anim",
+      "previewDuration": 0.18,
+      "loop": false,
+      "events": 0,
+      "bindings": [
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.x"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.y"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.CanvasGroup",
+          "property": "m_Alpha"
+        }
+      ]
+    },
+    {
+      "name": "RarityAccent",
+      "path": "Assets/UI/Animation/Profiles/RarityAccent.asset",
+      "guid": "5444395146463744d82063c49842f440",
+      "duration": 0.32,
+      "scaleFrom": 1.0,
+      "scaleTo": 1.0,
+      "alphaFrom": 0.55,
+      "alphaTo": 1.0,
+      "ease": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 3.0,
+          "outTangent": 3.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ],
+      "preview": "Assets/UI/Animation/Clips/Preview_RarityAccent.anim",
+      "previewDuration": 0.32,
+      "loop": false,
+      "events": 0,
+      "bindings": [
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.x"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.y"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.CanvasGroup",
+          "property": "m_Alpha"
+        }
+      ]
+    },
+    {
+      "name": "RewardReveal",
+      "path": "Assets/UI/Animation/Profiles/RewardReveal.asset",
+      "guid": "c45a78e2b368da444896ca26078652e8",
+      "duration": 0.32,
+      "scaleFrom": 0.98,
+      "scaleTo": 1.0,
+      "alphaFrom": 0.0,
+      "alphaTo": 1.0,
+      "ease": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 3.0,
+          "outTangent": 3.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ],
+      "preview": "Assets/UI/Animation/Clips/Preview_RewardReveal.anim",
+      "previewDuration": 0.32,
+      "loop": false,
+      "events": 0,
+      "bindings": [
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.x"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.y"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.CanvasGroup",
+          "property": "m_Alpha"
+        }
+      ]
+    },
+    {
+      "name": "SheetClose",
+      "path": "Assets/UI/Animation/Profiles/SheetClose.asset",
+      "guid": "81138086da74ade42ac1f59a7feaa7a6",
+      "duration": 0.18,
+      "scaleFrom": 1.0,
+      "scaleTo": 1.0,
+      "alphaFrom": 1.0,
+      "alphaTo": 1.0,
+      "ease": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 3.0,
+          "outTangent": 3.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ],
+      "preview": "Assets/UI/Animation/Clips/Preview_SheetClose.anim",
+      "previewDuration": 0.18,
+      "loop": false,
+      "events": 0,
+      "bindings": [
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.x"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.y"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.CanvasGroup",
+          "property": "m_Alpha"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_AnchoredPosition.y"
+        }
+      ]
+    },
+    {
+      "name": "SheetOpen",
+      "path": "Assets/UI/Animation/Profiles/SheetOpen.asset",
+      "guid": "40cd1bfbf82b3304b8fec424e43dc290",
+      "duration": 0.2,
+      "scaleFrom": 1.0,
+      "scaleTo": 1.0,
+      "alphaFrom": 1.0,
+      "alphaTo": 1.0,
+      "ease": [
+        {
+          "time": 0.0,
+          "value": 0.0,
+          "inTangent": 3.0,
+          "outTangent": 3.0
+        },
+        {
+          "time": 1.0,
+          "value": 1.0,
+          "inTangent": 0.0,
+          "outTangent": 0.0
+        }
+      ],
+      "preview": "Assets/UI/Animation/Clips/Preview_SheetOpen.anim",
+      "previewDuration": 0.2,
+      "loop": false,
+      "events": 0,
+      "bindings": [
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.x"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_LocalScale.y"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.CanvasGroup",
+          "property": "m_Alpha"
+        },
+        {
+          "path": "",
+          "type": "UnityEngine.RectTransform",
+          "property": "m_AnchoredPosition.y"
+        }
+      ]
+    }
+  ],
+  "constraints": {
+    "animationEvents": 0,
+    "loopingClips": 0,
+    "rarityMaxPerBatch": 6,
+    "rarityBatchCooldownSeconds": 0.6,
+    "reducedMotionFadeSeconds": 0.08,
+    "scaleTarget": "Decorative P6Frame only; no Selectable descendants. Native layout RectTransforms are not scaled by motion."
+  }
+}
