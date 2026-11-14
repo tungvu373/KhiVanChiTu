@@ -265,6 +265,13 @@ public class OfflineRewardPopupUI : MonoBehaviour
 
     private IEnumerator AnimateOpen()
     {
+        if(MobileUIAnimationDirector.For(this)!=null)
+        {
+            if(canvasGroup==null)canvasGroup=GetComponent<CanvasGroup>();
+            if(modalBox==null)modalBox=transform.Find("ModalBox") as RectTransform;
+            yield return MobileUIModalMotion.Animate(this,canvasGroup,modalBox,true,reward:true);
+            animRoutine=null;yield break;
+        }
         if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
         if (modalBox == null) modalBox = transform.Find("ModalBox") as RectTransform;
 
@@ -285,6 +292,11 @@ public class OfflineRewardPopupUI : MonoBehaviour
 
     private IEnumerator AnimateClose()
     {
+        if(MobileUIAnimationDirector.For(this)!=null)
+        {
+            yield return MobileUIModalMotion.Animate(this,canvasGroup,modalBox,false);
+            animRoutine=null;yield break;
+        }
         if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
         if (modalBox == null) modalBox = transform.Find("ModalBox") as RectTransform;
 

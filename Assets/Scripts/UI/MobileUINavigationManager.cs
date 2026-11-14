@@ -64,6 +64,8 @@ public class MobileUINavigationManager : MonoBehaviour
             Consider(secretLayer, secretRealm.Close);
         }
         var dismantle = DismantleConfirmModalUI.Instance;
+        var secretPlay = SecretRealmPlayController.Instance;
+        if (secretPlay != null) Consider(secretPlay.ActiveNavigationLayer, secretPlay.CloseAll);
         if (dismantle != null && dismantle.IsModalOpen) Consider(dismantle.transform, dismantle.Close);
         var storage = StorageModalUI.Instance;
         if (storage != null && storage.IsModalOpen) Consider(storage.transform, storage.Close);
@@ -89,6 +91,9 @@ public class MobileUINavigationManager : MonoBehaviour
             closeTop();
             return true;
         }
+
+        var portraitHud = GetComponentInChildren<PortraitHudController>(true);
+        if (portraitHud != null && portraitHud.CloseTopLayer()) return true;
 
         var secondaryMenu = GetComponent<JadeSecondaryMenu>();
         if (secondaryMenu != null && secondaryMenu.IsOpen)

@@ -59,6 +59,7 @@ public class DismantleService : MonoBehaviour
     public static DismantleService Instance { get; private set; }
 
     public event Action OnDismantleExecuted;
+    private bool batchInProgress;
 
     private void Awake()
     {
@@ -407,7 +408,7 @@ public class DismantleService : MonoBehaviour
                 break;
         }
 
-        StorageManager.Instance.RemovePendingItem(item);
+        if (!StorageManager.Instance.TryRemovePendingItem(item)) return false;
         ApplyReward(reward);
         OnDismantleExecuted?.Invoke();
 
@@ -424,6 +425,22 @@ public class DismantleService : MonoBehaviour
     public DismantleReward BatchDismantleLowTier()
     {
         DismantleReward totalReward = new DismantleReward();
+        if (batchInProgress || (FeatureUnlockService.Instance != null && !FeatureUnlockService.Instance.IsDismantleUnlocked()))
+            return totalReward;
+
+        batchInProgress = true;
+        try
+        {
+            return ExecuteBatchDismantleLowTier(totalReward);
+        }
+        finally
+        {
+            batchInProgress = false;
+        }
+    }
+
+    private DismantleReward ExecuteBatchDismantleLowTier(DismantleReward totalReward)
+    {
         int swordCount = 0;
         int pillCount = 0;
 
@@ -431,15 +448,18 @@ public class DismantleService : MonoBehaviour
         if (MergeManager.Instance != null)
         {
             var swords = MergeManager.Instance.GetAllSwords(includeEquipped: false);
+            bool inventoryChanged = false;
             foreach (var s in swords)
             {
                 if (s != null && s.level == 1)
                 {
-                    totalReward.Add(CalculateSwordReward(1, s.currentPieces));
-                    swordCount += s.currentPieces;
-                    MergeManager.Instance.RemoveSword(s);
+                    int pieces = s.currentPieces;
+                    if (!MergeManager.Instance.RemoveSword(s, false)) continue;
+                    swordCount += Mathf.Max(1, pieces);
+                    inventoryChanged = true;
                 }
             }
+            if (inventoryChanged) MergeManager.Instance.SortInventory();
         }
 
         // 2. Quét kho đan: Tìm Phế đan của mọi cảnh giới
@@ -455,7 +475,6 @@ public class DismantleService : MonoBehaviour
                         int count = AlchemyService.Instance.State.pills[wasteIdx];
                         if (count > 0)
                         {
-                            totalReward.Add(CalculatePillReward(r, (PillRecipe)rec, PillQuality.Waste, count));
                             AlchemyService.Instance.State.pills[wasteIdx] = 0;
                             pillCount += count;
                         }
@@ -467,24 +486,27 @@ public class DismantleService : MonoBehaviour
         // 3. Quét Hòm Tạm: Phân giải các món Lv1 hoặc Phế đan trong hòm tạm
         if (StorageManager.Instance != null)
         {
-            var pending = StorageManager.Instance.GetPendingItems();
-            for (int i = pending.Count - 1; i >= 0; i--)
+            StorageManager.Instance.RemovePendingItems(item =>
             {
-                var item = pending[i];
+                if (item == null) return false;
                 if (item.itemType == PendingLootType.Sword && item.level == 1)
                 {
-                    totalReward.Add(CalculateSwordReward(1, item.pieces));
-                    swordCount += item.pieces;
-                    StorageManager.Instance.RemovePendingItem(item);
+                    swordCount += Mathf.Max(1, item.pieces);
+                    return true;
                 }
-                else if (item.itemType == PendingLootType.Pill && item.quality == (int)PillQuality.Waste)
+                else if (item.itemType == PendingLootType.Pill && item.quality == (int)PillQuality.Waste && item.amount > 0)
                 {
-                    totalReward.Add(CalculatePillReward(item.realm, (PillRecipe)item.recipe, PillQuality.Waste, item.amount));
                     pillCount += item.amount;
-                    StorageManager.Instance.RemovePendingItem(item);
+                    return true;
                 }
-            }
+                return false;
+            });
         }
+
+        // Every Lv1 sword and Waste pill has the same unit value. Calculate
+        // once per type rather than allocating a reward + herb array per row.
+        if (swordCount > 0) totalReward.Add(CalculateSwordReward(1, swordCount));
+        if (pillCount > 0) totalReward.Add(CalculatePillReward(0, PillRecipe.Cultivation, PillQuality.Waste, pillCount));
 
         if (!totalReward.IsEmpty)
         {

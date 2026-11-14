@@ -62,3 +62,57 @@ Trước khi thực hiện bất kỳ thao tác Unity nào, AI phải tuân th�
 * **Đọc Log Console Editor:** `unity command console get --tail 20`
 * **Xóa Log Console:** `unity command console clear`
 
+
+
+<!-- BEGIN KHIVAN PROJECT SKILLS -->
+## Project skills
+
+Project-local skills are installed under `.agents/skills/` and may be selected
+automatically for related tasks. Load only skills relevant to the requested work.
+
+| Task | Skill |
+| --- | --- |
+| Save/load, slots, backups and migration | [save-systems](.agents/skills/save-systems/SKILL.md) |
+| Profiling, frame time, pooling and GC | [performance-optimization](.agents/skills/performance-optimization/SKILL.md) |
+| ScriptableObject configuration, runtime state and events | [unity-scriptableobjects](.agents/skills/unity-scriptableobjects/SKILL.md) |
+| Actions, maps, rebinding, mouse/touch/gamepad | [unity-input-system](.agents/skills/unity-input-system/SKILL.md) |
+| Hit feedback, camera shake, VFX/audio timing and polish | [game-feel](.agents/skills/game-feel/SKILL.md) |
+| Author and preview prompt-driven Particle System VFX | [unity-vfx](.agents/skills/unity-vfx/SKILL.md) |
+| DPS/TTK, progression, upgrade costs and resource flow | [balance-check](.agents/skills/balance-check/SKILL.md) |
+
+Use the already available official Unity skills for Editor control, uGUI, URP,
+physics, audio and navigation. Do not install a second Editor-control backend.
+
+Apply these skills to this project's actual Unity version and installed packages.
+The imported Unity examples target 6.3 LTS; verify APIs against the current
+`ProjectSettings/ProjectVersion.txt` and `Packages/manifest.json`. Translate
+cross-engine examples to Unity C# instead of introducing another engine.
+
+Use `Assets/.docs/GDD.md`, `Assets/.docs/TDD.md` and current implementation/data
+for project context. Preserve the existing portrait idle RPG and sword-merge
+design. Extend existing services/pools where appropriate; skill installation
+alone is not a request to retune gameplay or replace the architecture.
+
+Follow the Pipeline pre-flight above for Editor work. Read
+`Assets/Modules/PCContent/AGENTS.md` for PC-module ownership and save isolation.
+Keep player saves intact when validating persistence. Measure performance before
+claiming gains. For game feel, preserve pause/slow-motion ownership and restore
+the previous time scale rather than assuming it is always 1.
+
+Pinned sources, local adaptations and file hashes are recorded in
+`.agents/skill-sources.json`; upstream licenses are retained in `.agents/licenses/`.
+<!-- END KHIVAN PROJECT SKILLS -->
+
+
+<!-- BEGIN MOBILE UI PHASE 00 AUDIT -->
+## Mobile UI redesign audit and preservation
+
+- Read [the project audit](Docs/UI_Redesign/project_audit.md), [the baseline](Docs/UI_Redesign/project_baseline.json) and [the rollback plan](Docs/UI_Redesign/rollback_plan.md) before continuing the mobile UI redesign.
+- Phase 00 only inventories and backs up the project. Do not modify gameplay, UI layout, scenes, prefabs, PlayerSettings, build scenes, packages or player saves during this phase.
+- This audit starts after the Jade V2 UI commit. Treat the recorded HEAD as the current baseline; the retained PreJadeV2 scene and earlier audit describe the older presentation.
+- Preserve dirty and untracked user work. Do not use reset, clean, stash, a broad restore or an unrelated commit to prepare this workspace.
+- Keep .meta GUIDs and serialized object/event references. Use the connected Unity Editor for later scene/prefab edits, with CLI commands run from the project root.
+- Keep mobile and PC scenes/save profiles isolated. Read Assets/Modules/PCContent/AGENTS.md before PC-module work.
+- Local source backups in Docs/UI_Redesign/Backups/ are intentionally ignored by Git. Verify the recorded archive hash before selective rollback and preserve any later user edits.
+- Record existing console errors and unverified device states honestly. An audit is not a gameplay or physical-device test.
+<!-- END MOBILE UI PHASE 00 AUDIT -->

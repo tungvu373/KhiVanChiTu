@@ -1,0 +1,1684 @@
+{
+  "schemaVersion": "1.0.0",
+  "phase": "03",
+  "status": "DESIGN_ONLY_NOT_APPLIED",
+  "project": "Khí Vận Chi Tử",
+  "reference": {
+    "width": 1080,
+    "height": 1920,
+    "orientation": "portrait",
+    "canvasScaleMode": "ScaleWithScreenSize",
+    "matchWidthOrHeight": 0,
+    "logicalWidthExample": 360,
+    "referenceUnitsPerLogicalPixelAtExample": 3,
+    "safeAreaOwner": "existing SafeAreaFitter; applied once"
+  },
+  "tokenFormat": {
+    "structure": "flat tokens keyed by dot path; DTCG-style $type/$value entries, project-specific composite schema",
+    "referenceSyntax": "{token.id}",
+    "colorSpace": "sRGB",
+    "dimensions": "reference_px unless explicitly stated",
+    "durations": "ms",
+    "runtimeImporter": "NOT_CREATED"
+  },
+  "sourceInputs": {
+    "inventory": "feature_inventory.json",
+    "architecture": "screen_redesign_map.json",
+    "components": "ui_component_architecture.md",
+    "sha256": {
+      "feature_inventory.json": "a14ab07f8a32bb785e5d051a45df094e9ae82d6fb065749c60da4ca103d992d0",
+      "screen_redesign_map.json": "db5ad5e89bb7b17e295ebb9f28164310220f49725519edc1a10cd8c278f46f89",
+      "ui_component_architecture.md": "0889e0cec23a3375df179ebdba2d05360e8448dcb14d2f28caf24de423290ff8",
+      "new_ui_architecture.md": "bd71524bcbd7dc7e8a3051b7d103fc3915114465b92ad285798f003a8a1332bb",
+      "navigation_flow.md": "42d4c1020c7db4aa1e140dc7364171a3a1daa7a47827aa3c84cb7180bc9146ce"
+    }
+  },
+  "typographyDecision": {
+    "phase02ProvisionalBody": 32,
+    "phase03Body": 42,
+    "reason": "Improve Vietnamese reading at 360 logical width; preserve minimum touch geometry. Dense support/dock=36;32 only decorative.",
+    "framework": "UnityEngine.UI.Text; no TMP migration",
+    "fontAssignment": "explicit serialized reference for Semibold/Display; UiTextStyle.BodyFont remains Regular for existing views",
+    "tracking": "default font metrics; no forced all caps; no synthetic decorative italics",
+    "minimumCriticalSize": 36,
+    "nameAndCostOverflow": "wrap or grow/scroll; never clip cost, important suffix, timer or Vietnamese accents",
+    "dynamicType": "No global text scaling setting added; use largest content fixtures and scrolling in later integration"
+  },
+  "fonts": {
+    "regular": {
+      "path": "Assets/Resources/SourceSansPro-Regular.ttf",
+      "resourceKey": "SourceSansPro-Regular",
+      "style": "normal",
+      "licensePath": "Assets/Import/Asset/Font/Source Sans Pro/OFL.txt",
+      "sha256": "869f06e42d1a755a32f253a73f81235925cf27b686ba7702ce1f03fcc7738631",
+      "licenseSha256": "956019dbe7ec5378f1cee8c524cf02f539356e254d97d3c40e077daa591f97e0"
+    },
+    "semibold": {
+      "path": "Assets/Import/Asset/Font/Source Sans Pro/SourceSansPro-Semibold.ttf",
+      "style": "normal",
+      "licensePath": "Assets/Import/Asset/Font/Source Sans Pro/OFL.txt",
+      "sha256": "4385dc332185ab9396fc2e2f36409f207cac0fbeeeb43aae4a4fc3ad46799ef5",
+      "licenseSha256": "956019dbe7ec5378f1cee8c524cf02f539356e254d97d3c40e077daa591f97e0"
+    },
+    "display": {
+      "path": "Assets/Import/Asset/Font/Cormorant/Cormorant-Bold.otf",
+      "style": "normal",
+      "licensePath": "Assets/Import/Asset/Font/Cormorant/OFL.txt",
+      "usage": "hero/title art-adjacent heading only,72+; body/actions use Source Sans Pro",
+      "sha256": "a908b762cf0dabf510f86c5c2dad6febf8a94d83c4ee25cef791b3259e934dd2",
+      "licenseSha256": "fad952764a2cf7e58f34d18a62c707dedcebde4f33525e2433727dcca5bb5416"
+    },
+    "fallback": {
+      "builtin": "LegacyRuntime.ttf",
+      "usage": "emergency path from UiTextStyle; full Vietnamese render not certified"
+    }
+  },
+  "tokens": {
+    "color.palette.ink": {
+      "$type": "color",
+      "$value": "#081C22"
+    },
+    "color.palette.surface": {
+      "$type": "color",
+      "$value": "#0A1F22"
+    },
+    "color.palette.raised": {
+      "$type": "color",
+      "$value": "#123338"
+    },
+    "color.palette.inset": {
+      "$type": "color",
+      "$value": "#06181C"
+    },
+    "color.palette.scrim": {
+      "$type": "color",
+      "$value": "#020B10"
+    },
+    "color.palette.jade": {
+      "$type": "color",
+      "$value": "#6EDDB6"
+    },
+    "color.palette.jadeDeep": {
+      "$type": "color",
+      "$value": "#164E43"
+    },
+    "color.palette.gold": {
+      "$type": "color",
+      "$value": "#D5B574"
+    },
+    "color.palette.goldBright": {
+      "$type": "color",
+      "$value": "#F3D995"
+    },
+    "color.palette.goldMuted": {
+      "$type": "color",
+      "$value": "#7D693F"
+    },
+    "color.palette.ivory": {
+      "$type": "color",
+      "$value": "#F1E8CF"
+    },
+    "color.palette.secondary": {
+      "$type": "color",
+      "$value": "#B5C8C3"
+    },
+    "color.palette.muted": {
+      "$type": "color",
+      "$value": "#91AAA5"
+    },
+    "color.palette.disabled": {
+      "$type": "color",
+      "$value": "#91AAA5"
+    },
+    "color.palette.line": {
+      "$type": "color",
+      "$value": "#42635F"
+    },
+    "color.palette.danger": {
+      "$type": "color",
+      "$value": "#FF9793"
+    },
+    "color.palette.dangerSurface": {
+      "$type": "color",
+      "$value": "#4C252B"
+    },
+    "color.palette.warning": {
+      "$type": "color",
+      "$value": "#F4C46F"
+    },
+    "color.palette.info": {
+      "$type": "color",
+      "$value": "#91C8FF"
+    },
+    "color.palette.health": {
+      "$type": "color",
+      "$value": "#F28A90"
+    },
+    "color.palette.mana": {
+      "$type": "color",
+      "$value": "#83BFFF"
+    },
+    "color.palette.cultivation": {
+      "$type": "color",
+      "$value": "#BAA5F5"
+    },
+    "color.palette.neutral": {
+      "$type": "color",
+      "$value": "#BBC6CA"
+    },
+    "color.palette.green": {
+      "$type": "color",
+      "$value": "#99D9A6"
+    },
+    "color.palette.violet": {
+      "$type": "color",
+      "$value": "#D1ABF3"
+    },
+    "color.palette.orange": {
+      "$type": "color",
+      "$value": "#FFB17D"
+    },
+    "color.palette.waste": {
+      "$type": "color",
+      "$value": "#ADB7BA"
+    },
+    "color.palette.basic": {
+      "$type": "color",
+      "$value": "#A0DF8A"
+    },
+    "color.semantic.background": {
+      "$type": "color",
+      "$value": "{color.palette.ink}"
+    },
+    "color.semantic.panel": {
+      "$type": "color",
+      "$value": "{color.palette.surface}"
+    },
+    "color.semantic.panelRaised": {
+      "$type": "color",
+      "$value": "{color.palette.raised}"
+    },
+    "color.semantic.well": {
+      "$type": "color",
+      "$value": "{color.palette.inset}"
+    },
+    "color.semantic.text": {
+      "$type": "color",
+      "$value": "{color.palette.ivory}"
+    },
+    "color.semantic.textSecondary": {
+      "$type": "color",
+      "$value": "{color.palette.secondary}"
+    },
+    "color.semantic.textMuted": {
+      "$type": "color",
+      "$value": "{color.palette.muted}"
+    },
+    "color.semantic.textDisabled": {
+      "$type": "color",
+      "$value": "{color.palette.disabled}"
+    },
+    "color.semantic.accent": {
+      "$type": "color",
+      "$value": "{color.palette.jade}"
+    },
+    "color.semantic.ornament": {
+      "$type": "color",
+      "$value": "{color.palette.gold}"
+    },
+    "color.semantic.focus": {
+      "$type": "color",
+      "$value": "{color.palette.goldBright}"
+    },
+    "color.semantic.divider": {
+      "$type": "color",
+      "$value": "{color.palette.line}"
+    },
+    "color.semantic.success": {
+      "$type": "color",
+      "$value": "{color.palette.jade}"
+    },
+    "color.semantic.warning": {
+      "$type": "color",
+      "$value": "{color.palette.warning}"
+    },
+    "color.semantic.error": {
+      "$type": "color",
+      "$value": "{color.palette.danger}"
+    },
+    "color.semantic.info": {
+      "$type": "color",
+      "$value": "{color.palette.info}"
+    },
+    "color.semantic.hp": {
+      "$type": "color",
+      "$value": "{color.palette.health}"
+    },
+    "color.semantic.mp": {
+      "$type": "color",
+      "$value": "{color.palette.mana}"
+    },
+    "color.semantic.cultivation": {
+      "$type": "color",
+      "$value": "{color.palette.cultivation}"
+    },
+    "color.semantic.selected": {
+      "$type": "color",
+      "$value": "{color.palette.goldBright}"
+    },
+    "space.base": {
+      "$type": "dimension",
+      "$value": 6,
+      "description": "Canvas reference unit",
+      "unit": "reference_px"
+    },
+    "space.xs": {
+      "$type": "dimension",
+      "$value": 12,
+      "description": "Canvas reference unit",
+      "unit": "reference_px"
+    },
+    "space.sm": {
+      "$type": "dimension",
+      "$value": 24,
+      "description": "Canvas reference unit",
+      "unit": "reference_px"
+    },
+    "space.md": {
+      "$type": "dimension",
+      "$value": 36,
+      "description": "Canvas reference unit",
+      "unit": "reference_px"
+    },
+    "space.lg": {
+      "$type": "dimension",
+      "$value": 48,
+      "description": "Canvas reference unit",
+      "unit": "reference_px"
+    },
+    "space.xl": {
+      "$type": "dimension",
+      "$value": 72,
+      "description": "Canvas reference unit",
+      "unit": "reference_px"
+    },
+    "space.xxl": {
+      "$type": "dimension",
+      "$value": 96,
+      "description": "Canvas reference unit",
+      "unit": "reference_px"
+    },
+    "size.safeMargin": {
+      "$type": "dimension",
+      "$value": 36,
+      "unit": "reference_px"
+    },
+    "size.hitMin": {
+      "$type": "dimension",
+      "$value": 132,
+      "unit": "reference_px"
+    },
+    "size.hitFrequent": {
+      "$type": "dimension",
+      "$value": 144,
+      "unit": "reference_px"
+    },
+    "size.dockHeight": {
+      "$type": "dimension",
+      "$value": 176,
+      "unit": "reference_px"
+    },
+    "size.dockCellWidth": {
+      "$type": "dimension",
+      "$value": 192,
+      "unit": "reference_px"
+    },
+    "size.dockGap": {
+      "$type": "dimension",
+      "$value": 12,
+      "unit": "reference_px"
+    },
+    "size.quickHeight": {
+      "$type": "dimension",
+      "$value": 144,
+      "unit": "reference_px"
+    },
+    "size.skillRowHeight": {
+      "$type": "dimension",
+      "$value": 176,
+      "unit": "reference_px"
+    },
+    "size.vitalHeight": {
+      "$type": "dimension",
+      "$value": 96,
+      "unit": "reference_px"
+    },
+    "size.topEnvelope": {
+      "$type": "dimension",
+      "$value": 232,
+      "unit": "reference_px"
+    },
+    "size.questMaxHeight": {
+      "$type": "dimension",
+      "$value": 108,
+      "unit": "reference_px"
+    },
+    "size.sheetHeader": {
+      "$type": "dimension",
+      "$value": 144,
+      "unit": "reference_px"
+    },
+    "size.sheetFooter": {
+      "$type": "dimension",
+      "$value": 144,
+      "unit": "reference_px"
+    },
+    "size.arenaMin": {
+      "$type": "dimension",
+      "$value": 320,
+      "unit": "reference_px"
+    },
+    "size.pageHeaderMin": {
+      "$type": "dimension",
+      "$value": 168,
+      "unit": "reference_px"
+    },
+    "size.pageFooterMin": {
+      "$type": "dimension",
+      "$value": 168,
+      "unit": "reference_px"
+    },
+    "size.cardPadding": {
+      "$type": "dimension",
+      "$value": 36,
+      "unit": "reference_px"
+    },
+    "size.panelPadding": {
+      "$type": "dimension",
+      "$value": 48,
+      "unit": "reference_px"
+    },
+    "size.modalMargin": {
+      "$type": "dimension",
+      "$value": 48,
+      "unit": "reference_px"
+    },
+    "size.modalMaxWidth": {
+      "$type": "dimension",
+      "$value": 960,
+      "unit": "reference_px"
+    },
+    "size.listRowMin": {
+      "$type": "dimension",
+      "$value": 168,
+      "unit": "reference_px"
+    },
+    "size.iconSmall": {
+      "$type": "dimension",
+      "$value": 48,
+      "unit": "reference_px"
+    },
+    "size.iconAction": {
+      "$type": "dimension",
+      "$value": 72,
+      "unit": "reference_px"
+    },
+    "size.iconDock": {
+      "$type": "dimension",
+      "$value": 72,
+      "unit": "reference_px"
+    },
+    "size.iconFeature": {
+      "$type": "dimension",
+      "$value": 120,
+      "unit": "reference_px"
+    },
+    "size.iconDetail": {
+      "$type": "dimension",
+      "$value": 192,
+      "unit": "reference_px"
+    },
+    "size.iconBadge": {
+      "$type": "dimension",
+      "$value": 36,
+      "unit": "reference_px"
+    },
+    "size.stroke": {
+      "$type": "dimension",
+      "$value": 3,
+      "unit": "reference_px"
+    },
+    "size.strokeFocus": {
+      "$type": "dimension",
+      "$value": 6,
+      "unit": "reference_px"
+    },
+    "size.ornamentCorner": {
+      "$type": "dimension",
+      "$value": 48,
+      "unit": "reference_px"
+    },
+    "size.divider": {
+      "$type": "dimension",
+      "$value": 2,
+      "unit": "reference_px"
+    },
+    "size.barTrack": {
+      "$type": "dimension",
+      "$value": 18,
+      "unit": "reference_px"
+    },
+    "size.barReadable": {
+      "$type": "dimension",
+      "$value": 48,
+      "unit": "reference_px"
+    },
+    "size.sliderTrack": {
+      "$type": "dimension",
+      "$value": 12,
+      "unit": "reference_px"
+    },
+    "size.sliderThumb": {
+      "$type": "dimension",
+      "$value": 60,
+      "unit": "reference_px"
+    },
+    "size.sliderHitHeight": {
+      "$type": "dimension",
+      "$value": 144,
+      "unit": "reference_px"
+    },
+    "size.toggleGraphic": {
+      "$type": "dimension",
+      "$value": 72,
+      "unit": "reference_px"
+    },
+    "size.toggleHit": {
+      "$type": "dimension",
+      "$value": 144,
+      "unit": "reference_px"
+    },
+    "size.focusInset": {
+      "$type": "dimension",
+      "$value": 6,
+      "unit": "reference_px"
+    },
+    "size.selectedInset": {
+      "$type": "dimension",
+      "$value": 12,
+      "unit": "reference_px"
+    },
+    "size.tooltipMaxWidth": {
+      "$type": "dimension",
+      "$value": 720,
+      "unit": "reference_px"
+    },
+    "size.radiusSmall": {
+      "$type": "dimension",
+      "$value": 12,
+      "unit": "reference_px"
+    },
+    "size.radiusPanel": {
+      "$type": "dimension",
+      "$value": 24,
+      "unit": "reference_px"
+    },
+    "size.radiusModal": {
+      "$type": "dimension",
+      "$value": 36,
+      "unit": "reference_px"
+    },
+    "type.hero.size": {
+      "$type": "dimension",
+      "$value": 72,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.hero.lineHeight": {
+      "$type": "number",
+      "$value": 1.2
+    },
+    "type.hero.font": {
+      "$type": "fontFamily",
+      "$value": "display"
+    },
+    "type.title.size": {
+      "$type": "dimension",
+      "$value": 60,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.title.lineHeight": {
+      "$type": "number",
+      "$value": 1.25
+    },
+    "type.title.font": {
+      "$type": "fontFamily",
+      "$value": "semibold"
+    },
+    "type.heading.size": {
+      "$type": "dimension",
+      "$value": 48,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.heading.lineHeight": {
+      "$type": "number",
+      "$value": 1.3
+    },
+    "type.heading.font": {
+      "$type": "fontFamily",
+      "$value": "semibold"
+    },
+    "type.body.size": {
+      "$type": "dimension",
+      "$value": 42,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.body.lineHeight": {
+      "$type": "number",
+      "$value": 1.35
+    },
+    "type.body.font": {
+      "$type": "fontFamily",
+      "$value": "regular"
+    },
+    "type.action.size": {
+      "$type": "dimension",
+      "$value": 42,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.action.lineHeight": {
+      "$type": "number",
+      "$value": 1.2
+    },
+    "type.action.font": {
+      "$type": "fontFamily",
+      "$value": "semibold"
+    },
+    "type.stat.size": {
+      "$type": "dimension",
+      "$value": 48,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.stat.lineHeight": {
+      "$type": "number",
+      "$value": 1.2
+    },
+    "type.stat.font": {
+      "$type": "fontFamily",
+      "$value": "semibold"
+    },
+    "type.support.size": {
+      "$type": "dimension",
+      "$value": 36,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.support.lineHeight": {
+      "$type": "number",
+      "$value": 1.35
+    },
+    "type.support.font": {
+      "$type": "fontFamily",
+      "$value": "regular"
+    },
+    "type.dock.size": {
+      "$type": "dimension",
+      "$value": 36,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.dock.lineHeight": {
+      "$type": "number",
+      "$value": 1.2
+    },
+    "type.dock.font": {
+      "$type": "fontFamily",
+      "$value": "semibold"
+    },
+    "type.badge.size": {
+      "$type": "dimension",
+      "$value": 36,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.badge.lineHeight": {
+      "$type": "number",
+      "$value": 1.2
+    },
+    "type.badge.font": {
+      "$type": "fontFamily",
+      "$value": "semibold"
+    },
+    "type.microDecorative.size": {
+      "$type": "dimension",
+      "$value": 32,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.microDecorative.lineHeight": {
+      "$type": "number",
+      "$value": 1.3
+    },
+    "type.microDecorative.font": {
+      "$type": "fontFamily",
+      "$value": "regular"
+    },
+    "type.damage.size": {
+      "$type": "dimension",
+      "$value": 48,
+      "description": "Không bật Best Fit thu nhỏ dưới role này.",
+      "unit": "reference_px"
+    },
+    "type.damage.lineHeight": {
+      "$type": "number",
+      "$value": 1.2
+    },
+    "type.damage.font": {
+      "$type": "fontFamily",
+      "$value": "semibold"
+    },
+    "motion.buttonDown": {
+      "$type": "duration",
+      "$value": 70,
+      "unit": "ms"
+    },
+    "motion.buttonUp": {
+      "$type": "duration",
+      "$value": 100,
+      "unit": "ms"
+    },
+    "motion.stateFade": {
+      "$type": "duration",
+      "$value": 100,
+      "unit": "ms"
+    },
+    "motion.sheetOpen": {
+      "$type": "duration",
+      "$value": 200,
+      "unit": "ms"
+    },
+    "motion.sheetClose": {
+      "$type": "duration",
+      "$value": 180,
+      "unit": "ms"
+    },
+    "motion.pageOpen": {
+      "$type": "duration",
+      "$value": 160,
+      "unit": "ms"
+    },
+    "motion.pageClose": {
+      "$type": "duration",
+      "$value": 140,
+      "unit": "ms"
+    },
+    "motion.modalOpen": {
+      "$type": "duration",
+      "$value": 140,
+      "unit": "ms"
+    },
+    "motion.modalClose": {
+      "$type": "duration",
+      "$value": 120,
+      "unit": "ms"
+    },
+    "motion.toastEnter": {
+      "$type": "duration",
+      "$value": 140,
+      "unit": "ms"
+    },
+    "motion.toastHold": {
+      "$type": "duration",
+      "$value": 2400,
+      "unit": "ms"
+    },
+    "motion.toastExit": {
+      "$type": "duration",
+      "$value": 140,
+      "unit": "ms"
+    },
+    "motion.claimAccent": {
+      "$type": "duration",
+      "$value": 320,
+      "unit": "ms"
+    },
+    "motion.progressGain": {
+      "$type": "duration",
+      "$value": 180,
+      "unit": "ms"
+    },
+    "motion.selection": {
+      "$type": "duration",
+      "$value": 120,
+      "unit": "ms"
+    },
+    "motion.focusPulse": {
+      "$type": "duration",
+      "$value": 1600,
+      "unit": "ms"
+    },
+    "motion.loadingLoop": {
+      "$type": "duration",
+      "$value": 1000,
+      "unit": "ms"
+    },
+    "motion.lowMotionFade": {
+      "$type": "duration",
+      "$value": 80,
+      "unit": "ms"
+    },
+    "motion.damageLife": {
+      "$type": "duration",
+      "$value": 650,
+      "unit": "ms"
+    },
+    "ease.out": {
+      "$type": "cubicBezier",
+      "$value": [
+        0.22,
+        1,
+        0.36,
+        1
+      ]
+    },
+    "ease.in": {
+      "$type": "cubicBezier",
+      "$value": [
+        0.4,
+        0,
+        1,
+        1
+      ]
+    },
+    "ease.standard": {
+      "$type": "cubicBezier",
+      "$value": [
+        0.2,
+        0,
+        0,
+        1
+      ]
+    },
+    "ease.linear": {
+      "$type": "cubicBezier",
+      "$value": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "opacity.dimmer": {
+      "$type": "number",
+      "$value": 0.72
+    },
+    "opacity.shadow": {
+      "$type": "number",
+      "$value": 0.32
+    },
+    "opacity.softPattern": {
+      "$type": "number",
+      "$value": 0.035
+    },
+    "opacity.headerPattern": {
+      "$type": "number",
+      "$value": 0.08
+    },
+    "opacity.disabledIcon": {
+      "$type": "number",
+      "$value": 0.55
+    },
+    "opacity.skillCooldown": {
+      "$type": "number",
+      "$value": 0.78
+    },
+    "opacity.selectedHalo": {
+      "$type": "number",
+      "$value": 0.16
+    },
+    "opacity.lowHpEdge": {
+      "$type": "number",
+      "$value": 0.12
+    },
+    "opacity.pressedOverlay": {
+      "$type": "number",
+      "$value": 0.14
+    },
+    "rule.pressedScale": {
+      "$type": "number",
+      "$value": 0.98
+    },
+    "rule.restScale": {
+      "$type": "number",
+      "$value": 1
+    },
+    "rule.claimMaxScale": {
+      "$type": "number",
+      "$value": 1.03
+    },
+    "rule.sheetFractionMax": {
+      "$type": "number",
+      "$value": 0.55
+    },
+    "rule.atlasPadding": {
+      "$type": "number",
+      "$value": 8
+    },
+    "rule.atlasExtrude": {
+      "$type": "number",
+      "$value": 4
+    },
+    "rule.iconSafeInset": {
+      "$type": "number",
+      "$value": 32
+    },
+    "rule.frameCenterContrastMax": {
+      "$type": "number",
+      "$value": 0.04
+    },
+    "rule.maxAmbientGlows": {
+      "$type": "number",
+      "$value": 1
+    },
+    "rule.maxOrnamentCorners": {
+      "$type": "number",
+      "$value": 4
+    },
+    "shadow.flat": {
+      "$type": "shadow",
+      "$value": {
+        "color": "#020B10",
+        "offset": [
+          0,
+          6
+        ],
+        "softness": 12,
+        "alpha": 0.24,
+        "unit": "reference_px",
+        "rendering": "single reusable alpha sprite; no live blur"
+      }
+    },
+    "shadow.panel": {
+      "$type": "shadow",
+      "$value": {
+        "color": "#020B10",
+        "offset": [
+          0,
+          12
+        ],
+        "softness": 24,
+        "alpha": 0.32,
+        "unit": "reference_px",
+        "rendering": "single reusable alpha sprite; no live blur"
+      }
+    },
+    "shadow.modal": {
+      "$type": "shadow",
+      "$value": {
+        "color": "#020B10",
+        "offset": [
+          0,
+          18
+        ],
+        "softness": 36,
+        "alpha": 0.4,
+        "unit": "reference_px",
+        "rendering": "single reusable alpha sprite; no live blur"
+      }
+    }
+  },
+  "componentRecipes": {
+    "panel": {
+      "surface": "{color.semantic.panel}",
+      "padding": "{size.panelPadding}",
+      "radius": "{size.radiusPanel}",
+      "border": "{color.semantic.ornament}",
+      "borderWidth": "{size.stroke}",
+      "sprite": "EX.ATLAS.Panel",
+      "patternAlpha": "{opacity.softPattern}",
+      "shadow": "{shadow.panel}"
+    },
+    "sheet": {
+      "surface": "{color.semantic.panel}",
+      "sprite": "EX.ATLAS.Window",
+      "headerMin": "{size.sheetHeader}",
+      "footerMin": "{size.sheetFooter}",
+      "cornerMotifLimit": 2,
+      "bodyScroll": true
+    },
+    "page": {
+      "surface": "{color.semantic.panel}",
+      "headerMin": "{size.pageHeaderMin}",
+      "footerMin": "{size.pageFooterMin}",
+      "textureUnderText": false,
+      "cardSprite": "EX.ATLAS.Panel"
+    },
+    "modal": {
+      "surface": "{color.semantic.panel}",
+      "sprite": "EX.ATLAS.Window",
+      "margin": "{size.modalMargin}",
+      "maxWidth": "{size.modalMaxWidth}",
+      "shadow": "{shadow.modal}",
+      "dimmer": "{opacity.dimmer}",
+      "scrollBody": true,
+      "actionsMinHeight": "{size.hitFrequent}"
+    },
+    "primaryButton": {
+      "sprite": "EX.ATLAS.PrimaryButton",
+      "surface": "{color.palette.jadeDeep}",
+      "label": "{color.semantic.text}",
+      "border": "{color.semantic.ornament}",
+      "labelRole": "action",
+      "minHeight": "{size.hitFrequent}",
+      "horizontalTextPadding": 60
+    },
+    "secondaryButton": {
+      "sprite": "EX.ATLAS.SecondaryButton",
+      "surface": "{color.semantic.panelRaised}",
+      "label": "{color.semantic.text}",
+      "border": "{color.semantic.ornament}",
+      "minHeight": "{size.hitMin}"
+    },
+    "destructiveButton": {
+      "sprite": "EX.ATLAS.SecondaryButton",
+      "surface": "{color.palette.dangerSurface}",
+      "label": "{color.semantic.text}",
+      "icon": "warning",
+      "minHeight": "{size.hitFrequent}",
+      "confirmationRequired": "existing caller policy"
+    },
+    "rewardButton": {
+      "sprite": "EX.ATLAS.PrimaryButton",
+      "surface": "{color.palette.goldBright}",
+      "label": "{color.palette.ink}",
+      "minHeight": "{size.hitFrequent}",
+      "note": "Semantic target for future neutral-face/tint-compatible button; existing colored texture requires sampled contrast QA."
+    },
+    "itemSlot": {
+      "sprite": "EX.ATLAS.Slot",
+      "padding": 12,
+      "rarityStripWidth": 6,
+      "selectionInset": "{size.selectedInset}",
+      "selectedSprite": "EX.ATLAS.SelectedSlot",
+      "selectedGlow": "{opacity.selectedHalo}",
+      "labelRole": "badge",
+      "logicalDecor": "DecorationLayer sibling; empty MergeSlot has no children"
+    },
+    "resourceBar": {
+      "sprite": "EX.ATLAS.ResourceBar",
+      "textOutsideFill": true,
+      "criticalValueRole": "body",
+      "minimumReadableHeight": "{size.barReadable}",
+      "cosmeticTrack": "{size.barTrack}"
+    },
+    "tab": {
+      "labelRole": "dock",
+      "selectedUnderline": 6,
+      "selectedIcon": "{color.semantic.accent}",
+      "inactiveIcon": "{color.semantic.textSecondary}",
+      "badgeCountTruthful": true
+    },
+    "slider": {
+      "track": "{size.sliderTrack}",
+      "thumb": "{size.sliderThumb}",
+      "hitHeight": "{size.sliderHitHeight}",
+      "valueLabel": "{type.body.size}",
+      "dragOwner": "existing Slider; no new gameplay controls"
+    },
+    "toggle": {
+      "graphicSize": "{size.toggleGraphic}",
+      "hitSize": "{size.toggleHit}",
+      "labelRole": "body",
+      "stateCues": [
+        "check",
+        "explicit label"
+      ],
+      "storedSetting": "only existing toggles"
+    },
+    "input": {
+      "fontRole": "body",
+      "minHeight": "{size.hitFrequent}",
+      "caret": "{color.semantic.accent}",
+      "focus": "{color.semantic.focus}",
+      "placeholder": "{color.semantic.textMuted}",
+      "validationInline": true,
+      "keyboardSafe": true
+    },
+    "toast": {
+      "fontRole": "body",
+      "surface": "{color.semantic.panelRaised}",
+      "maxLines": 3,
+      "enter": "{motion.toastEnter}",
+      "hold": "{motion.toastHold}",
+      "exit": "{motion.toastExit}",
+      "interactive": false
+    },
+    "tooltip": {
+      "maxWidth": "{size.tooltipMaxWidth}",
+      "padding": "{space.md}",
+      "fontRole": "support",
+      "longContentScroll": true,
+      "touchAccessible": true
+    },
+    "focus": {
+      "color": "{color.semantic.focus}",
+      "width": "{size.strokeFocus}",
+      "inset": "{size.focusInset}",
+      "animation": "none by default; optional one slow pulse only on tutorial target"
+    }
+  },
+  "states": {
+    "normal": {
+      "label": "{color.semantic.text}",
+      "surface": "{color.semantic.panelRaised}",
+      "border": "{color.semantic.ornament}",
+      "scale": 1
+    },
+    "pressed": {
+      "overlay": "{color.palette.scrim}",
+      "overlayAlpha": "{opacity.pressedOverlay}",
+      "scale": "{rule.pressedScale}",
+      "duration": "{motion.buttonDown}"
+    },
+    "focused": {
+      "ring": "{color.semantic.focus}",
+      "width": "{size.strokeFocus}",
+      "inset": "{size.focusInset}",
+      "scale": 1
+    },
+    "selected": {
+      "ring": "{color.semantic.selected}",
+      "width": "{size.strokeFocus}",
+      "badge": "Đã chọn",
+      "badgePlacement": "separate badge; never overwrite rarity strip",
+      "scale": 1
+    },
+    "disabled": {
+      "surface": "{color.semantic.well}",
+      "label": "{color.semantic.textDisabled}",
+      "iconAlpha": "{opacity.disabledIcon}",
+      "badge": "reason from existing gate",
+      "interactable": false,
+      "labelAlpha": 1
+    },
+    "locked": {
+      "badge": "Chưa mở",
+      "icon": "lock",
+      "reason": "actual realm/prerequisite condition",
+      "label": "{color.semantic.textSecondary}",
+      "interactable": false
+    },
+    "insufficient": {
+      "badge": "Thiếu tài nguyên",
+      "cost": "{color.semantic.error}",
+      "showOwnedAndRequired": true,
+      "interactable": false
+    },
+    "pending": {
+      "badge": "Đang xử lý…",
+      "keepButtonWidth": true,
+      "interactable": false,
+      "spinnerOrStaticHourglass": true
+    },
+    "max": {
+      "badge": "Tối đa",
+      "hideInvalidInfinityPrice": true,
+      "interactable": false
+    },
+    "cooldown": {
+      "badge": "remaining time from service",
+      "radialOverlay": "{color.palette.scrim}",
+      "alpha": "{opacity.skillCooldown}",
+      "keepManaAndLockVisible": true,
+      "interactable": false
+    },
+    "claimed": {
+      "badge": "Đã nhận",
+      "icon": "check",
+      "interactable": false
+    },
+    "error": {
+      "label": "{color.semantic.error}",
+      "message": "actual local result; no invented server response",
+      "retryViewOnly": true
+    }
+  },
+  "stateComposition": {
+    "precedence": [
+      "route-binding-error",
+      "pending-command-or-ad",
+      "locked",
+      "cooldown",
+      "insufficient",
+      "max-or-claimed",
+      "pressed",
+      "selected",
+      "normal"
+    ],
+    "orthogonal": [
+      "rarity",
+      "equipped",
+      "selected-item",
+      "focused",
+      "quantity"
+    ],
+    "notes": [
+      "Pending preserves explanatory lock/cost text but prevents repeat command.",
+      "MAX overrides price/cost rows, not actual progression data.",
+      "ColorBlock affects targetGraphic only; keep child text opaque and readable.",
+      "Do not tint the full colored atlas to force semantic color; neutral face/overlay or fresh art required after visual QA."
+    ]
+  },
+  "rarityAndProgression": {
+    "sword": {
+      "source": "Assets/Scripts/UI/StorageModalUI.cs:GetRarityColorForLevel; Assets/Scripts/Managers/MergeManager.cs",
+      "meaning": "existing level bands; no new loot rarity",
+      "bands": [
+        {
+          "levels": [
+            1
+          ],
+          "color": "{color.palette.neutral}",
+          "label": "Lv.1",
+          "mark": "one notch"
+        },
+        {
+          "levels": [
+            2
+          ],
+          "color": "{color.palette.green}",
+          "label": "Lv.2",
+          "mark": "two notches"
+        },
+        {
+          "levels": [
+            3,
+            4
+          ],
+          "color": "{color.palette.info}",
+          "label": "Lv.3–4",
+          "mark": "three notches plus explicit level"
+        },
+        {
+          "levels": [
+            5,
+            6,
+            7
+          ],
+          "color": "{color.palette.violet}",
+          "label": "Lv.5–7",
+          "mark": "four notches plus explicit level"
+        },
+        {
+          "levels": [
+            8
+          ],
+          "color": "{color.palette.orange}",
+          "label": "Lv.8",
+          "mark": "five notches plus explicit level"
+        }
+      ],
+      "equipped": {
+        "color": "{color.semantic.selected}",
+        "badge": "Trang bị",
+        "scope": "top badge and inset ring; retain level hue strip"
+      }
+    },
+    "pill": {
+      "source": "Assets/Scripts/Data/DeepProgressionSaveData.cs:PillQuality",
+      "mapping": {
+        "Waste": {
+          "label": "Phế đan",
+          "color": "{color.palette.waste}",
+          "mark": "broken outline"
+        },
+        "Basic": {
+          "label": "Sơ phẩm",
+          "color": "{color.palette.basic}",
+          "mark": "one small diamond"
+        },
+        "Refined": {
+          "label": "Trung phẩm",
+          "color": "{color.palette.info}",
+          "mark": "two small diamonds"
+        },
+        "Supreme": {
+          "label": "Cực phẩm",
+          "color": "{color.palette.goldBright}",
+          "mark": "three small diamonds"
+        }
+      },
+      "recipeShape": {
+        "Cultivation": "round pill medallion with rising spiral",
+        "Breakthrough": "pill medallion with split cloud/lightning accent"
+      },
+      "rule": "Quality affects ornament only; quantity and quality name rendered by Text."
+    },
+    "realms": [
+      {
+        "index": 0,
+        "name": "Luyện Khí",
+        "sealSegmentCount": 1,
+        "color": "{color.palette.neutral}",
+        "dataSource": "CultivationDisplay and current progression snapshot; no new realm/save field"
+      },
+      {
+        "index": 1,
+        "name": "Trúc Cơ",
+        "sealSegmentCount": 2,
+        "color": "{color.palette.green}",
+        "dataSource": "CultivationDisplay and current progression snapshot; no new realm/save field"
+      },
+      {
+        "index": 2,
+        "name": "Kim Đan",
+        "sealSegmentCount": 3,
+        "color": "{color.palette.gold}",
+        "dataSource": "CultivationDisplay and current progression snapshot; no new realm/save field"
+      },
+      {
+        "index": 3,
+        "name": "Nguyên Anh",
+        "sealSegmentCount": 4,
+        "color": "{color.palette.info}",
+        "dataSource": "CultivationDisplay and current progression snapshot; no new realm/save field"
+      },
+      {
+        "index": 4,
+        "name": "Hóa Thần",
+        "sealSegmentCount": 5,
+        "color": "{color.palette.jade}",
+        "dataSource": "CultivationDisplay and current progression snapshot; no new realm/save field"
+      },
+      {
+        "index": 5,
+        "name": "Luyện Hư",
+        "sealSegmentCount": 6,
+        "color": "{color.palette.violet}",
+        "dataSource": "CultivationDisplay and current progression snapshot; no new realm/save field"
+      },
+      {
+        "index": 6,
+        "name": "Hợp Thể",
+        "sealSegmentCount": 7,
+        "color": "{color.palette.cultivation}",
+        "dataSource": "CultivationDisplay and current progression snapshot; no new realm/save field"
+      },
+      {
+        "index": 7,
+        "name": "Đại Thừa",
+        "sealSegmentCount": 8,
+        "color": "{color.palette.goldBright}",
+        "dataSource": "CultivationDisplay and current progression snapshot; no new realm/save field"
+      },
+      {
+        "index": 8,
+        "name": "Độ Kiếp",
+        "sealSegmentCount": 9,
+        "color": "{color.palette.orange}",
+        "dataSource": "CultivationDisplay and current progression snapshot; no new realm/save field"
+      }
+    ],
+    "realmPhases": [
+      "Sơ Kỳ",
+      "Trung Kỳ",
+      "Hậu Kỳ",
+      "Đỉnh Phong"
+    ],
+    "artifact": {
+      "slots": [
+        "Robe",
+        "Crown",
+        "Boots",
+        "Amulet"
+      ],
+      "levelSource": "ArtifactService.GetLevel / MaxLevel",
+      "auraSource": "ArtifactService.AuraTier (0..9 aggregate); no per-item fake rarity"
+    },
+    "formation": {
+      "ids": [
+        "Thunder",
+        "Spirit",
+        "Frost",
+        "SwordRain",
+        "BloodDrain",
+        "GoldenBell"
+      ],
+      "colors": [
+        "{color.palette.info}",
+        "{color.palette.jade}",
+        "{color.palette.mana}",
+        "{color.palette.gold}",
+        "{color.palette.danger}",
+        "{color.palette.goldBright}"
+      ],
+      "selectedBadge": "Đang dùng",
+      "source": "FormationService; selected != unlocked != spirit active"
+    },
+    "daoAn": {
+      "tierCount": 6,
+      "visual": "six numbered tier seals;8 filters keep actual labels;38 catalog node IDs retain their own text",
+      "source": "Assets/Resources/Progression/DaoAnCatalog.asset"
+    }
+  },
+  "motionPolicy": {
+    "clock": "unscaled UI time; do not own Time.timeScale",
+    "easing": "{ease.out}",
+    "buttonScaleTarget": "visual surface child only; hit RectTransform remains fixed",
+    "sheet": "translate Y + opacity; no spring overshoot; retain Phase02 geometry/route instance",
+    "page": "fade and <=24 reference_px vertical travel",
+    "modal": "fade and scale .98→1; dimmer independent",
+    "countdown": "source truth from service/UTC; animated fill never delays ready/cancel",
+    "completion": "only after successful command/event; no grant on animation complete",
+    "interruptions": "cancel old animation, restore raycast/input state through router generation; no duplicate listeners",
+    "reducedMotion": {
+      "implementationStatus": "PROPOSED_RENDER_VARIANT_NO_NEW_SETTINGS_CONTROL",
+      "useExistingLowVfxIfAvailable": true,
+      "disable": [
+        "continuous rotation",
+        "ambient glints",
+        "scale punch",
+        "floating drift"
+      ],
+      "keep": [
+        "static focus/lock/cooldown labels",
+        "progress/time values",
+        "modal dimmer"
+      ],
+      "duration": "{motion.lowMotionFade}"
+    }
+  },
+  "vfxPolicy": {
+    "status": "DESIGN_BUDGET_NOT_PROFILED",
+    "lighting": "icons top-left key at approx45deg, subtle cool rim; world lights unchanged",
+    "uiLayers": [
+      "single surface",
+      "one frame",
+      "optional small focal glow"
+    ],
+    "noFullScreenBlur": true,
+    "ambientGlowCount": "{rule.maxAmbientGlows}",
+    "ambientGlowAlphaMax": 0.16,
+    "rewardBurst": {
+      "durationMs": 320,
+      "spritesMax": 8,
+      "scope": "inside result header; off in Low VFX"
+    },
+    "combat": "Reuse actual telegraphs/hit/sword effects; do not recolor threats gold or let UI animation cover them.",
+    "flash": "No UI strobe; Low VFX static success mark. Do not modify existing combat timing in Phase03.",
+    "profilingRequired": [
+      "overdraw",
+      "Canvas rebuild",
+      "draw calls",
+      "texture residency",
+      "low-end physical-device readability"
+    ]
+  },
+  "spriteRules": {
+    "pixelsPerUnit": 100,
+    "canvasReferencePixelsPerUnit": 100,
+    "pixelsPerUnitMultiplier": 1,
+    "logicalPixelWarning": "image pixels,Canvas units,and device dp are not interchangeable",
+    "mesh": "FullRect for sliced frames",
+    "filter": "Bilinear",
+    "wrap": "Clamp",
+    "mipmaps": false,
+    "sRGB": true,
+    "readWrite": false,
+    "alpha": "straight-alpha PNG with real alpha, no matte/checkerboard",
+    "padding": "{rule.atlasPadding}",
+    "extrude": "{rule.atlasExtrude}",
+    "nineSlice": "L,B,R,T import pixel values; preserve corners at intended display scale; never resize source without border recalculation",
+    "icons": "preserve aspect; do not slice; author512 with64px inset or256 with32px inset",
+    "background": "cover/full bleed only; critical art/text-safe crop checked separately",
+    "mobileCompression": "future per-platform trial: ASTC6x6 for soft art; ASTC4x4 or RGBA32 for thin UI lines after visual/device QA; no import setting changed",
+    "packedAtlas": "do not prepack all generated jobs into a sheet; import separate sources then pack via existing workflow"
+  },
+  "contrastPolicy": {
+    "calculation": "WCAG sRGB relative luminance ratio; token-level static opaque pairs, not screenshot certification",
+    "textMinRatio": 4.5,
+    "criticalControlOutlineMinRatio": 3,
+    "alphaText": "use opaque readable labels; dim icons rather than all CanvasGroup children",
+    "photographicText": "opaque panel or tested dark scrim behind text; raw art not certified",
+    "pairs": [
+      {
+        "id": "primary-text",
+        "foreground": "{color.semantic.text}",
+        "background": "{color.semantic.panel}",
+        "minimum": 4.5,
+        "calculatedRatio": 13.948,
+        "passed": true
+      },
+      {
+        "id": "secondary-text",
+        "foreground": "{color.semantic.textSecondary}",
+        "background": "{color.semantic.panelRaised}",
+        "minimum": 4.5,
+        "calculatedRatio": 7.72,
+        "passed": true
+      },
+      {
+        "id": "support-text",
+        "foreground": "{color.semantic.textMuted}",
+        "background": "{color.semantic.panelRaised}",
+        "minimum": 4.5,
+        "calculatedRatio": 5.46,
+        "passed": true
+      },
+      {
+        "id": "disabled-label",
+        "foreground": "{color.semantic.textDisabled}",
+        "background": "{color.semantic.panelRaised}",
+        "minimum": 4.5,
+        "calculatedRatio": 5.46,
+        "passed": true
+      },
+      {
+        "id": "jade-action",
+        "foreground": "{color.palette.ivory}",
+        "background": "{color.palette.jadeDeep}",
+        "minimum": 4.5,
+        "calculatedRatio": 7.793,
+        "passed": true
+      },
+      {
+        "id": "gold-action",
+        "foreground": "{color.palette.ink}",
+        "background": "{color.palette.goldBright}",
+        "minimum": 4.5,
+        "calculatedRatio": 12.647,
+        "passed": true
+      },
+      {
+        "id": "danger-action",
+        "foreground": "{color.palette.ivory}",
+        "background": "{color.palette.dangerSurface}",
+        "minimum": 4.5,
+        "calculatedRatio": 10.694,
+        "passed": true
+      },
+      {
+        "id": "focus-ring",
+        "foreground": "{color.semantic.focus}",
+        "background": "{color.semantic.panelRaised}",
+        "minimum": 3,
+        "calculatedRatio": 9.747,
+        "passed": true
+      },
+      {
+        "id": "error-copy",
+        "foreground": "{color.semantic.error}",
+        "background": "{color.semantic.panel}",
+        "minimum": 4.5,
+        "calculatedRatio": 8.198,
+        "passed": true
+      },
+      {
+        "id": "info-copy",
+        "foreground": "{color.semantic.info}",
+        "background": "{color.semantic.panel}",
+        "minimum": 4.5,
+        "calculatedRatio": 9.667,
+        "passed": true
+      }
+    ]
+  },
+  "validation": {
+    "status": "PASS_STATIC_CHECKS",
+    "runtimeStatus": "NOT_IMPLEMENTED_NOT_TESTED",
+    "physicalDeviceStatus": "NOT_TESTED",
+    "summary": {
+      "tokenCount": 177,
+      "resolvedReferenceCount": 148,
+      "contrastPairs": [
+        [
+          "primary-text",
+          13.948
+        ],
+        [
+          "secondary-text",
+          7.72
+        ],
+        [
+          "support-text",
+          5.46
+        ],
+        [
+          "disabled-label",
+          5.46
+        ],
+        [
+          "jade-action",
+          7.793
+        ],
+        [
+          "gold-action",
+          12.647
+        ],
+        [
+          "danger-action",
+          10.694
+        ],
+        [
+          "focus-ring",
+          9.747
+        ],
+        [
+          "error-copy",
+          8.198
+        ],
+        [
+          "info-copy",
+          9.667
+        ]
+      ],
+      "routeCount": 57,
+      "routeAssignments": 57,
+      "screenVariants": 13,
+      "assetEntries": 84,
+      "plannedImagegenJobs": 41,
+      "existingReuseEntries": 18,
+      "plannedUtilityEntries": 25,
+      "newImagesGenerated": 0,
+      "newImports": 0,
+      "existingAtlasSlicedSprites": 7,
+      "futurePathsConfirmedAbsent": 66
+    },
+    "limitations": [
+      "No image generated or Unity view rendered in Phase03",
+      "Contrast uses opaque flat tokens; textures and actual screens need later QA",
+      "No runtime token importer or component implementation"
+    ],
+    "preservation": {
+      "sourceFilesChecked": 2090,
+      "sourceChanged": [],
+      "sourceAdded": [],
+      "oldDocsChanged": [],
+      "gitHeadUnchanged": true,
+      "gitBranchUnchanged": true,
+      "gitIndexUnchanged": true,
+      "saveFilesChecked": 18,
+      "saveDataUnchanged": true
+    },
+    "editorObservation": {
+      "scene": "Assets/Scenes/SampleScene_MobileWork.unity",
+      "sceneDirty": false,
+      "rootCount": 12,
+      "playing": false,
+      "compiling": false,
+      "consoleErrors": 0,
+      "consoleWarnings": 2,
+      "note": "warnings pre-existed; no runtime view or device tests"
+    },
+    "evidenceDirectory": "Docs/UI_Redesign/Backups/Phase03-20261112-170523"
+  },
+  "createdUtc": "2026-11-12T10:20:41.604023+00:00",
+  "fontAudit": {
+    "scope": "sfnt cmap glyph presence for recorded Vietnamese/sample characters only; not rendered QA",
+    "evidencePath": "Docs/UI_Redesign/Backups/Phase03-20261112-170523/font-audit.json",
+    "fonts": [
+      {
+        "path": "Assets/Resources/SourceSansPro-Regular.ttf",
+        "sha256": "869f06e42d1a755a32f253a73f81235925cf27b686ba7702ce1f03fcc7738631",
+        "missingSample": "",
+        "unicodeCount": 660
+      },
+      {
+        "path": "Assets/Import/Asset/Font/KD-Hidayatullah-v2.ttf",
+        "sha256": "7a9701305b9db837f4673625f91863b7f88f7740c4c8163ca91fc33673c79c8c",
+        "missingSample": "×",
+        "unicodeCount": 305
+      },
+      {
+        "path": "Assets/Import/Asset/Font/Babylonica/Babylonica-Regular.ttf",
+        "sha256": "b92eb4b50f55893f13adc40b8ce458ecdce8bea695f089ca7450ae449e70d373",
+        "missingSample": "",
+        "unicodeCount": 586
+      },
+      {
+        "path": "Assets/Import/Asset/Font/Cormorant/Cormorant-Bold.otf",
+        "sha256": "a908b762cf0dabf510f86c5c2dad6febf8a94d83c4ee25cef791b3259e934dd2",
+        "missingSample": "",
+        "unicodeCount": 655
+      },
+      {
+        "path": "Assets/Import/Asset/Font/Source Sans Pro/SourceSansPro-Semibold.ttf",
+        "sha256": "4385dc332185ab9396fc2e2f36409f207cac0fbeeeb43aae4a4fc3ad46799ef5",
+        "missingSample": "",
+        "unicodeCount": 660
+      }
+    ],
+    "fullVietnameseCoverage": [
+      {
+        "role": "regular",
+        "path": "Assets/Resources/SourceSansPro-Regular.ttf",
+        "precomposedLettersChecked": 104,
+        "missingVietnameseCodepoints": [],
+        "combiningMarksMissing": [],
+        "renderedQa": "NOT_RUN"
+      },
+      {
+        "role": "semibold",
+        "path": "Assets/Import/Asset/Font/Source Sans Pro/SourceSansPro-Semibold.ttf",
+        "precomposedLettersChecked": 104,
+        "missingVietnameseCodepoints": [],
+        "combiningMarksMissing": [],
+        "renderedQa": "NOT_RUN"
+      },
+      {
+        "role": "display",
+        "path": "Assets/Import/Asset/Font/Cormorant/Cormorant-Bold.otf",
+        "precomposedLettersChecked": 104,
+        "missingVietnameseCodepoints": [],
+        "combiningMarksMissing": [],
+        "renderedQa": "NOT_RUN"
+      }
+    ],
+    "normalizationPolicy": "Use NFC for display projection if decomposed user input needs it; do not mutate saved names. Combining glyph presence is not shaping/render certification."
+  }
+}

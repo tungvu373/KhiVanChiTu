@@ -9,6 +9,8 @@ public sealed class JadeSecondaryMenu : MonoBehaviour
     public bool IsOpen { get; private set; }
     private void Awake()
     {
+        // A portrait prototype owns the replacement menu, including these existing shortcut objects.
+        if (GetComponentInChildren<PortraitHudController>(true) != null) return;
         toggle.onClick.AddListener(Toggle);
         if (dismissArea != null) dismissArea.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(Close);
         foreach (var action in actions) if (action != null) action.onClick.AddListener(Close);

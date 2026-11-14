@@ -64,6 +64,11 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
     public Button[] upgradeButtons = new Button[6];
 
     private int selectedIndex = 0; // Node đang được chọn trong Center Modal
+    // Geometry belongs to the view lifetime; currency events only refresh the displayed data.
+    private RectTransform mobileLayoutBox;
+    private string mobileMechanicsText;
+    private float mobileMechanicsWidth;
+    private int mobileMechanicsFont;
 
     // Bảng màu phong cách Tu Tiên huyền huyễn
     private static readonly Color ColorSelectedOutline = new Color(0.98f, 0.82f, 0.28f, 1f); // Vàng kim rực rỡ
@@ -311,6 +316,7 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
     private void RefreshCenterModal(PlayerStatsService stats, EconomyManager economy)
     {
         if (selectedIndex < 0 || selectedIndex >= PlayerStatsService.TalentNodes.Length) return;
+        var presentation=GetComponentInParent<MobileUIReconstruction>();
         var nodeDef = PlayerStatsService.TalentNodes[selectedIndex];
         bool isUnlocked = stats.IsNodeUnlocked(selectedIndex);
         int level = stats.GetLevel(selectedIndex);
@@ -320,7 +326,9 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
         // Tiêu đề
         if (txtModalTitle != null)
         {
-            txtModalTitle.text = $"{nodeDef.name.ToUpper()}\n<size=20><color=#ffd32a>{nodeDef.title}</color></size>";
+            txtModalTitle.text = presentation!=null
+                ? $"{nodeDef.name.ToUpper()}\n<color=#ffd32a>{nodeDef.title}</color>"
+                : $"{nodeDef.name.ToUpper()}\n<size=20><color=#ffd32a>{nodeDef.title}</color></size>";
         }
 
         // Nhánh & Tier
@@ -420,6 +428,25 @@ public sealed class BodyTemperingPanelUI : MonoBehaviour
         {
             btnModalUpgradeMax.gameObject.SetActive(isUnlocked);
             btnModalUpgradeMax.interactable = canAfford;
+        }
+        if(presentation!=null&&centerModalBox!=null)
+        {
+            if(mobileLayoutBox!=centerModalBox)
+            {
+                MobileUIResponsiveRepairs.ApplyTree(presentation,centerModalBox);
+                mobileLayoutBox=centerModalBox;
+                mobileMechanicsText=null;
+            }
+            // Node changes or new text metrics can change scroll height, even when the view is reused.
+            if(txtModalMechanics!=null)
+            {
+                float width=txtModalMechanics.rectTransform.rect.width;
+                if(mobileMechanicsText!=txtModalMechanics.text||mobileMechanicsWidth!=width||mobileMechanicsFont!=txtModalMechanics.fontSize)
+                {
+                    txtModalMechanics.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,Mathf.Max(300,txtModalMechanics.preferredHeight+12));
+                    mobileMechanicsText=txtModalMechanics.text;mobileMechanicsWidth=width;mobileMechanicsFont=txtModalMechanics.fontSize;
+                }
+            }
         }
     }
 }

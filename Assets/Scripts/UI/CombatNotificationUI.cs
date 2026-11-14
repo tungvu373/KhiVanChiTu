@@ -248,6 +248,18 @@ public class CombatNotificationUI : MonoBehaviour
 
     private IEnumerator AnimateBannerCoroutine(float duration)
     {
+        if(MobileUIAnimationDirector.For(this)!=null)
+        {
+            gameObject.SetActive(true);transform.SetAsLastSibling();
+            if(containerRect==null)containerRect=GetComponent<RectTransform>();
+            if(canvasGroup==null){canvasGroup=GetComponent<CanvasGroup>();if(canvasGroup==null)canvasGroup=gameObject.AddComponent<CanvasGroup>();}
+            canvasGroup.blocksRaycasts=false;canvasGroup.interactable=false;
+            yield return MobileUIModalMotion.Animate(this,canvasGroup,containerRect,true,manageInput:false,hideOnClose:false);
+            float hold=Mathf.Max(.5f,duration-.26f),elapsedHold=0;
+            while(elapsedHold<hold){elapsedHold+=Time.unscaledDeltaTime;yield return null;}
+            yield return MobileUIModalMotion.Animate(this,canvasGroup,containerRect,false,manageInput:false,hideOnClose:false);
+            gameObject.SetActive(false);activeAnimRoutine=null;yield break;
+        }
         gameObject.SetActive(true);
         transform.SetAsLastSibling();
 

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "command": "command",
+  "data": {
+    "command": "console status",
+    "parameters": {},
+    "result": {
+      "entries": [],
+      "cursor": 1563,
+      "session": "153e534abf0844dc87142c595857375c",
+      "returned": 0,
+      "dropped": false,
+      "reset": false,
+      "counts": {
+        "error": 3,
+        "warn": 1164,
+        "log": 396
+      },
+      "groundTruth": {
+        "sampledUtc": "2026-11-13T18:16:12.6260541Z",
+        "ageMs": 57,
+        "compilationFailed": false,
+        "compiling": false,
+        "consoleErrors": 0,
+        "consoleWarnings": 2,
+        "consoleLogs": 29,
+        "seeded": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Lap trinh game\\Save file\\KhiVanChiTu"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -254,6 +254,11 @@ public class MergeManager : MonoBehaviour
 
     public bool RemoveSword(MergeItem item)
     {
+        return RemoveSword(item, true);
+    }
+
+    internal bool RemoveSword(MergeItem item, bool sortInventory)
+    {
         if (item == null) return false;
         bool isEquipped = IsSwordEquipped(item);
         item.transform.SetParent(null);
@@ -262,7 +267,7 @@ public class MergeManager : MonoBehaviour
         {
             OnEquipChanged();
         }
-        else
+        else if (sortInventory)
         {
             SortInventory();
         }

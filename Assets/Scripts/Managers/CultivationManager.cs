@@ -147,7 +147,7 @@ public class CultivationManager : MonoBehaviour
 
         if (characterInfoText != null)
         {
-            string nameDisplay = (string.IsNullOrEmpty(characterName) || characterName == "1") ? "Đạo Hữu" : characterName;
+            string nameDisplay = string.IsNullOrWhiteSpace(characterName) ? "Đạo Hữu" : characterName;
             string tuViCur = EconomyManager.FormatNumber(currentTuVi);
             string tuViReq = (currentStageData != null && currentStageData.requiredTuVi > 0) ? EconomyManager.FormatNumber(currentStageData.requiredTuVi) : "Max";
             characterInfoText.supportRichText = true;

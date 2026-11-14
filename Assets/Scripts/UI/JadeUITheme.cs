@@ -9,6 +9,7 @@ public sealed class JadeUITheme : MonoBehaviour
     public Sprite panel, window, slot, selectedSlot, primaryButton, secondaryButton, resourceBar, divider;
     public Sprite[] navigationIcons;
     public Sprite spiritStone, spiritFlame, cultivationHalo;
+    public MobileUIReconstruction reconstruction;
     public static readonly Color Ivory = new Color32(241, 232, 207, 255);
     public static readonly Color Gold = new Color32(213, 181, 116, 255);
     public static readonly Color Jade = new Color32(110, 221, 182, 255);
@@ -69,7 +70,9 @@ public sealed class JadeUITheme : MonoBehaviour
             if (!styled.Add(rt)) continue;
             StyleElement(rt);
             JadeUIAdaptiveSkin.Apply(rt,this);
+            if (reconstruction != null) reconstruction.StyleElement(rt);
         }
+        if (reconstruction != null) MobileUIResponsiveRepairs.ApplyTree(reconstruction,root);
     }
     public void StyleElement(RectTransform rt)
     {
@@ -129,5 +132,6 @@ public sealed class JadeUITheme : MonoBehaviour
         image.type = sprite.border.sqrMagnitude > 0 ? UnityEngine.UI.Image.Type.Sliced : UnityEngine.UI.Image.Type.Simple;
         image.pixelsPerUnitMultiplier = 1f;
         image.color = Color.white;
+        MobileUISlicedSurface.Configure(image);
     }
 }

@@ -41,8 +41,23 @@ public class GameplayChoicesService : MonoBehaviour
     private readonly Vector2 collapsedStylePos = new Vector2(-20f, 85f);
     private Coroutine styleSlideCoroutine;
     private JadeUITheme presentationTheme;
-    private Vector2 DefaultStylePosition => presentationTheme != null ? new Vector2(-24f, 450f) : defaultStylePos;
-    private Vector2 CollapsedStylePosition => presentationTheme != null ? new Vector2(-24f, 24f) : collapsedStylePos;
+    private RectTransform portraitStyleHost;
+    private Vector2 DefaultStylePosition => portraitStyleHost != null ? Vector2.zero : presentationTheme != null ? new Vector2(-24f, 450f) : defaultStylePos;
+    private Vector2 CollapsedStylePosition => portraitStyleHost != null ? Vector2.zero : presentationTheme != null ? new Vector2(-24f, 24f) : collapsedStylePos;
+
+    // Optional presentation bridge. The existing button, listener, gate and status remain authoritative.
+    public void BindPortraitHudStyle(RectTransform host)
+    {
+        if (host == null || styleButton == null || portraitStyleHost == host) return;
+        portraitStyleHost = host;
+        if (styleSlideCoroutine != null) { StopCoroutine(styleSlideCoroutine); styleSlideCoroutine = null; }
+        var rt = (RectTransform)styleButton.transform;
+        rt.SetParent(host, false);
+        rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+        rt.offsetMin = rt.offsetMax = Vector2.zero;
+        foreach (var label in styleButton.GetComponentsInChildren<UnityEngine.UI.Text>(true))
+        { label.fontSize = 36; label.resizeTextForBestFit = false; label.raycastTarget = false; }
+    }
 
     private void Awake()
     {
@@ -108,6 +123,7 @@ public class GameplayChoicesService : MonoBehaviour
 
     internal bool IsAnyModalBlocking()
     {
+        if (PortraitHudController.IsOverlayBlocking) return true;
         if (DaoAnModalUI.Instance != null && DaoAnModalUI.Instance.IsModalOpen) return true;
         if (SecretRealmModalUI.Instance != null && SecretRealmModalUI.Instance.IsModalOpen) return true;
         var canvas = GameObject.Find("Canvas");

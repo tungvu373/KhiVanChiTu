@@ -1,53 +1,32 @@
-# TỔNG KẾT ĐỊNH HƯỚNG VÀ YÊU CẦU CỐT LÕI - GAME SPRINT 2026
+# ĐẶC TẢ ĐỊNH HƯỚNG & TIÊU CHUẨN PHÁT HÀNH THƯƠNG MẠI (COMMERCIAL RELEASE SPECIFICATION)
+## DỰ ÁN GAME: KHÍ VẬN CHI TỬ (THE CHOSEN ONE)
 
-## 1. Trọng tâm cuộc thi
-*   **Chủ đề:** Phát triển **Idle Game**.
-*   **Triết lý phát triển:** "Small but complete" (Một sản phẩm nhỏ, nhưng thực sự hoàn chỉnh). 
-*   **Mục tiêu:** Đánh giá khả năng quản trị Scope dự án của sinh viên (từ Prototype đến Release trong 21 ngày), loại bỏ tư duy thiết kế phi thực tế (Open World, MMORPG).
-*   **Tích hợp công nghệ:** Bắt buộc ứng dụng AI (Code, Art, Audio) vào quy trình sản xuất (Development Pipeline) để tối ưu thời gian.
+---
 
-## 2. Tiêu chí cốt lõi đánh giá sản phẩm dự thi
-Để đáp ứng đúng tiêu chí của Game Sprint 2026, các dự án cần tuân thủ ma trận yêu cầu sau:
+## 1. Trọng Tâm & Mục Tiêu Sản Phẩm
+* **Thể loại:** Idle / Incremental RPG x Sword Merge.
+* **Nền tảng mục tiêu:** Mobile (Android / iOS) - Màn hình dọc (Portrait 9:16), tối ưu thao tác 1 tay.
+* **Mục tiêu sản phẩm:** Chuyển đổi toàn diện từ bản Prototype sang sản phẩm **Thương Mại Hóa Hoàn Chỉnh (Commercial Ready)** đủ điều kiện phát hành trên Google Play Store & Apple App Store.
+* **Tuyên ngôn sản phẩm (Elevator Pitch):** "Khí Vận Chi Tử" kết hợp trải nghiệm ngự kiếm tu tiên kinh điển với cơ chế hợp kiếm (Merge) hiện đại. Người chơi song tu Khí - Thể, dung hợp kiếm trận rợp trời, tự nấu đan vượt qua sinh tử lôi kiếp để phi thăng đắc đạo.
 
-| Khía cạnh | Yêu cầu bắt buộc (Must-have) | Hạng mục cần loại bỏ (Cut / Out of scope) |
+---
+
+## 2. Tiêu Chí & Yêu Cầu Cốt Lõi Cho Bản Thương Mại
+
+| Khía cạnh | Yêu cầu bắt buộc (Must-Have for Release) | Hạng mục cần loại bỏ (Out of scope) |
 | :--- | :--- | :--- |
-| **Core Gameplay** | • Sở hữu 1 **Core Loop** khép kín: Progress ➔ Auto ➔ Earn ➔ Upgrade.<br>• Tuân thủ luật **Anti-clone**: Không trùng lặp Core Gameplay với các nhóm khác (cùng Theme nhưng phải khác Mechanic). | • Thiết kế quá nhiều màn chơi.<br>• Nhồi nhét hàng chục hệ thống rườm rà, vật phẩm (Items) phức tạp. |
-| **Hệ thống** | • Thiết kế từ 3 đến 5 hệ thống **Upgrades** (Nâng cấp) cốt lõi. | • Các tính năng phụ trợ không đóng góp vào Core Loop. |
-| **UI/UX & Level** | • Toàn bộ thao tác và UI hiển thị gói gọn trên **1 màn hình** (Single-screen). | • Di chuyển bản đồ, load scene phức tạp. |
-| **Game Feel** | • Cảm giác tăng trưởng lũy tiến tốt (Progression).<br>• **Feedback** âm thanh/hình ảnh phản hồi mượt mà. | • Đồ họa nặng nề không được tối ưu. |
-| **Technical & Backend** | • Sản phẩm có thể chơi được hoàn chỉnh (chấp nhận tồn tại Bug nhỏ).<br>• Chạy trên bất kỳ **Engine** nào (Unity, Godot, Web HTML5). | • Đăng nhập (Login), Cloud Save.<br>• Tích hợp Quảng cáo (Ads), IAP. |
+| **Giao diện (UI/UX)** | • Màn hình dọc Portrait 9:16.<br>• **Hệ thống Collapsible Tab Drawer:** Đấu trường chiếm 85% diện tích khi đóng tab; 5 tab trượt lên mượt mà dạng Bottom Sheet mở ra đóng vào 1-chạm. | • Giao diện chia đôi màn hình PC cũ.<br>• Chuyển Scene liên tục gây đứt gãy trải nghiệm. |
+| **Tiến trình Cảnh Giới (Khí Tu)** | • 9 Đại Cảnh Giới (từ Luyện Khí tới Độ Kiếp / Chân Tiên).<br>• Mỗi cảnh giới gồm đúng 10 Level trong logic code.<br>• Hiển thị Sơ - Trung - Hậu - Đỉnh Phong.<br>• **Bình cảnh Level 10:** Bắt buộc cần Đan Dược Đột Phá; thất bại bị phạt rớt 30% Tu vi Level 10. | • Cảnh giới chỉ tăng chỉ số suông mà không có rủi ro hay đòi hỏi vật phẩm. |
+| **Hệ Thống Luyện Thể (Thể Tu)** | • **Thay thế nâng cấp kỹ năng cũ.**<br>• Cây chỉ số Thể Phách (Max HP, Cương Khí, Hồi Máu, Kình Lực, Hút Máu, Kháng Choáng).<br>• Nâng cấp bằng Linh Thạch để triệt tiêu lạm phát tài nguyên.<br>• Các mốc Đại Huyệt mở khóa Nội Tại Bá Thể. | • Hệ thống kỹ năng active riêng lẻ gây rối rắm thừa thãi. |
+| **Ngự Kiếm & Merge** | • **Mở Ô Kiếm Xuất Chiến theo Cảnh Giới** (từ 1 kiếm đến 10 kiếm).<br>• Merge Kiếm Lô dạng Drawer tiện lợi.<br>• Gói tiện ích Gộp Nhanh (Quick Merge): Xem Ads hoặc Thẻ Tháng VIP. | • Mở sẵn toàn bộ ô kiếm từ đầu game. |
+| **Tam Đại Chế Tác** | • **Luyện Đan:** Tự nấu đan dược, có tỷ lệ ra Phế đan, Sơ phẩm, Trung phẩm và nổ hũ Cực phẩm (3-5% nổ ngay từ đầu).<br>• **Pháp Khí:** 4 món Mũ, Áo, Giày, Ngọc Bội cường hóa bằng quặng nhặt từ Boss.<br>• **Pháp Trận:** Thi triển kỹ năng diện rộng AoE quét quái. | • Tiệm mua đứt đồ tĩnh cũ. |
+| **Kỳ Ngộ Ngẫu Nhiên** | • Cổng Bí Cảnh xuất hiện ngẫu nhiên với 3 mini-game idle (Sinh tồn 30s, Phá cấm chế thạch, Đan thần kỳ duyên). | • Các map dungeon chạy bộ phức tạp. |
+| **Mô hình Doanh Thu** | • **Hybrid Monetization bền vững:**<br>  - Rewarded Ads: Nhận x2 quà offline, mở 15 phút Auto-Merge, bảo toàn tu vi khi lôi kiếp thất bại.<br>  - IAP Nhẹ: Gói Tân Thủ $0.99, No-Ads $3.99, Thẻ Tháng $4.99, Battle Pass $9.99. | • Pay-to-Win phá vỡ game balance.<br>• Quảng cáo chen ngang (Interstitial Ads) gây ức chế người chơi. |
+| **Technical & Backend** | • Hệ thống Save/Load JSON an toàn lưu trữ cục bộ, sẵn sàng đồng bộ Google Play Games / Apple Game Center.<br>• Tối ưu hiệu năng 60 FPS trên thiết bị di động tầm trung. | • Server thời gian thực đắt đỏ, phức tạp. |
 
-## 3. Cấu trúc chuẩn cho file Specification Requirement.md (GDD)
-Các nhóm cần trình bày đồ án hợp lệ theo bộ khung GDD tiêu chuẩn sau:
+---
 
-### 1. Project Overview
-- **Game Title:** [Tên trò chơi]
-- **Genre:** Idle Game / Incremental Game
-- **Engine/Platform:** [Unity / Godot / Web...]
-- **Elevator Pitch:** [Mô tả ngắn gọn 2-3 câu về điểm hấp dẫn nhất của game]
-- **Unique Selling Proposition (USP):** [Điểm khác biệt tuân thủ luật Anti-clone]
-
-### 2. Core Gameplay & Mechanics
-- **Core Loop:** Mô tả chi tiết luồng vận hành khép kín:
-  - *Auto (Tự động hóa):* Game tự vận hành như thế nào?
-  - *Earn (Tạo tài nguyên):* Đơn vị tiền tệ chính và cách sinh ra?
-  - *Upgrade (Nâng cấp):* Người chơi tiêu hao tài nguyên vào đâu?
-  - *Progress (Tiến trình):* Mục tiêu/Cột mốc tiếp theo để giữ chân người chơi?
-- **Game Layout:** Sơ đồ bố cục UI trên 1 màn hình (Single-screen wireframe).
-
-### 3. Economy & Upgrade Systems
-- **Tài nguyên (Resources):** [Danh sách tiền tệ/điểm số]
-- **Hệ thống Upgrades (3-5 hệ thống):**
-  - Upgrade 1: [Tên] - [Chức năng] - [Công thức giá / Base cost]
-  - Upgrade 2: [Tên] - [Chức năng] - [Công thức giá / Base cost]
-  - ...
-
-### 4. Game Feel & Feedback
-- **Visual Feedback:** [Hiệu ứng hạt (Particles), Animation, Pop-up text khi tương tác]
-- **Audio Feedback:** [Nhạc nền (BGM), Hiệu ứng âm thanh (SFX) khi click, upgrade]
-
-### 5. AI Implementation Log
-*Liệt kê danh sách các công cụ AI đã sử dụng và cách ứng dụng vào quy trình:*
-- **AI Art (Midjourney/Stable Diffusion/...):** [Tạo asset nào? Kèm Prompt mẫu]
-- **AI Code (ChatGPT/Claude/Copilot/...):** [Tối ưu logic/script nào? Kèm Prompt mẫu]
-- **AI Audio (Suno/...):** [Tạo nhạc/âm thanh nào? Kèm Prompt mẫu]
+## 3. Khung Cấu Trúc Tài Liệu Chuẩn Của Dự Án
+1. **Commercial GDD (`.docs/GDD.md`):** Đặc tả chi tiết toàn bộ cơ chế gameplay, chỉ số, vòng lặp kinh tế và trải nghiệm người dùng.
+2. **Technical TDD (`.docs/TDD.md`):** Đặc tả kiến trúc kỹ thuật Unity C#, cấu trúc dữ liệu `ScriptableObject`, danh sách Manager Classes và Event flow.
+3. **Báo Cáo Ý Tưởng Đầu Tư (`.docs/BAO_CAO_Y_TUONG_KHI_VAN_CHI_TU.md & .doc`):** Tài liệu báo cáo hoàn chỉnh dùng để thuyết trình và bảo vệ đồ án / dự án thương mại.

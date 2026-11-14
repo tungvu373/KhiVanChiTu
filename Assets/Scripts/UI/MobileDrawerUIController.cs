@@ -29,6 +29,9 @@ public class MobileDrawerUIController : MonoBehaviour
     private int activeIndex = -1;
     private bool isTransitioning = false;
     private bool closeAfterTransition;
+    private int motionPending=-2,motionTarget=-1;
+    private Coroutine drawerMotion;
+    private bool scopedMotion;
     private Coroutine dockSlideCoroutine;
     private Vector2 defaultDockPos = Vector2.zero;
     private Vector2 defaultHpPos = Vector2.zero;
@@ -45,6 +48,7 @@ public class MobileDrawerUIController : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        scopedMotion=MobileUIAnimationDirector.For(this)!=null;
         Canvas.ForceUpdateCanvases();
         ResolveReferences();
         WireButtons();
@@ -322,27 +326,33 @@ public class MobileDrawerUIController : MonoBehaviour
 
     public void OpenDrawer(int index)
     {
-        if (isTransitioning || drawerPanels == null || index < 0 || index >= drawerPanels.Length || drawerPanels[index] == null) return;
+        if ((!scopedMotion&&isTransitioning) || drawerPanels == null || index < 0 || index >= drawerPanels.Length || drawerPanels[index] == null) return;
         if (!IsDrawerUnlocked(index, out string reason))
         {
             GameLogger.Instance?.Log(reason, Color.yellow);
             return;
         }
+        if(scopedMotion&&isTransitioning){motionPending=index;return;}
         if (IsDockCollapsed)
         {
             ToggleDockCollapse();
         }
         if (activeIndex == index) return;
-        StartCoroutine(TransitionTo(index));
+        drawerMotion=StartCoroutine(TransitionTo(index));
     }
 
     public void ToggleDrawer(int index)
     {
-        if (isTransitioning || drawerPanels == null || index < 0 || index >= drawerPanels.Length || drawerPanels[index] == null) return;
+        if ((!scopedMotion&&isTransitioning) || drawerPanels == null || index < 0 || index >= drawerPanels.Length || drawerPanels[index] == null) return;
         if (!IsDrawerUnlocked(index, out string reason))
         {
             GameLogger.Instance?.Log(reason, Color.yellow);
             return;
+        }
+        if(scopedMotion&&isTransitioning)
+        {
+            int desired=motionPending!=-2?motionPending:motionTarget;
+            motionPending=desired==index?-1:index;return;
         }
 
         if (IsDockCollapsed)
@@ -356,20 +366,22 @@ public class MobileDrawerUIController : MonoBehaviour
         }
         else
         {
-            StartCoroutine(TransitionTo(index));
+            drawerMotion=StartCoroutine(TransitionTo(index));
         }
     }
 
     public void CloseActiveDrawer()
     {
+        if(scopedMotion&&isTransitioning){motionPending=-1;return;}
         if (isTransitioning) closeAfterTransition = true;
-        else if (activeIndex != -1) StartCoroutine(SlideOut(activeIndex));
+        else if (activeIndex != -1) drawerMotion=StartCoroutine(SlideOut(activeIndex));
     }
 
     private IEnumerator TransitionTo(int targetIndex)
     {
         closeAfterTransition = false;
         isTransitioning = true;
+        motionTarget=targetIndex;
         if (backdropOverlay != null) backdropOverlay.SetActive(true);
         if (dockToggleButton != null) dockToggleButton.gameObject.SetActive(false);
 
@@ -387,12 +399,13 @@ public class MobileDrawerUIController : MonoBehaviour
         UpdateDockVisuals();
         OnDrawerStateChanged?.Invoke(activeIndex);
         isTransitioning = false;
-        if (closeAfterTransition) CloseActiveDrawer();
+        if(scopedMotion)DrainMotionIntent();else if (closeAfterTransition) CloseActiveDrawer();
     }
 
     private IEnumerator SlideOut(int targetIndex)
     {
         isTransitioning = true;
+        motionTarget=-1;
         yield return StartCoroutine(SlidePanel(drawerPanels[targetIndex], 0f, ClosedY(drawerPanels[targetIndex]), DURATION));
         drawerPanels[targetIndex].gameObject.SetActive(false);
 
@@ -403,16 +416,27 @@ public class MobileDrawerUIController : MonoBehaviour
         OnDrawerStateChanged?.Invoke(activeIndex);
         isTransitioning = false;
         closeAfterTransition = false;
+        if(scopedMotion)DrainMotionIntent();
     }
 
     private IEnumerator SlidePanel(RectTransform panel, float startY, float endY, float time)
     {
+        var motion=MobileUIAnimationDirector.For(this);
+        if(motion!=null&&motion.reducedMotion)
+        {
+            panel.anchoredPosition=new Vector2(panel.anchoredPosition.x,endY);yield break;
+        }
+        var preset=motion!=null?(endY==0?motion.sheetOpen:motion.sheetClose):null;
+        if(preset!=null)time=motion.Duration(preset)*(time/DURATION);
         float elapsed = 0f;
         while (elapsed < time)
         {
             elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, elapsed / time);
-            panel.anchoredPosition = new Vector2(panel.anchoredPosition.x, Mathf.Lerp(startY, endY, t));
+            using(MobileUIAnimationDirector.MotionMarker.Auto())
+            {
+                float t = preset!=null?preset.Evaluate(elapsed/time):Mathf.SmoothStep(0f, 1f, elapsed / time);
+                panel.anchoredPosition = new Vector2(panel.anchoredPosition.x, Mathf.Lerp(startY, endY, t));
+            }
             yield return null;
         }
         panel.anchoredPosition = new Vector2(panel.anchoredPosition.x, endY);
@@ -420,6 +444,8 @@ public class MobileDrawerUIController : MonoBehaviour
 
     private void CloseAllInstant()
     {
+        if(scopedMotion&&drawerMotion!=null){StopCoroutine(drawerMotion);drawerMotion=null;}
+        if(scopedMotion){motionPending=-2;motionTarget=-1;isTransitioning=false;closeAfterTransition=false;}
         if (backdropOverlay != null) backdropOverlay.SetActive(false);
         if (drawerPanels == null) return;
         for (int i = 0; i < drawerPanels.Length; i++)
@@ -434,4 +460,10 @@ public class MobileDrawerUIController : MonoBehaviour
         UpdateDockVisuals();
         OnDrawerStateChanged?.Invoke(activeIndex);
     }
+    private void DrainMotionIntent()
+    {
+        int desired=motionPending;motionPending=-2;
+        if(desired==-1)CloseActiveDrawer();else if(desired>=0&&desired!=activeIndex)OpenDrawer(desired);
+    }
+    private void OnDisable(){if(scopedMotion)CloseAllInstant();}
 }

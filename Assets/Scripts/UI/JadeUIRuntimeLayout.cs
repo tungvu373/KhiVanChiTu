@@ -9,7 +9,8 @@ public sealed class JadeUIRuntimeLayout : MonoBehaviour
     private Vector2 lastQuestSize;
     private void Start()
     {
-        var shortcut=transform.Find("Drawer_0/MergePanel/BtnDrawerDismantle") as RectTransform;
+        var presentation=GetComponentInParent<MobileUIReconstruction>();
+        var shortcut=presentation!=null&&presentation.dismantleShortcut!=null?presentation.dismantleShortcut:transform.Find("Drawer_0/MergePanel/BtnDrawerDismantle") as RectTransform;
         if(shortcut!=null)
         {
             shortcut.anchorMin=shortcut.anchorMax=Vector2.one;shortcut.pivot=Vector2.one;shortcut.sizeDelta=new Vector2(430,88);shortcut.anchoredPosition=new Vector2(-8,0);
