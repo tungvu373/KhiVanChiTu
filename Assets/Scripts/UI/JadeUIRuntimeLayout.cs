@@ -39,22 +39,22 @@ public sealed class JadeUIRuntimeLayout : MonoBehaviour
         if(title==null)return;
         // Two cheap property comparisons detect the legacy tutorial's one-off rebuild/collapse.
         var rt=(RectTransform)quest;
-        if(title.fontSize==28&&rt.sizeDelta==lastQuestSize)return;
+        if(title.fontSize==30&&rt.sizeDelta==lastQuestSize)return;
         bool expanded=title.gameObject.activeSelf;
-        rt.sizeDelta=new Vector2(expanded?420:128,148);lastQuestSize=rt.sizeDelta;
-        title.fontSize=28;title.resizeTextForBestFit=true;title.resizeTextMinSize=24;title.resizeTextMaxSize=28;
-        SetRect(title.rectTransform,new Vector2(0,.45f),Vector2.one,new Vector2(16,-6),new Vector2(-120,-6));
+        rt.sizeDelta=new Vector2(expanded?852:132,132);lastQuestSize=rt.sizeDelta;
+        title.fontSize=30;title.resizeTextForBestFit=true;title.resizeTextMinSize=28;title.resizeTextMaxSize=30;
+        SetRect(title.rectTransform,new Vector2(0,.4f),Vector2.one,new Vector2(18,0),new Vector2(-286,-8));
         var reward=quest.Find("QuestDescScrollView") as RectTransform;
-        if(reward!=null)SetRect(reward,Vector2.zero,new Vector2(1,.45f),new Vector2(16,8),new Vector2(-120,0));
+        if(reward!=null)SetRect(reward,Vector2.zero,new Vector2(1,.4f),new Vector2(18,8),new Vector2(-286,0));
         var rewardText=quest.Find("QuestDescScrollView/TxtQuestReward")?.GetComponent<UnityEngine.UI.Text>();
-        if(rewardText!=null)rewardText.fontSize=24;
+        if(rewardText!=null)rewardText.fontSize=28;
         var claim=quest.Find("BtnClaimQuick") as RectTransform;
-        if(claim!=null)ButtonRect(claim,-68,60);
+        if(claim!=null)ButtonRect(claim,-142,132);
         var toggle=quest.Find("BtnToggle") as RectTransform;
         if(toggle!=null)
         {
-            ButtonRect(toggle,-4,56);
-            var text=toggle.GetComponent<UnityEngine.UI.Text>();if(text!=null){text.fontSize=24;text.raycastTarget=true;}
+            ButtonRect(toggle,-4,132);
+            var text=toggle.GetComponent<UnityEngine.UI.Text>();if(text!=null){text.fontSize=28;text.raycastTarget=true;}
         }
         // Equivalent full-size routes live in the secondary menu.
         quest.Find("BtnAchievement")?.gameObject.SetActive(false);

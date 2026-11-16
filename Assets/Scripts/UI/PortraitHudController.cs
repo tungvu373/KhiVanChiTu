@@ -11,7 +11,7 @@ public sealed class PortraitHudController : MonoBehaviour
     public static bool IsOverlayBlocking => Instance != null && Instance.isActiveAndEnabled && Instance.IsSecondaryOpen;
 
     public RectTransform upper, lower, profile, wallet, realm, stage, quest, skills, quick, dock, vitals;
-    public RectTransform hp, mana, styleHost, notification, focusButton, pauseButton;
+    public RectTransform hp, mana, styleHost, notification, focusButton;
     public UnityEngine.UI.Text sourceProfile, playerName, playerRealm, cultivationValue, menuTitle, walletDetails, buffSummary, manaValue;
     public UnityEngine.UI.Button menuButton, closeMenuButton, menuBackdrop, milestoneButton, profileButton, buffsButton, logButton, walletButton, achievementButton;
     public UnityEngine.UI.Button[] quickButtons;
@@ -70,11 +70,6 @@ public sealed class PortraitHudController : MonoBehaviour
         questTitle=quest.Find("TxtQuestTitle").GetComponent<UnityEngine.UI.Text>();
         realmTitle=realm.Find("StageText").GetComponent<UnityEngine.UI.Text>();
         bossTimerLabel=stage!=null?stage.Find("BossTimer")?.GetComponent<UnityEngine.UI.Text>():null;
-        if (pauseButton == null && upper != null)
-        {
-            var pb = upper.Find("PauseButton");
-            if (pb != null) pauseButton = pb as RectTransform;
-        }
         CloseSecondary();
     }
 
@@ -187,6 +182,8 @@ public sealed class PortraitHudController : MonoBehaviour
         if (bossTimerLabel!=null&&bossTimerLabel.gameObject.activeSelf!=lastBossTimerActive) LayoutStage();
         if ((sourceProfile != null && sourceProfile.text != lastProfile) ||
             (cultivation != null && cultivation.CharacterName != lastCharacterName)) RefreshProfile();
+        // The legacy drawer animates this toggle in dock coordinates. The prototype owns its top anchor.
+        Place(focusButton, 1, 1, 1, 1, -36, -348, 132, 144);
         if (drawer != null && drawer.dockToggleLabelText != null)
         {
             string label = IsFocusMode ? "Hiện\nHUD" : "Thu\ngọn";
@@ -194,7 +191,7 @@ public sealed class PortraitHudController : MonoBehaviour
         }
         var choices = GameplayChoicesService.Instance;
         if (choices != null) choices.BindPortraitHudStyle(styleHost);
-        var skillView=skills!=null?skills.GetComponent<MobileSkillHUD>():null;
+        var skillView=skills.GetComponent<MobileSkillHUD>();
         if(skillView!=null&&skillView.imgUltiGlow!=null&&skillView.imgUltiGlow.gameObject.activeSelf)
             skillView.imgUltiGlow.color=new Color(jade.r,jade.g,jade.b,.16f);
         var sm=SkillManager.Instance;
@@ -234,11 +231,11 @@ public sealed class PortraitHudController : MonoBehaviour
         if (string.IsNullOrWhiteSpace(name)) name = "Đạo Hữu";
         playerName.text = name;
         playerRealm.text = cm.GetDisplayRealmName();
-        playerRealm.enabled = false;
+        // Realm is displayed once in the segmented progression area, leaving two full name lines here.
+        playerRealm.enabled=false;
         var data = cm.GetCurrentStageData();
-        // Hiển thị Lực Chiến / Tu Vi màu vàng gold chuẩn Ảnh 2
-        cultivationValue.text = "⚔ Lực Chiến: " + Compact(cm.currentTuVi * 12.5f + 1000f);
-        cultivationValue.color = gold;
+        cultivationValue.text = "Tu vi " + EconomyManager.FormatNumber(cm.currentTuVi) + " / " +
+            (data != null && data.requiredTuVi > 0 ? EconomyManager.FormatNumber(data.requiredTuVi) : "Max");
     }
 
     void RefreshWallet()
@@ -264,59 +261,23 @@ public sealed class PortraitHudController : MonoBehaviour
         lastSize = bounds.rect.size;
         bool shortView = lastSize.y < 1500;
         bool focus = IsFocusMode;
-
-        // ─── GÓC TRÊN-TRÁI: Profile + HP/MP ───────────────────────────────────
-        // Profile block: avatar, tên, lực chiến vàng
-        Place(profile, 0, 1, 0, 1, 20, -16, 450, 156);
-        // Vitals (HP/MP) nằm gọn trong profile, bên phải avatar
-        Place(vitals, 0, 1, 0, 1, 148, -82, 290, 62);
-        LayoutVitals();
-
-        // ─── CỘT NÚT TIỆN ÍCH GÓC PHẢI (Thẳng hàng dọc, cách nhau rõ ràng) ────
-        // 1. Nút Tạm Dừng ở góc trên cùng bên phải
-        if (pauseButton != null) Place(pauseButton, 1, 1, 1, 1, -16, -16, 72, 72);
-        // 2. Nút Đạo Lộ (Menu) ngay bên dưới Tạm Dừng
-        Place(menuButton != null ? menuButton.transform as RectTransform : null, 1, 1, 1, 1, -16, -96, 72, 72);
-        // 3. Nút Thu Gọn / Hiện HUD ngay bên dưới Đạo Lộ
-        if (focusButton != null) Place(focusButton, 1, 1, 1, 1, -16, -176, 72, 72);
-
-        // ─── TÀI NGUYÊN (Linh Thạch & Cơ Duyên 2 tầng rõ ràng) ─────────────────
-        // Đặt ở góc trên, bên trái cột nút tiện ích (X=-96), chiều cao 136px đủ cho cả 2 dòng
-        Place(wallet, 1, 1, 1, 1, -96, -16, 360, 136);
-
-        // ─── CẠNH PHẢI: Khung Tầng (Stage) & Đổi Kiếm (StyleHost) ────────────
-        // Đặt thẳng dưới nút Thu Gọn / Hiện HUD, không bị đè hay trùng lặp
-        Place(stage, 1, 1, 1, 1, -16, -264, 270, 84);
-        Place(styleHost, 1, 1, 1, 1, -16, -356, 270, 72);
-
-        // ─── CẠNH TRÁI: Bảng Nhiệm Vụ & Thanh Cảnh Giới ───────────────────────
-        // Nhiệm vụ bắt đầu ngay dưới Profile
-        LayoutQuest();
-        // Cảnh giới đặt gọn gàng ngay dưới Nhiệm Vụ
-        Place(realm, 0, 1, 0, 1, 20, -348, 420, 68);
-        LayoutRealm();
-
-        // ─── KỸ NĂNG: Vòng Cung bên phải màn hình ────────────────────────────
-        if (skills != null)
-        {
-            skills.gameObject.SetActive(true);
-            // Container phủ toàn canvas để định vị tuyệt đối từng nút
-            skills.anchorMin = Vector2.zero;
-            skills.anchorMax = Vector2.one;
-            skills.offsetMin = Vector2.zero;
-            skills.offsetMax = Vector2.zero;
-            LayoutSkillsArc();
-        }
-        if (quick != null) quick.gameObject.SetActive(false);
-
-        // ─── ĐÁY MÀN HÌNH: Thanh Dock ───────────────────────────────────────
-        Place(dock, 0, 0, 1, 0, 0, 16, 0, 150);
+        Place(profile,0,1,0,1,36,-24,534,144);
+        Place(wallet,1,1,1,1,-180,-24,318,144);
+        Place(realm,0,1,1,1,-78,-180,-228,156);
+        Place(stage,0,1,0,1,36,-504,636,132);
+        Place(notification,.5f,1,.5f,1,0,-648,840,144);
+        Place(menuButton != null ? menuButton.transform as RectTransform : null,1,1,1,1,-36,-180,132,144);
+        Place(dock,0,0,1,0,0,12,-72,176);
+        Place(quick,0,0,1,0,0,200,-72,132);
+        Place(skills,0,0,1,0,0,344,-72,176);
+        Place(vitals,0,0,1,0,0,532,-72,120);
+        if(focus) Place(vitals,0,0,1,0,0,18,-72,120);
+        if (quick != null) quick.gameObject.SetActive(!focus);
+        if (skills != null) skills.gameObject.SetActive(!focus);
         SetDockState();
-
-        // ─── THÔNG BÁO + VÙNG 3D TRUNG TÂM ──────────────────────────────────
-        Place(notification, 0.5f, 1, 0.5f, 1, 0, -560, 840, 120);
-        CentralClearArea = new Rect(20, 172, Mathf.Max(0, lastSize.x - 40), Mathf.Max(0, lastSize.y - 480));
-
+        Place(styleHost,1,1,1,1,-36,-504,342,132);
+        if (focus || shortView) Place(stage,0,1,0,1,36,-504,636,132);
+        LayoutQuest();
         var overlayBox = secondaryOverlay != null ? secondaryOverlay.transform.Find("MenuCard") as RectTransform : null;
         if (overlayBox != null)
         {
@@ -326,6 +287,7 @@ public sealed class PortraitHudController : MonoBehaviour
         }
         if (logPanel != null) AuxRect(logPanel, overlayBox);
         if (buffPanel != null) AuxRect(buffPanel, overlayBox);
+        CentralClearArea = new Rect(36, focus ? 150 : 664, Mathf.Max(0,lastSize.x-72), Mathf.Max(0,lastSize.y-(focus?150:664)-648));
     }
 
     void AuxRect(RectTransform view, RectTransform box)
@@ -341,22 +303,17 @@ public sealed class PortraitHudController : MonoBehaviour
         if (quest == null) return;
         var title=quest.Find("TxtQuestTitle")?.GetComponent<UnityEngine.UI.Text>();
         questExpanded=title!=null&&title.gameObject.activeSelf;
-        // Quest bắt đầu ngay dưới Profile (profile chiếm 16+156=172px → đặt tại -188 để có 16px gap)
-        Place(quest, 0, 1, 0, 1, 20, -188, questExpanded ? 420 : 128, 148);
-        if(title!=null)
-        {
-            Place(title.rectTransform, 0, 1, 1, 1, 16, -10, -120, 36);
-            Text(title, 28, TextAnchor.MiddleLeft);
-            title.color = gold;
-        }
+        Place(quest,0,1,0,1,36,-348,questExpanded?852:144,144);
+        if(title!=null) { Fill(title.rectTransform,24,48,294,0); Text(title,36,TextAnchor.MiddleLeft); }
         var reward=quest.Find("QuestDescScrollView") as RectTransform;
-        if(reward!=null) Place(reward, 0, 0, 1, 1, 16, 10, -120, -48);
+        if(reward!=null) Fill(reward,24,0,294,96);
         var rewardText=reward!=null?reward.GetComponentInChildren<UnityEngine.UI.Text>(true):null;
-        if(rewardText!=null) { Text(rewardText, 24, TextAnchor.UpperLeft); rewardText.color = ivory; }
+        if(rewardText!=null) Text(rewardText,36,TextAnchor.MiddleLeft);
         var claim=quest.Find("BtnClaimQuick") as RectTransform;
-        if(claim!=null) { Place(claim, 1, 0.5f, 1, 0.5f, -68, 0, 60, 60); if(questExpanded) claim.gameObject.SetActive(true); }
+        if(claim!=null) {Place(claim,1,.5f,1,.5f,-144,0,132,132);if(questExpanded)claim.gameObject.SetActive(true);}
         var toggle=quest.Find("BtnToggle") as RectTransform;
-        if(toggle!=null) { Place(toggle, 1, 0.5f, 1, 0.5f, -4, 0, 56, 56); var text=toggle.GetComponent<UnityEngine.UI.Text>(); if(text!=null) Text(text, 24, TextAnchor.MiddleCenter); }
+        if(toggle!=null){Place(toggle,1,.5f,1,.5f,-6,0,132,132);var text=toggle.GetComponent<UnityEngine.UI.Text>();if(text!=null)Text(text,36,TextAnchor.MiddleCenter);}
+        if(claim!=null)foreach(var text in claim.GetComponentsInChildren<UnityEngine.UI.Text>(true)){Text(text,36,TextAnchor.MiddleCenter);Fill(text.rectTransform,4,4,4,4);}
         quest.Find("BtnAchievement")?.gameObject.SetActive(false);
         quest.Find("BtnStorage")?.gameObject.SetActive(false);
         quest.Find("BtnQuestToggle")?.gameObject.SetActive(false);
@@ -373,19 +330,17 @@ public sealed class PortraitHudController : MonoBehaviour
         var hit=profile.GetComponent<UnityEngine.UI.Image>(); if(hit!=null)hit.raycastTarget=true;
         foreach(var text in GetComponentsInChildren<UnityEngine.UI.Text>(true))
             if(text!=sourceProfile) { text.font=regularFont; text.resizeTextForBestFit=false; text.color=ivory; }
-        Text(playerName,30,TextAnchor.MiddleLeft); playerName.font=semiboldFont;
-        Place(playerName.rectTransform,0,1,0,1,145,-12,320,36);
-        playerName.resizeTextForBestFit=true;playerName.resizeTextMinSize=22;playerName.resizeTextMaxSize=30;
+        Text(playerName,42,TextAnchor.MiddleLeft); playerName.font=semiboldFont;
+        Fill(playerName.rectTransform,168,24,42,24);
+        playerName.resizeTextForBestFit=true;playerName.resizeTextMinSize=34;playerName.resizeTextMaxSize=42;
         playerName.verticalOverflow=VerticalWrapMode.Truncate;
-        Text(playerRealm,24,TextAnchor.MiddleLeft); playerRealm.color=jade;playerRealm.enabled=false;
-        Text(cultivationValue,24,TextAnchor.MiddleLeft);
-        cultivationValue.color=gold;
-        Place(cultivationValue.rectTransform,0,1,0,1,145,-46,320,30);
+        Text(playerRealm,36,TextAnchor.MiddleLeft); playerRealm.color=jade;playerRealm.enabled=false;
+        Text(cultivationValue,36,TextAnchor.MiddleLeft);
         foreach(var value in wallet.GetComponentsInChildren<MobileCurrencyText>(true))
-        {value.enabled=false;Text(value.GetComponent<UnityEngine.UI.Text>(),32,TextAnchor.MiddleRight);}
+        {value.enabled=false;Text(value.GetComponent<UnityEngine.UI.Text>(),42,TextAnchor.MiddleRight);}
         foreach(var button in secondaryOverlay.GetComponentsInChildren<UnityEngine.UI.Button>(true))
-            foreach(var text in button.GetComponentsInChildren<UnityEngine.UI.Text>(true))Text(text,36,TextAnchor.MiddleCenter);
-        menuTitle.fontSize=50;
+            foreach(var text in button.GetComponentsInChildren<UnityEngine.UI.Text>(true))Text(text,42,TextAnchor.MiddleCenter);
+        menuTitle.fontSize=60;
         Place(menuTitle.rectTransform,0,1,1,1,0,-32,-144,84);
         LayoutRealm(); LayoutSkills(); LayoutVitals();
         if(drawer!=null)
@@ -397,15 +352,15 @@ public sealed class PortraitHudController : MonoBehaviour
                 var icon=b.transform.Find("JadeNavIcon") as RectTransform;
                 if(icon!=null)Place(icon,.5f,1,.5f,1,0,-14,78,78);
                 var label=b.transform.Find("Label")?.GetComponent<UnityEngine.UI.Text>();
-                if(label!=null){Place(label.rectTransform,0,0,1,0,0,12,-12,64);Text(label,30,TextAnchor.MiddleCenter);label.font=semiboldFont;}
+                if(label!=null){Place(label.rectTransform,0,0,1,0,0,12,-12,64);Text(label,36,TextAnchor.MiddleCenter);label.font=semiboldFont;}
             }
-            if(drawer.dockToggleLabelText!=null)Text(drawer.dockToggleLabelText,30,TextAnchor.MiddleCenter);
+            if(drawer.dockToggleLabelText!=null)Text(drawer.dockToggleLabelText,36,TextAnchor.MiddleCenter);
         }
         if(quickButtons!=null)for(int i=0;i<quickButtons.Length;i++)
         {
             var b=quickButtons[i];if(b==null)continue;
             Place((RectTransform)b.transform,i/4f,0,(i+1)/4f,1,0,0,-12,0);
-            foreach(var label in b.GetComponentsInChildren<UnityEngine.UI.Text>(true)){Fill(label.rectTransform,12,8,12,8);Text(label,36,TextAnchor.MiddleCenter);}
+            foreach(var label in b.GetComponentsInChildren<UnityEngine.UI.Text>(true)){Fill(label.rectTransform,12,8,12,8);Text(label,42,TextAnchor.MiddleCenter);}
         }
         if(stage!=null)
         {
@@ -418,7 +373,7 @@ public sealed class PortraitHudController : MonoBehaviour
         if(shortcut!=null)
         {
             Place(shortcut,1,1,1,1,-16,0,430,132);
-            foreach(var text in shortcut.GetComponentsInChildren<UnityEngine.UI.Text>(true)){Fill(text.rectTransform,20,12,20,12);Text(text,30,TextAnchor.MiddleCenter);}
+            foreach(var text in shortcut.GetComponentsInChildren<UnityEngine.UI.Text>(true)){Fill(text.rectTransform,20,12,20,12);Text(text,36,TextAnchor.MiddleCenter);}
         }
         LayoutQuest();
     }
@@ -427,11 +382,11 @@ public sealed class PortraitHudController : MonoBehaviour
     {
         if(realm==null)return;
         var title=realm.Find("StageText")?.GetComponent<UnityEngine.UI.Text>();
-        if(title!=null){Place(title.rectTransform,0,1,1,1,12,-6,-24,28);Text(title,24,TextAnchor.MiddleLeft);title.verticalOverflow=VerticalWrapMode.Truncate;}
-        if(cultivationValue!=null&&cultivationValue.transform.parent==realm){Place(cultivationValue.rectTransform,0,1,1,1,12,-34,-24,24);Text(cultivationValue,22,TextAnchor.MiddleLeft);cultivationValue.verticalOverflow=VerticalWrapMode.Truncate;}
+        if(title!=null){Place(title.rectTransform,0,1,1,1,0,-14,-96,44);Text(title,32,TextAnchor.MiddleLeft);title.verticalOverflow=VerticalWrapMode.Truncate;}
+        if(cultivationValue!=null){Place(cultivationValue.rectTransform,0,1,1,1,0,-59,-96,42);Text(cultivationValue,30,TextAnchor.MiddleLeft);cultivationValue.verticalOverflow=VerticalWrapMode.Truncate;}
         var segments=realm.Find("PhaseSegments") as RectTransform;if(segments==null)return;
-        segments.anchorMin=new Vector2(0,0);segments.anchorMax=new Vector2(1,0);segments.pivot=new Vector2(.5f,0);segments.sizeDelta=new Vector2(-24,24);segments.anchoredPosition=new Vector2(0,6);
-        foreach(var text in segments.GetComponentsInChildren<UnityEngine.UI.Text>(true)){Text(text,20,TextAnchor.MiddleCenter);Fill(text.rectTransform,2,2,2,2);text.resizeTextForBestFit=true;text.resizeTextMinSize=16;text.resizeTextMaxSize=20;text.verticalOverflow=VerticalWrapMode.Truncate;}
+        segments.anchorMin=new Vector2(0,0);segments.anchorMax=new Vector2(1,0);segments.pivot=new Vector2(.5f,0);segments.sizeDelta=new Vector2(-64,36);segments.anchoredPosition=new Vector2(0,12);
+        foreach(var text in segments.GetComponentsInChildren<UnityEngine.UI.Text>(true)){Text(text,26,TextAnchor.MiddleCenter);Fill(text.rectTransform,6,2,6,2);text.resizeTextForBestFit=true;text.resizeTextMinSize=22;text.resizeTextMaxSize=26;text.verticalOverflow=VerticalWrapMode.Truncate;}
     }
 
     public void LayoutStage()
@@ -443,11 +398,11 @@ public sealed class PortraitHudController : MonoBehaviour
         lastBossTimerActive=hasTimer;
         if(title!=null)
         {
-            if(hasTimer)Place(title.rectTransform,0,1,1,1,0,-12,-20,36);
-            else Fill(title.rectTransform,20,12,20,12);
-            Text(title,28,TextAnchor.MiddleCenter);title.resizeTextForBestFit=true;title.resizeTextMinSize=22;title.resizeTextMaxSize=28;title.verticalOverflow=VerticalWrapMode.Truncate;
+            if(hasTimer)Place(title.rectTransform,0,1,1,1,0,-20,-160,48);
+            else Fill(title.rectTransform,80,24,80,24);
+            Text(title,36,TextAnchor.MiddleCenter);title.resizeTextForBestFit=true;title.resizeTextMinSize=28;title.resizeTextMaxSize=36;title.verticalOverflow=VerticalWrapMode.Truncate;
         }
-        if(timer!=null){Place(timer.rectTransform,.5f,0,.5f,0,0,8,220,28);Text(timer,22,TextAnchor.MiddleCenter);timer.verticalOverflow=VerticalWrapMode.Truncate;}
+        if(timer!=null){Place(timer.rectTransform,.5f,0,.5f,0,0,20,476,36);Text(timer,28,TextAnchor.MiddleCenter);timer.verticalOverflow=VerticalWrapMode.Truncate;}
     }
 
     void LayoutVitals()
@@ -455,7 +410,7 @@ public sealed class PortraitHudController : MonoBehaviour
         for(int i=0;i<2;i++)
         {
             var view=i==0?hp:mana;if(view==null)continue;
-            Place(view,0,i==0?1:0,1,i==0?1:0,0,i==0?0:-34,0,i==0?32:28);
+            Place(view,0,i==0?1:0,1,i==0?1:0,0,0,0,60);
             var rootImage=view.GetComponent<UnityEngine.UI.Image>();
             if(rootImage!=null)
             {
@@ -471,8 +426,8 @@ public sealed class PortraitHudController : MonoBehaviour
                 bg.anchorMin=Vector2.zero;
                 bg.anchorMax=Vector2.one;
                 bg.pivot=new Vector2(.5f,.5f);
-                bg.offsetMin=new Vector2(6,2);
-                bg.offsetMax=new Vector2(-6,-2);
+                bg.offsetMin=new Vector2(40,10);
+                bg.offsetMax=new Vector2(-40,-10);
                 var bgImage=bg.GetComponent<UnityEngine.UI.Image>();
                 if(bgImage!=null){bgImage.color=new Color(.02f,.05f,.07f,.95f);bgImage.raycastTarget=false;}
 
@@ -497,13 +452,13 @@ public sealed class PortraitHudController : MonoBehaviour
                 var hpLabel=view.Find("HPText")?.GetComponent<UnityEngine.UI.Text>();
                 if(hpLabel!=null)
                 {
-                    Text(hpLabel,18,TextAnchor.MiddleCenter);
+                    Text(hpLabel,26,TextAnchor.MiddleCenter);
                     hpLabel.fontStyle=FontStyle.Bold;
                     hpLabel.color=ivory;
                     hpLabel.rectTransform.anchorMin=Vector2.zero;
                     hpLabel.rectTransform.anchorMax=Vector2.one;
-                    hpLabel.rectTransform.offsetMin=new Vector2(10,0);
-                    hpLabel.rectTransform.offsetMax=new Vector2(-10,0);
+                    hpLabel.rectTransform.offsetMin=new Vector2(24,0);
+                    hpLabel.rectTransform.offsetMax=new Vector2(-24,0);
                     hpLabel.transform.SetAsLastSibling();
                 }
             }
@@ -511,17 +466,27 @@ public sealed class PortraitHudController : MonoBehaviour
             {
                 if(manaValue!=null)
                 {
-                    Text(manaValue,18,TextAnchor.MiddleCenter);
+                    Text(manaValue,24,TextAnchor.MiddleLeft);
                     manaValue.fontStyle=FontStyle.Bold;
                     manaValue.color=ivory;
                     manaValue.rectTransform.anchorMin=Vector2.zero;
-                    manaValue.rectTransform.anchorMax=Vector2.one;
-                    manaValue.rectTransform.offsetMin=new Vector2(10,0);
-                    manaValue.rectTransform.offsetMax=new Vector2(-10,0);
+                    manaValue.rectTransform.anchorMax=new Vector2(.48f,1f);
+                    manaValue.rectTransform.offsetMin=new Vector2(80,0);
+                    manaValue.rectTransform.offsetMax=Vector2.zero;
                     manaValue.transform.SetAsLastSibling();
                 }
                 var legacy=view.Find("ManaText")?.GetComponent<UnityEngine.UI.Text>();
-                if(legacy!=null) legacy.gameObject.SetActive(false);
+                if(legacy!=null)
+                {
+                    Text(legacy,24,TextAnchor.MiddleRight);
+                    legacy.fontStyle=FontStyle.Bold;
+                    legacy.color=gold;
+                    legacy.rectTransform.anchorMin=new Vector2(.48f,0f);
+                    legacy.rectTransform.anchorMax=Vector2.one;
+                    legacy.rectTransform.offsetMin=Vector2.zero;
+                    legacy.rectTransform.offsetMax=new Vector2(-80,0);
+                    legacy.transform.SetAsLastSibling();
+                }
             }
 
             var slider=view.GetComponent<UnityEngine.UI.Slider>();
@@ -537,111 +502,29 @@ public sealed class PortraitHudController : MonoBehaviour
         }
     }
 
-    // Wrapper để tương thích với lời gọi cũ trong ConfigureViews()
-    void LayoutSkills() { LayoutSkillsArc(); }
-
-    /// <summary>
-    /// Đặt 4 nút kỹ năng theo vòng cung (quarter-circle arc) bên phải màn hình.
-    /// Nút Ultimate to nhất ở vị trí trên-trong (11 giờ), 3 nút thường theo vòng
-    /// cung xuống đến 4 giờ (gần mép phải màn hình), thuận ngón cái phải.
-    /// Container skills được phủ toàn canvas để định vị tuyệt đối.
-    /// </summary>
-    void LayoutSkillsArc()
+    void LayoutSkills()
     {
-        var hud = skills != null ? skills.GetComponent<MobileSkillHUD>() : null;
-        if (hud == null) return;
-        var vLayout = skills.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
-        if (vLayout != null) vLayout.enabled = false;
-        var hLayout = skills.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
-        if (hLayout != null) hLayout.enabled = false;
-
-        float W = lastSize.x;
-        float scale = Mathf.Clamp(W / 1080f, 0.75f, 1.35f);
-
-        // 4 nút kỹ năng xếp theo vòng cung thoáng đãng bên phải màn hình:
-        // i=3 (Âm Dương): thấp nhất, gần mép phải, trên thanh dock
-        // i=2 (Lôi Phạt): chếch lên trên-trái
-        // i=1 (Ấn Chưởng): chếch tiếp lên trên-trái
-        // i=0 (Tuyệt kỹ - Vạn Kiếm): to nhất, vươn cao nhất về phía giữa
-        // Khe hở giữa các nút > 40px, rộng rãi, thao tác ngón cái cực kỳ thoải mái
-        float[] btnSizes = { 128f * scale, 106f * scale, 106f * scale, 106f * scale };
-        float[] centerXs = {
-            W - 480f * scale, // i=0 (Ultimate)
-            W - 330f * scale, // i=1 (Ấn Chưởng)
-            W - 195f * scale, // i=2 (Lôi Phạt)
-            W - 78f * scale   // i=3 (Âm Dương)
-        };
-        float[] centerYs = {
-            405f * scale,     // i=0 (Ultimate)
-            380f * scale,     // i=1 (Ấn Chưởng)
-            315f * scale,     // i=2 (Lôi Phạt)
-            225f * scale      // i=3 (Âm Dương)
-        };
-
-        var buttons = new UnityEngine.UI.Button[]
+        var hud=skills!=null?skills.GetComponent<MobileSkillHUD>():null;if(hud==null)return;
+        var layout=skills.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();if(layout!=null)layout.enabled=false;
+        var buttons=new[]{hud.btnUltimate,hud.btnNormalSkills[0],hud.btnNormalSkills[1],hud.btnNormalSkills[2]};
+        for(int i=0;i<4;i++)
         {
-            hud.btnUltimate,
-            hud.btnNormalSkills.Length > 0 ? hud.btnNormalSkills[0] : null,
-            hud.btnNormalSkills.Length > 1 ? hud.btnNormalSkills[1] : null,
-            hud.btnNormalSkills.Length > 2 ? hud.btnNormalSkills[2] : null,
-        };
-
-        for (int i = 0; i < 4; i++)
-        {
-            var b = buttons[i]; if (b == null) continue;
-            float bx = centerXs[i];
-            float by = centerYs[i];
-            var rt = (RectTransform)b.transform;
-            // Anchor = góc dưới-trái canvas, pivot = tâm nút
-            rt.anchorMin = rt.anchorMax = Vector2.zero;
-            rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.sizeDelta = new Vector2(btnSizes[i], btnSizes[i]);
-            rt.anchoredPosition = new Vector2(bx, by);
-
-            // Style viền / sprite
-            var image = b.GetComponent<UnityEngine.UI.Image>();
-            if (image != null && slotSprite != null)
-                JadeUITheme.SetSurface(image, i == 0 ? selectedSprite ?? slotSprite : slotSprite);
-            foreach (var t in b.GetComponentsInChildren<UnityEngine.UI.Text>(true))
-                Text(t, i == 0 ? 26 : 22, TextAnchor.MiddleCenter);
-
-            // Text tiêu đề kỹ năng (phía trên nút)
-            var title = i == 0 ? hud.txtUltiTitle : (hud.txtNormalTitles.Length > i-1 ? hud.txtNormalTitles[i-1] : null);
-            // Text chi phí MP (phía dưới nút)
-            var cost = i == 0 ? hud.txtUltiMana : (hud.txtNormalCosts.Length > i-1 ? hud.txtNormalCosts[i-1] : null);
-            if (title != null)
-            {
-                Fill(title.rectTransform, 4, btnSizes[i] * 0.44f, 4, 6);
-                Text(title, i == 0 ? 24 : 20, TextAnchor.UpperCenter);
-            }
-            if (cost != null)
-            {
-                Fill(cost.rectTransform, 4, 6, 4, btnSizes[i] * 0.44f);
-                Text(cost, i == 0 ? 20 : 17, TextAnchor.LowerCenter);
-                cost.color = new Color(0.65f, 0.9f, 1f, 1f);
-            }
-
-            // Emblem icon ở giữa
-            var emblem = b.transform.Find("JadeSkillEmblem") as RectTransform;
-            float eSize = i == 0 ? 64f * scale : 52f * scale;
-            if (emblem != null)
-            {
-                Place(emblem, 0.5f, 0.5f, 0.5f, 0.5f, 0, i == 0 ? 4f : 2f, eSize, eSize);
-                emblem.SetAsFirstSibling();
-            }
-
-            // Cooldown timer + overlay + lock
-            if (i > 0 && hud.txtNormalCooldownTimers.Length > i-1 && hud.txtNormalCooldownTimers[i-1] != null)
-            {
-                var tmr = hud.txtNormalCooldownTimers[i-1];
-                Fill(tmr.rectTransform, 2, 2, 2, 2);
-                Text(tmr, 20, TextAnchor.MiddleCenter);
-                tmr.transform.SetAsLastSibling();
-            }
-            if (i > 0 && hud.imgNormalCooldownOverlays.Length > i-1 && hud.imgNormalCooldownOverlays[i-1] != null)
-                Fill(hud.imgNormalCooldownOverlays[i-1].rectTransform, 0, 0, 0, 0);
-            if (i > 0 && hud.lockOverlays.Length > i-1 && hud.lockOverlays[i-1] != null)
-                Fill((RectTransform)hud.lockOverlays[i-1].transform, 0, 0, 0, 0);
+            var b=buttons[i];if(b==null)continue;
+            Place((RectTransform)b.transform,i/4f,0,(i+1)/4f,1,0,0,-12,0);
+            var image=b.GetComponent<UnityEngine.UI.Image>();if(image!=null)JadeUITheme.SetSurface(image,slotSprite);
+            foreach(var text in b.GetComponentsInChildren<UnityEngine.UI.Text>(true))Text(text,36,TextAnchor.MiddleCenter);
+            var title=i==0?hud.txtUltiTitle:hud.txtNormalTitles[i-1];
+            var cost=i==0?hud.txtUltiMana:hud.txtNormalCosts[i-1];
+            if(title!=null)Place(title.rectTransform,0,1,1,1,0,-8,-12,48);
+            if(cost!=null)Place(cost.rectTransform,0,0,1,0,0,8,-12,48);
+            var emblem=b.transform.Find("JadeSkillEmblem") as RectTransform;
+            if(emblem!=null){Place(emblem,.5f,.5f,.5f,.5f,0,0,64,64);emblem.SetAsFirstSibling();}
+            if(i>0&&hud.txtNormalCooldownTimers[i-1]!=null)
+            {var timer=hud.txtNormalCooldownTimers[i-1];Place(timer.rectTransform,0,.5f,1,.5f,0,0,-12,48);timer.transform.SetAsLastSibling();}
+            if(i>0&&hud.imgNormalCooldownOverlays[i-1]!=null)
+                Place(hud.imgNormalCooldownOverlays[i-1].rectTransform,0,.5f,1,.5f,0,0,-12,64);
+            if(i>0&&hud.lockOverlays[i-1]!=null)
+                Place((RectTransform)hud.lockOverlays[i-1].transform,0,.5f,1,.5f,0,0,-12,64);
         }
     }
 
