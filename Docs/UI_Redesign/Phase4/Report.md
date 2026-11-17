@@ -16,7 +16,7 @@ Script chưa commit ApplyUIFixesPhase4 sửa HUD, tên nhân vật, Đạo Ấn 
 
 ## Kiểm thử
 
-Evidence/checks.json: 42 kiểm tra trên profile riêng equipment-cultivation-redesign-qa; 1080×1920, 1080×2340, 720×1280. Chọn item, Back chi tiết trước kho, category filter, list/grid, scroll, mở/đóng, equip/unequip cảm ứng, merge thật, thiếu nguyên liệu, kho hòm tạm trống, nâng cấp cũ thiếu tài nguyên. Kiểm tra drawer thực sự render trên hub và primary merge có hit area tối thiểu 120 reference units. SaveToSlot/LoadFromSlot round trip và DataManager ghi/đọc lại inventory profile QA khớp.
+Evidence/checks.json: 48 kiểm tra trên profile riêng equipment-cultivation-redesign-qa; 1080×1920, 1080×2340, 720×1280. Chọn item, Back chi tiết trước kho, category filter, list/grid, scroll, mở/đóng, equip/unequip cảm ứng, merge thật, thiếu nguyên liệu, kho hòm tạm trống, nâng cấp cũ thiếu tài nguyên. Kiểm tra drawer thực sự render trên hub và primary merge có hit area tối thiểu 120 reference units. SaveToSlot/LoadFromSlot round trip và DataManager ghi/đọc lại inventory profile QA khớp.
 
 Evidence/console-errors.json rỗng trong lần chạy cuối. Evidence/save-preservation.json xác nhận PlayerPrefs, JSON và backup production không đổi. Compilation cuối không có lỗi mới; project còn warning API obsolete có sẵn. Các file previous-failure là lịch sử lần QA phát hiện lỗi, không phải kết quả cuối.
 
@@ -25,3 +25,5 @@ Chưa kiểm trên điện thoại Android thật/Device Simulator notch; không
 Không sửa Item Database, service formula, drop rate, upgrade cost, persistence schema hoặc equipment stats. Các file gameplay và UI khác dirty từ trước vẫn giữ nguyên ngoài commit. Scene được stage bằng Git three-way từ snapshot trước thao tác để tách thay đổi người dùng có sẵn; scene trên đĩa luôn do Editor lưu.
 
 Commit dependency riêng đưa Design System/HUD/TMP đã hoàn thành nhưng chưa được theo dõi vào Git; không đổi code của các phase đó.
+
+Hồi quy cuối cùng sau Phase 5: 60 vật phẩm hòm tạm tạo scroll overflow thực, phân trang sau 48 item còn 12 item, tên dài đầy đủ trong thân chi tiết cuộn; chạm ô nguyên liệu bỏ chọn và preview kết quả chỉ đọc.

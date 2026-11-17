@@ -113,7 +113,7 @@ namespace KhiVanChiTu.UI.Equipment.Editor
             System.IO.Directory.CreateDirectory("Assets/UI/Equipment/Prefabs");
             var item=Item(null,false);PrefabUtility.SaveAsPrefabAsset(item.gameObject,"Assets/UI/Equipment/Prefabs/ItemSlot.prefab");UnityEngine.Object.DestroyImmediate(item.gameObject);v.slotPrefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/UI/Equipment/Prefabs/ItemSlot.prefab").GetComponent<FoundationItem>();
             item=Item(null,true);PrefabUtility.SaveAsPrefabAsset(item.gameObject,"Assets/UI/Equipment/Prefabs/ItemCard.prefab");UnityEngine.Object.DestroyImmediate(item.gameObject);v.cardPrefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/UI/Equipment/Prefabs/ItemCard.prefab").GetComponent<FoundationItem>();
-            BuildMerge();EditorUtility.SetDirty(storage);EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());EditorSceneManager.SaveScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());AssetDatabase.SaveAssets();Debug.Log("[Phase 4] Inventory, real item prefabs, detail sheet and merge workbench applied to mobile scene.");
+            BuildMerge();Refine();EditorUtility.SetDirty(storage);EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());EditorSceneManager.SaveScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());AssetDatabase.SaveAssets();Debug.Log("[Phase 4] Inventory, real item prefabs, detail sheet and merge workbench applied to mobile scene.");
         }
         [MenuItem("TuTien/UI Phase 4/Refine Existing Presentation")]
         public static void Refine()

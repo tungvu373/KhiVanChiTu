@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Linq;
 using TMPro;
@@ -38,10 +39,11 @@ namespace KhiVanChiTu.UI.Equipment
                 preview.text=$"Kết quả: cấp {l} · {p:N0} phôi\nChi phí: {a.currentPieces:N0} + {b.currentPieces:N0} phôi cùng cấp · Không tốn tiền";
             }
             else {result.Bind("Kết quả","",null,"");preview.text=a==null?"Chạm kiếm → Chọn ghép để đặt nguyên liệu.\nDùng hai kiếm cùng cấp trong kho, dưới cấp 8.":"Chọn thêm kiếm cùng cấp trong kho.\nKiếm đang xuất chiến không dùng làm nguyên liệu.";}
+            result.action.button.interactable=false;
         }
         static int Required(int l)=>l<=2?2:l>=8?9999:l;
-        static void Bind(FoundationItem target,MergeItem s,string empty)
-        {target.Bind(s!=null?DismantleService.GetSwordDisplayName(s.level):empty,s!=null?$"Cấp {s.level}":"",RpgUI.SwordArt(s),s!=null?$"{s.currentPieces:N0} phôi":"");target.detail.gameObject.SetActive(true);target.SetSelected(s!=null);}
+        void Bind(FoundationItem target,MergeItem s,string empty)
+        {target.Bind(s!=null?DismantleService.GetSwordDisplayName(s.level):empty,s!=null?$"Cấp {s.level}":"",RpgUI.SwordArt(s),s!=null?$"{s.currentPieces:N0} phôi":"",()=>{if(s!=null)Select(s);});target.action.button.interactable=s!=null;target.detail.gameObject.SetActive(true);target.SetSelected(s!=null);}
         IEnumerator Merge()
         {
             if(a==null||b==null||a==b||a.level!=b.level||a.level>=8||manager.IsSwordEquipped(a)||manager.IsSwordEquipped(b)){feedback.text="Cần hai kiếm cùng cấp trong kho.";Refresh();yield break;}
