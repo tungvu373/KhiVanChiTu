@@ -38,6 +38,8 @@ public class MobileUINavigationManager : MonoBehaviour
 
     public bool HandleBackNavigation()
     {
+        var global = KhiVanChiTu.UI.Navigation.GlobalNavigationController.For(this);
+        if (global != null && global.IsInSession) return global.Back();
         var menu = MainMenuManager.Instance;
         if (menu != null && menu.isActiveAndEnabled)
             return menu.HandleBackNavigation();

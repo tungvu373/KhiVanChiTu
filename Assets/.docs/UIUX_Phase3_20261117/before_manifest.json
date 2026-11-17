@@ -1,0 +1,12 @@
+{
+  "Assets/Scenes/SampleScene_MobileWork.unity": "b249f26b14086fdea3173a452a7688f02aa24e1fdd38732c91f4746a47f4d119",
+  "Assets/Scenes/SampleScene_MobileWork.unity.meta": "5f284784b8870ae8911da425fbefbdcce55cc880d666aedda0e060ea9ee9fda9",
+  "Assets/Scripts/UI/MobileUINavigationManager.cs": "f4b9c6b92001f9b0f04db1469e911d3ecb59e070072c0e9c051fd9c16087859e",
+  "Assets/Scripts/UI/MobileUINavigationManager.cs.meta": "a045bbceadad0e79084db1f694c2e92da5a4362de9443c46c8fe4728a5ad2589",
+  "Assets/UI/CombatHUD/Runtime/CombatHudPresentation.cs": "99b81fd77a75e7baec27a114e6fbf859d59f0bb35e0846cfee8d2961914eb941",
+  "Assets/UI/CombatHUD/Runtime/CombatHudPresentation.cs.meta": "a8cb3ba03cef42adf0321100f218a9d45cecdefa62128cd4849a8e1db9b0a583",
+  "Assets/Scripts/UI/JadeUITheme.cs": "4f3fb7ac6b634d6a8e2574208c8372b2f9b3ac0721d4e4db998ac71b45e6859d",
+  "Assets/Scripts/UI/JadeUITheme.cs.meta": "790fcd71dfb6f6ff57b662c219d7340f2ae72f18f68538f20e69a7142ffea106",
+  "Assets/UI/Reconstruction/Runtime/MobileUIReconstruction.cs": "746dadafa1948d897f07edc1fa9c302f1c11310de35e4cf20e4edd281467c1e5",
+  "Assets/UI/Reconstruction/Runtime/MobileUIReconstruction.cs.meta": "90840741a66d7f1c122e5061463f445ea7c6c77a79e6c4321670459d7c1a4828"
+}
