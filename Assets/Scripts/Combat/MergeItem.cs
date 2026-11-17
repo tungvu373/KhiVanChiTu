@@ -191,6 +191,11 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            var sheet = KhiVanChiTu.UI.Equipment.ItemDetailSheet.Find(this);
+            if (sheet != null) { sheet.ShowSword(this); return; }
+        }
         // Nhấn chuột phải để trang bị/tháo gỡ nhanh
         if (eventData.button == PointerEventData.InputButton.Right)
         {

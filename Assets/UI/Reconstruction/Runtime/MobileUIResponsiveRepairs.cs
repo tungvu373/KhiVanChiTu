@@ -32,6 +32,7 @@ public static class MobileUIResponsiveRepairs
         foreach(var density in scope.GetComponentsInChildren<MobileUITextDensity>(true))density.Restore();
         foreach(var rt in scope.GetComponentsInChildren<RectTransform>(true))
         {
+            if(rt.GetComponentInParent<KhiVanChiTu.UI.Equipment.RpgViewScope>(true)!=null)continue;
             string n=rt.name, parent=rt.parent!=null?rt.parent.name:"";
             if(n=="TutorialPointerArrow")
             {var visibility=rt.GetComponent<MobileUITutorialOcclusion>();if(visibility==null)visibility=rt.gameObject.AddComponent<MobileUITutorialOcclusion>();visibility.owner=owner;}

@@ -31,6 +31,7 @@ public enum StorageViewMode
 /// </summary>
 public class StorageModalUI : MonoBehaviour
 {
+    public KhiVanChiTu.UI.Equipment.InventoryPresentation presentation;
     private static StorageModalUI _instance;
     public static StorageModalUI Instance
     {
@@ -436,6 +437,7 @@ public class StorageModalUI : MonoBehaviour
             if (MergeManager.Instance != null)
             {
                 var swords = MergeManager.Instance.GetAllSwords(includeEquipped: true);
+                if (presentation != null) swords.Sort((a,b) => presentation.descending ? b.level.CompareTo(a.level) : a.level.CompareTo(b.level));
                 foreach (var s in swords)
                 {
                     if (s == null) continue;
@@ -636,6 +638,11 @@ public class StorageModalUI : MonoBehaviour
             }
         };
 
+        if (presentation != null)
+        {
+            spawnedRows.Add(presentation.Add(swordName, "Bậc " + KhiVanChiTu.UI.Equipment.RpgUI.SwordRarity(level), $"{pieces:N0} phôi", detail, KhiVanChiTu.UI.Equipment.RpgUI.SwordArt(sword), KhiVanChiTu.UI.Equipment.RpgUI.SwordColor(level), isEquipped, doDismantle, sword));
+            return;
+        }
         if (currentViewMode == StorageViewMode.GridSlots)
         {
             Color rarityColor = GetRarityColorForLevel(level, isEquipped);
@@ -685,6 +692,11 @@ public class StorageModalUI : MonoBehaviour
             }
         };
 
+        if (presentation != null)
+        {
+            spawnedRows.Add(presentation.Add($"{realmStr} {recipeStr} Đan", KhiVanChiTu.UI.Equipment.RpgUI.Quality(quality), $"×{count:N0}", $"{detail}\nCảnh giới: {realmStr}\nPhẩm chất: {KhiVanChiTu.UI.Equipment.RpgUI.Quality(quality)}\nHiệu ứng: " + (recipe == PillRecipe.Cultivation ? $"Bổ sung tu vi; hệ số phẩm chất ×{AlchemyService.QualityMultiplier(quality):0.##}. Dùng trong Luyện Đan." : "Dùng cho đột phá cảnh giới tương ứng.") + $"\n{rewardStr}", presentation.pill, GetQualityColorValue(quality), false, doDismantle));
+            return;
+        }
         if (currentViewMode == StorageViewMode.GridSlots)
         {
             Color rarityCol = GetQualityColorValue(quality);
@@ -728,6 +740,12 @@ public class StorageModalUI : MonoBehaviour
             }
         };
 
+        if (presentation != null)
+        {
+            spawnedRows.Add(presentation.Add(name, "Dược liệu", $"×{count:N0}", $"{detail}\nNguyên liệu luyện đan; chọn công thức trong Luyện Đan.\n{rewardStr}", presentation.herb, new Color(.48f,.98f,.48f,.85f), false, doDismantle));
+            return;
+        }
+
         if (currentViewMode == StorageViewMode.GridSlots)
         {
             Color herbCol = new Color(0.48f, 0.98f, 0.48f, 0.85f);
@@ -743,6 +761,11 @@ public class StorageModalUI : MonoBehaviour
     {
         string title = "<color=#98FB98>Dược Trần (Bột Thuốc)</color>";
         string detail = $"Số lượng: {dust} hạt (Tăng tốc hoàn tất lò luyện đan)";
+        if (presentation != null)
+        {
+            spawnedRows.Add(presentation.Add("Dược Trần (Bột Thuốc)", "Nguyên liệu", $"×{dust:N0}", detail, presentation.dust, new Color(.6f,.98f,.6f,.85f), false, null));
+            return;
+        }
         if (currentViewMode == StorageViewMode.GridSlots)
         {
             Color dustCol = new Color(0.60f, 0.98f, 0.60f, 0.85f);
@@ -783,6 +806,12 @@ public class StorageModalUI : MonoBehaviour
                 RefreshWalletStats();
             }
         };
+
+        if (presentation != null)
+        {
+            spawnedRows.Add(presentation.Add("Quặng Phôi Pháp Khí", "Nguyên liệu", $"×{ore:N0}", $"{detail}\nDùng nâng Pháp Khí và Trận Pháp.\n{rewardStr}", presentation.ore, new Color(1,.73f,.15f,.85f), false, doDismantle));
+            return;
+        }
 
         if (currentViewMode == StorageViewMode.GridSlots)
         {
@@ -848,6 +877,11 @@ public class StorageModalUI : MonoBehaviour
             }
         };
 
+        if (presentation != null)
+        {
+            spawnedRows.Add(presentation.Add(item.displayName, "Hòm tạm · Chờ nhận", $"×{item.amount:N0}", $"{detail}\nNhận vật phẩm bằng nút Nhận ưu tiên trong Kho Đồ.\n{rewardStr}", presentation.pending, new Color(0,.85f,.95f,.85f), false, doDismantle));
+            return;
+        }
         if (currentViewMode == StorageViewMode.GridSlots)
         {
             Color pendingCol = isHighValue ? new Color(1f, 0.8f, 0.2f, 0.9f) : new Color(0f, 0.85f, 0.95f, 0.85f);

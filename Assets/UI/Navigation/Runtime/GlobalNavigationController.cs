@@ -226,7 +226,7 @@ namespace KhiVanChiTu.UI.Navigation
             for(int i=0;i<active.Count;i++)
             {
                 var layer=active[i];bool top=i==active.Count-1;
-                layer.canvas.sortingOrder=300+i*4;layer.group.ignoreParentGroups=top;layer.group.interactable=layer.group.blocksRaycasts=top;
+                layer.canvas.overrideSorting=true;layer.canvas.sortingOrder=300+i*4;layer.group.ignoreParentGroups=top;layer.group.interactable=layer.group.blocksRaycasts=top;
                 bool hide=false;
                 if(layer.kind==NavigationLayerKind.Screen)
                 {
@@ -252,6 +252,7 @@ namespace KhiVanChiTu.UI.Navigation
         void Discover()
         {
             var canvas=rootCanvas.transform;
+            Add("item-detail",canvas.Find("ItemDetailBottomSheet"),NavigationLayerKind.BottomSheet,()=>KhiVanChiTu.UI.Equipment.ItemDetailSheet.Find(this)?.Close());
             Add("storage",canvas.Find("StorageModalUI"),NavigationLayerKind.Screen,()=>StorageModalUI.Instance.Close());
             Add("talents",canvas.Find("DaoAnModal"),NavigationLayerKind.Screen,()=>DaoAnModalUI.Instance.Close());
             Add("milestones",canvas.Find("MilestoneModalUI"),NavigationLayerKind.Screen,()=>MilestoneModalUI.Instance.Close());

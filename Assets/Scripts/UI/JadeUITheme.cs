@@ -62,6 +62,7 @@ public sealed class JadeUITheme : MonoBehaviour
         var all = root.GetComponentsInChildren<RectTransform>(true);
         foreach (var rt in all)
         {
+            if(rt.GetComponentInParent<KhiVanChiTu.UI.Equipment.RpgViewScope>(true)!=null)continue;
             if(rt.GetComponentInParent<KhiVanChiTu.UI.Navigation.GlobalNavigationController>()!=null)continue;
             if(rt.GetComponentInParent<KhiVanChiTu.UI.CombatHUD.CombatHudPresentation>()!=null)continue;
             string n = rt.name;
@@ -80,6 +81,7 @@ public sealed class JadeUITheme : MonoBehaviour
     }
     public void StyleElement(RectTransform rt)
     {
+        if(rt.GetComponentInParent<KhiVanChiTu.UI.Equipment.RpgViewScope>(true)!=null)return;
         string n = rt.name;
         var text = rt.GetComponent<UnityEngine.UI.Text>();
         if (text != null)

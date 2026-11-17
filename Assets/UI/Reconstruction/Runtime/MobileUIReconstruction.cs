@@ -72,6 +72,7 @@ public sealed class MobileUIReconstruction : MonoBehaviour
 
     public void StyleElement(RectTransform rt)
     {
+        if(rt.GetComponentInParent<KhiVanChiTu.UI.Equipment.RpgViewScope>(true)!=null)return;
         if(rt!=null&&rt.GetComponentInParent<KhiVanChiTu.UI.Navigation.GlobalNavigationController>()!=null)return;
         if(rt!=null&&rt.GetComponentInParent<KhiVanChiTu.UI.CombatHUD.CombatHudPresentation>()!=null)return;
         if (assets == null || rt == null || rt.name.StartsWith("P6")) return;
