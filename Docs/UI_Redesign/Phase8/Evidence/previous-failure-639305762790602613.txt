@@ -1,0 +1,5 @@
+System.Exception: Touch reaches BackButton over nothing
+  at KhiVanChiTu.UI.Menu.Editor.MenuQA.Check (System.Boolean b, System.String text) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:50 
+  at KhiVanChiTu.UI.Menu.Editor.MenuQA.Hit (UnityEngine.UI.Button button) [0x00048] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:57 
+  at KhiVanChiTu.UI.Menu.Editor.MenuQA+<Run>d__31.MoveNext () [0x004e9] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:82 
+  at KhiVanChiTu.UI.Menu.Editor.MenuQA.Tick () [0x0002a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:47 

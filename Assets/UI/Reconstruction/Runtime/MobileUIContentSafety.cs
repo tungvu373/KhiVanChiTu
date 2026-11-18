@@ -8,6 +8,7 @@ public static class MobileUIContentSafety
     public static bool IsCornerClose(UnityEngine.UI.Button button)
     {
         if (button == null) return false;
+        if (button.GetComponentInParent<KhiVanChiTu.UI.Equipment.RpgViewScope>(true) != null) return false;
         string name = button.name.ToLowerInvariant().Replace("_", "");
         if (!name.Contains("close") || name.Contains("footer") || name.Contains("bottom")) return false;
         var rect = button.transform as RectTransform;
@@ -61,6 +62,7 @@ public static class MobileUIContentSafety
 
     static void PadFramedCaption(UnityEngine.UI.Text text)
     {
+        if (text.GetComponentInParent<KhiVanChiTu.UI.Equipment.RpgViewScope>(true) != null) return;
         var rect = text.rectTransform;
         if (rect.parent == null || text.GetComponentInParent<UnityEngine.UI.InputField>() != null ||
             rect.anchorMin != Vector2.zero || rect.anchorMax != Vector2.one) return;

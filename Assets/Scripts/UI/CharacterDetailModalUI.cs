@@ -250,6 +250,7 @@ public class CharacterDetailModalUI : MonoBehaviour
 
         if (txtUpgradeThanThuc != null)
             txtUpgradeThanThuc.text = $"• <color=#CC88FF>Thần Thức</color>: Cấp {lvlTT} · Chỉ số: <color=#CC88FF>+{valTT:F1}% Tốc độ xuất chiêu</color>";
+        GetComponent<KhiVanChiTu.UI.Menu.MenuCharacterInfoView>()?.Sync();
     }
 
     private IEnumerator AnimateOpen()

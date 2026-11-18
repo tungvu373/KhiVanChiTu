@@ -169,7 +169,9 @@ namespace KhiVanChiTu.UI.Navigation
                 case NavigationRoute.Resources:hud.legacy.walletButton.onClick.Invoke();break;
                 case NavigationRoute.Buffs:hud.legacy.buffsButton.onClick.Invoke();break;
                 case NavigationRoute.Log:hud.legacy.logButton.onClick.Invoke();break;
-                case NavigationRoute.Settings:hud.pause.GetComponent<UnityEngine.UI.Button>().onClick.Invoke();break;
+                case NavigationRoute.Settings:
+                    hud.pause.GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
+                    PauseMenuManager.Instance?.GetComponent<KhiVanChiTu.UI.Menu.MenuPauseView>()?.ShowSettings();break;
                 case NavigationRoute.SwordStyle:
                     var style=hud.legacy.styleHost.GetComponentInChildren<UnityEngine.UI.Button>(true);
                     if(style!=null&&style.interactable)style.onClick.Invoke();break;
