@@ -104,6 +104,9 @@ namespace KhiVanChiTu.UI.SecretRealm.Editor
         static IEnumerable Launch(RealmHubView hub,SecretRealmType type)
         {
             Time.timeScale=0;SecretRealmService.Instance.State.freeAttemptsToday=1;SecretRealmService.Instance.State.lastResetDate=DateTime.UtcNow.ToString("yyyy-MM-dd");SecretRealmModalUI.Instance.Open();hub.Refresh();hub.Focus(type);yield return null;Hit(hub.cards[(int)type].enter.button);yield return null;yield return null;
+            // Opening uses unscaled micro animation; wait for the actual raycast target before native input.
+            var primary=UnityEngine.Object.FindAnyObjectByType<RealmPlayView>(FindObjectsInactive.Include).actionHost.GetComponentInChildren<UnityEngine.UI.Button>();
+            if(primary!=null)foreach(var ready in Ready(primary))yield return ready;
             Check(Running&&SecretRealmPlayController.Instance.ActiveNavigationLayer!=null,"Launch "+type);Check(SecretRealmService.Instance.State.freeAttemptsToday==0,"Entry charged once "+type);
         }
         static IEnumerator Run()

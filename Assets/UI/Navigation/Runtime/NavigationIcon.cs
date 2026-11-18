@@ -7,9 +7,27 @@ namespace KhiVanChiTu.UI.Navigation
     public sealed class NavigationIcon : UnityEngine.UI.MaskableGraphic
     {
         [Range(0,4)] public int symbol;
+        public Sprite artwork;
+        Sprite Artwork=>artwork!=null?artwork:KhiVanChiTu.UI.GameIcons.GameIconCatalogue.At(KhiVanChiTu.UI.GameIcons.GameIconCatalogue.Current?.navigation,symbol);
+        public override Texture mainTexture=>Artwork!=null?Artwork.texture:base.mainTexture;
         protected override void OnPopulateMesh(UnityEngine.UI.VertexHelper mesh)
         {
             mesh.Clear();
+            var sprite=Artwork;
+            if(sprite!=null)
+            {
+                var rect=GetPixelAdjustedRect();var center=rect.center;
+                float aspect=sprite.rect.width/sprite.rect.height;
+                if(rect.width>rect.height*aspect)rect.width=rect.height*aspect;else rect.height=rect.width/aspect;
+                rect.center=center;var uv=UnityEngine.Sprites.DataUtility.GetOuterUV(sprite);
+                float light=Mathf.Clamp(Mathf.Max(color.r,Mathf.Max(color.g,color.b)),.55f,1);
+                var tone=new Color(light,light,light,color.a);
+                mesh.AddVert(new Vector3(rect.xMin,rect.yMin),tone,new Vector2(uv.x,uv.y));
+                mesh.AddVert(new Vector3(rect.xMin,rect.yMax),tone,new Vector2(uv.x,uv.w));
+                mesh.AddVert(new Vector3(rect.xMax,rect.yMax),tone,new Vector2(uv.z,uv.w));
+                mesh.AddVert(new Vector3(rect.xMax,rect.yMin),tone,new Vector2(uv.z,uv.y));
+                mesh.AddTriangle(0,1,2);mesh.AddTriangle(0,2,3);return;
+            }
             switch(symbol)
             {
                 case 0:Line(mesh,9,7,38,40);Line(mesh,33,7,10,36);Line(mesh,4,16,17,4);Line(mesh,27,4,40,16);break;

@@ -143,7 +143,7 @@ namespace KhiVanChiTu.UI.Cultivation
             secondary.label.text=active?"Đang dùng":l>0?"Chọn trận":"Chưa học";secondary.SetAvailable(unlocked&&l>0&&!active);
             tertiary.gameObject.SetActive(id==FormationId.Spirit);bool can=unlocked&&active&&s.SpiritCooldown==TimeSpan.Zero&&!s.SpiritActive;tertiary.label.text=s.SpiritActive?"Tụ Linh đang tác dụng":s.SpiritCooldown>TimeSpan.Zero?$"Hồi {s.SpiritCooldown:mm\\:ss}":"Phát động Tụ Linh";tertiary.SetAvailable(can);
             progress.Set(l,FormationService.MaxLevel,$"Tiến độ tu luyện · {l}/{FormationService.MaxLevel}");explanation.text=id==FormationId.Spirit?"Chọn Tụ Linh rồi phát động để tăng tu vi. Thời gian tác dụng và hồi chiêu giữ theo hệ thống hiện tại.":"Chỉ trận đang chọn phát huy hiệu ứng. Sau khi học, dùng Chọn trận để kích hoạt.";
-            result.text=s.SpiritActive?"Tụ Linh đang tác dụng · Tu vi ×"+s.CultivationMultiplier.ToString("0.##"):"Đang dùng: "+FormationPanelUI.FormationNames[(int)s.Selected];RpgEmblem.Show(subjectArt,RpgEmblemKind.Formation,Selected==1?theme.jade:theme.gold);
+            result.text=s.SpiritActive?"Tụ Linh đang tác dụng · Tu vi ×"+s.CultivationMultiplier.ToString("0.##"):"Đang dùng: "+FormationPanelUI.FormationNames[(int)s.Selected];RpgEmblem.Show(subjectArt,RpgEmblemKind.Formation,Selected==1?theme.jade:theme.gold,Selected);
         }
         public static string FormationEffect(FormationId id,int l)
         {

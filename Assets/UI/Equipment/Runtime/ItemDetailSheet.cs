@@ -21,7 +21,9 @@ namespace KhiVanChiTu.UI.Equipment
         public void Close(){gameObject.SetActive(false);sword=null;remove=null;}
         public void Show(string name,string quality,string body,Sprite image,Color color,Action onRemove=null,MergeItem item=null)
         {
-            sword=item;remove=onRemove;title.text=name;rarity.text=quality;rarity.color=color;description.text=name+"\n\n"+body;feedback.text="";art.sprite=image;art.enabled=image!=null;RpgEmblem.Hide(art);if(quality=="Dược liệu")RpgEmblem.Show(art,RpgEmblemKind.Herb,theme.jade);else if(quality.Contains("phẩm")||quality=="Phế đan")RpgEmblem.Show(art,RpgEmblemKind.Pill,color);
+            var generated=item==null?KhiVanChiTu.UI.GameIcons.GameIconCatalogue.Current?.Item(name,quality):null;
+            if(generated!=null)image=generated;
+            sword=item;remove=onRemove;title.text=name;rarity.text=quality;rarity.color=color;description.text=name+"\n\n"+body;feedback.text="";art.sprite=image;art.enabled=image!=null;art.color=Color.white;art.preserveAspect=true;RpgEmblem.Hide(art);if(generated==null){if(quality=="Dược liệu")RpgEmblem.Show(art,RpgEmblemKind.Herb,theme.jade);else if(quality.Contains("phẩm")||quality=="Phế đan")RpgEmblem.Show(art,RpgEmblemKind.Pill,color);}
             gameObject.SetActive(true);transform.SetAsLastSibling();
             RpgUI.Button(dismantle,"Phân giải",remove!=null&& (FeatureUnlockService.Instance==null||FeatureUnlockService.Instance.IsDismantleUnlocked()),()=>{var action=remove;Close();action?.Invoke();});
             selectMerge.gameObject.SetActive(item!=null&&MergeManager.Instance!=null&&!MergeManager.Instance.IsSwordEquipped(item));

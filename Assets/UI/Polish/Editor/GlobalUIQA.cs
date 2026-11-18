@@ -25,7 +25,7 @@ namespace KhiVanChiTu.UI.Polish.Editor
         const string Key="GlobalUIQA";
         static string Profile=>SessionState.GetString(Key+"Profile","");
         static string Mode=>SessionState.GetString(Key+"Mode","");
-        static string Evidence=>Mode=="refinement"?"UIUX_Polish/Evidence/refinement":"Docs/UI_Redesign/"+((Mode=="polish"||Mode=="baseline")?"Phase9":"Phase10")+"/Evidence/"+Mode;
+        static string Evidence=>Mode=="icons"?"Docs/AI_Icon_Refresh/Evidence/global":Mode=="refinement"?"UIUX_Polish/Evidence/refinement":"Docs/UI_Redesign/"+((Mode=="polish"||Mode=="baseline")?"Phase9":"Phase10")+"/Evidence/"+Mode;
         static IEnumerator routine;static double due;
         static readonly List<object> rows=new List<object>();
         static readonly List<string> errors=new List<string>();
@@ -79,6 +79,7 @@ namespace KhiVanChiTu.UI.Polish.Editor
             Expect(DataManager.Instance.SaveProfileId==Profile,"Isolation required before fixture writes");
             var slot=new CharacterSaveData{isSlotEmpty=false,characterName="Huyền Thiên Đạo Hữu Trường Sinh Vô Cực",stageIndex=26,realmId=5,subLevel=1,combatStage=5,linhThach=1e30f,playerMaxHp=50000,playerCurrentHp=50000,monsterSwordsAcquired=600};
             slot.swords=Enumerable.Range(0,64).Select(i=>new SwordSaveEntry{level=1+i%10,pieces=1,isEquipped=i<3,equipSlotIndex=i<3?i:-1}).ToArray();slot.artifacts.ore=99999;slot.alchemy.herbs=new[]{999999,888888,777777};slot.formations.levels=new[]{1,1,1,1,1,1};
+            if(Mode=="icons"){slot.alchemy.pills=Enumerable.Repeat(5,slot.alchemy.pills.Length).ToArray();slot.alchemy.medicineDust=999;}
             DataManager.Instance.gameSaveData.slots[0]=slot;MainMenuManager.Instance.AskConfirmEnterGame(0,slot);yield return null;MainMenuManager.Instance.popupConfirmBtn.onClick.Invoke();
             // Native LoadCurrentGame is delayed by scaled Invoke(0.05). Never pause before it runs.
             double loadDeadline=EditorApplication.timeSinceStartup+12;
@@ -92,6 +93,7 @@ namespace KhiVanChiTu.UI.Polish.Editor
             StorageModalUI.Instance.Close();foreach(var x in Delay(.45f))yield return x;
             if(Mode=="baseline")yield break;
             if(Mode=="refinement")foreach(var x in KhiVanChiTu.UI.Refinement.Editor.HudPolishChecks.Run(nav,SelectSize,Case,Capture))yield return x;
+            if(Mode=="icons")foreach(var x in KhiVanChiTu.UI.GameIcons.Editor.GameIconChecks.Run(nav,SelectSize,Case,Capture))yield return x;
             foreach(var size in new[]{new Vector2Int(1080,1920),new Vector2Int(1080,2340),new Vector2Int(720,1280),new Vector2Int(1440,3200)})
             {
                 SelectSize(size);yield return null;yield return null;nav.SelectGroup(NavigationGroup.Battle);foreach(var x in Delay(.45f))yield return x;

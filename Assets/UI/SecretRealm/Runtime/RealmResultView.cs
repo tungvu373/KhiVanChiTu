@@ -31,14 +31,14 @@ namespace KhiVanChiTu.UI.SecretRealm
             status.text=timed?(reached?"MỤC TIÊU HOÀN THÀNH":"HẾT THỜI GIAN · CHƯA ĐẠT MỤC TIÊU"):type==SecretRealmType.DanCauldron?(points>0?"KHAI ĐỈNH · CỰC PHẨM":"KHAI ĐỈNH · DUYÊN THƯỜNG"):"CỔ KIẾM ĐÃ THỨC TỈNH";status.color=reached?theme.jade:theme.gold;
             title.text=RealmCopy.Names[(int)type];score.text=type==SecretRealmType.HordeSurvival?$"Đã trảm {points:N0}/50 yêu ma":type==SecretRealmType.BarrierBreak?$"Đã phá {points:N0}% cấm chế":type==SecretRealmType.LightningDodge?$"Đã thu {points:N0}/20 lôi tinh":type==SecretRealmType.SwordTomb?$"Phi kiếm cao nhất · Cấp {points:N0}":points>0?"Đã tìm đúng đỉnh theo sấm ngôn":"Đã khai mở đỉnh thảo dược";
             note.text=RealmCopy.Plain(reward.specialNote);note.transform.parent.gameObject.SetActive(!string.IsNullOrEmpty(note.text));VisibleRewardCount=0;
-            Add("Linh thạch",reward.linhThach);Add("Tu vi",reward.tuVi);Add("Thảo dược · Bậc 1",reward.herbs0);Add("Thảo dược · Bậc 2",reward.herbs1);Add("Thảo dược · Bậc 3",reward.herbs2);Add("Quặng",reward.ore);Add("Cơ Duyên",reward.bonusCoDuyen);if(reward.swordLevel>0)Add("Phi kiếm",1,"Cấp "+reward.swordLevel);
+            Add("Linh thạch",reward.linhThach);Add("Tu vi",reward.tuVi);Add("Thảo dược · Bậc 1",reward.herbs0);Add("Thảo dược · Bậc 2",reward.herbs1);Add("Thảo dược · Bậc 3",reward.herbs2);Add("Quặng",reward.ore);Add("Cơ Duyên",reward.bonusCoDuyen);if(reward.swordLevel>0)Add("Phi kiếm",1,"Cấp "+reward.swordLevel,reward.swordLevel);
             for(int i=VisibleRewardCount;i<pool.Count;i++)pool[i].gameObject.SetActive(false);
             note.transform.parent.SetAsLastSibling();
             receipt.text=VisibleRewardCount>0?"Phần thưởng đã được cộng vào hành trang.":"Lượt thử luyện đã kết thúc.";
             confirm.Bind("Hoàn tất · Trở về bí cảnh",close);Canvas.ForceUpdateCanvases();scroll.verticalNormalizedPosition=1;StopAllCoroutines();StartCoroutine(Reveal());
         }
-        void Add(string caption,float amount,string value=null)
-        {if(amount<=0)return;RealmRewardRow row;if(VisibleRewardCount<pool.Count)row=pool[VisibleRewardCount];else{row=Instantiate(rowPrefab,rows);pool.Add(row);}VisibleRewardCount++;row.gameObject.SetActive(true);row.label.text=caption;row.value.text=value??"+"+(amount>=1e12f?amount.ToString("0.##E+0"):EconomyManager.FormatNumber(amount));row.icon.color=theme.gold;}
+        void Add(string caption,float amount,string value=null,int swordLevel=1)
+        {if(amount<=0)return;RealmRewardRow row;if(VisibleRewardCount<pool.Count)row=pool[VisibleRewardCount];else{row=Instantiate(rowPrefab,rows);pool.Add(row);}VisibleRewardCount++;row.gameObject.SetActive(true);row.label.text=caption;row.value.text=value??"+"+(amount>=1e12f?amount.ToString("0.##E+0"):EconomyManager.FormatNumber(amount));var generated=KhiVanChiTu.UI.GameIcons.GameIconCatalogue.Current?.Reward(caption,swordLevel);if(generated!=null){row.icon.sprite=generated;row.icon.type=UnityEngine.UI.Image.Type.Simple;row.icon.preserveAspect=true;row.icon.color=Color.white;}else row.icon.color=theme.gold;}
         IEnumerator Reveal(){reveal.alpha=.35f;float elapsed=0;while(elapsed<.18f){elapsed+=Time.unscaledDeltaTime;reveal.alpha=Mathf.Lerp(.35f,1,Mathf.Clamp01(elapsed/.18f));yield return null;}reveal.alpha=1;}
     }
 

@@ -1,0 +1,14 @@
+{
+  "scene": "Assets/Scenes/SampleScene_MobileWork.unity",
+  "objects": 2637,
+  "missingScripts": 0,
+  "brokenReferences": [],
+  "uniqueGeneratedSprites": 35,
+  "readOnlyAtRuntime": true,
+  "textureBytes": 73252576,
+  "swordVariantType": "Variant",
+  "swordCap": 10,
+  "originalPrefabSprites": 8,
+  "variantSprites": 10,
+  "profileMarkers": 0
+}

@@ -1,0 +1,51 @@
+{
+  "generatedAssets": 35,
+  "globalAssertions": 162,
+  "nativeAssertions": {
+    "inventory": 48,
+    "cultivation": 739,
+    "realms": 1257,
+    "reward-icons": 12
+  },
+  "successfulAssertions": 2218,
+  "currentFailureCases": 0,
+  "unexecutedCases": 1,
+  "globalResolutions": [
+    "1080x1920",
+    "1080x2340",
+    "720x1280",
+    "1440x3200"
+  ],
+  "spriteChecksAt": [
+    "1080x1920",
+    "1080x2340",
+    "720x1280"
+  ],
+  "screenshots": {
+    "global": 136,
+    "inventory": 13,
+    "cultivation": 32,
+    "realms": 31,
+    "reward-icons": 1
+  },
+  "savePreserved": true,
+  "computerUseUsed": false,
+  "androidBuild": {
+    "status": "PASS",
+    "result": "Succeeded",
+    "totalErrors": 0,
+    "totalWarnings": 37,
+    "totalSize": 945408044,
+    "seconds": 106.4576628,
+    "outputPath": "C:/Lap trinh game/Save file/KhiVanChiTu/Temp/AIIconBuild/KhiVanChiTu_Illustrated_Icons.apk",
+    "failures": [],
+    "apkFileBytes": 125615014,
+    "apkSHA256": "d3707df46a0cff07e05e5bed3ee6d1acc05878c3c70db16e04058ab7fcb9dfa1"
+  },
+  "validationCaseStatuses": {
+    "PASS": 2221,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "NOT RUN": 1
+  }
+}

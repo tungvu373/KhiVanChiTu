@@ -38,8 +38,12 @@ namespace KhiVanChiTu.UI.Equipment
         {
             var r=GetPixelAdjustedRect();Vector2 a=new Vector2(r.xMin+x*r.width/48,r.yMin+y*r.height/48),b=new Vector2(r.xMin+xx*r.width/48,r.yMin+yy*r.height/48);var n=new Vector2(-(b-a).y,(b-a).x).normalized*Mathf.Min(r.width,r.height)*.018f;int k=m.currentVertCount;m.AddVert(a-n,color,Vector2.zero);m.AddVert(a+n,color,Vector2.zero);m.AddVert(b+n,color,Vector2.zero);m.AddVert(b-n,color,Vector2.zero);m.AddTriangle(k,k+1,k+2);m.AddTriangle(k,k+2,k+3);
         }
-        public static void Show(UnityEngine.UI.Image host,RpgEmblemKind kind,Color tint)
-        {host.enabled=false;var child=host.transform.Find("VectorEmblem");var r=child!=null?(RectTransform)child:RpgUI.Rect("VectorEmblem",host.transform);RpgUI.Fill(r);var e=r.GetComponent<RpgEmblem>()??r.gameObject.AddComponent<RpgEmblem>();e.symbol=kind;e.color=tint;e.raycastTarget=false;e.SetAllDirty();r.gameObject.SetActive(true);}
+        public static void Show(UnityEngine.UI.Image host,RpgEmblemKind kind,Color tint,int variant=-1)
+        {
+            var sprite=KhiVanChiTu.UI.GameIcons.GameIconCatalogue.Current?.Emblem(kind,variant);
+            if(sprite!=null){Hide(host);host.sprite=sprite;host.type=UnityEngine.UI.Image.Type.Simple;host.color=Color.white;host.preserveAspect=true;host.enabled=true;return;}
+            host.enabled=false;var child=host.transform.Find("VectorEmblem");var r=child!=null?(RectTransform)child:RpgUI.Rect("VectorEmblem",host.transform);RpgUI.Fill(r);var e=r.GetComponent<RpgEmblem>()??r.gameObject.AddComponent<RpgEmblem>();e.symbol=kind;e.color=tint;e.raycastTarget=false;e.SetAllDirty();r.gameObject.SetActive(true);
+        }
         public static void Hide(UnityEngine.UI.Image host){var child=host.transform.Find("VectorEmblem");if(child!=null)child.gameObject.SetActive(false);}
     }
 }

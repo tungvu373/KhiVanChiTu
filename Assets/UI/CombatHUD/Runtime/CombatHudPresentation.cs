@@ -193,8 +193,8 @@ namespace KhiVanChiTu.UI.CombatHUD
                 PortraitHudController.Place(v.title.rectTransform,0,1,1,1,0,-2,-12,40);
                 PortraitHudController.Place(v.state.rectTransform,0,0,1,0,0,2,-8,40);
                 var icon=v.icon.rectTransform;
-                PortraitHudController.Place(icon,.5f,.5f,.5f,.5f,0,0,IsCompact?48:64,IsCompact?48:64);
-                PortraitHudController.Place(v.cooldown.rectTransform,.5f,.5f,.5f,.5f,0,0,IsCompact?54:72,IsCompact?54:72);
+                PortraitHudController.Place(icon,.5f,.5f,.5f,.5f,0,0,IsCompact?72:96,IsCompact?72:96);
+                PortraitHudController.Place(v.cooldown.rectTransform,.5f,.5f,.5f,.5f,0,0,IsCompact?76:100,IsCompact?76:100);
             }
             Top(legacy.notification,156,HasBoss?392:292,768,116);
             var box=legacy.secondaryOverlay.transform.Find("MenuCard") as RectTransform;

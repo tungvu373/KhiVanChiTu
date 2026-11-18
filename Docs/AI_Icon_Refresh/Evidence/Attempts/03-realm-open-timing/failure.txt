@@ -1,0 +1,5 @@
+System.Exception: Native touch reaches MainActionBtn
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Check (System.Boolean b, System.String m) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:55 
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Hit (UnityEngine.UI.Button button) [0x00078] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:66 
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA+<Run>d__40.MoveNext () [0x00cdb] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:149 
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Tick () [0x0001a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:51 

@@ -1,0 +1,131 @@
+{
+  "success": true,
+  "command": "command",
+  "data": {
+    "command": "console get",
+    "parameters": {
+      "tail": "10"
+    },
+    "result": {
+      "entries": [
+        {
+          "seq": 26351,
+          "timestampUtc": "2026-11-18T12:19:42.348746Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Assets\\UI\\Equipment\\Runtime\\ItemDetailSheet.cs(19,109): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "stackTrace": "",
+          "seeded": false
+        },
+        {
+          "seq": 26352,
+          "timestampUtc": "2026-11-18T12:19:42.348746Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Assets\\UI\\Equipment\\Runtime\\ItemDetailSheet.cs(19,27): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "stackTrace": "",
+          "seeded": false
+        },
+        {
+          "seq": 26353,
+          "timestampUtc": "2026-11-18T12:19:42.348746Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Assets\\UI\\Equipment\\Runtime\\MergeWorkbench.cs(24,96): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+          "stackTrace": "",
+          "seeded": false
+        },
+        {
+          "seq": 26354,
+          "timestampUtc": "2026-11-18T12:19:42.348746Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Assets\\UI\\Equipment\\Runtime\\MergeWorkbench.cs(24,27): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+          "stackTrace": "",
+          "seeded": false
+        },
+        {
+          "seq": 26355,
+          "timestampUtc": "2026-11-18T12:19:42.348746Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Assets\\Scripts\\Combat\\BossEnemy.cs(44,18): warning CS0414: The field 'BossEnemy.hasHashDie' is assigned but its value is never used",
+          "stackTrace": "",
+          "seeded": false
+        },
+        {
+          "seq": 26356,
+          "timestampUtc": "2026-11-18T12:19:51.8552636Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Shader warning in 'TextMeshPro/Mobile/Distance Field': #pragma enable_d3d11_debug_symbols has been deprecated, instead please use #pragma enable_debug_symbols at line 84",
+          "stackTrace": "",
+          "seeded": false
+        },
+        {
+          "seq": 26357,
+          "timestampUtc": "2026-11-18T12:19:52.9063966Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Pre-baked collision is disabled on 1 mesh(es) referenced by Mesh Collider components in this build. In future versions of Unity, the build process will no longer automatically pre-bake collision for these meshes; enable pre-baked collision in the Mesh import settings. Use Project Auditor (Window > Analysis > Project Auditor > Game Objects) to find and fix similar issues across the project. Affected meshes:\n - 'Pebbles01_LOD0' (convex collision is disabled)",
+          "stackTrace": "",
+          "seeded": false
+        },
+        {
+          "seq": 26358,
+          "timestampUtc": "2026-11-18T12:20:45.7797323Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "C:\\Lap trinh game\\Save file\\KhiVanChiTu\\Library\\Bee\\artifacts\\Android\\il2cppOutput\\cpp: [Unity.TextMeshPro] - System.Void TMPro.TMP_TextParsingUtilities::.cctor() - Method was given it's own cpp file because it is large and costly to compile",
+          "stackTrace": "UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions)\nPipelineEvaluation.PipelineEval_0b1b880b/<>c:<Execute>b__0_0 ()\nUnityEditor.EditorApplication:Internal_CallDelayFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26359,
+          "timestampUtc": "2026-11-18T12:20:45.7797323Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "C:\\Lap trinh game\\Save file\\KhiVanChiTu\\Library\\Bee\\artifacts\\Android\\il2cppOutput\\cpp: [Unity.TextMeshPro] - System.Void TMPro.TextMeshPro::GenerateTextMesh() - Method was given it's own cpp file because it is large and costly to compile",
+          "stackTrace": "UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions)\nPipelineEvaluation.PipelineEval_0b1b880b/<>c:<Execute>b__0_0 ()\nUnityEditor.EditorApplication:Internal_CallDelayFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26360,
+          "timestampUtc": "2026-11-18T12:20:45.7797323Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "C:\\Lap trinh game\\Save file\\KhiVanChiTu\\Library\\Bee\\artifacts\\Android\\il2cppOutput\\cpp: [Unity.TextMeshPro] - System.Void TMPro.TextMeshProUGUI::GenerateTextMesh() - Method was given it's own cpp file because it is large and costly to compile",
+          "stackTrace": "UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions)\nPipelineEvaluation.PipelineEval_0b1b880b/<>c:<Execute>b__0_0 ()\nUnityEditor.EditorApplication:Internal_CallDelayFunctions ()\n",
+          "seeded": false
+        }
+      ],
+      "cursor": 26360,
+      "session": "af870fa573df48aab91744e1487e193f",
+      "returned": 10,
+      "dropped": false,
+      "reset": false,
+      "counts": {
+        "error": 9,
+        "warn": 1155,
+        "log": 836
+      },
+      "groundTruth": {
+        "sampledUtc": "2026-11-18T12:22:02.1854813Z",
+        "ageMs": 263,
+        "compilationFailed": false,
+        "compiling": false,
+        "consoleErrors": 0,
+        "consoleWarnings": 37,
+        "consoleLogs": 4,
+        "seeded": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Lap trinh game\\Save file\\KhiVanChiTu"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

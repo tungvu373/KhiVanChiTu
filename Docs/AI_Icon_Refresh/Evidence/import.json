@@ -1,0 +1,219 @@
+{
+  "scene": "Assets/Scenes/SampleScene_MobileWork.unity",
+  "assetCount": 35,
+  "catalogue": "Assets/Resources/UI/GameIconCatalogue.asset",
+  "swordVariant": "Assets/UI/GameIcons/Prefabs/MergeItemIllustrated.prefab",
+  "swordLevelCap": 10,
+  "assets": [
+    {
+      "name": "Sword01",
+      "path": "Assets/UI/GameIcons/Art/Sword01.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Sword02",
+      "path": "Assets/UI/GameIcons/Art/Sword02.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Sword03",
+      "path": "Assets/UI/GameIcons/Art/Sword03.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Sword04",
+      "path": "Assets/UI/GameIcons/Art/Sword04.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Sword05",
+      "path": "Assets/UI/GameIcons/Art/Sword05.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Sword06",
+      "path": "Assets/UI/GameIcons/Art/Sword06.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Sword07",
+      "path": "Assets/UI/GameIcons/Art/Sword07.png",
+      "textureWidth": 468,
+      "textureHeight": 512
+    },
+    {
+      "name": "Sword08",
+      "path": "Assets/UI/GameIcons/Art/Sword08.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Sword09",
+      "path": "Assets/UI/GameIcons/Art/Sword09.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Sword10",
+      "path": "Assets/UI/GameIcons/Art/Sword10.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "SkillSword",
+      "path": "Assets/UI/GameIcons/Art/SkillSword.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "SkillPalm",
+      "path": "Assets/UI/GameIcons/Art/SkillPalm.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "SkillThunder",
+      "path": "Assets/UI/GameIcons/Art/SkillThunder.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "SkillYinYang",
+      "path": "Assets/UI/GameIcons/Art/SkillYinYang.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "PillCultivation",
+      "path": "Assets/UI/GameIcons/Art/PillCultivation.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "PillBreakthrough",
+      "path": "Assets/UI/GameIcons/Art/PillBreakthrough.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "HerbLingzhi",
+      "path": "Assets/UI/GameIcons/Art/HerbLingzhi.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "HerbCondensing",
+      "path": "Assets/UI/GameIcons/Art/HerbCondensing.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "HerbSnowLotus",
+      "path": "Assets/UI/GameIcons/Art/HerbSnowLotus.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Ore",
+      "path": "Assets/UI/GameIcons/Art/Ore.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Dust",
+      "path": "Assets/UI/GameIcons/Art/Dust.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Chest",
+      "path": "Assets/UI/GameIcons/Art/Chest.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Robe",
+      "path": "Assets/UI/GameIcons/Art/Robe.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Crown",
+      "path": "Assets/UI/GameIcons/Art/Crown.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Boots",
+      "path": "Assets/UI/GameIcons/Art/Boots.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Amulet",
+      "path": "Assets/UI/GameIcons/Art/Amulet.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Body",
+      "path": "Assets/UI/GameIcons/Art/Body.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "Cauldron",
+      "path": "Assets/UI/GameIcons/Art/Cauldron.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "SpiritLotus",
+      "path": "Assets/UI/GameIcons/Art/SpiritLotus.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "FrostFormation",
+      "path": "Assets/UI/GameIcons/Art/FrostFormation.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "BloodFormation",
+      "path": "Assets/UI/GameIcons/Art/BloodFormation.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "GoldenBell",
+      "path": "Assets/UI/GameIcons/Art/GoldenBell.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "SpiritStone",
+      "path": "Assets/UI/GameIcons/Art/SpiritStone.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "FortuneCoin",
+      "path": "Assets/UI/GameIcons/Art/FortuneCoin.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    },
+    {
+      "name": "RealmPortal",
+      "path": "Assets/UI/GameIcons/Art/RealmPortal.png",
+      "textureWidth": 512,
+      "textureHeight": 512
+    }
+  ]
+}

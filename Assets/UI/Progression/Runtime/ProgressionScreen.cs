@@ -140,7 +140,7 @@ namespace KhiVanChiTu.UI.Progression
             Tint(milestoneTab,!talents);Tint(talentTab,talents);dirty=false;signature=Fingerprint();Canvas.ForceUpdateCanvases();scroll.verticalNormalizedPosition=Mathf.Clamp01(position);
         }
         void Tint(FoundationAction a,bool selected){a.button.targetGraphic.color=selected?theme.raised:theme.surface;a.label.color=selected?theme.gold:theme.ivory;}
-        static void Symbol(ProgressionCard row,int symbol){var icon=row.icon as NavigationIcon;if(icon!=null){icon.symbol=symbol;icon.SetAllDirty();}}
+        static void Symbol(ProgressionCard row,int symbol){var icon=row.icon as NavigationIcon;if(icon!=null){icon.symbol=symbol;icon.artwork=KhiVanChiTu.UI.GameIcons.GameIconCatalogue.At(KhiVanChiTu.UI.GameIcons.GameIconCatalogue.Current?.progression,symbol);icon.SetAllDirty();}}
         public static string LockReason(DaoAnDefinition node,DaoAnProgressionService service,int level)
         {
             var reasons=new List<string>();if(!string.IsNullOrEmpty(node.prerequisiteId)&&(node.prerequisiteId==node.id||service.GetLevel(node.prerequisiteId)<Math.Max(1,node.prerequisiteLevel)))reasons.Add($"Cần {service.Catalog.Find(node.prerequisiteId)?.displayName??node.prerequisiteId} cấp {Math.Max(1,node.prerequisiteLevel)}");

@@ -37,13 +37,16 @@ namespace KhiVanChiTu.UI.Equipment
         }
         public GameObject Add(string name,string rarity,string count,string body,Sprite icon,Color color,bool equipped,Action remove,MergeItem sword=null)
         {
+            var generated=sword==null?KhiVanChiTu.UI.GameIcons.GameIconCatalogue.Current?.Item(name,rarity):null;
+            if(generated!=null)icon=generated;
             var item=Instantiate(owner.currentViewMode==StorageViewMode.GridSlots?slotPrefab:cardPrefab,owner.contentContainer);
             item.name="InventoryItem";RpgUI.Top(item.badge.rectTransform,0,52,8,8);item.Bind(name,rarity,icon,count,()=>
             {
                 foreach(var other in owner.contentContainer.GetComponentsInChildren<FoundationItem>())other.SetSelected(other==item);
                 if(sword!=null)sheet.ShowSword(sword,remove);else sheet.Show(name,rarity,body,icon,color,remove);
             });
-            if(rarity=="Dược liệu")RpgEmblem.Show(item.icon,RpgEmblemKind.Herb,theme.jade);
+            if(generated!=null){RpgEmblem.Hide(item.icon);item.icon.color=Color.white;item.icon.preserveAspect=true;}
+            else if(rarity=="Dược liệu")RpgEmblem.Show(item.icon,RpgEmblemKind.Herb,theme.jade);
             else if(rarity.Contains("phẩm")||rarity=="Phế đan")RpgEmblem.Show(item.icon,RpgEmblemKind.Pill,color);
             item.detail.gameObject.SetActive(true);item.detail.text=equipped?"ĐANG TRANG BỊ":rarity;item.detail.color=equipped?theme.gold:color;
             var edge=item.transform.Find("RarityEdge").GetComponent<UnityEngine.UI.Image>();edge.color=color;
