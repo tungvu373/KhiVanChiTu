@@ -16,6 +16,7 @@ namespace KhiVanChiTu.UI.CombatHUD
         }
         public PortraitHudController legacy;
         public FoundationTheme theme;
+        public Sprite hudSurface;
         public Material damageMaterial;
         public bool externalNavigation;
         public MobileDrawerUIController drawer;
@@ -75,8 +76,8 @@ namespace KhiVanChiTu.UI.CombatHUD
                 claimAction.SetAvailable(questClaim.interactable);
                 bool ready=sourceClaim!=null&&sourceClaim.text.ToUpperInvariant().Contains("NH\u1eacN");
                 Set(claimAction.label,ready?"Nh\u1eadn":"M\u1ed1c");
-                claimAction.button.targetGraphic.color=ready?theme.gold:theme.raised;
-                claimAction.label.color=ready?theme.ink:theme.ivory;
+                claimAction.button.targetGraphic.color=hudSurface!=null?Color.white:ready?theme.gold:theme.raised;
+                claimAction.label.color=hudSurface!=null?(ready?theme.gold:theme.ivory):ready?theme.ink:theme.ivory;
             }
             if(combat!=null)hp.Set(combat.playerCurrentHp,combat.playerMaxHp,"HP  "+PortraitHudController.Compact(combat.playerCurrentHp)+" / "+PortraitHudController.Compact(combat.playerMaxHp));
             if(sm!=null)mp.Set(sm.currentLinhLuc,sm.maxLinhLuc,"MP  "+Mathf.FloorToInt(sm.currentLinhLuc)+" / "+Mathf.FloorToInt(sm.maxLinhLuc));
@@ -111,7 +112,7 @@ namespace KhiVanChiTu.UI.CombatHUD
             view.cooldown.fillAmount=cd>0?Mathf.Clamp01(cd/duration):unlocked?0:1;
             view.icon.color=view.button.interactable?Color.white:new Color(.48f,.56f,.55f,1);
             view.state.color=sm.currentLinhLuc<cost&&unlocked&&cd<=0?theme.gold:theme.ivory;
-            view.button.targetGraphic.color=view.button.interactable?theme.raised:theme.ink;
+            view.button.targetGraphic.color=hudSurface!=null?(view.button.interactable?Color.white:new Color(.55f,.62f,.60f,1)):view.button.interactable?theme.raised:theme.ink;
             view.title.color=view.button.interactable?theme.gold:theme.muted;
         }
         public void ConfigureAppearance()
@@ -145,7 +146,7 @@ namespace KhiVanChiTu.UI.CombatHUD
             {
                 var button=drawer.dockButtons[i];bool unlocked=drawer.IsDrawerUnlocked(i,out _);
                 bool selected=drawer.ActiveDrawerIndex==i;
-                button.targetGraphic.color=selected?theme.raised:theme.ink;
+                button.targetGraphic.color=hudSurface!=null?(selected?Color.white:new Color(.72f,.78f,.76f,1)):selected?theme.raised:theme.ink;
                 var text=button.transform.Find("P2Label")?.GetComponent<TMP_Text>();
                 if(text!=null)text.color=!unlocked?theme.muted:selected?theme.gold:theme.ivory;
             }
@@ -158,11 +159,12 @@ namespace KhiVanChiTu.UI.CombatHUD
                 if(styleButton==null)return;
                 sourceStyle=styleButton.GetComponentInChildren<UnityEngine.UI.Text>(true);
                 foreach(var graphic in styleButton.GetComponentsInChildren<UnityEngine.UI.Graphic>(true))if(graphic.transform!=styleButton.transform)graphic.enabled=false;
-                var image=styleButton.GetComponent<UnityEngine.UI.Image>();image.sprite=theme.surfaceSprite;image.type=UnityEngine.UI.Image.Type.Sliced;
+                var image=styleButton.GetComponent<UnityEngine.UI.Image>();image.sprite=hudSurface!=null?hudSurface:theme.surfaceSprite;image.type=UnityEngine.UI.Image.Type.Sliced;
+                if(hudSurface!=null)image.pixelsPerUnitMultiplier=10;
                 styleCaption=new FoundationFactory(theme).Text("P2SwordStyle",styleButton.transform,"",24,TextAlignmentOptions.Center);
                 FoundationFactory.Fill(styleCaption.rectTransform,12,0,12,0);styleCaption.textWrappingMode=TextWrappingModes.NoWrap;styleCaption.color=theme.gold;
             }
-            styleButton.targetGraphic.color=theme.surface;
+            styleButton.targetGraphic.color=hudSurface!=null?Color.white:theme.surface;
             if(sourceStyle!=null)Set(styleCaption,sourceStyle.text);
         }
         public void ApplyLayout()

@@ -1,0 +1,113 @@
+{
+  "success": true,
+  "command": "command",
+  "data": {
+    "command": "console get",
+    "parameters": {
+      "tail": "8"
+    },
+    "result": {
+      "entries": [
+        {
+          "seq": 24555,
+          "timestampUtc": "2026-11-18T10:41:53.2534236Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "C:\\Lap trinh game\\Save file\\KhiVanChiTu\\Library\\Bee\\artifacts\\Android\\il2cppOutput\\cpp: [Unity.TextMeshPro] - System.Void TMPro.TextMeshPro::GenerateTextMesh() - Method was given it's own cpp file because it is large and costly to compile",
+          "stackTrace": "UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions)\nPipelineEvaluation.PipelineEval_06796c45/<>c:<Execute>b__0_0 ()\nUnityEditor.EditorApplication:Internal_CallDelayFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 24556,
+          "timestampUtc": "2026-11-18T10:41:53.2534236Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "C:\\Lap trinh game\\Save file\\KhiVanChiTu\\Library\\Bee\\artifacts\\Android\\il2cppOutput\\cpp: [Unity.TextMeshPro] - System.Void TMPro.TextMeshProUGUI::GenerateTextMesh() - Method was given it's own cpp file because it is large and costly to compile",
+          "stackTrace": "UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions)\nPipelineEvaluation.PipelineEval_06796c45/<>c:<Execute>b__0_0 ()\nUnityEditor.EditorApplication:Internal_CallDelayFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 24557,
+          "timestampUtc": "2026-11-18T10:46:14.6516802Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "1 URP assets included in build\r\n- Mobile_RPAsset - Assets/Settings/Mobile_RPAsset.asset\r\n\t - Mobile_Renderer - Assets/Settings/Mobile_Renderer.asset - UnityEngine.Rendering.Universal.UniversalRendererData\r\n",
+          "stackTrace": "UnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions)\nPipelineEvaluation.PipelineEval_4d1f1afa/<>c:<Execute>b__0_0 ()\nUnityEditor.EditorApplication:Internal_CallDelayFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 24558,
+          "timestampUtc": "2026-11-18T10:46:14.6845041Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[TestRunBuilder] Creating new file 'Assets/Resources/PerformanceTestRunInfo.json' (3164 bytes)",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nUnity.PerformanceTesting.Editor.TestRunBuilder:SaveToStorage (object,string) (at ./Library/PackageCache/com.unity.test-framework.performance@b6023decb532/Editor/TestRunBuilder.cs:242)\nUnity.PerformanceTesting.Editor.TestRunBuilder:OnPreprocessBuild (UnityEditor.Build.Reporting.BuildReport) (at ./Library/PackageCache/com.unity.test-framework.performance@b6023decb532/Editor/TestRunBuilder.cs:35)\nUnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions)\nPipelineEvaluation.PipelineEval_4d1f1afa/<>c:<Execute>b__0_0 ()\nUnityEditor.EditorApplication:Internal_CallDelayFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 24559,
+          "timestampUtc": "2026-11-18T10:46:14.6855029Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[TestRunBuilder] Creating new file 'Assets/Resources/PerformanceTestRunSettings.json' (23 bytes)",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nUnity.PerformanceTesting.Editor.TestRunBuilder:SaveToStorage (object,string) (at ./Library/PackageCache/com.unity.test-framework.performance@b6023decb532/Editor/TestRunBuilder.cs:242)\nUnity.PerformanceTesting.Editor.TestRunBuilder:OnPreprocessBuild (UnityEditor.Build.Reporting.BuildReport) (at ./Library/PackageCache/com.unity.test-framework.performance@b6023decb532/Editor/TestRunBuilder.cs:38)\nUnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions)\nPipelineEvaluation.PipelineEval_4d1f1afa/<>c:<Execute>b__0_0 ()\nUnityEditor.EditorApplication:Internal_CallDelayFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 24560,
+          "timestampUtc": "2026-11-18T10:46:15.2376766Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "Pipeline: this build does not include the Pipeline (Project Settings > Pipeline > Runtime), so its assemblies and settings are excluded from it.",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nUnity.Pipeline.Editor.BuildProcessors.PipelineRuntimeBuildProcessor:Preprocess (UnityEditor.Build.NamedBuildTarget,System.Nullable`1<UnityEditor.BuildOptions>) (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Editor/BuildProcessors/PipelineRuntimeBuildProcessor.cs:107)\nUnity.Pipeline.Editor.BuildProcessors.PipelineRuntimeBuildProcessor:OnPreprocessBuild (UnityEditor.Build.BuildCallbackContext) (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Editor/BuildProcessors/PipelineRuntimeBuildProcessor.cs:68)\nUnityEditor.BuildPipeline:BuildPlayer (UnityEditor.BuildPlayerOptions)\nPipelineEvaluation.PipelineEval_4d1f1afa/<>c:<Execute>b__0_0 ()\nUnityEditor.EditorApplication:Internal_CallDelayFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 24561,
+          "timestampUtc": "2026-11-18T10:46:31.6013915Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Shader warning in 'TextMeshPro/Mobile/Distance Field': #pragma enable_d3d11_debug_symbols has been deprecated, instead please use #pragma enable_debug_symbols at line 84",
+          "stackTrace": "",
+          "seeded": false
+        },
+        {
+          "seq": 24562,
+          "timestampUtc": "2026-11-18T10:46:32.3047671Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Pre-baked collision is disabled on 1 mesh(es) referenced by Mesh Collider components in this build. In future versions of Unity, the build process will no longer automatically pre-bake collision for these meshes; enable pre-baked collision in the Mesh import settings. Use Project Auditor (Window > Analysis > Project Auditor > Game Objects) to find and fix similar issues across the project. Affected meshes:\n - 'Pebbles01_LOD0' (convex collision is disabled)",
+          "stackTrace": "",
+          "seeded": false
+        }
+      ],
+      "cursor": 24562,
+      "session": "af870fa573df48aab91744e1487e193f",
+      "returned": 8,
+      "dropped": false,
+      "reset": false,
+      "counts": {
+        "error": 13,
+        "warn": 995,
+        "log": 992
+      },
+      "groundTruth": {
+        "sampledUtc": "2026-11-18T10:49:15.7998371Z",
+        "ageMs": 37,
+        "compilationFailed": false,
+        "compiling": false,
+        "consoleErrors": 0,
+        "consoleWarnings": 2,
+        "consoleLogs": 4,
+        "seeded": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Lap trinh game\\Save file\\KhiVanChiTu"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

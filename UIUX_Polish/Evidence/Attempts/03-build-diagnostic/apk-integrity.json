@@ -1,0 +1,5 @@
+{
+  "size": 116574649,
+  "sha256": "0e58858de380e5790368eb5107c50db51508d5fc585a3a5d0c061286613fc225",
+  "note": "Build Succeeded; one counted Editor error came from unsupported diagnostic editor dialog command during build, not a C# or Gradle failure."
+}

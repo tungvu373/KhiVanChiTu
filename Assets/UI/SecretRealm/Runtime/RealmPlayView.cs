@@ -50,7 +50,9 @@ namespace KhiVanChiTu.UI.SecretRealm
             foreach(var line in button.GetComponents<UnityEngine.UI.Outline>())line.enabled=false;
             foreach(var text in button.GetComponentsInChildren<UnityEngine.UI.Text>(true))text.enabled=false;
             var icon=button.transform.Find("Icon") as RectTransform;if(icon!=null){icon.anchorMin=icon.anchorMax=new Vector2(0,.5f);icon.pivot=new Vector2(.5f,.5f);icon.anchoredPosition=new Vector2(60,0);icon.sizeDelta=new Vector2(64,64);var img=icon.GetComponent<UnityEngine.UI.Image>();img.raycastTarget=false;var cutout=icon.gameObject.AddComponent<RealmSwordImage>();cutout.source=img;cutout.silhouettes=swordArt;}
-            actionLabel=new FoundationFactory(theme).Text("Phase7ActionLabel",button.transform,"",34,TextAlignmentOptions.Center);RpgUI.Fill(actionLabel.rectTransform,112,10,24,10);actionLabel.color=theme.ink;
+            // Reserve the same gutter on both sides so the label stays centered
+            // in the action's readable region, independently of its left icon.
+            actionLabel=new FoundationFactory(theme).Text("Phase7ActionLabel",button.transform,"",34,TextAlignmentOptions.Center);RpgUI.Fill(actionLabel.rectTransform,112,10,112,10);actionLabel.color=theme.ink;
         }
         public void Layout()
         {

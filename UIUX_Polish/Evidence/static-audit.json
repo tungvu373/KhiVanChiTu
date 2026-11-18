@@ -1,0 +1,143 @@
+{
+  "scene": "Assets/Scenes/SampleScene_MobileWork.unity",
+  "objects": 2637,
+  "missingScripts": 0,
+  "brokenReferences": [],
+  "badgeCount": 29,
+  "allBadgesIgnoreLayout": true,
+  "allBadgesNoRaycast": true,
+  "allBadgesHaveRenderer": true,
+  "externalDockLayout": true,
+  "restoreControlOutsideHiddenDock": true,
+  "generatedArt": {
+    "path": "Assets/UI/Refinement/Art/JadeSurface.png",
+    "type": "Sprite",
+    "alpha": true,
+    "border": "(180.00, 180.00, 180.00, 180.00)",
+    "mipmapEnabled": false,
+    "isReadable": false
+  },
+  "eventSystems": 1,
+  "destinations": [
+    {
+      "route": "Merge",
+      "group": "Equipment",
+      "title": "Kiếm Lộ"
+    },
+    {
+      "route": "Storage",
+      "group": "Equipment",
+      "title": "Kho Đồ"
+    },
+    {
+      "route": "Body",
+      "group": "Cultivation",
+      "title": "Luyện Thể"
+    },
+    {
+      "route": "Alchemy",
+      "group": "Cultivation",
+      "title": "Luyện Đan"
+    },
+    {
+      "route": "Artifact",
+      "group": "Cultivation",
+      "title": "Pháp Khí"
+    },
+    {
+      "route": "Formation",
+      "group": "Cultivation",
+      "title": "Trận Pháp"
+    },
+    {
+      "route": "Progression",
+      "group": "Cultivation",
+      "title": "Công Pháp & Kỹ Năng"
+    },
+    {
+      "route": "Tribulation",
+      "group": "Cultivation",
+      "title": "Độ Kiếp"
+    },
+    {
+      "route": "RealmList",
+      "group": "SecretRealm",
+      "title": "Tất cả Bí Cảnh"
+    },
+    {
+      "route": "Horde",
+      "group": "SecretRealm",
+      "title": "Vạn Ma Triều Dâng"
+    },
+    {
+      "route": "Barrier",
+      "group": "SecretRealm",
+      "title": "Trảm Phá Cấm Chế"
+    },
+    {
+      "route": "Cauldron",
+      "group": "SecretRealm",
+      "title": "Đan Thần Kỳ Duyên"
+    },
+    {
+      "route": "Lightning",
+      "group": "SecretRealm",
+      "title": "Vượt Lôi Trì"
+    },
+    {
+      "route": "SwordTomb",
+      "group": "SecretRealm",
+      "title": "Kiếm Chủng Cổ Thần"
+    },
+    {
+      "route": "Talents",
+      "group": "Equipment",
+      "title": "Đạo Vận"
+    },
+    {
+      "route": "Milestones",
+      "group": "Other",
+      "title": "Mốc Tu Tiên"
+    },
+    {
+      "route": "Achievements",
+      "group": "Other",
+      "title": "Thành Tựu"
+    },
+    {
+      "route": "Character",
+      "group": "Other",
+      "title": "Nhân Vật"
+    },
+    {
+      "route": "Resources",
+      "group": "Other",
+      "title": "Tài Nguyên"
+    },
+    {
+      "route": "Buffs",
+      "group": "Other",
+      "title": "Hiệu Ứng"
+    },
+    {
+      "route": "Log",
+      "group": "Other",
+      "title": "Nhật Ký"
+    },
+    {
+      "route": "Settings",
+      "group": "Other",
+      "title": "Cài Đặt & Tạm Dừng"
+    },
+    {
+      "route": "Supplies",
+      "group": "Other",
+      "title": "Hỗ Trợ Tu Luyện"
+    },
+    {
+      "route": "SwordStyle",
+      "group": "Other",
+      "title": "Kiếm Pháp"
+    }
+  ]
+}

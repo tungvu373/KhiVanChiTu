@@ -1,0 +1,17 @@
+{
+  "generator": "Built-in image_gen",
+  "source": "C:/Users/Admin/.codex/generated_images/01a1ea8f-d813-74d2-b6f9-970135bde6f3/exec-02ade758-6c25-42cd-bf00-73d91b0d73b7.png",
+  "workspace": "Assets\\UI\\Refinement\\Art\\JadeSurface.png",
+  "sha256": "db757112f30cb8b43bce6ff6555f12acd1bab7a734f67a12c2e4001fd6950a08",
+  "mode": "RGBA",
+  "width": 1254,
+  "height": 1254,
+  "alphaExtrema": [
+    0,
+    255
+  ],
+  "fullyTransparentPixels": 409175,
+  "imported": true,
+  "reuse": "HUD static surfaces, buttons, skill frames, tracks. Native fills/icons/cooldowns preserved.",
+  "discardedVariant": "exec-6ac61e13: border too thick; not imported"
+}

@@ -25,7 +25,7 @@ namespace KhiVanChiTu.UI.Polish.Editor
         const string Key="GlobalUIQA";
         static string Profile=>SessionState.GetString(Key+"Profile","");
         static string Mode=>SessionState.GetString(Key+"Mode","");
-        static string Evidence=>"Docs/UI_Redesign/"+((Mode=="polish"||Mode=="baseline")?"Phase9":"Phase10")+"/Evidence/"+Mode;
+        static string Evidence=>Mode=="refinement"?"UIUX_Polish/Evidence/refinement":"Docs/UI_Redesign/"+((Mode=="polish"||Mode=="baseline")?"Phase9":"Phase10")+"/Evidence/"+Mode;
         static IEnumerator routine;static double due;
         static readonly List<object> rows=new List<object>();
         static readonly List<string> errors=new List<string>();
@@ -91,6 +91,7 @@ namespace KhiVanChiTu.UI.Polish.Editor
             foreach(var x in MeasureInventory())yield return x;
             StorageModalUI.Instance.Close();foreach(var x in Delay(.45f))yield return x;
             if(Mode=="baseline")yield break;
+            if(Mode=="refinement")foreach(var x in KhiVanChiTu.UI.Refinement.Editor.HudPolishChecks.Run(nav,SelectSize,Case,Capture))yield return x;
             foreach(var size in new[]{new Vector2Int(1080,1920),new Vector2Int(1080,2340),new Vector2Int(720,1280),new Vector2Int(1440,3200)})
             {
                 SelectSize(size);yield return null;yield return null;nav.SelectGroup(NavigationGroup.Battle);foreach(var x in Delay(.45f))yield return x;

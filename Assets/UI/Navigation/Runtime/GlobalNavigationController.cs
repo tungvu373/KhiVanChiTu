@@ -68,7 +68,7 @@ namespace KhiVanChiTu.UI.Navigation
             new NavigationDestination(NavigationGroup.SecretRealm,NavigationRoute.Cauldron,"\u0110an Th\u1ea7n K\u1ef3 Duy\u00ean","Xem c\u1eeda v\u00e0o k\u1ef3 duy\u00ean l\u00f2 \u0111an"),
             new NavigationDestination(NavigationGroup.SecretRealm,NavigationRoute.Lightning,"V\u01b0\u1ee3t L\u00f4i Tr\u00ec","Xem c\u1eeda v\u00e0o thu th\u1eadp v\u00e0 n\u00e9 tr\u00e1nh"),
             new NavigationDestination(NavigationGroup.SecretRealm,NavigationRoute.SwordTomb,"Ki\u1ebfm Ch\u1ee7ng C\u1ed5 Th\u1ea7n","Xem c\u1eeda v\u00e0o th\u1eed th\u00e1ch r\u00fat ki\u1ebfm"),
-            new NavigationDestination(NavigationGroup.Other,NavigationRoute.Talents,"Thi\u00ean Ph\u00fa \u00b7 V\u1eadn Kh\u00ed","\u0110\u1ea1o \u1ea4n, b\u1ed9 l\u1ecdc v\u00e0 n\u00e2ng c\u1ea5p"),
+            new NavigationDestination(NavigationGroup.Equipment,NavigationRoute.Talents,"Đạo Vận","\u0110\u1ea1o \u1ea4n, b\u1ed9 l\u1ecdc v\u00e0 n\u00e2ng c\u1ea5p"),
             new NavigationDestination(NavigationGroup.Other,NavigationRoute.Milestones,"M\u1ed1c Tu Ti\u00ean","Ti\u1ebfn \u0111\u1ed9 v\u00e0 c\u00e1c ph\u1ea7n th\u01b0\u1edfng \u0111ang ch\u1edd"),
             new NavigationDestination(NavigationGroup.Other,NavigationRoute.Achievements,"Th\u00e0nh T\u1ef1u","Danh s\u00e1ch th\u00e0nh t\u1ef1u v\u00e0 nh\u1eadn th\u01b0\u1edfng"),
             new NavigationDestination(NavigationGroup.Other,NavigationRoute.Character,"Nh\u00e2n V\u1eadt","C\u1ea3nh gi\u1edbi, trang b\u1ecb v\u00e0 ch\u1ec9 s\u1ed1 chi ti\u1ebft"),
@@ -128,7 +128,10 @@ namespace KhiVanChiTu.UI.Navigation
             SelectedGroup=pendingGroup.Value;pendingGroup=null;heading.text=GroupTitles[(int)SelectedGroup];
             subtitle.text=SelectedGroup==NavigationGroup.Equipment?"Phi ki\u1ebfm v\u00e0 h\u00e0nh trang":SelectedGroup==NavigationGroup.Cultivation?"T\u1eebng b\u01b0\u1edbc v\u1eefng \u0111\u1ea1o t\u00e2m":SelectedGroup==NavigationGroup.SecretRealm?"Ch\u1ecdn th\u1eed th\u00e1ch, xem l\u01b0\u1ee3t v\u00e0o tr\u01b0\u1edbc khi xu\u1ea5t ph\u00e1t":"\u0110\u1ea1o l\u1ed9 v\u00e0 ti\u1ec7n \u00edch";
             breadcrumb.text="KH\u00cd V\u1eacN CHI T\u1eec  /  "+GroupTitles[(int)SelectedGroup];
-            for(int i=0;i<cards.Length;i++)cards[i].action.gameObject.SetActive(Destinations[i].group==SelectedGroup);
+            // Bind by route identity; serialized cards retain their existing order/references.
+            foreach(var card in cards)card.action.gameObject.SetActive(FindDestination(card.route).group==SelectedGroup);
+            if(SelectedGroup==NavigationGroup.Equipment)
+                foreach(var card in cards)if(card.route==NavigationRoute.Talents)card.action.transform.SetAsFirstSibling();
             Canvas.ForceUpdateCanvases();hubScroll.verticalNormalizedPosition=1;
             if(UnityEngine.EventSystems.EventSystem.current!=null)UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
         }
@@ -222,7 +225,7 @@ namespace KhiVanChiTu.UI.Navigation
             VisibleFullScreenCount=showHub?1:0;
             for(int i=0;i<groupButtons.Length;i++)
             {
-                bool selected=(int)SelectedGroup==i;groupButtons[i].button.targetGraphic.color=selected?theme.raised:theme.ink;
+                bool selected=(int)SelectedGroup==i;groupButtons[i].button.targetGraphic.color=hud.hudSurface!=null?(selected?Color.white:new Color(.72f,.78f,.76f,1)):selected?theme.raised:theme.ink;
                 groupButtons[i].label.color=selected?theme.gold:theme.muted;groupIcons[i].color=selected?theme.gold:theme.muted;
             }
             blocker.gameObject.SetActive(any);
