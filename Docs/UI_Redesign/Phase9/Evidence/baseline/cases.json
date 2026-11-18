@@ -1,0 +1,14 @@
+[
+  {
+    "id": "profile-120-frames",
+    "description": "profile-120-frames",
+    "expected": "Measured 120 advancing Editor frames",
+    "actual": "Measured 120 advancing Editor frames",
+    "status": "PASS",
+    "evidence": null,
+    "frame": 447,
+    "width": 1080,
+    "height": 1920,
+    "profile": "global-ui-20261118-054348"
+  }
+]

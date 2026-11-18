@@ -29,7 +29,7 @@ namespace KhiVanChiTu.UI.Equipment
         {
             if(owner==null)return;
             var e=EconomyManager.Instance;
-            wallet.text=$"LINH THẠCH  {EconomyManager.FormatNumber(e!=null?e.currentLinhThach:0)}    ·    QUẶNG  {ArtifactService.Instance?.Ore??0:N0}";
+            wallet.text=$"LINH THẠCH  {RpgUI.Number(e!=null?e.currentLinhThach:0)}    ·    QUẶNG  {ArtifactService.Instance?.Ore??0:N0}";
             summary.text="Chạm để xem chi tiết · Giữ vật phẩm quý trong xác nhận phân giải";
             for(int i=0;i<tabs.Length;i++){tabs[i].button.targetGraphic.color=(int)owner.selectedCategory==i?theme.raised:theme.surface;tabs[i].label.color=(int)owner.selectedCategory==i?theme.gold:theme.ivory;}
             var grid=owner.gridContent!=null?owner.gridContent.GetComponent<UnityEngine.UI.GridLayoutGroup>():null;

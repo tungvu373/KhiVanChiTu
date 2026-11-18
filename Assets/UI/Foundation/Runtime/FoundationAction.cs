@@ -15,6 +15,11 @@ namespace KhiVanChiTu.UI.Foundation
         public void Bind(string caption, Action action, bool enabled = true)
         { if (label != null) label.text = caption ?? ""; command = action; button.interactable = enabled; }
         void OnEnable() { if (button == null) button = GetComponent<UnityEngine.UI.Button>(); button.onClick.AddListener(Execute); }
+        void Start()
+        {
+            if(GetComponent<JadeButtonFeedback>()==null)gameObject.AddComponent<JadeButtonFeedback>();
+            if(GetComponent<KhiVanChiTu.UI.Polish.UnavailableActionHint>()==null)gameObject.AddComponent<KhiVanChiTu.UI.Polish.UnavailableActionHint>();
+        }
         void OnDisable() { if (button != null) button.onClick.RemoveListener(Execute); }
         public void Execute()
         { if (button != null && button.IsInteractable() && isActiveAndEnabled) { command?.Invoke(); clicked.Invoke(); } }

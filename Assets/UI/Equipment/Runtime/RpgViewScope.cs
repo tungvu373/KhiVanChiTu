@@ -9,6 +9,8 @@ namespace KhiVanChiTu.UI.Equipment
     public sealed class RpgViewScope : MonoBehaviour { }
     public static class RpgUI
     {
+        // Presentation only: keep late-game values readable without changing balances or precision in services.
+        public static string Number(float value)=>Mathf.Abs(value)>=1e15f?value.ToString("0.##E+0"):EconomyManager.FormatNumber(value);
         public static RectTransform Rect(string n,Transform p)=>FoundationFactory.Rect(n,p);
         public static void Fill(RectTransform r,float l=0,float b=0,float rr=0,float t=0)=>FoundationFactory.Fill(r,l,b,rr,t);
         public static void Top(RectTransform r,float y,float h,float l=0,float right=0)

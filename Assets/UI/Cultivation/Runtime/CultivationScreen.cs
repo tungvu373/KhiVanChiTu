@@ -72,7 +72,7 @@ namespace KhiVanChiTu.UI.Cultivation
         {
             if(theme==null||primary==null)return;
             float stone=EconomyManager.Instance?.currentLinhThach??0;
-            wallet.text=$"LINH THẠCH  {EconomyManager.FormatNumber(stone)}     ·     QUẶNG  {ArtifactService.Instance?.Ore??0:N0}";
+            wallet.text=$"LINH THẠCH  {RpgUI.Number(stone)}     ·     QUẶNG  {ArtifactService.Instance?.Ore??0:N0}";
             for(int i=0;i<selectors.Length;i++){selectors[i].button.targetGraphic.color=i==Selected?theme.raised:theme.surface;selectors[i].label.color=i==Selected?theme.gold:theme.ivory;}
             subject.text=Names[Selected];
             secondary.gameObject.SetActive(true);tertiary.gameObject.SetActive(true);
@@ -92,11 +92,11 @@ namespace KhiVanChiTu.UI.Cultivation
             var s=PlayerStatsService.Instance;if(s==null)return;int l=s.GetLevel(Selected);bool unlocked=s.IsNodeUnlocked(Selected);var node=PlayerStatsService.TalentNodes[Selected];float cost=s.GetUpgradeCost(Selected);
             level.text=$"Cấp {l:N0} · {node.branchName} · Tầng {node.tier}";
             current.text="HIỆN TẠI\n"+s.GetCurrentEffectString(Selected);next.text="SAU MỘT CẤP\n"+(unlocked?s.GetNextEffectString(Selected):"Mở khóa để tu luyện nhánh này");
-            materials.text=$"LINH THẠCH\nĐang có {EconomyManager.FormatNumber(stone)}  /  Cần {EconomyManager.FormatNumber(cost)}";
+            materials.text=$"LINH THẠCH\nĐang có {RpgUI.Number(stone)}  /  Cần {RpgUI.Number(cost)}";
             explanation.text=node.statPerLevelText+"\n\n"+node.combatMechanics;
             SetState(unlocked,false,false,stone>=cost,"Nâng 1 cấp",s.GetUnlockRequirementText(Selected));
             secondary.label.text="Nâng đến 5 cấp";tertiary.label.text="Nâng đến 50 cấp";secondary.SetAvailable(unlocked&&stone>=cost);tertiary.SetAvailable(unlocked&&stone>=cost);
-            if(State==CultivationActionState.Available)primary.label.text+=" · "+EconomyManager.FormatNumber(cost)+" LT";
+            if(State==CultivationActionState.Available)primary.label.text+=" · "+RpgUI.Number(cost)+" LT";
             result.text=$"Tổng thể phách: {s.GetTotalBodyLevel():N0} cấp · Nâng nhiều cấp mua lần lượt theo tài nguyên đang có.";
             if(node.parentIndex>=0){int p=s.GetLevel(node.parentIndex);progress.Set(p,node.requiredParentLevel,$"Điều kiện nhánh: {PlayerStatsService.TalentNodes[node.parentIndex].name} {p}/{node.requiredParentLevel}");}
             else progress.Set(Mathf.Min(l,5),5,$"Mốc mở nhánh tiếp: {Mathf.Min(l,5)}/5 cấp");
@@ -107,10 +107,10 @@ namespace KhiVanChiTu.UI.Cultivation
             var s=ArtifactService.Instance;if(s==null)return;var slot=(ArtifactSlot)Selected;int l=s.GetLevel(slot);bool max=l>=ArtifactService.MaxLevel;bool unlocked=FeatureUnlockService.Instance==null||FeatureUnlockService.Instance.IsArtifactSlotUnlocked(slot);int ore=s.GetOreCost(slot);float cost=s.GetStoneCost(slot);
             level.text=$"Cấp {l}/{ArtifactService.MaxLevel} · Hào quang bậc {s.AuraTier}";
             current.text="HIỆN TẠI\n"+ArtifactPanelUI.GetSlotStatsFormatted(slot,l);next.text=max?"ĐÃ ĐẠT CỰC HẠN":"SAU MỘT CẤP\n"+ArtifactPanelUI.GetSlotStatsFormatted(slot,l+1);
-            materials.text=max?"Không cần thêm nguyên liệu.":$"QUẶNG PHÔI   {s.Ore:N0} / {ore:N0}\nLINH THẠCH   {EconomyManager.FormatNumber(stone)} / {EconomyManager.FormatNumber(cost)}";
+            materials.text=max?"Không cần thêm nguyên liệu.":$"QUẶNG PHÔI   {s.Ore:N0} / {ore:N0}\nLINH THẠCH   {RpgUI.Number(stone)} / {RpgUI.Number(cost)}";
             explanation.text="Pháp khí đã chế tạo tự động cộng chỉ số. Hào quang cộng từ các mốc 3 cấp của từng món, tối đa bậc 9.";
             SetState(unlocked,max,false,s.Ore>=ore&&stone>=cost,l==0?"Chế tạo pháp khí":"Cường hóa",FeatureUnlockService.Instance?.GetArtifactSlotUnlockRequirementText(slot));
-            if(State==CultivationActionState.Available)primary.label.text+=$"\n{ore:N0} quặng · {EconomyManager.FormatNumber(cost)} LT";
+            if(State==CultivationActionState.Available)primary.label.text+=$"\n{ore:N0} quặng · {RpgUI.Number(cost)} LT";
             secondary.gameObject.SetActive(false);tertiary.gameObject.SetActive(false);result.text="Các món đã chế tạo tự động phát huy chỉ số.";
             progress.Set(l,ArtifactService.MaxLevel,$"Tiến độ cường hóa · {l}/{ArtifactService.MaxLevel}");RpgEmblem.Show(subjectArt,(RpgEmblemKind)((int)RpgEmblemKind.Robe+Selected),theme.gold);
         }
@@ -137,9 +137,9 @@ namespace KhiVanChiTu.UI.Cultivation
             var s=FormationService.Instance;if(s==null)return;var id=(FormationId)Selected;int l=s.GetLevel(id);bool max=l>=FormationService.MaxLevel,unlocked=FeatureUnlockService.Instance==null||FeatureUnlockService.Instance.IsFormationUnlocked(id);int ore=s.GetOreCost(id);float cost=s.GetStoneCost(id);bool active=s.Selected==id&&l>0;
             level.text=$"Cấp {l}/{FormationService.MaxLevel} · "+(active?"Đang kích hoạt":l>0?"Đã học":"Chưa học");
             current.text="HIỆN TẠI\n"+FormationEffect(id,l);next.text=max?"ĐÃ ĐẠT CỰC HẠN":"SAU MỘT CẤP\n"+FormationEffect(id,l+1);
-            materials.text=max?"Không cần thêm nguyên liệu.":$"QUẶNG PHÔI   {ArtifactService.Instance?.Ore??0:N0} / {ore:N0}\nLINH THẠCH   {EconomyManager.FormatNumber(stone)} / {EconomyManager.FormatNumber(cost)}";
+            materials.text=max?"Không cần thêm nguyên liệu.":$"QUẶNG PHÔI   {ArtifactService.Instance?.Ore??0:N0} / {ore:N0}\nLINH THẠCH   {RpgUI.Number(stone)} / {RpgUI.Number(cost)}";
             SetState(unlocked,max,false,(ArtifactService.Instance?.Ore??0)>=ore&&stone>=cost,l==0?"Học trận pháp":"Tu luyện trận pháp",FeatureUnlockService.Instance?.GetFormationUnlockRequirementText(id));
-            if(State==CultivationActionState.Available)primary.label.text+=$"\n{ore:N0} quặng · {EconomyManager.FormatNumber(cost)} LT";
+            if(State==CultivationActionState.Available)primary.label.text+=$"\n{ore:N0} quặng · {RpgUI.Number(cost)} LT";
             secondary.label.text=active?"Đang dùng":l>0?"Chọn trận":"Chưa học";secondary.SetAvailable(unlocked&&l>0&&!active);
             tertiary.gameObject.SetActive(id==FormationId.Spirit);bool can=unlocked&&active&&s.SpiritCooldown==TimeSpan.Zero&&!s.SpiritActive;tertiary.label.text=s.SpiritActive?"Tụ Linh đang tác dụng":s.SpiritCooldown>TimeSpan.Zero?$"Hồi {s.SpiritCooldown:mm\\:ss}":"Phát động Tụ Linh";tertiary.SetAvailable(can);
             progress.Set(l,FormationService.MaxLevel,$"Tiến độ tu luyện · {l}/{FormationService.MaxLevel}");explanation.text=id==FormationId.Spirit?"Chọn Tụ Linh rồi phát động để tăng tu vi. Thời gian tác dụng và hồi chiêu giữ theo hệ thống hiện tại.":"Chỉ trận đang chọn phát huy hiệu ứng. Sau khi học, dùng Chọn trận để kích hoạt.";

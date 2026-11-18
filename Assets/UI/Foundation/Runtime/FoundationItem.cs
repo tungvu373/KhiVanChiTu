@@ -16,6 +16,10 @@ namespace KhiVanChiTu.UI.Foundation
             icon.sprite = art; icon.enabled = art != null;
             action.Bind("", () => { SetSelected(!IsSelected); onSelect?.Invoke(); });
         }
-        public void SetSelected(bool value) { IsSelected = value; if (selection != null) selection.enabled = value; }
+        public void SetSelected(bool value)
+        {
+            bool changed=IsSelected!=value;IsSelected=value;
+            if(selection!=null){selection.enabled=value;if(changed&&value)MobileUIAnimationDirector.For(this)?.Accent(selection);}
+        }
     }
 }

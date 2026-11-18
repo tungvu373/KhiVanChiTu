@@ -106,9 +106,9 @@ namespace KhiVanChiTu.UI.Progression
                     float cost=!max&&n.costs!=null&&level<n.costs.Length?n.costs[level]:0;
                     string status=max?"HOÀN THÀNH · Tối đa":locked?"CHƯA MỞ KHÓA":can?"CÓ THỂ NÂNG NGAY":"ĐANG PHÁT TRIỂN · Thiếu Linh Thạch";
                     string effects=$"HIỆN TẠI   {Bonus(n,level)}"+(max?"":$"\nCẤP KẾ   {Bonus(n,level+1)}");
-                    string conditions=max?"Đã mua đủ các cấp trong dữ liệu hiện tại.":(reason.Length>0?reason+"\n":"")+$"CHI PHÍ   {EconomyManager.FormatNumber(cost)} LT\nĐang có {EconomyManager.FormatNumber(EconomyManager.Instance?.currentLinhThach??0)} LT";
+                    string conditions=max?"Đã mua đủ các cấp trong dữ liệu hiện tại.":(reason.Length>0?reason+"\n":"")+$"CHI PHÍ   {RpgUI.Number(cost)} LT\nĐang có {RpgUI.Number(EconomyManager.Instance?.currentLinhThach??0)} LT";
                     var row=Row(n.id);string id=n.id;
-                    row.Bind(id,n.displayName,$"Tầng {n.tier} · Cấp {level}/{n.MaxLevel}",n.description,status,effects,conditions,"",state,level,n.MaxLevel,$"Cấp thiên phú {level}/{n.MaxLevel}",max?"Đã tối đa":locked?"Chưa mở khóa":can?$"Nâng cấp · {EconomyManager.FormatNumber(cost)} LT":"Chưa đủ Linh Thạch",can,()=>Purchase(id),theme);
+                    row.Bind(id,n.displayName,$"Tầng {n.tier} · Cấp {level}/{n.MaxLevel}",n.description,status,effects,conditions,"",state,level,n.MaxLevel,$"Cấp thiên phú {level}/{n.MaxLevel}",max?"Đã tối đa":locked?"Chưa mở khóa":can?$"Nâng cấp · {RpgUI.Number(cost)} LT":"Chưa đủ Linh Thạch",can,()=>Purchase(id),theme);
                     Symbol(row,n.branch=="sword"?0:n.branch=="wealth"?1:n.branch=="cultivation"?2:n.branch=="alchemy"?3:4);
                     bool show=(Branch=="all"||string.Equals(n.branch,Branch,StringComparison.OrdinalIgnoreCase))&&Visible(state,can);row.gameObject.SetActive(show);ordered.Add((row,Rank(state),n.tier*1000+total));total++;levels+=level;maxLevels+=n.MaxLevel;if(max)completed++;if(can)ActionableCount++;
                 }
@@ -116,7 +116,7 @@ namespace KhiVanChiTu.UI.Progression
                 totalProgress.Set(levels,maxLevels,$"Đạo vị {rank} · {levels:N0}/{maxLevels:N0} cấp");
                 summary.text=$"{ActionableCount} thiên phú có thể nâng ngay · {completed}/{total} đã tối đa";
                 primary.gameObject.SetActive(false);secondary.gameObject.SetActive(false);
-                wallet.text=$"LINH THẠCH  {EconomyManager.FormatNumber(EconomyManager.Instance?.currentLinhThach??0)} · {CultivationManager.Instance?.GetDisplayRealmName()}";
+                wallet.text=$"LINH THẠCH  {RpgUI.Number(EconomyManager.Instance?.currentLinhThach??0)} · {CultivationManager.Instance?.GetDisplayRealmName()}";
             }
             else
             {
@@ -151,7 +151,7 @@ namespace KhiVanChiTu.UI.Progression
         {string unit=(n.unit??"").Trim();float v=n.GetTotalBonus(level);return unit.StartsWith("%",StringComparison.Ordinal)?$"{v*100:0.##}% {unit.TrimStart('%').Trim()}":$"{v:0.##} {unit}";}
         static string Rewards(MilestoneQuest q)
         {
-            var r=new List<string>();if(q.rewardLinhThach>0)r.Add($"+{EconomyManager.FormatNumber(q.rewardLinhThach)} Linh Thạch");if(q.rewardCoDuyen>0)r.Add($"+{q.rewardCoDuyen:N0} Cơ Duyên");
+            var r=new List<string>();if(q.rewardLinhThach>0)r.Add($"+{RpgUI.Number(q.rewardLinhThach)} Linh Thạch");if(q.rewardCoDuyen>0)r.Add($"+{q.rewardCoDuyen:N0} Cơ Duyên");
             if(q.rewardDanDuocIndex>=0&&q.rewardDanDuocAmount>0){string[] n={"Hồi Linh Đan","Tật Phong Đan","Hồi Huyết Đan","Cuồng Nộ Đan","Tĩnh Tâm Đan"};r.Add((q.rewardDanDuocIndex<n.Length?n[q.rewardDanDuocIndex]:"Linh Đan")+$" ×{q.rewardDanDuocAmount:N0} · Hiệu lực áp dụng khi nhận");}if(q.rewardSwordLevel>0)r.Add($"Kiếm cấp {q.rewardSwordLevel}");return string.Join("\n",r);
         }
         void Purchase(string id)
