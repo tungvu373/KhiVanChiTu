@@ -619,7 +619,7 @@ public sealed class PortraitHudController : MonoBehaviour
         if(detailsKind=="wallet")
         {
             var e=EconomyManager.Instance;var a=ArtifactService.Instance;
-            detailsText.text=e==null?"Chưa có dữ liệu tài nguyên.":"Linh Thạch\n"+e.currentLinhThach.ToString("N0")+"\n\nCơ Duyên\n"+e.currentCoDuyen.ToString("N0")+"\n\nQuặng\n"+(a!=null?a.Ore.ToString("N0"):"0");
+            detailsText.text=e==null?"Chưa có dữ liệu tài nguyên.":"Linh Thạch\n"+KhiVanChiTu.UI.Equipment.RpgUI.Number(e.currentLinhThach)+"\n\nCơ Duyên\n"+e.currentCoDuyen.ToString("N0")+"\n\nQuặng\n"+(a!=null?a.Ore.ToString("N0"):"0");
         }
         if(detailsKind=="buffs")
         {

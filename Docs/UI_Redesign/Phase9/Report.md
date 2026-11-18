@@ -30,3 +30,6 @@ Không thấy bằng chứng Canvas rebuild idle là bottleneck; không viết l
 Lượt đo/quét đầu được loại khỏi so sánh vì test đã pause trước `Invoke(LoadCurrentGame, 0.05)` chạy. Runner đã sửa để đợi `isSessionActive`, thêm thời gian settle modal trước chụp và kiểm inherited alpha HUD. `Evidence/baseline` giữ dấu vết **INVALID FIXTURE**, không dùng làm baseline hiệu năng trước/sau. Không có thay đổi gameplay từ sửa test harness.
 
 Phase 9 hoàn thành phần polish và kiểm tra trên Editor; chuyển Phase 10 theo yêu cầu chủ dự án. Các giới hạn Android thực, cutout, build và thao tác xóa dữ liệu được ghi nhận riêng trong nghiệm thu cuối.
+
+
+Phase 10 correction: five Phase 9 scan cases rendered at transient Editor sizes despite their requested-size labels. Their assertions were executed, but they are excluded from acceptance at the requested raster. See `Evidence/polish/raster-validity.json`; the final Phase 10 sweep locks actual Screen dimensions and supersedes this earlier resolution sweep.

@@ -10,13 +10,29 @@ namespace KhiVanChiTu.UI.Polish
         public FoundationTheme theme;
         static GlobalFeedbackHost instance;
         FeatureUnlockService unlocks;
+        CultivationManager cultivation;
+        bool sessionReady;
         readonly bool[] known=new bool[7];
         static readonly string[] Names={"Kiếm Lô","Thiên Phú Đạo Vận","Luyện Đan","Trận Pháp","Pháp Khí","Luyện Thể","Phân Giải"};
         public static string LastMessage=>instance!=null?instance.notice.text.text:"";
         void Awake(){instance=this;}
-        void Start(){unlocks=FeatureUnlockService.Instance;if(unlocks!=null){Snapshot(false);unlocks.OnUnlockStateChanged+=Unlocked;}}
-        void OnDestroy(){if(unlocks!=null)unlocks.OnUnlockStateChanged-=Unlocked;if(instance==this)instance=null;}
+        void Start()
+        {
+            unlocks=FeatureUnlockService.Instance;cultivation=CultivationManager.Instance;
+            sessionReady=DataManager.Instance!=null&&DataManager.Instance.isSessionActive;
+            if(unlocks!=null){Snapshot(false);unlocks.OnUnlockStateChanged+=Unlocked;}
+            if(cultivation!=null)cultivation.OnStageChanged+=StageChanged;
+            if(!sessionReady)StartCoroutine(WaitForSession());
+        }
+        System.Collections.IEnumerator WaitForSession()
+        {
+            while(DataManager.Instance==null||!DataManager.Instance.isSessionActive)yield return null;
+            if(unlocks!=null)Snapshot(false);sessionReady=true;
+        }
+        void OnDestroy(){if(unlocks!=null)unlocks.OnUnlockStateChanged-=Unlocked;if(cultivation!=null)cultivation.OnStageChanged-=StageChanged;if(instance==this)instance=null;}
         void Unlocked()=>Snapshot(true);
+        void StageChanged(CultivationStageData stage)
+        {if(unlocks!=null)Snapshot(sessionReady);sessionReady=DataManager.Instance!=null&&DataManager.Instance.isSessionActive;}
         void Snapshot(bool announce)
         {for(int i=0;i<known.Length;i++){bool now=unlocks.IsFeatureUnlocked((FeatureId)i);if(announce&&now&&!known[i])Notify("Đã mở khóa · "+Names[i]);known[i]=now;}}
         public static void Notify(string message,bool failure=false)

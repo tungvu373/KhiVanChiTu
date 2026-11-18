@@ -29,6 +29,25 @@ namespace KhiVanChiTu.UI.Polish.Editor
             foreach(var v in Object.FindObjectsByType<KhiVanChiTu.UI.Progression.ProgressionScreen>(FindObjectsInactive.Include))Accent(v.feedback);
             foreach(var v in Object.FindObjectsByType<MergeWorkbench>(FindObjectsInactive.Include))Accent(v.feedback);
             foreach(var v in Object.FindObjectsByType<ItemDetailSheet>(FindObjectsInactive.Include))Accent(v.feedback);
+            var pause=Object.FindAnyObjectByType<PauseMenuManager>(FindObjectsInactive.Include);
+            if(pause!=null&&pause.muteToggle!=null)
+            {var bg=pause.muteToggle.transform.Find("Background") as RectTransform;if(bg!=null){bg.pivot=new Vector2(.5f,.5f);bg.anchoredPosition=new Vector2(56,0);}}
+            var achievement=Object.FindAnyObjectByType<AchievementModalUI>(FindObjectsInactive.Include);
+            if(achievement!=null)
+            {
+                var polish=Legacy(achievement.transform,achievement.modalBox);
+                var observer=achievement.contentContainer.GetComponent<LegacyPolishDirty>()??achievement.contentContainer.gameObject.AddComponent<LegacyPolishDirty>();observer.owner=polish;
+            }
+            var hud=Object.FindAnyObjectByType<PortraitHudController>(FindObjectsInactive.Include);
+            if(hud!=null&&hud.secondaryOverlay!=null){var polish=Legacy(hud.secondaryOverlay.transform,hud.secondaryOverlay.transform);polish.backdrop=hud.menuBackdrop!=null?hud.menuBackdrop.GetComponent<UnityEngine.UI.Image>():null;}
+            var manager=Object.FindAnyObjectByType<MergeManager>(FindObjectsInactive.Include);
+            if(manager!=null)foreach(var slot in manager.equipPanel.GetComponentsInChildren<MergeSlot>(true).Concat(manager.inventoryPages.SelectMany(p=>p.GetComponentsInChildren<MergeSlot>(true))))
+            {
+                if(slot.GetComponentInParent<RpgViewScope>(true)==null)continue;
+                var image=slot.GetComponent<UnityEngine.UI.Image>();if(image==null)continue;
+                image.sprite=KhiVanChiTu.UI.Equipment.Editor.EquipmentRedesignBuilder.Theme.surfaceSprite;image.type=UnityEngine.UI.Image.Type.Sliced;image.color=KhiVanChiTu.UI.Equipment.Editor.EquipmentRedesignBuilder.Theme.surface;
+                foreach(var outline in slot.GetComponents<UnityEngine.UI.Outline>())outline.enabled=false;
+            }
             if(Object.FindAnyObjectByType<GlobalFeedbackHost>(FindObjectsInactive.Include)==null)
             {
                 var theme=KhiVanChiTu.UI.Equipment.Editor.EquipmentRedesignBuilder.Theme;var f=new FoundationFactory(theme);
@@ -40,6 +59,8 @@ namespace KhiVanChiTu.UI.Polish.Editor
             EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());EditorSceneManager.SaveScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
         }
         static void Accent(TMP_Text text){if(text!=null&&text.GetComponent<StatusFeedbackAccent>()==null)text.gameObject.AddComponent<StatusFeedbackAccent>();}
+        static LegacySurfacePolish Legacy(Transform owner,Transform target)
+        {var p=owner.GetComponent<LegacySurfacePolish>()??owner.gameObject.AddComponent<LegacySurfacePolish>();p.theme=KhiVanChiTu.UI.Equipment.Editor.EquipmentRedesignBuilder.Theme;p.target=target;p.Invalidate();return p;}
     }
 }
 #endif

@@ -18,8 +18,9 @@ namespace KhiVanChiTu.UI.Equipment.Editor
     [InitializeOnLoad]
     public static class Phase45QA
     {
-        const string Profile="equipment-cultivation-redesign-qa",Key="Phase45QA";
-        public static string Evidence=>"Docs/UI_Redesign/Phase"+SessionState.GetInt(Key+"Phase",4)+"/Evidence";
+        static string Profile=>KhiVanChiTu.UI.Polish.Editor.FinalUIValidation.Profile("equipment-cultivation-redesign-qa");
+        const string Key="Phase45QA";
+        public static string Evidence=>KhiVanChiTu.UI.Polish.Editor.FinalUIValidation.Evidence("Docs/UI_Redesign/Phase"+SessionState.GetInt(Key+"Phase",4)+"/Evidence");
         static IEnumerator routine;
         static double due;
         static readonly List<string> checks=new List<string>(),errors=new List<string>();
@@ -28,7 +29,7 @@ namespace KhiVanChiTu.UI.Equipment.Editor
         static object sizeGroup;
         static int oldSize;
         static readonly List<int> sizes=new List<int>();
-        static Phase45QA(){EditorApplication.playModeStateChanged+=s=>{if(s==PlayModeStateChange.EnteredPlayMode&&SessionState.GetBool(Key,false))Attach();if(s==PlayModeStateChange.EnteredEditMode&&SessionState.GetBool(Key,false))EditorApplication.delayCall+=Cleanup;};}
+        static Phase45QA(){EditorApplication.update+=()=>{if(SessionState.GetBool(Key,false)&&!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling)Cleanup();};EditorApplication.playModeStateChanged+=s=>{if(s==PlayModeStateChange.EnteredPlayMode&&SessionState.GetBool(Key,false))Attach();if(s==PlayModeStateChange.EnteredEditMode&&SessionState.GetBool(Key,false))EditorApplication.delayCall+=Cleanup;};}
         static string Hash(string s)=>Hash128.Compute(s).ToString();
         static string Prod=>Path.Combine(Application.persistentDataPath,"KhiVanChiTu_SaveData.json");
         static string FileHash(string p)=>File.Exists(p)?Hash(Convert.ToBase64String(File.ReadAllBytes(p))):"absent";
@@ -171,6 +172,8 @@ namespace KhiVanChiTu.UI.Equipment.Editor
         static void Stop(){EditorApplication.update-=Tick;Application.logMessageReceived-=Log;File.WriteAllText(Evidence+"/console-errors.json",Newtonsoft.Json.JsonConvert.SerializeObject(errors,Newtonsoft.Json.Formatting.Indented));EditorApplication.isPlaying=false;}
         static void Cleanup()
         {
+            if(!SessionState.GetBool(Key,false)||EditorApplication.isPlayingOrWillChangePlaymode)return;
+            SessionState.SetBool(Key,false);
             foreach(var marker in UnityEngine.Object.FindObjectsByType<WorkspaceSaveProfile>(FindObjectsInactive.Include,FindObjectsSortMode.None))if(marker.profileId==Profile)UnityEngine.Object.DestroyImmediate(marker.gameObject);
             Time.timeScale=SessionState.GetFloat(Key+"Scale",1);if(view!=null&&sizeProperty!=null){sizeProperty.SetValue(view,oldSize);for(int i=sizes.Count-1;i>=0;i--)sizeGroup.GetType().GetMethod("RemoveCustomSize").Invoke(sizeGroup,new object[]{sizes[i]});}sizes.Clear();
             var preservation=new{productionPrefsUnchanged=Hash(PlayerPrefs.GetString("KhiVanChiTu_SaveData",""))==SessionState.GetString(Key+"Prefs",""),productionFileUnchanged=FileHash(Prod)==SessionState.GetString(Key+"File",""),productionBackupUnchanged=FileHash(Prod+".bak")==SessionState.GetString(Key+"Bak","")};File.WriteAllText(Evidence+"/save-preservation.json",Newtonsoft.Json.JsonConvert.SerializeObject(preservation,Newtonsoft.Json.Formatting.Indented));SessionState.SetBool(Key,false);EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());EditorSceneManager.SaveScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());Debug.Log("[Phase45 QA] Finished. Evidence: "+Evidence);

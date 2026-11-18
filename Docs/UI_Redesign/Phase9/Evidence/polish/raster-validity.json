@@ -1,0 +1,31 @@
+{
+  "assertions": 83,
+  "requestedRasterMismatches": [
+    {
+      "id": "layout-Merge-(1080, 1920)",
+      "width": 478,
+      "height": 1016
+    },
+    {
+      "id": "HUD-full-(1080, 2340)",
+      "width": 1007,
+      "height": 602
+    },
+    {
+      "id": "layout-Storage-(1080, 2340)",
+      "width": 1007,
+      "height": 602
+    },
+    {
+      "id": "layout-Resources-(720, 1280)",
+      "width": 1007,
+      "height": 602
+    },
+    {
+      "id": "layout-Supplies-(720, 1280)",
+      "width": 435,
+      "height": 525
+    }
+  ],
+  "acceptance": "Use Phase10/Evidence/final, which locks actual Screen raster. Original raw outputs retained."
+}

@@ -1,0 +1,3 @@
+[
+  "Exception: Native touch reaches Exit\nKhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Check (System.Boolean b, System.String m) (at Assets/UI/SecretRealm/Editor/RealmQA.cs:55)\nKhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Hit (UnityEngine.UI.Button button) (at Assets/UI/SecretRealm/Editor/RealmQA.cs:66)\nKhiVanChiTu.UI.SecretRealm.Editor.RealmQA+<Run>d__39.MoveNext () (at Assets/UI/SecretRealm/Editor/RealmQA.cs:126)\nKhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Tick () (at Assets/UI/SecretRealm/Editor/RealmQA.cs:51)\nUnityEngine.Debug:LogException(Exception)\nKhiVanChiTu.UI.SecretRealm.Editor.RealmQA:Tick() (at Assets/UI/SecretRealm/Editor/RealmQA.cs:52)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions()\n"
+]

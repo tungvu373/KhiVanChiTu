@@ -19,8 +19,9 @@ namespace KhiVanChiTu.UI.SecretRealm.Editor
     [InitializeOnLoad]
     public static class RealmQA
     {
-        const string Profile="realm-phase7-qa",Key="RealmQA";
-        public const string Evidence="Docs/UI_Redesign/Phase7/Evidence";
+        static string Profile=>KhiVanChiTu.UI.Polish.Editor.FinalUIValidation.Profile("realm-phase7-qa");
+        const string Key="RealmQA";
+        public static string Evidence=>KhiVanChiTu.UI.Polish.Editor.FinalUIValidation.Evidence("Docs/UI_Redesign/Phase7/Evidence");
         static IEnumerator routine;
         static double due;
         static readonly List<string> checks=new List<string>(),errors=new List<string>();
@@ -29,7 +30,7 @@ namespace KhiVanChiTu.UI.SecretRealm.Editor
         static object sizeGroup;
         static int oldSize;
         static readonly List<int> sizes=new List<int>();
-        static RealmQA(){EditorApplication.playModeStateChanged+=s=>{if(s==PlayModeStateChange.EnteredPlayMode&&SessionState.GetBool(Key,false))Attach();if(s==PlayModeStateChange.EnteredEditMode&&SessionState.GetBool(Key,false))EditorApplication.delayCall+=Cleanup;};}
+        static RealmQA(){EditorApplication.update+=()=>{if(SessionState.GetBool(Key,false)&&!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling)Cleanup();};EditorApplication.playModeStateChanged+=s=>{if(s==PlayModeStateChange.EnteredPlayMode&&SessionState.GetBool(Key,false))Attach();if(s==PlayModeStateChange.EnteredEditMode&&SessionState.GetBool(Key,false))EditorApplication.delayCall+=Cleanup;};}
         static string Hash(string s)=>Hash128.Compute(s).ToString();
         static string Prod=>Path.Combine(Application.persistentDataPath,"KhiVanChiTu_SaveData.json");
         static string FileHash(string p)=>File.Exists(p)?Hash(Convert.ToBase64String(File.ReadAllBytes(p))):"absent";
@@ -70,6 +71,18 @@ namespace KhiVanChiTu.UI.SecretRealm.Editor
             Canvas.ForceUpdateCanvases();var r=(RectTransform)button.transform;var data=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current){position=RectTransformUtility.WorldToScreenPoint(null,r.TransformPoint(r.rect.center)),button=UnityEngine.EventSystems.PointerEventData.InputButton.Left};var hits=new List<UnityEngine.EventSystems.RaycastResult>();UnityEngine.EventSystems.EventSystem.current.RaycastAll(data,hits);
             if(hits.Count==0||!(hits[0].gameObject.transform==r||hits[0].gameObject.transform.IsChildOf(r)))return false;
             UnityEngine.EventSystems.ExecuteEvents.Execute(button.gameObject,data,UnityEngine.EventSystems.ExecuteEvents.pointerClickHandler);return true;
+        }
+        static IEnumerable<object> Ready(UnityEngine.UI.Button button)
+        {
+            for(int attempt=0;attempt<24;attempt++)
+            {
+                Canvas.ForceUpdateCanvases();var r=(RectTransform)button.transform;
+                var data=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current){position=RectTransformUtility.WorldToScreenPoint(null,r.TransformPoint(r.rect.center))};
+                var hits=new List<UnityEngine.EventSystems.RaycastResult>();UnityEngine.EventSystems.EventSystem.current.RaycastAll(data,hits);
+                if(button.IsInteractable()&&hits.Count>0&&(hits[0].gameObject.transform==r||hits[0].gameObject.transform.IsChildOf(r)))yield break;
+                yield return null;
+            }
+            throw new Exception("Touch target never settled: "+button.name+" at "+Screen.width+"x"+Screen.height);
         }
         static void VerifyText(Transform root)
         {
@@ -122,14 +135,14 @@ namespace KhiVanChiTu.UI.SecretRealm.Editor
                     }
                     if(type==SecretRealmType.SwordTomb){var image=Arena.Find("FloatingSword").GetComponent<UnityEngine.UI.Image>();Check(image.sprite.name=="kiem_7"&&image.overrideSprite==play.swordArt[2],"Transparent sword retains original sprite selection");}
                     Capture("play-"+type);yield return null;
-                    int cleared=service.State.totalCleared;Hit(play.exit.button);yield return null;Check(!Running&&SecretRealmModalUI.Instance.IsModalOpen&&service.State.totalCleared==cleared,"Exit without reward "+type+" "+size);
+                    int cleared=service.State.totalCleared;foreach(var ready in Ready(play.exit.button))yield return ready;Hit(play.exit.button);yield return null;Check(!Running&&SecretRealmModalUI.Instance.IsModalOpen&&service.State.totalCleared==cleared,"Exit without reward "+type+" "+size);
                 }
             }
             SelectSize(new Vector2Int(1080,1920));yield return null;
             // Native hub admission: no free entry, insufficient funds, paid entry, daily reset.
             service.State.lastResetDate=DateTime.UtcNow.ToString("yyyy-MM-dd");service.State.freeAttemptsToday=0;EconomyManager.Instance.currentCoDuyen=4;hub.Refresh();Check(hub.cards.All(c=>!c.enter.button.interactable),"Insufficient resource buttons disabled");
             SecretRealmModalUI.Instance.EnterRealm(SecretRealmType.HordeSurvival);Check(!Running&&EconomyManager.Instance.currentCoDuyen==4,"Insufficient entry blocked by original command");
-            EconomyManager.Instance.currentCoDuyen=10;hub.Refresh();hub.Focus(SecretRealmType.HordeSurvival);yield return null;Hit(hub.cards[0].enter.button);yield return null;Check(EconomyManager.Instance.currentCoDuyen==5,"Paid entry deducts exactly 5 CD");Hit(play.exit.button);yield return null;
+            EconomyManager.Instance.currentCoDuyen=10;hub.Refresh();hub.Focus(SecretRealmType.HordeSurvival);yield return null;Hit(hub.cards[0].enter.button);yield return null;Check(EconomyManager.Instance.currentCoDuyen==5,"Paid entry deducts exactly 5 CD");foreach(var ready in Ready(play.exit.button))yield return ready;Hit(play.exit.button);yield return null;
             service.State.lastResetDate=DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-dd");hub.Refresh();Check(service.State.freeAttemptsToday==1,"Original daily free reset retained");
             // Success via existing gameplay input. Horde uses normal spawning and clock, no score injection.
             foreach(var x in Launch(hub,SecretRealmType.HordeSurvival))yield return x;Time.timeScale=1;float start=Time.realtimeSinceStartup;
@@ -183,6 +196,8 @@ namespace KhiVanChiTu.UI.SecretRealm.Editor
         static void Stop(){EditorApplication.update-=Tick;Application.logMessageReceived-=Log;File.WriteAllText(Evidence+"/console-errors.json",Newtonsoft.Json.JsonConvert.SerializeObject(errors,Newtonsoft.Json.Formatting.Indented));EditorApplication.isPlaying=false;}
         static void Cleanup()
         {
+            if(!SessionState.GetBool(Key,false)||EditorApplication.isPlayingOrWillChangePlaymode)return;
+            SessionState.SetBool(Key,false);
             foreach(var marker in UnityEngine.Object.FindObjectsByType<WorkspaceSaveProfile>(FindObjectsInactive.Include,FindObjectsSortMode.None))if(marker.profileId==Profile)UnityEngine.Object.DestroyImmediate(marker.gameObject);
             Time.timeScale=SessionState.GetFloat(Key+"Scale",1);if(view!=null&&sizeProperty!=null){sizeProperty.SetValue(view,oldSize);for(int i=sizes.Count-1;i>=0;i--)sizeGroup.GetType().GetMethod("RemoveCustomSize").Invoke(sizeGroup,new object[]{sizes[i]});}sizes.Clear();
             var preservation=new{productionPrefsUnchanged=Hash(PlayerPrefs.GetString("KhiVanChiTu_SaveData",""))==SessionState.GetString(Key+"Prefs",""),productionFileUnchanged=FileHash(Prod)==SessionState.GetString(Key+"File",""),productionBackupUnchanged=FileHash(Prod+".bak")==SessionState.GetString(Key+"Bak","")};File.WriteAllText(Evidence+"/save-preservation.json",Newtonsoft.Json.JsonConvert.SerializeObject(preservation,Newtonsoft.Json.Formatting.Indented));SessionState.SetBool(Key,false);EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());EditorSceneManager.SaveScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());Debug.Log("[Phase7 QA] Finished. Evidence: "+Evidence);

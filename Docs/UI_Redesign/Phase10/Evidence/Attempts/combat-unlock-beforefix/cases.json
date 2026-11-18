@@ -1,0 +1,50 @@
+[
+  {
+    "id": "combat-advances",
+    "description": "combat-advances",
+    "expected": "240 actual combat frames observed with timeScale 1",
+    "actual": "240 actual combat frames observed with timeScale 1",
+    "status": "PASS",
+    "evidence": null,
+    "frame": 575,
+    "width": 1080,
+    "height": 1920,
+    "profile": "global-ui-20261118-061245"
+  },
+  {
+    "id": "boss-bound-fixture",
+    "description": "boss-bound-fixture",
+    "expected": "Boss banner, timer and progress respond to existing StageManager state",
+    "actual": "Boss banner, timer and progress respond to existing StageManager state",
+    "status": "PASS",
+    "evidence": null,
+    "frame": 591,
+    "width": 1080,
+    "height": 1920,
+    "profile": "global-ui-20261118-061245"
+  },
+  {
+    "id": "unlock-feedback",
+    "description": "unlock-feedback",
+    "expected": "Real unlock event produces presentation feedback",
+    "actual": "Unlock toast absent",
+    "status": "FAIL",
+    "evidence": null,
+    "frame": 614,
+    "width": 1080,
+    "height": 1920,
+    "profile": "global-ui-20261118-061245"
+  },
+  {
+    "id": "combat-runtime-errors",
+    "description": "combat-runtime-errors",
+    "expected": "No runtime errors during combat measurement",
+    "actual": "No runtime errors during combat measurement",
+    "status": "PASS",
+    "evidence": null,
+    "frame": 614,
+    "width": 1080,
+    "height": 1920,
+    "profile": "global-ui-20261118-061245"
+  }
+]

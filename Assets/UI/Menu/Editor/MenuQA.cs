@@ -19,7 +19,7 @@ namespace KhiVanChiTu.UI.Menu.Editor
     public static class MenuQA
     {
         const string Key="MenuPhase8QA";
-        public const string Evidence="Docs/UI_Redesign/Phase8/Evidence";
+        public static string Evidence=>KhiVanChiTu.UI.Polish.Editor.FinalUIValidation.Evidence("Docs/UI_Redesign/Phase8/Evidence");
         static string Profile=>SessionState.GetString(Key+"Profile","");
         static IEnumerator routine;
         static double due,deadline;
@@ -33,7 +33,7 @@ namespace KhiVanChiTu.UI.Menu.Editor
         static void CleanupWhenIdle(){if(SessionState.GetBool(Key,false)&&!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling)Cleanup();}
         public static void Begin(bool load=false,bool preview=false)
         {
-            EquipmentRedesignBuilder.Require();if(SessionState.GetBool(Key,false))Cleanup();if(UnityEngine.Object.FindObjectsByType<WorkspaceSaveProfile>(FindObjectsInactive.Include).Length>0)throw new Exception("Save profile already owned");
+            EquipmentRedesignBuilder.Require();checks.Clear();errors.Clear();if(SessionState.GetBool(Key,false))Cleanup();if(UnityEngine.Object.FindObjectsByType<WorkspaceSaveProfile>(FindObjectsInactive.Include).Length>0)throw new Exception("Save profile already owned");
             if(!load)SessionState.SetString(Key+"Profile","menu8-qa-"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss"));if(string.IsNullOrEmpty(Profile))throw new Exception("No QA profile for load test");
             SessionState.SetBool(Key+"Load",load);SessionState.SetBool(Key+"Preview",preview);SessionState.SetBool(Key,true);Directory.CreateDirectory(Evidence);if(File.Exists(Evidence+"/failure.txt"))File.Move(Evidence+"/failure.txt",Evidence+"/previous-failure-"+DateTime.UtcNow.Ticks+".txt");
             SessionState.SetString(Key+"Prefs",Hash(PlayerPrefs.GetString("KhiVanChiTu_SaveData","")));SessionState.SetString(Key+"File",FileHash(Prod));SessionState.SetString(Key+"Bak",FileHash(Prod+".bak"));SessionState.SetFloat(Key+"Scale",Time.timeScale);
@@ -103,7 +103,7 @@ namespace KhiVanChiTu.UI.Menu.Editor
                 SelectSize(size);yield return null;Time.timeScale=.35f;p.OpenPauseMenu();yield return null;yield return null;Check(Time.timeScale==.35f&&p.IsModalOpen,"Pause menu keeps existing realtime policy "+size);Texts(pv.mainPage);Capture("pause-menu");yield return null;
                 var hud=GlobalNavigationController.Instance.hud.legacy.profileButton;var hits=new List<UnityEngine.EventSystems.RaycastResult>();UnityEngine.EventSystems.EventSystem.current.RaycastAll(Point((RectTransform)hud.transform),hits);Check(hits.Count>0&&!hits[0].gameObject.transform.IsChildOf(hud.transform)&&hits[0].gameObject!=hud.gameObject,"Pause blocks touch to HUD");
                 Hit(pv.audio.button);yield return null;Texts(pv.settingsPage);Slider(p.bgmSlider,.15f);Slider(p.sfxSlider,.85f);yield return null;Check(Mathf.Abs(AudioManager.Instance.bgmVolume-.15f)<.025f&&Mathf.Abs(AudioManager.Instance.sfxVolume-.85f)<.025f,"Native callbacks update audio service");
-                var toggle=p.muteToggle;var e=Point((RectTransform)toggle.transform);UnityEngine.EventSystems.ExecuteEvents.Execute(toggle.gameObject,e,UnityEngine.EventSystems.ExecuteEvents.pointerClickHandler);yield return null;Check(AudioManager.Instance.isMuted==toggle.isOn,"Native mute callback retained");AudioManager.Instance.LoadSettings();Check(Mathf.Abs(AudioManager.Instance.bgmVolume-.15f)<.025f&&AudioManager.Instance.isMuted==toggle.isOn,"Settings persistence reload matches actual controls");Capture("pause-settings");yield return null;
+                var toggle=p.muteToggle;var e=Point((RectTransform)toggle.transform);UnityEngine.EventSystems.ExecuteEvents.Execute(toggle.gameObject,e,UnityEngine.EventSystems.ExecuteEvents.pointerClickHandler);yield return null;Check(AudioManager.Instance.isMuted==toggle.isOn,"Native mute callback retained");var checkRect=(RectTransform)toggle.transform.Find("Background");var caption=(RectTransform)toggle.transform.Find("MuteCaption");Check(caption.offsetMin.x-checkRect.anchoredPosition.x-(1-checkRect.pivot.x)*checkRect.rect.width>=16,"Mute caption clears checkbox with readable spacing");AudioManager.Instance.LoadSettings();Check(Mathf.Abs(AudioManager.Instance.bgmVolume-.15f)<.025f&&AudioManager.Instance.isMuted==toggle.isOn,"Settings persistence reload matches actual controls");Capture("pause-settings");yield return null;
                 Hit(pv.back.button);yield return null;Hit(p.manualSaveButton);yield return null;Check(MenuCopy.Plain(p.txtSaveStatus.text).Contains("Đã lưu"),"Manual save status feedback");Hit(p.returnMainMenuButton);yield return null;Texts(p.confirmationPopup.transform);Capture("confirm-return-main");yield return null;Hit(p.btnPopupCancel);yield return null;Check(p.IsModalOpen,"Cancel return keeps current session");Hit(p.quitButton);yield return null;Hit(p.btnPopupCancel);yield return null;Hit(p.resumeButton);yield return null;Check(!p.IsModalOpen&&Time.timeScale==.35f,"Resume preserves prior time scale "+size);Time.timeScale=1;
                 CharacterDetailModalUI.Open();yield return null;yield return null;yield return null;Texts(iv.transform);Capture("character-info-top");yield return null;Drag(iv.scroll);iv.scroll.verticalNormalizedPosition=0;yield return null;Capture("character-info-bottom");yield return null;Hit(iv.close.button);yield return null;yield return null;yield return null;Check(!info.gameObject.activeInHierarchy,"Character information closes "+size);
             }
@@ -119,6 +119,8 @@ namespace KhiVanChiTu.UI.Menu.Editor
         static void Stop(){EditorApplication.update-=Tick;Application.logMessageReceived-=Log;File.WriteAllText(Evidence+"/checks.json",Newtonsoft.Json.JsonConvert.SerializeObject(checks,Newtonsoft.Json.Formatting.Indented));File.WriteAllText(Evidence+"/console-errors.json",Newtonsoft.Json.JsonConvert.SerializeObject(errors,Newtonsoft.Json.Formatting.Indented));EditorApplication.isPlaying=false;}
         static void Cleanup()
         {
+            if(!SessionState.GetBool(Key,false)||EditorApplication.isPlayingOrWillChangePlaymode)return;
+            SessionState.SetBool(Key,false);
             foreach(var marker in UnityEngine.Object.FindObjectsByType<WorkspaceSaveProfile>(FindObjectsInactive.Include))if(marker.profileId==Profile)UnityEngine.Object.DestroyImmediate(marker.gameObject);
             for(int i=0;i<3;i++){if(!SessionState.GetBool(Key+"Had"+i,false))PlayerPrefs.DeleteKey(audioKeys[i]);else if(i<2)PlayerPrefs.SetFloat(audioKeys[i],SessionState.GetFloat(Key+"Audio"+i,0));else PlayerPrefs.SetInt(audioKeys[i],(int)SessionState.GetFloat(Key+"Audio"+i,0));}PlayerPrefs.Save();
             Time.timeScale=SessionState.GetFloat(Key+"Scale",1);if(view!=null&&sizeProperty!=null){sizeProperty.SetValue(view,oldSize);for(int i=sizes.Count-1;i>=0;i--)sizeGroup.GetType().GetMethod("RemoveCustomSize").Invoke(sizeGroup,new object[]{sizes[i]});}sizes.Clear();

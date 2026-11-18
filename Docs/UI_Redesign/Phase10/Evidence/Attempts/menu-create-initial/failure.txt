@@ -1,0 +1,4 @@
+System.Exception: Original menu time freeze retained
+  at KhiVanChiTu.UI.Menu.Editor.MenuQA.Check (System.Boolean b, System.String text) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:50 
+  at KhiVanChiTu.UI.Menu.Editor.MenuQA+<Run>d__33.MoveNext () [0x0028c] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:77 
+  at KhiVanChiTu.UI.Menu.Editor.MenuQA.Tick () [0x0002a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:47 
