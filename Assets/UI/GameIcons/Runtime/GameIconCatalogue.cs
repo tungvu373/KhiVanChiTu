@@ -42,7 +42,7 @@ namespace KhiVanChiTu.UI.GameIcons
                 case RpgEmblemKind.Pill:return cultivationPill;
                 case RpgEmblemKind.Herb:return At(herbs,Mathf.Clamp(variant,0,2));
                 case RpgEmblemKind.Robe:case RpgEmblemKind.Crown:case RpgEmblemKind.Boots:case RpgEmblemKind.Amulet:return At(artifacts,(int)kind-(int)RpgEmblemKind.Robe);
-                case RpgEmblemKind.Body:return body;
+                case RpgEmblemKind.Body:return NavigationArtCatalogue.Current?.BodyNode(variant)??body;
                 case RpgEmblemKind.Formation:return At(formations,Mathf.Clamp(variant,0,5));
                 default:return null;
             }

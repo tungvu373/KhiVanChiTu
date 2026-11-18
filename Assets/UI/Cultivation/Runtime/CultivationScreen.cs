@@ -100,7 +100,7 @@ namespace KhiVanChiTu.UI.Cultivation
             result.text=$"Tổng thể phách: {s.GetTotalBodyLevel():N0} cấp · Nâng nhiều cấp mua lần lượt theo tài nguyên đang có.";
             if(node.parentIndex>=0){int p=s.GetLevel(node.parentIndex);progress.Set(p,node.requiredParentLevel,$"Điều kiện nhánh: {PlayerStatsService.TalentNodes[node.parentIndex].name} {p}/{node.requiredParentLevel}");}
             else progress.Set(Mathf.Min(l,5),5,$"Mốc mở nhánh tiếp: {Mathf.Min(l,5)}/5 cấp");
-            RpgEmblem.Show(subjectArt,RpgEmblemKind.Body,Selected<3?theme.jade:theme.gold);
+            RpgEmblem.Show(subjectArt,RpgEmblemKind.Body,Selected<3?theme.jade:theme.gold,Selected);
         }
         void RefreshArtifact(float stone)
         {

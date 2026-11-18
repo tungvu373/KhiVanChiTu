@@ -5261,8 +5261,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &39269357
 MonoBehaviour:
@@ -6337,11 +6337,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1062542105}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &45830402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6355,7 +6355,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6363,7 +6363,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 3
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: d23262e783ec9474881412a5e4d928ed, type: 3}
 --- !u!222 &45830403
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10561,8 +10561,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &63163229
 CanvasRenderer:
@@ -19151,8 +19151,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &132109998
 CanvasRenderer:
@@ -25027,8 +25027,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &175628263
 MonoBehaviour:
@@ -30662,11 +30662,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1444456157}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &205255161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30680,7 +30680,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -30688,7 +30688,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 1
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 752616a801dd0844c84c037ab299bcb9, type: 3}
 --- !u!222 &205255162
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -31011,8 +31011,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &206318789
 CanvasRenderer:
@@ -31148,8 +31148,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &206909869
 CanvasRenderer:
@@ -31847,8 +31847,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &214892176
 MonoBehaviour:
@@ -40279,8 +40279,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &270256978
 CanvasRenderer:
@@ -40839,8 +40839,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &272096206
 MonoBehaviour:
@@ -40976,8 +40976,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &272744453
 MonoBehaviour:
@@ -42803,11 +42803,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1933873105}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &289470257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42821,7 +42821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -42829,7 +42829,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 3
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 6ca3959c9f9e97f45ad9d68918073861, type: 3}
 --- !u!222 &289470258
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -43196,8 +43196,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &294603207
 CanvasRenderer:
@@ -48162,8 +48162,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &331559088
 MonoBehaviour:
@@ -54201,8 +54201,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &375535430
 GameObject:
@@ -59634,8 +59634,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &420915659
 CanvasRenderer:
@@ -62360,8 +62360,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &438383051
 MonoBehaviour:
@@ -65891,8 +65891,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &469791268
 CanvasRenderer:
@@ -66105,11 +66105,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 653191239}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &470860970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66123,7 +66123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -66131,7 +66131,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 4
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: aee07aa7c05942840a5b84e90591b261, type: 3}
 --- !u!222 &470860971
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -69052,8 +69052,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &493722253
 CanvasRenderer:
@@ -74970,11 +74970,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1645503771}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &524978492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74988,7 +74988,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -74996,7 +74996,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 4
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: b3e91be4d0fb9c14ea53d76f18692481, type: 3}
 --- !u!222 &524978493
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -77256,8 +77256,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &549021345
 MonoBehaviour:
@@ -77572,8 +77572,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &553839654
 CanvasRenderer:
@@ -84453,8 +84453,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &587214282
 CanvasRenderer:
@@ -92971,11 +92971,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 509347352}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &648785475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92989,7 +92989,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -92997,7 +92997,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 2
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: abb57953b333d1e4186be58318b7287a, type: 3}
 --- !u!222 &648785476
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -97189,8 +97189,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &671199900
 MonoBehaviour:
@@ -106972,11 +106972,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2111819854}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &728264127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106990,7 +106990,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -106998,7 +106998,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 3
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: ba01831d75ff8154294fed13196f4ce0, type: 3}
 --- !u!222 &728264128
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -108076,8 +108076,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &736051734
 CanvasRenderer:
@@ -111517,11 +111517,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1591433722}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &755272846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111535,7 +111535,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -111543,7 +111543,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 4
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 8fb70b028d860634aa5e4b885ef177f8, type: 3}
 --- !u!222 &755272847
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -124783,8 +124783,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &828549432
 MonoBehaviour:
@@ -125191,8 +125191,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &829944748
 CanvasRenderer:
@@ -129285,8 +129285,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &855906407
 CanvasRenderer:
@@ -130514,8 +130514,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &860702175
 MonoBehaviour:
@@ -130651,8 +130651,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &861884674
 MonoBehaviour:
@@ -131796,11 +131796,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1180732559}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &870563780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131814,7 +131814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -131822,7 +131822,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 3
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 7454c0b3c8c81a8428435c3d63396867, type: 3}
 --- !u!222 &870563781
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -135180,8 +135180,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &898406077
 CanvasRenderer:
@@ -136219,8 +136219,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &904360174
 MonoBehaviour:
@@ -139917,8 +139917,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &941618439
 CanvasRenderer:
@@ -141327,8 +141327,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &949826971
 CanvasRenderer:
@@ -161963,8 +161963,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1083298701
 CanvasRenderer:
@@ -165945,11 +165945,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 505967471}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1111737224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165963,7 +165963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -165971,7 +165971,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 3
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 96516d98d93337f419626eafec6746c9, type: 3}
 --- !u!222 &1111737225
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -167534,11 +167534,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1480259339}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1123452582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167552,7 +167552,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -167560,7 +167560,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 4
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 8a05ed16e7378f5498d52942106bc6ca, type: 3}
 --- !u!222 &1123452583
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -169235,11 +169235,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 905134195}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1139504652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169253,7 +169253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -169261,7 +169261,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 2
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 82ff7241fe015914a8b7433d3da4e448, type: 3}
 --- !u!222 &1139504653
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -175386,8 +175386,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1175449637
 MonoBehaviour:
@@ -178733,8 +178733,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1207364750
 MonoBehaviour:
@@ -180677,8 +180677,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1227319451
 CanvasRenderer:
@@ -182979,11 +182979,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1952868573}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1245073134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182997,7 +182997,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -183005,7 +183005,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 4
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 6ed154e486ea8cb48aa757a3df60a9b4, type: 3}
 --- !u!222 &1245073135
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -185513,11 +185513,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1294883492}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1254849215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185531,7 +185531,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -185539,7 +185539,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 4
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 094399ebc273dea42bfd44a2ef2890e1, type: 3}
 --- !u!222 &1254849216
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -189154,8 +189154,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1269995639
 MonoBehaviour:
@@ -195034,7 +195034,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 78b9094f551171d47b3455a40026fff1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 58592dfe18fbd5b4c8aa88330f1be86a, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -201943,11 +201943,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1628037761}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1340319385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201961,7 +201961,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -201969,7 +201969,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 2
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 263aa6da03b21a24cbe5903ae1d4bd8e, type: 3}
 --- !u!222 &1340319386
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -203620,11 +203620,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 468376764}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1351099787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203638,7 +203638,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -203646,7 +203646,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 2
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: f8dc4b72a639296438ab879f48034d1d, type: 3}
 --- !u!222 &1351099788
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -207520,8 +207520,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1359270349
 MonoBehaviour:
@@ -208236,8 +208236,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1363822668
 CanvasRenderer:
@@ -210104,8 +210104,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1383506014
 MonoBehaviour:
@@ -217278,11 +217278,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1354167676}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1403767166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217296,7 +217296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -217304,7 +217304,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 2
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 0d37c6aacbd5ce041acc84c4c292c367, type: 3}
 --- !u!222 &1403767167
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -220621,11 +220621,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1597294961}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1410807549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220639,7 +220639,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -220647,7 +220647,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 1
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 9af73fe76f3035c4c887c32e748e36df, type: 3}
 --- !u!222 &1410807550
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -224800,8 +224800,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1435199504
 MonoBehaviour:
@@ -234963,8 +234963,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1521575484
 MonoBehaviour:
@@ -239344,11 +239344,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 801821820}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1539135333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239362,7 +239362,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -239370,7 +239370,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 3
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: cec5c2fba030421469510f8fa9d15bc2, type: 3}
 --- !u!222 &1539135334
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -246065,8 +246065,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1571899862
 MonoBehaviour:
@@ -251093,11 +251093,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 530355121}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1596059009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251111,7 +251111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -251119,7 +251119,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 2
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 6968d7472d52b61489b9e4c5829de052, type: 3}
 --- !u!222 &1596059010
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -259897,8 +259897,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1651292234
 MonoBehaviour:
@@ -276016,8 +276016,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1729404641
 MonoBehaviour:
@@ -277137,11 +277137,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2111758195}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1735504657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277155,7 +277155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -277163,7 +277163,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 4
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: c08bd6ac9ea92f245b516031210f0503, type: 3}
 --- !u!222 &1735504658
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -282912,8 +282912,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1783847061
 CanvasRenderer:
@@ -286630,8 +286630,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: 42}
-  m_SizeDelta: {x: -168, y: -108}
+  m_AnchoredPosition: {x: 44, y: 42}
+  m_SizeDelta: {x: -216, y: -108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1816196029
 MonoBehaviour:
@@ -313974,11 +313974,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1879801946}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1957180770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313992,7 +313992,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -314000,7 +314000,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 4
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 28a349996b715c646a11578cd14f5dc3, type: 3}
 --- !u!222 &1957180771
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -322206,11 +322206,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 947532061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2023705027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -322224,7 +322224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -322232,7 +322232,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 4
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: 3bc5acab7ab6f8a47a314f87aa465d92, type: 3}
 --- !u!222 &2023705028
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -323221,8 +323221,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2033071676
 CanvasRenderer:
@@ -326468,11 +326468,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1806375729}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28, y: -48}
-  m_SizeDelta: {x: 48, y: 48}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 104, y: 104}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2066817257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326486,7 +326486,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.Navigation.NavigationIcon
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7882353, g: 0.654902, b: 0.41568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -326494,7 +326494,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   symbol: 4
-  artwork: {fileID: 0}
+  artwork: {fileID: 21300000, guid: babf82f095cb89e4fa84ff41fc710607, type: 3}
 --- !u!222 &2066817258
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -332048,8 +332048,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: -30}
-  m_SizeDelta: {x: -152, y: -84}
+  m_AnchoredPosition: {x: 52, y: -30}
+  m_SizeDelta: {x: -200, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2093697686
 CanvasRenderer:

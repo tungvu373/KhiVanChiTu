@@ -1,0 +1,131 @@
+{
+  "success": true,
+  "command": "command",
+  "data": {
+    "command": "console get",
+    "parameters": {
+      "tail": "10"
+    },
+    "result": {
+      "entries": [
+        {
+          "seq": 26807,
+          "timestampUtc": "2026-11-18T13:03:17.9062312Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[SwordLoadout] Capacity updated: 5 swords.",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nSwordLoadoutService:UpdateCapacity (RealmId,int) (at Assets/Scripts/Managers/SwordLoadoutService.cs:41)\nCultivationManager:UpdateStageIdentity () (at Assets/Scripts/Managers/CultivationManager.cs:452)\nCultivationManager:SetStageAndTuViForEditor (int,single) (at Assets/Scripts/Managers/CultivationManager.cs:439)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<RunCultivation>d__28:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:133)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<Run>d__26:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:67)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA:Tick () (at Assets/UI/Equipment/Editor/Phase45QA.cs:49)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26808,
+          "timestampUtc": "2026-11-18T13:03:17.9062312Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[GameLogger] Đột phá Hóa Thần · Hậu Kỳ! HP tối đa tăng lên 24300!",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nGameLogger:Log (string,UnityEngine.Color) (at Assets/Scripts/Managers/GameLogger.cs:64)\nCombatManager:HandleStageChanged (CultivationStageData) (at Assets/Scripts/Managers/CombatManager.cs:795)\nCultivationManager:SetStageAndTuViForEditor (int,single) (at Assets/Scripts/Managers/CultivationManager.cs:442)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<RunCultivation>d__28:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:133)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<Run>d__26:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:67)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA:Tick () (at Assets/UI/Equipment/Editor/Phase45QA.cs:49)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26809,
+          "timestampUtc": "2026-11-18T13:03:20.2119022Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[SwordLoadout] Capacity updated: 1 swords.",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nSwordLoadoutService:UpdateCapacity (RealmId,int) (at Assets/Scripts/Managers/SwordLoadoutService.cs:41)\nCultivationManager:UpdateStageIdentity () (at Assets/Scripts/Managers/CultivationManager.cs:452)\nCultivationManager:SetStageAndTuViForEditor (int,single) (at Assets/Scripts/Managers/CultivationManager.cs:439)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<RunCultivation>d__28:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:138)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<Run>d__26:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:67)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA:Tick () (at Assets/UI/Equipment/Editor/Phase45QA.cs:49)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26810,
+          "timestampUtc": "2026-11-18T13:03:20.2129024Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[GameLogger] Đột phá Luyện Khí · Sơ Kỳ! HP tối đa tăng lên 19100!",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nGameLogger:Log (string,UnityEngine.Color) (at Assets/Scripts/Managers/GameLogger.cs:64)\nCombatManager:HandleStageChanged (CultivationStageData) (at Assets/Scripts/Managers/CombatManager.cs:795)\nCultivationManager:SetStageAndTuViForEditor (int,single) (at Assets/Scripts/Managers/CultivationManager.cs:442)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<RunCultivation>d__28:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:138)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<Run>d__26:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:67)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA:Tick () (at Assets/UI/Equipment/Editor/Phase45QA.cs:49)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26811,
+          "timestampUtc": "2026-11-18T13:03:21.1295929Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[GameLogger] Đột phá Luyện Khí · Hậu Kỳ! HP tối đa tăng lên 20700!",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nGameLogger:Log (string,UnityEngine.Color) (at Assets/Scripts/Managers/GameLogger.cs:64)\nCombatManager:HandleStageChanged (CultivationStageData) (at Assets/Scripts/Managers/CombatManager.cs:795)\nCultivationManager:SetStageAndTuViForEditor (int,single) (at Assets/Scripts/Managers/CultivationManager.cs:442)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<RunCultivation>d__28:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:139)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<Run>d__26:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:67)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA:Tick () (at Assets/UI/Equipment/Editor/Phase45QA.cs:49)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26812,
+          "timestampUtc": "2026-11-18T13:03:23.8648529Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[GameLogger] Đột phá Luyện Khí · Sơ Kỳ! HP tối đa tăng lên 19100!",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nGameLogger:Log (string,UnityEngine.Color) (at Assets/Scripts/Managers/GameLogger.cs:64)\nCombatManager:HandleStageChanged (CultivationStageData) (at Assets/Scripts/Managers/CombatManager.cs:795)\nCultivationManager:SetStageAndTuViForEditor (int,single) (at Assets/Scripts/Managers/CultivationManager.cs:442)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<RunCultivation>d__28:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:145)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<Run>d__26:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:67)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA:Tick () (at Assets/UI/Equipment/Editor/Phase45QA.cs:49)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26813,
+          "timestampUtc": "2026-11-18T13:03:23.8663644Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[GameLogger] Đột phá Luyện Khí · Hậu Kỳ! HP tối đa tăng lên 20700!",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nGameLogger:Log (string,UnityEngine.Color) (at Assets/Scripts/Managers/GameLogger.cs:64)\nCombatManager:HandleStageChanged (CultivationStageData) (at Assets/Scripts/Managers/CombatManager.cs:795)\nCultivationManager:SetStageAndTuViForEditor (int,single) (at Assets/Scripts/Managers/CultivationManager.cs:442)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<RunCultivation>d__28:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:146)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<Run>d__26:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:67)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA:Tick () (at Assets/UI/Equipment/Editor/Phase45QA.cs:49)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26814,
+          "timestampUtc": "2026-11-18T13:03:57.953468Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[DataManager] ✅ Đã nạp dữ liệu an toàn từ file chính: C:/Users/Admin/AppData/LocalLow/DefaultCompany/ThienVanChiTu\\unique-route-cultivation-1118_KhiVanChiTu_SaveData.json",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nDataManager:LoadData () (at Assets/Scripts/Data/DataManager.cs:388)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<RunCultivation>d__28:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:151)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<Run>d__26:MoveNext () (at Assets/UI/Equipment/Editor/Phase45QA.cs:67)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA:Tick () (at Assets/UI/Equipment/Editor/Phase45QA.cs:49)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26815,
+          "timestampUtc": "2026-11-18T13:03:58.8372237Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[Phase45 QA] Finished. Evidence: Docs/Unique_Route_Icons/Evidence/cultivation",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA:Cleanup () (at Assets/UI/Equipment/Editor/Phase45QA.cs:179)\nKhiVanChiTu.UI.Equipment.Editor.Phase45QA/<>c:<.cctor>b__14_0 () (at Assets/UI/Equipment/Editor/Phase45QA.cs:32)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n",
+          "seeded": false
+        },
+        {
+          "seq": 26816,
+          "timestampUtc": "2026-11-18T13:04:54.6060164Z",
+          "level": "log",
+          "logType": "Log",
+          "message": "[Route Icons] Applied 24 distinct route icons and six body-node illustrations through Editor API.",
+          "stackTrace": "UnityEngine.Debug:Log (object)\nKhiVanChiTu.UI.GameIcons.Editor.NavigationArtBuilder:Apply () (at Assets/UI/GameIcons/Editor/NavigationArtBuilder.cs:61)\nPipelineEvaluation.PipelineEval_6e0da707:Execute ()\nSystem.Reflection.MethodBase:Invoke (object,object[])\nUnity.Pipeline.Compilation.EvalCodeCompiler:ExecuteCompiledAssembly (System.Reflection.Assembly) (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Runtime/Compilation/EvalCodeCompiler.cs:190)\nUnity.Pipeline.Compilation.EvalCodeCompiler:CompileAndExecuteOnMainThread (string,System.TimeSpan,System.Diagnostics.Stopwatch) (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Runtime/Compilation/EvalCodeCompiler.cs:54)\nUnity.Pipeline.Runtime.Commands.CodeEvalCommand:EvaluateSource (string,System.TimeSpan,string) (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Runtime/Commands/CodeEvalCommand.cs:97)\nUnity.Pipeline.Runtime.Commands.CodeEvalCommand:Eval (string,double) (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Runtime/Commands/CodeEvalCommand.cs:26)\nSystem.Reflection.MethodBase:Invoke (object,object[])\nUnity.Pipeline.Commands.DefaultCommandQueue:InvokeDirect (Unity.Pipeline.Commands.CommandContext,Unity.Pipeline.Commands.CommandInfo,object[]) (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Runtime/CommandExecution/CommandQueue/DefaultCommandQueue.cs:487)\nUnity.Pipeline.Commands.DefaultCommandQueue/<>c__DisplayClass19_0:<Invoke>b__1 () (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Runtime/CommandExecution/CommandQueue/DefaultCommandQueue.cs:409)\nUnity.Pipeline.Threading.Dispatcher/WorkItem`1<object>:ExecuteCore () (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Runtime/Common/Dispatcher.cs:342)\nUnity.Pipeline.Threading.Dispatcher/WorkItem:Execute () (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Runtime/Common/Dispatcher.cs:285)\nUnity.Pipeline.Threading.Dispatcher:ProcessWorkQueue (int) (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Runtime/Common/Dispatcher.cs:251)\nUnity.Pipeline.Threading.Dispatcher:ProcessWorkQueue () (at ./Library/PackageCache/com.unity.pipeline@363b8bb9e91d/Runtime/Common/Dispatcher.cs:266)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n",
+          "seeded": false
+        }
+      ],
+      "cursor": 26816,
+      "session": "af870fa573df48aab91744e1487e193f",
+      "returned": 10,
+      "dropped": false,
+      "reset": false,
+      "counts": {
+        "error": 8,
+        "warn": 1238,
+        "log": 754
+      },
+      "groundTruth": {
+        "sampledUtc": "2026-11-18T13:06:07.2706315Z",
+        "ageMs": 27,
+        "compilationFailed": false,
+        "compiling": false,
+        "consoleErrors": 0,
+        "consoleWarnings": 2,
+        "consoleLogs": 39,
+        "seeded": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Lap trinh game\\Save file\\KhiVanChiTu"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

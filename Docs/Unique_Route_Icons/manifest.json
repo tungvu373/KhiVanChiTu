@@ -1,0 +1,452 @@
+[
+  {
+    "id": "RouteMerge",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-2d2129f1-f174-4eab-b110-709c3edd02e8.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteMerge.png",
+    "sha256": "a2e23b1bf69f32f062c544b3541699e03975694b98ec1227d39a6061af5ecc04",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteStorage",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-7e7f91cf-ce16-465c-bee3-c5e2252da48f.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteStorage.png",
+    "sha256": "76c6699d3f2d82497fac38737f5801b312b27a12888c416a03d8a4a336ccc2e1",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteBody",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-a05e3b1f-2140-458e-88c9-a3297c8ba0d5.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteBody.png",
+    "sha256": "89406f402085203fe3d63954a4553a0adeef1e02aa30a1916904677c6a30b8a8",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteAlchemy",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-294b8fdf-0be0-4ddc-89b7-d96d57f40964.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteAlchemy.png",
+    "sha256": "f9678c9e9a90c3aaaf122391579e51825e1dde2e217739e6833cb240949f29eb",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteArtifact",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-4ab0c66c-66ce-4426-8f68-a0ce3f7105d6.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteArtifact.png",
+    "sha256": "a42bdaa9db9e931b5ac22028619b65dfbd10680832b6a6a6b7d6cd6b05d95e19",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteFormation",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-97a85d7a-31a1-4fe2-940b-6f009c9da5ab.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteFormation.png",
+    "sha256": "9b124fc9e602ddea3774320cd7023660fe408d95fc1017391e08dd1f6541bf56",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteProgression",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-a23fa4c5-20bd-4659-941f-c67e922eda68.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteProgression.png",
+    "sha256": "24443f71b11f6ca311d2825da7ee7b47e7800c0780795220921fc481ce544eeb",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteTribulation",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-660bcc81-81bb-4e5c-b3be-804773b4c397.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteTribulation.png",
+    "sha256": "978e71ba49d6b34ae3523a6b067bee54a3062b9eacbe87e92a1aca53d9814138",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteRealmList",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-0c1253e7-6a84-4879-8d22-5840ff3dbd4c.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteRealmList.png",
+    "sha256": "6dc5f9b4cf6229965404fa61039c172cce5b06370e4807163c0187fa73a64293",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1774,
+    "height": 887,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteHorde",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-cb909ca0-175c-431a-bcd1-fea7c956831d.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteHorde.png",
+    "sha256": "66556a4f4747d489b9d23d760db7f2b20d26807336ef622806291c440c9329ac",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteBarrier",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-37bb1120-3f37-4ced-94f2-6942bd18f610.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteBarrier.png",
+    "sha256": "68293e8b5e33591986c3bc5f53dffe6f0437a876793fc2c7c9d192ac20c376fb",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteCauldron",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-fb7d08f2-caa5-4a55-a61b-1e5f2a13686c.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteCauldron.png",
+    "sha256": "752bc3bd1d33b2f70d1e045cf650befb3b2823086445e508f108ea2fe50b9953",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteLightning",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-eb2c5936-47fd-4dbf-b260-2cb7bc4fb586.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteLightning.png",
+    "sha256": "40b61664a58ce01005f3bb050b917a257ad4a8457920ea07f1ac6dc8c23efe87",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteSwordTomb",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-e52510f7-520c-446a-a6b7-b5fd92981795.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteSwordTomb.png",
+    "sha256": "4294daf032077d17e382458e5845ddb19e0a6389cb9e987aa5d5b6d37cab99d5",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteTalents",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-104ced87-238d-4b5f-9cf0-1a55f2e16eef.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteTalents.png",
+    "sha256": "d1338e82ec29960b74465c763dbf152da7ed4c9a6fc4338e3098e774b0d154fd",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteMilestones",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-a7239b60-c318-48e7-bb1e-901183cd7969.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteMilestones.png",
+    "sha256": "9bf59618a5e43b6869abfde852e237c395ea263fc931e531dabd582d3216aa9f",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteAchievements",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-dd078a48-2efc-468b-9124-ed08e9ee78c0.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteAchievements.png",
+    "sha256": "bc92ae7b8c3bc3dc9eaec3fd11dd8f1cecfd550ec485a684729ef33aedf9f8f9",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteCharacter",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-0de87a36-5cb0-4bdd-9e39-2fd25bca8fdd.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteCharacter.png",
+    "sha256": "519726f27dffad3c1b1637b39dc223a0594fe1e01ed4144de88534484ec839f4",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteResources",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-8a9faa86-cbee-41db-a05f-6415173909c6.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteResources.png",
+    "sha256": "e4ebbbe86cc57f6bb85d3228be33b0b0c52e7b6b09ed24e25312cce76eff1c09",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteBuffs",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-f854775d-8ff1-4d02-b3ec-4a973963d5c0.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteBuffs.png",
+    "sha256": "540a38386f778162a1d97d0ecb034dd24934b7248ae596b3af6bbb4d99bbf6e5",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteLog",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-be59721f-0c11-4fbf-b40a-a27acd8ae18c.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteLog.png",
+    "sha256": "4d68ab0ec3e38af0c05385fac0fbf25188de1cc874029c212cf31b0506086a6a",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteSettings",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-0bf1e884-871b-4310-aaec-ab9434e57c13.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteSettings.png",
+    "sha256": "3ae5300b6d8a7f6f637a19d60ffe081fd3eea684b3b7336b6064f5c4c4faf97a",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteSupplies",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-f2c023ce-cb8b-4c9c-bf38-bde8b66b5a99.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteSupplies.png",
+    "sha256": "e2f8029454c46367a58619cd63e780856185d17a2151598724dc090b8ad47a2e",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "RouteSwordStyle",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-df3ddade-1e56-4435-a18b-c78d1b6bc429.png",
+    "path": "Assets/UI/GameIcons/RouteArt/RouteSwordStyle.png",
+    "sha256": "2e2bd7527c8a2d48e65daf5ae0ac4d2369d2cf9170993aabb8f5b4a8dc8ade2e",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "BodyVitality",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-c0d03401-92b8-469f-848a-6d307051ae9c.png",
+    "path": "Assets/UI/GameIcons/RouteArt/BodyVitality.png",
+    "sha256": "30e881e17c9bd60e75d33832b384ebbf3a543a81ee598b48df676df70f0af83e",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "BodyGuard",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-1ea90add-5268-4c42-8e47-788677f5ed93.png",
+    "path": "Assets/UI/GameIcons/RouteArt/BodyGuard.png",
+    "sha256": "2e575432768fb350ee96c98f1438e484b5b3802fe839a813da4e85391b3741b1",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "BodyRecovery",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-f72373e7-42d4-4082-a5d4-b5ab4e403748.png",
+    "path": "Assets/UI/GameIcons/RouteArt/BodyRecovery.png",
+    "sha256": "633434337b47ba135fa0e376fa5b018b58a84141bd71dd1596d4c272832e6f13",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "BodyForce",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-b74a7993-895f-4564-94b6-4edc94854ce4.png",
+    "path": "Assets/UI/GameIcons/RouteArt/BodyForce.png",
+    "sha256": "00f459c67f0e69845e90a92a08c097ec58139ed8ce4eae0fb2d61da04e0f3c64",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "BodyDrain",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-c952e3cf-fa77-4c95-96f8-8a0410186370.png",
+    "path": "Assets/UI/GameIcons/RouteArt/BodyDrain.png",
+    "sha256": "b82258ff81336703ae41dec6372e32f5493f98acead2e288d02bdc278b6d4da8",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  },
+  {
+    "id": "BodyFocus",
+    "source": "C:\\Users\\Admin\\.codex\\generated_images\\01a1ea8f-d813-74d2-b6f9-970135bde6f3\\exec-8811ff93-df03-4007-80d5-dfdc9845fd07.png",
+    "path": "Assets/UI/GameIcons/RouteArt/BodyFocus.png",
+    "sha256": "22e0d1d5dd31f19f03c8ae479b33bb9edad0deec39e52568afb003f957857ec9",
+    "matchesGeneratedSource": true,
+    "mode": "RGBA",
+    "width": 1254,
+    "height": 1254,
+    "alphaExtrema": [
+      0,
+      255
+    ],
+    "promptSet": "prompts.json"
+  }
+]

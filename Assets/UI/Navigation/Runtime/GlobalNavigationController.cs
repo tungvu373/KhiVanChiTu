@@ -105,8 +105,22 @@ namespace KhiVanChiTu.UI.Navigation
             }
             for(int i=0;i<groupButtons.Length;i++){var group=(NavigationGroup)i;groupButtons[i].Bind(GroupTitles[i],()=>SelectGroup(group));}
             foreach(var card in cards){var route=card.route;card.action.Bind(card.action.label.text,()=>OpenRoute(route));}
+            ApplyRouteArtwork();
             backButton.Bind("\u2039",()=>Back());
             hud.legacy.menuButton.onClick.AddListener(OpenMore);wired=true;SelectGroup(NavigationGroup.Battle);
+        }
+        public void ApplyRouteArtwork()
+        {
+            var catalogue=KhiVanChiTu.UI.GameIcons.NavigationArtCatalogue.Current;
+            if(catalogue==null)return;
+            foreach(var card in cards)
+            {
+                var icon=card.action.GetComponentInChildren<NavigationIcon>(true);
+                if(icon==null)continue;
+                var artwork=catalogue.Route(card.route);
+                if(artwork==null)continue;
+                icon.artwork=artwork;icon.color=Color.white;icon.raycastTarget=false;icon.SetAllDirty();
+            }
         }
         void OnDestroy(){if(wired&&hud!=null&&hud.legacy!=null)hud.legacy.menuButton.onClick.RemoveListener(OpenMore);if(Instance==this)Instance=null;}
         void OnDisable(){if(topHud!=null){SetGate(topHud,true);SetGate(bottomHud,true);}if(blocker!=null)blocker.gameObject.SetActive(false);}

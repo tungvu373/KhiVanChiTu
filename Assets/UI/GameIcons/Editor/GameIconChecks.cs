@@ -83,7 +83,7 @@ namespace KhiVanChiTu.UI.GameIcons.Editor
                     {
                         screen.Select(i);yield return null;
                         Test("subject-art-"+route+"-"+i+"-"+size,"Selected native cultivation subject uses its matching generated art",()=>{
-                            var expected=route==NavigationRoute.Alchemy?catalogue.cauldron:route==NavigationRoute.Body?catalogue.body:route==NavigationRoute.Artifact?catalogue.artifacts[screen.Selected]:catalogue.formations[screen.Selected];
+                            var expected=route==NavigationRoute.Alchemy?catalogue.cauldron:route==NavigationRoute.Body?(NavigationArtCatalogue.Current?.BodyNode(screen.Selected)??catalogue.body):route==NavigationRoute.Artifact?catalogue.artifacts[screen.Selected]:catalogue.formations[screen.Selected];
                             Expect(screen.subjectArt.enabled&&screen.subjectArt.sprite==expected&&screen.subjectArt.preserveAspect,"Wrong subject image");});
                         capture("icons-"+route+"-"+i);yield return null;
                     }

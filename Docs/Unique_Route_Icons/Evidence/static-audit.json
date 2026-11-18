@@ -1,0 +1,15 @@
+{
+  "scene": "Assets/Scenes/SampleScene_MobileWork.unity",
+  "objects": 2637,
+  "missingScripts": 0,
+  "brokenReferences": [],
+  "routeCount": 24,
+  "bodyNodes": 6,
+  "distinctSprites": 30,
+  "wrongRouteBindings": [],
+  "readOnlyAtRuntime": true,
+  "editorTextureBytes": 24931520,
+  "profileMarkers": 0,
+  "swordCap": 10,
+  "originalPrefabSprites": 8
+}

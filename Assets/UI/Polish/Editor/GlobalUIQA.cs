@@ -25,7 +25,7 @@ namespace KhiVanChiTu.UI.Polish.Editor
         const string Key="GlobalUIQA";
         static string Profile=>SessionState.GetString(Key+"Profile","");
         static string Mode=>SessionState.GetString(Key+"Mode","");
-        static string Evidence=>Mode=="icons"?"Docs/AI_Icon_Refresh/Evidence/global":Mode=="refinement"?"UIUX_Polish/Evidence/refinement":"Docs/UI_Redesign/"+((Mode=="polish"||Mode=="baseline")?"Phase9":"Phase10")+"/Evidence/"+Mode;
+        static string Evidence=>Mode=="routes"?"Docs/Unique_Route_Icons/Evidence/playmode":Mode=="icons"?"Docs/AI_Icon_Refresh/Evidence/global":Mode=="refinement"?"UIUX_Polish/Evidence/refinement":"Docs/UI_Redesign/"+((Mode=="polish"||Mode=="baseline")?"Phase9":"Phase10")+"/Evidence/"+Mode;
         static IEnumerator routine;static double due;
         static readonly List<object> rows=new List<object>();
         static readonly List<string> errors=new List<string>();
@@ -88,7 +88,14 @@ namespace KhiVanChiTu.UI.Polish.Editor
             foreach(var x in Delay(.4f))yield return x;Time.timeScale=0;
             SetupSizes();SelectSize(new Vector2Int(1080,1920));yield return null;
             if(Mode=="combat"){foreach(var x in CombatWindow())yield return x;yield break;}
-            var nav=GlobalNavigationController.Instance;nav.SelectGroup(NavigationGroup.Equipment);yield return null;nav.OpenRoute(NavigationRoute.Storage);yield return null;yield return null;yield return null;
+            var nav=GlobalNavigationController.Instance;
+            if(Mode=="routes")
+            {
+                foreach(var x in KhiVanChiTu.UI.GameIcons.Editor.NavigationArtChecks.Run(nav,SelectSize,Case,Capture))yield return x;
+                Case("runtime-errors","No runtime errors during route/body icon QA",()=>Expect(errors.Count==0,string.Join("\n",errors)));
+                yield break;
+            }
+            nav.SelectGroup(NavigationGroup.Equipment);yield return null;nav.OpenRoute(NavigationRoute.Storage);yield return null;yield return null;yield return null;
             foreach(var x in MeasureInventory())yield return x;
             StorageModalUI.Instance.Close();foreach(var x in Delay(.45f))yield return x;
             if(Mode=="baseline")yield break;
