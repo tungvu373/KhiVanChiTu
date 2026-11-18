@@ -1,0 +1,1501 @@
+{
+  "scene": "Assets/Scenes/SampleScene_MobileWork.unity",
+  "nodes": [
+    {
+      "id": "wealth",
+      "displayName": "Tụ Linh Đạo Ấn",
+      "description": "Tăng Linh Thạch rơi từ quái vật và Boss",
+      "branch": "wealth",
+      "tier": 1,
+      "tierName": "Tầng 1: Luyện Khí Sơ Kỳ (Khí Hải Sơ Định)",
+      "unit": "% Linh Thạch",
+      "prerequisiteId": "",
+      "prerequisiteLevel": 1,
+      "costs": [
+        500.0,
+        1500.0,
+        4500.0,
+        12000.0,
+        30000.0,
+        80000.0
+      ],
+      "bonuses": [
+        0.05,
+        0.05,
+        0.05,
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        0,
+        0,
+        1,
+        4,
+        5,
+        7
+      ],
+      "minSubLevels": [
+        1,
+        4,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "sword_luck",
+      "displayName": "Kiếm Duyên Đạo Ấn",
+      "description": "Tăng xác suất quái rơi Phi Kiếm (Cần 500 kiếm mở Phân Giải)",
+      "branch": "sword",
+      "tier": 1,
+      "tierName": "Tầng 1: Luyện Khí Sơ Kỳ (Khí Hải Sơ Định)",
+      "unit": "% Rơi Kiếm",
+      "prerequisiteId": "wealth",
+      "prerequisiteLevel": 1,
+      "costs": [
+        800.0,
+        2400.0,
+        7000.0,
+        20000.0,
+        55000.0,
+        150000.0
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        0,
+        0,
+        1,
+        2,
+        5,
+        7
+      ],
+      "minSubLevels": [
+        2,
+        7,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "kim_thiem",
+      "displayName": "Kim Thiềm Đạo Ấn",
+      "description": "Có cơ hội nhân đôi Linh Thạch rơi từ Boss",
+      "branch": "wealth",
+      "tier": 2,
+      "tierName": "Tầng 2: Luyện Khí Trung & Hậu Kỳ",
+      "unit": "% Nổ Hũ LT",
+      "prerequisiteId": "wealth",
+      "prerequisiteLevel": 2,
+      "costs": [
+        1500.0,
+        4500.0,
+        12000.0,
+        35000.0,
+        90000.0,
+        250000.0
+      ],
+      "bonuses": [
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15
+      ],
+      "minRealms": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "minSubLevels": [
+        4,
+        7,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "monster_cultivation",
+      "displayName": "Hội Linh Đạo Ấn",
+      "description": "Gia tăng Tu Vi nhận được khi tiêu diệt yêu ma",
+      "branch": "cultivation",
+      "tier": 2,
+      "tierName": "Tầng 2: Luyện Khí Trung & Hậu Kỳ",
+      "unit": "% Tu Vi Quái",
+      "prerequisiteId": "wealth",
+      "prerequisiteLevel": 1,
+      "costs": [
+        1200.0,
+        3600.0,
+        10000.0,
+        28000.0,
+        75000.0,
+        200000.0
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        0,
+        0,
+        1,
+        2,
+        4,
+        4
+      ],
+      "minSubLevels": [
+        4,
+        7,
+        4,
+        1,
+        1,
+        7
+      ]
+    },
+    {
+      "id": "sword",
+      "displayName": "Vô Song Kiếm Tâm",
+      "description": "Cường hóa toàn bộ Phi Kiếm xuất trận, tăng sát thương cơ bản",
+      "branch": "sword",
+      "tier": 2,
+      "tierName": "Tầng 2: Luyện Khí Trung & Hậu Kỳ",
+      "unit": "% Sát Thương",
+      "prerequisiteId": "wealth",
+      "prerequisiteLevel": 2,
+      "costs": [
+        2000.0,
+        6000.0,
+        18000.0,
+        50000.0,
+        130000.0,
+        350000.0
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03,
+        0.02,
+        0.02,
+        0.02
+      ],
+      "minRealms": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        7
+      ],
+      "minSubLevels": [
+        7,
+        4,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "repose",
+      "displayName": "Bế Quan Ngộ Đạo",
+      "description": "Gia tăng hiệu suất nhận Linh Thạch khi treo máy offline",
+      "branch": "wealth",
+      "tier": 2,
+      "tierName": "Tầng 2: Luyện Khí Trung & Hậu Kỳ",
+      "unit": "% LT Treo Máy",
+      "prerequisiteId": "wealth",
+      "prerequisiteLevel": 1,
+      "costs": [
+        1000.0,
+        3000.0,
+        9000.0,
+        25000.0,
+        70000.0,
+        200000.0
+      ],
+      "bonuses": [
+        0.05,
+        0.05,
+        0.05,
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        7
+      ],
+      "minSubLevels": [
+        7,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "herb_luck",
+      "displayName": "Dược Linh Dẫn Dụ",
+      "description": "Dẫn dụ thảo mộc, tăng xác suất rơi Dược Liệu Quý khi đánh quái",
+      "branch": "alchemy",
+      "tier": 2,
+      "tierName": "Tầng 2: Luyện Khí Trung & Hậu Kỳ",
+      "unit": "% Rơi Thảo Dược",
+      "prerequisiteId": "",
+      "prerequisiteLevel": 1,
+      "costs": [
+        1600.0,
+        4800.0,
+        14000.0,
+        40000.0,
+        110000.0,
+        300000.0
+      ],
+      "bonuses": [
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04
+      ],
+      "minRealms": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6
+      ],
+      "minSubLevels": [
+        8,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "tribulation_guard",
+      "displayName": "Nghịch Mệnh Hộ Thân",
+      "description": "Khí vận nghịch thiên, giảm tổn hao Tu Vi khi lôi kiếp thất bại",
+      "branch": "cultivation",
+      "tier": 3,
+      "tierName": "Tầng 3: Trúc Cơ Kỳ (Đạo Cơ Vững Chắc)",
+      "unit": "% Giảm Mất Tu Vi",
+      "prerequisiteId": "monster_cultivation",
+      "prerequisiteLevel": 1,
+      "costs": [
+        2500.0,
+        7500.0,
+        22000.0,
+        60000.0,
+        160000.0,
+        450000.0
+      ],
+      "bonuses": [
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ],
+      "minRealms": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        7
+      ],
+      "minSubLevels": [
+        9,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "formation_cd",
+      "displayName": "Cửu Thiên Lôi Uy",
+      "description": "Rút ngắn khoảng cách giữa các lần Lôi Trận giáng sét",
+      "branch": "formation",
+      "tier": 3,
+      "tierName": "Tầng 3: Trúc Cơ Kỳ (Đạo Cơ Vững Chắc)",
+      "unit": "% Giảm Hồi Chiêu",
+      "prerequisiteId": "sword",
+      "prerequisiteLevel": 1,
+      "costs": [
+        3000.0,
+        9000.0,
+        26000.0,
+        75000.0,
+        200000.0,
+        550000.0
+      ],
+      "bonuses": [
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ],
+      "minRealms": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        7
+      ],
+      "minSubLevels": [
+        1,
+        4,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "ore_luck",
+      "displayName": "Linh Khoáng Duyên",
+      "description": "Khai mở linh nhãn địa mạch, tăng xác suất quái rơi Quặng Rèn",
+      "branch": "body_artifact",
+      "tier": 3,
+      "tierName": "Tầng 3: Trúc Cơ Kỳ (Đạo Cơ Vững Chắc)",
+      "unit": "% Rơi Quặng",
+      "prerequisiteId": "",
+      "prerequisiteLevel": 1,
+      "costs": [
+        2800.0,
+        8400.0,
+        24000.0,
+        70000.0,
+        190000.0,
+        500000.0
+      ],
+      "bonuses": [
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04
+      ],
+      "minRealms": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        6
+      ],
+      "minSubLevels": [
+        1,
+        7,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "formation_stone_efficiency",
+      "displayName": "Trận Tài Tinh Thông",
+      "description": "Lĩnh ngộ trận văn huyền ảo, giảm tiêu hao Linh Thạch nâng cấp Pháp Trận",
+      "branch": "formation",
+      "tier": 4,
+      "tierName": "Tầng 4: Kim Đan Kỳ (Ngưng Kết Kim Đan)",
+      "unit": "% Giảm Giá Trận",
+      "prerequisiteId": "formation_cd",
+      "prerequisiteLevel": 1,
+      "costs": [
+        4500.0,
+        13500.0,
+        38000.0,
+        100000.0,
+        270000.0,
+        750000.0
+      ],
+      "bonuses": [
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ],
+      "minRealms": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "minSubLevels": [
+        4,
+        7,
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "offline_cultivation",
+      "displayName": "Tĩnh Tu Minh Ngộ",
+      "description": "Thiền định nhập định tầng sâu, gia tăng Tu Vi nhận được khi offline",
+      "branch": "cultivation",
+      "tier": 4,
+      "tierName": "Tầng 4: Kim Đan Kỳ (Ngưng Kết Kim Đan)",
+      "unit": "% Tu Vi Offline",
+      "prerequisiteId": "repose",
+      "prerequisiteLevel": 1,
+      "costs": [
+        4200.0,
+        12600.0,
+        36000.0,
+        95000.0,
+        260000.0,
+        700000.0
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ],
+      "minSubLevels": [
+        7,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "alchemy_material_efficiency",
+      "displayName": "Tiết Dược Bí Thuật",
+      "description": "Giảm Linh Chi và Cỏ Ngưng Khí, giữ ít nhất một mỗi loại",
+      "branch": "alchemy",
+      "tier": 4,
+      "tierName": "Tầng 4: Kim Đan Kỳ (Ngưng Kết Kim Đan)",
+      "unit": "Thảo Dược Tiết Kiệm",
+      "prerequisiteId": "herb_luck",
+      "prerequisiteLevel": 1,
+      "costs": [
+        5000.0,
+        15000.0,
+        42000.0,
+        110000.0,
+        300000.0,
+        850000.0
+      ],
+      "bonuses": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "minRealms": [
+        2,
+        2,
+        3,
+        4,
+        5,
+        7
+      ],
+      "minSubLevels": [
+        1,
+        4,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "boss_stone",
+      "displayName": "Chiến Lộc Đạo Ấn",
+      "description": "Sát phạt yêu ma đầu lĩnh, tăng mạnh Linh Thạch rơi độc quyền từ Boss",
+      "branch": "wealth",
+      "tier": 4,
+      "tierName": "Tầng 4: Kim Đan Kỳ (Ngưng Kết Kim Đan)",
+      "unit": "% LT Boss",
+      "prerequisiteId": "kim_thiem",
+      "prerequisiteLevel": 1,
+      "costs": [
+        5500.0,
+        16500.0,
+        46000.0,
+        120000.0,
+        330000.0,
+        900000.0
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        2,
+        2,
+        3,
+        4,
+        5,
+        7
+      ],
+      "minSubLevels": [
+        4,
+        7,
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "artifact_ore_efficiency",
+      "displayName": "Tinh Quặng Chi Đạo",
+      "description": "Rèn đúc hóa cảnh, giảm tiêu hao Quặng Rèn khi nâng cấp Pháp Khí",
+      "branch": "body_artifact",
+      "tier": 5,
+      "tierName": "Tầng 5: Nguyên Anh Kỳ (Ngưng Anh Hóa Thần)",
+      "unit": "% Giảm Quặng",
+      "prerequisiteId": "ore_luck",
+      "prerequisiteLevel": 1,
+      "costs": [
+        7000.0,
+        21000.0,
+        60000.0,
+        160000.0,
+        420000.0,
+        1200000.0
+      ],
+      "bonuses": [
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ],
+      "minRealms": [
+        3,
+        3,
+        3,
+        4,
+        5,
+        7
+      ],
+      "minSubLevels": [
+        1,
+        4,
+        7,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "sword_crit",
+      "displayName": "Vạn Kiếm Quy Tông",
+      "description": "Kiếm khí ngập trời, tăng tỷ lệ kích hoạt Bạo Kích x2 sát thương kiếm",
+      "branch": "sword",
+      "tier": 5,
+      "tierName": "Tầng 5: Nguyên Anh Kỳ (Ngưng Anh Hóa Thần)",
+      "unit": "% Bạo Kích",
+      "prerequisiteId": "sword",
+      "prerequisiteLevel": 2,
+      "costs": [
+        8500.0,
+        25000.0,
+        72000.0,
+        190000.0,
+        500000.0,
+        1400000.0
+      ],
+      "bonuses": [
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04
+      ],
+      "minRealms": [
+        3,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "minSubLevels": [
+        1,
+        4,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "artifact_stone_efficiency",
+      "displayName": "Bảo Tài Hộ Mệnh",
+      "description": "Luyện khí tâm đắc, giảm tiêu hao Linh Thạch khi nâng cấp Pháp Khí",
+      "branch": "body_artifact",
+      "tier": 5,
+      "tierName": "Tầng 5: Nguyên Anh Kỳ (Ngưng Anh Hóa Thần)",
+      "unit": "% Giảm LT Pháp Khí",
+      "prerequisiteId": "artifact_ore_efficiency",
+      "prerequisiteLevel": 1,
+      "costs": [
+        7500.0,
+        22500.0,
+        65000.0,
+        175000.0,
+        460000.0,
+        1300000.0
+      ],
+      "bonuses": [
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ],
+      "minRealms": [
+        3,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "minSubLevels": [
+        4,
+        7,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "body_stone_efficiency",
+      "displayName": "Thể Tài Cường Hóa",
+      "description": "Thân thể kim cang, giảm tiêu hao Linh Thạch khi nâng cấp Luyện Thể",
+      "branch": "body",
+      "tier": 6,
+      "tierName": "Tầng 6: Hóa Thần Kỳ (Phá Toái Hư Không)",
+      "unit": "% Giảm LT Thể",
+      "prerequisiteId": "",
+      "prerequisiteLevel": 1,
+      "costs": [
+        10000.0,
+        30000.0,
+        85000.0,
+        230000.0,
+        600000.0,
+        1700000.0
+      ],
+      "bonuses": [
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ],
+      "minRealms": [
+        4,
+        4,
+        4,
+        5,
+        6,
+        7
+      ],
+      "minSubLevels": [
+        1,
+        4,
+        7,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "boss_ore",
+      "displayName": "Báu Khoáng Thần Tích",
+      "description": "Khai sơn phá thạch, tăng bảo đảm +1 Quặng Rèn rơi thêm từ Boss",
+      "branch": "body_artifact",
+      "tier": 6,
+      "tierName": "Tầng 6: Hóa Thần Kỳ (Phá Toái Hư Không)",
+      "unit": "Quặng Boss Thêm",
+      "prerequisiteId": "artifact_ore_efficiency",
+      "prerequisiteLevel": 1,
+      "costs": [
+        12000.0,
+        36000.0,
+        100000.0,
+        270000.0,
+        720000.0,
+        2000000.0
+      ],
+      "bonuses": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "minRealms": [
+        4,
+        4,
+        5,
+        5,
+        6,
+        7
+      ],
+      "minSubLevels": [
+        4,
+        7,
+        1,
+        7,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "spirit_duration",
+      "displayName": "Dư Trận Trường Cửu",
+      "description": "Kéo dài thời gian hiệu lực của Tụ Linh Trận chủ động",
+      "branch": "formation",
+      "tier": 6,
+      "tierName": "Tầng 6: Hóa Thần Kỳ (Phá Toái Hư Không)",
+      "unit": "s Duy Trì Trận",
+      "prerequisiteId": "formation_stone_efficiency",
+      "prerequisiteLevel": 1,
+      "costs": [
+        11000.0,
+        33000.0,
+        95000.0,
+        250000.0,
+        660000.0,
+        1850000.0
+      ],
+      "bonuses": [
+        2.0,
+        2.0,
+        2.0,
+        2.0,
+        2.0,
+        2.0
+      ],
+      "minRealms": [
+        4,
+        4,
+        4,
+        6,
+        6,
+        7
+      ],
+      "minSubLevels": [
+        1,
+        4,
+        7,
+        1,
+        7,
+        4
+      ]
+    },
+    {
+      "id": "sword_tier_weight",
+      "displayName": "Trạch Kiếm Đạo Ấn",
+      "description": "Kiếm từ quái thường dễ có cấp 2 trở lên trong các cấp đã mở",
+      "branch": "sword",
+      "tier": 3,
+      "tierName": "Tầng 3: Trúc Cơ Kỳ (Đạo Cơ Vững Chắc)",
+      "unit": "% Trọng Số Kiếm Cấp Cao",
+      "prerequisiteId": "sword_luck",
+      "prerequisiteLevel": 2,
+      "costs": [
+        3.2E+07,
+        2.6E+08,
+        2.1E+09
+      ],
+      "bonuses": [
+        0.04,
+        0.04,
+        0.04
+      ],
+      "minRealms": [
+        1,
+        2,
+        3
+      ],
+      "minSubLevels": [
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "boss_herb",
+      "displayName": "Dược Lộc Hộ Sơn",
+      "description": "Nhận thêm Linh Chi khi đánh Boss sau khi mở Luyện Đan",
+      "branch": "alchemy",
+      "tier": 2,
+      "tierName": "Tầng 2: Luyện Khí Trung & Hậu Kỳ",
+      "unit": "Linh Chi Thêm",
+      "prerequisiteId": "herb_luck",
+      "prerequisiteLevel": 1,
+      "costs": [
+        2000000.0,
+        3.2E+07,
+        2.6E+08
+      ],
+      "bonuses": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "minRealms": [
+        0,
+        1,
+        2
+      ],
+      "minSubLevels": [
+        9,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "alchemy_brew_speed",
+      "displayName": "Đan Hỏa Tốc Luyện",
+      "description": "Rút ngắn thời gian luyện đan, tối thiểu 10 giây mỗi mẻ",
+      "branch": "alchemy",
+      "tier": 3,
+      "tierName": "Tầng 3: Trúc Cơ Kỳ (Đạo Cơ Vững Chắc)",
+      "unit": "% Giảm Thời Gian Luyện",
+      "prerequisiteId": "herb_luck",
+      "prerequisiteLevel": 1,
+      "costs": [
+        1.6E+07,
+        1.3E+08,
+        1.05E+09
+      ],
+      "bonuses": [
+        0.04,
+        0.04,
+        0.04
+      ],
+      "minRealms": [
+        1,
+        2,
+        3
+      ],
+      "minSubLevels": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "boss_damage_reduction",
+      "displayName": "Kim Thân Hộ Mệnh",
+      "description": "Giảm sát thương nhận vào từ Boss, kể cả Boss Độ Kiếp",
+      "branch": "body",
+      "tier": 6,
+      "tierName": "Tầng 6: Hóa Thần Kỳ (Phá Toái Hư Không)",
+      "unit": "% Giảm Sát Thương Boss",
+      "prerequisiteId": "body_stone_efficiency",
+      "prerequisiteLevel": 1,
+      "costs": [
+        8E+09,
+        1.6E+10,
+        3.3E+10
+      ],
+      "bonuses": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "minRealms": [
+        4,
+        4,
+        4
+      ],
+      "minSubLevels": [
+        1,
+        4,
+        7
+      ]
+    },
+    {
+      "id": "field_stone",
+      "displayName": "Tán Lộc Tụ Kim",
+      "description": "Tăng Linh Thạch từ quái thường.",
+      "branch": "wealth",
+      "tier": 2,
+      "tierName": "Tầng 2: Luyện Khí",
+      "unit": "% Linh Thạch",
+      "prerequisiteId": "wealth",
+      "prerequisiteLevel": 2,
+      "costs": [
+        5000.0,
+        2E+07,
+        1.7E+08
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        0,
+        1,
+        2
+      ],
+      "minSubLevels": [
+        4,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "retreat_stone",
+      "displayName": "Kim Khố Bế Quan",
+      "description": "Tích thêm Linh Thạch trong thời gian bế quan.",
+      "branch": "wealth",
+      "tier": 3,
+      "tierName": "Tầng 3: Trúc Cơ",
+      "unit": "% Linh Thạch offline",
+      "prerequisiteId": "repose",
+      "prerequisiteLevel": 2,
+      "costs": [
+        4.5E+07,
+        3.6E+08,
+        2.9E+09
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        1,
+        2,
+        3
+      ],
+      "minSubLevels": [
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "sword_flight",
+      "displayName": "Ngự Phong Kiếm Bộ",
+      "description": "Phi kiếm lao tới mục tiêu nhanh hơn.",
+      "branch": "sword",
+      "tier": 3,
+      "tierName": "Tầng 3: Trúc Cơ",
+      "unit": "% Tốc độ lao kiếm",
+      "prerequisiteId": "sword_luck",
+      "prerequisiteLevel": 2,
+      "costs": [
+        2.2E+07,
+        1.8E+08,
+        1.45E+09
+      ],
+      "bonuses": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "minRealms": [
+        1,
+        2,
+        3
+      ],
+      "minSubLevels": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "sword_boss_hunt",
+      "displayName": "Trảm Yêu Kiếm Quyết",
+      "description": "Tăng sát thương phi kiếm khi đánh Boss.",
+      "branch": "sword",
+      "tier": 4,
+      "tierName": "Tầng 4: Kim Đan",
+      "unit": "% Sát thương kiếm lên Boss",
+      "prerequisiteId": "sword",
+      "prerequisiteLevel": 2,
+      "costs": [
+        4.2E+08,
+        3.35E+09,
+        2.68E+10
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        2,
+        3,
+        4
+      ],
+      "minSubLevels": [
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "boss_tuvi",
+      "displayName": "Hóa Yêu Quy Nguyên",
+      "description": "Tăng Tu Vi nhận khi đánh bại Boss.",
+      "branch": "cultivation",
+      "tier": 3,
+      "tierName": "Tầng 3: Trúc Cơ",
+      "unit": "% Tu Vi từ Boss",
+      "prerequisiteId": "monster_cultivation",
+      "prerequisiteLevel": 1,
+      "costs": [
+        2.4E+07,
+        1.9E+08,
+        1.5E+09
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        1,
+        2,
+        3
+      ],
+      "minSubLevels": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "pill_tuvi",
+      "displayName": "Đan Tức Nhập Mạch",
+      "description": "Tăng Tu Vi nhận khi dùng Tu Vi Đan.",
+      "branch": "cultivation",
+      "tier": 2,
+      "tierName": "Tầng 2: Luyện Khí",
+      "unit": "% Tu Vi từ đan",
+      "prerequisiteId": "monster_cultivation",
+      "prerequisiteLevel": 2,
+      "costs": [
+        700000.0,
+        4.8E+07,
+        3.8E+08
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        0,
+        1,
+        2
+      ],
+      "minSubLevels": [
+        8,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "alchemy_dust_cost",
+      "displayName": "Tụ Hỏa Tiết Trần",
+      "description": "Giảm Bụi Dược dùng để hoàn tất mẻ đan tức thì.",
+      "branch": "alchemy",
+      "tier": 3,
+      "tierName": "Tầng 3: Trúc Cơ",
+      "unit": "Bụi Dược tiết kiệm",
+      "prerequisiteId": "herb_luck",
+      "prerequisiteLevel": 1,
+      "costs": [
+        2.6E+07,
+        2.1E+08,
+        1.7E+09
+      ],
+      "bonuses": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "minRealms": [
+        1,
+        2,
+        3
+      ],
+      "minSubLevels": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "alchemy_waste_dust",
+      "displayName": "Hồi Trần Bí Pháp",
+      "description": "Thu thêm Bụi Dược khi mẻ luyện ra Phế Đan.",
+      "branch": "alchemy",
+      "tier": 4,
+      "tierName": "Tầng 4: Kim Đan",
+      "unit": "Bụi Dược thêm",
+      "prerequisiteId": "alchemy_dust_cost",
+      "prerequisiteLevel": 1,
+      "costs": [
+        4.5E+08,
+        3.6E+09
+      ],
+      "bonuses": [
+        1.0,
+        1.0
+      ],
+      "minRealms": [
+        2,
+        3
+      ],
+      "minSubLevels": [
+        4,
+        4
+      ]
+    },
+    {
+      "id": "spirit_recovery",
+      "displayName": "Bát Quái Hồi Linh",
+      "description": "Rút ngắn hồi chiêu kích hoạt Tụ Linh Trận.",
+      "branch": "formation",
+      "tier": 3,
+      "tierName": "Tầng 3: Trúc Cơ",
+      "unit": "% Giảm hồi chiêu",
+      "prerequisiteId": "formation_cd",
+      "prerequisiteLevel": 1,
+      "costs": [
+        5.2E+07,
+        4.2E+08,
+        3.4E+09
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        1,
+        2,
+        3
+      ],
+      "minSubLevels": [
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "sword_rain_recovery",
+      "displayName": "Kiếm Vũ Liên Hoàn",
+      "description": "Rút ngắn chu kỳ mưa kiếm, tối thiểu 4 giây.",
+      "branch": "formation",
+      "tier": 4,
+      "tierName": "Tầng 4: Kim Đan",
+      "unit": "% Giảm chu kỳ",
+      "prerequisiteId": "formation_cd",
+      "prerequisiteLevel": 1,
+      "costs": [
+        2.2E+08,
+        1.75E+09,
+        1.4E+10
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        2,
+        3,
+        4
+      ],
+      "minSubLevels": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "artifact_armor_stone",
+      "displayName": "Bảo Y Tiết Tài",
+      "description": "Giảm Linh Thạch cường hóa Đạo Bào và Mũ.",
+      "branch": "body_artifact",
+      "tier": 5,
+      "tierName": "Tầng 5: Nguyên Anh",
+      "unit": "% Giảm Linh Thạch",
+      "prerequisiteId": "artifact_stone_efficiency",
+      "prerequisiteLevel": 1,
+      "costs": [
+        3.3E+09,
+        6.7E+09,
+        2.7E+10
+      ],
+      "bonuses": [
+        0.025,
+        0.025,
+        0.025
+      ],
+      "minRealms": [
+        3,
+        3,
+        4
+      ],
+      "minSubLevels": [
+        4,
+        7,
+        4
+      ]
+    },
+    {
+      "id": "artifact_accessory_ore",
+      "displayName": "Linh Phôi Tinh Luyện",
+      "description": "Giảm Quặng cường hóa Giày và Hộ Phù.",
+      "branch": "body_artifact",
+      "tier": 5,
+      "tierName": "Tầng 5: Nguyên Anh",
+      "unit": "% Giảm Quặng",
+      "prerequisiteId": "artifact_ore_efficiency",
+      "prerequisiteLevel": 1,
+      "costs": [
+        6.8E+09,
+        1.36E+10,
+        2.72E+10
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        3,
+        4,
+        4
+      ],
+      "minSubLevels": [
+        7,
+        1,
+        4
+      ]
+    },
+    {
+      "id": "body_guard_cost",
+      "displayName": "Cương Thân Điều Tức",
+      "description": "Giảm Linh Thạch cho các thiên phú nhánh Cương Thân.",
+      "branch": "body",
+      "tier": 6,
+      "tierName": "Tầng 6: Hóa Thần",
+      "unit": "% Giảm Linh Thạch",
+      "prerequisiteId": "body_stone_efficiency",
+      "prerequisiteLevel": 1,
+      "costs": [
+        1.3E+10,
+        2.6E+10,
+        5.2E+10
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        4,
+        4,
+        4
+      ],
+      "minSubLevels": [
+        1,
+        4,
+        7
+      ]
+    },
+    {
+      "id": "body_force_cost",
+      "displayName": "Thần Lực Luyện Cốt",
+      "description": "Giảm Linh Thạch cho các thiên phú nhánh Thần Lực.",
+      "branch": "body",
+      "tier": 6,
+      "tierName": "Tầng 6: Hóa Thần",
+      "unit": "% Giảm Linh Thạch",
+      "prerequisiteId": "body_stone_efficiency",
+      "prerequisiteLevel": 1,
+      "costs": [
+        1.4E+10,
+        2.8E+10,
+        5.6E+10
+      ],
+      "bonuses": [
+        0.03,
+        0.03,
+        0.03
+      ],
+      "minRealms": [
+        4,
+        4,
+        4
+      ],
+      "minSubLevels": [
+        1,
+        4,
+        7
+      ]
+    }
+  ],
+  "roots": [
+    {
+      "name": "UIManager",
+      "active": true
+    },
+    {
+      "name": "RightPanel",
+      "active": false
+    },
+    {
+      "name": "ShopPanel",
+      "active": false
+    },
+    {
+      "name": "TutorialOverlay",
+      "active": false
+    },
+    {
+      "name": "TutorialPointerArrow",
+      "active": false
+    },
+    {
+      "name": "MobileUIRoot",
+      "active": true
+    },
+    {
+      "name": "CharacterDetailModal",
+      "active": false
+    },
+    {
+      "name": "TribulationModalUI",
+      "active": false
+    },
+    {
+      "name": "MainMenuManager",
+      "active": true
+    },
+    {
+      "name": "MilestoneModalUI",
+      "active": false
+    },
+    {
+      "name": "AchievementModalUI",
+      "active": false
+    },
+    {
+      "name": "DismantleConfirmModalUI",
+      "active": false
+    },
+    {
+      "name": "StorageModalUI",
+      "active": false
+    },
+    {
+      "name": "DaoAnModal",
+      "active": false
+    },
+    {
+      "name": "SecretRealmModal",
+      "active": false
+    },
+    {
+      "name": "SecretRealmPlayRoot",
+      "active": false
+    },
+    {
+      "name": "SecretRealmResultModal",
+      "active": false
+    },
+    {
+      "name": "PauseMenuModal",
+      "active": false
+    },
+    {
+      "name": "GlobalNavigationBlockerModal",
+      "active": false
+    },
+    {
+      "name": "ItemDetailBottomSheet",
+      "active": false
+    }
+  ]
+}
