@@ -1,0 +1,50 @@
+{
+  "referenceResolution": [
+    1080,
+    1920
+  ],
+  "matchWidthOrHeight": 0,
+  "colors": {
+    "ink": "#10282A",
+    "surface": "#163C3C",
+    "raised": "#1E4C48",
+    "gold": "#C9A76A",
+    "ivory": "#F3EBD8",
+    "muted": "#AFBDB3",
+    "jade": "#69CAA2",
+    "progressFill": "#28634F",
+    "danger": "#D85F67"
+  },
+  "type": {
+    "title": 52,
+    "heading": 38,
+    "body": 32,
+    "caption": 28
+  },
+  "spacing": {
+    "screen": 36,
+    "padding": 32,
+    "gap": 24,
+    "controlHeight": 132
+  },
+  "sorting": {
+    "GameplayHUD": 100,
+    "Navigation": 110,
+    "ScreenOverlay": 200,
+    "Modal": 300,
+    "Notification": 400
+  },
+  "surface": {
+    "size": [
+      64,
+      64
+    ],
+    "border": [
+      14,
+      14,
+      14,
+      14
+    ]
+  },
+  "scope": "Foundation showcase only; no production UI migration"
+}

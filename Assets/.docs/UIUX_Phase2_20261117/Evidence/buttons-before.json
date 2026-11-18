@@ -1,0 +1,94 @@
+[
+  {
+    "name": "TopBar",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-63933575-0"
+  },
+  {
+    "name": "PauseButton",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-1814150550-0"
+  },
+  {
+    "name": "TutorialTargetQuestBar",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-2133832049-0"
+  },
+  {
+    "name": "BtnToggle",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-1254614070-0"
+  },
+  {
+    "name": "BtnClaimQuick",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-2018211657-0"
+  },
+  {
+    "name": "BtnAchievement",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-1129110255-0"
+  },
+  {
+    "name": "BtnStorage",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-1247920411-0"
+  },
+  {
+    "name": "JadeMenuButton",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-398168851-0"
+  },
+  {
+    "name": "Btn_Ultimate",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-614836222-0"
+  },
+  {
+    "name": "Btn_Skill_0",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-57062430-0"
+  },
+  {
+    "name": "Btn_Skill_1",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-2140400548-0"
+  },
+  {
+    "name": "Btn_Skill_2",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-339151838-0"
+  },
+  {
+    "name": "BtnHUDStorage",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-771399465-0"
+  },
+  {
+    "name": "BtnHUDBiCanh",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-632717081-0"
+  },
+  {
+    "name": "BtnHUDDaoAn",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-941995808-0"
+  },
+  {
+    "name": "MilestoneButton",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-373464865-0"
+  },
+  {
+    "name": "BottomDockToggle",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-79286219-0"
+  },
+  {
+    "name": "MenuDimmer",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-251357175-0"
+  },
+  {
+    "name": "CloseMenu",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-1239584985-0"
+  },
+  {
+    "name": "ProfileButton",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-2049834123-0"
+  },
+  {
+    "name": "BtnHUDAchievement",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-2127626756-0"
+  },
+  {
+    "name": "BuffsButton",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-658487810-0"
+  },
+  {
+    "name": "LogButton",
+    "id": "GlobalObjectId_V1-2-1a628208df20da2438a6b792d508ba9b-875373119-0"
+  }
+]

@@ -1,0 +1,3 @@
+System.InvalidOperationException: Pointer raycast passed through modal.
+  at KhiVanChiTu.UI.Foundation.Editor.FoundationValidation.CheckModalRaycast () [0x000a4] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Foundation\Editor\FoundationValidation.cs:143 
+  at KhiVanChiTu.UI.Foundation.Editor.FoundationValidation.Tick () [0x001a3] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Foundation\Editor\FoundationValidation.cs:84 

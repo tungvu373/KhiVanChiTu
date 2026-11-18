@@ -129,9 +129,22 @@ public class CharacterDetailModalUI : MonoBehaviour
     {
         // 1. THÔNG TIN BẢN THÂN
         string charName = "Đạo Hữu";
-        if (CultivationManager.Instance != null && !string.IsNullOrEmpty(CultivationManager.Instance.CharacterName))
+        if (CultivationManager.Instance != null && !string.IsNullOrWhiteSpace(CultivationManager.Instance.CharacterName) && CultivationManager.Instance.CharacterName != "Đạo Hữu")
         {
             charName = CultivationManager.Instance.CharacterName;
+        }
+        else if (DataManager.Instance != null && DataManager.Instance.gameSaveData != null)
+        {
+            int idx = DataManager.Instance.gameSaveData.lastPlayedSlotIndex;
+            if (idx >= 0 && idx < DataManager.Instance.gameSaveData.slots.Length)
+            {
+                var slot = DataManager.Instance.gameSaveData.slots[idx];
+                if (!slot.isSlotEmpty && !string.IsNullOrWhiteSpace(slot.characterName))
+                {
+                    charName = slot.characterName;
+                    CultivationManager.Instance?.SetCharacterName(charName);
+                }
+            }
         }
         if (txtName != null) txtName.text = $"Đạo Hiệu: <color=#FFE666>{charName}</color>";
 

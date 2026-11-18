@@ -36,6 +36,7 @@ public class DamagePopup : MonoBehaviour
         disappearTimer = DISAPPEAR_TIMER_MAX;
         currentScale = 1.3f;
         transform.localScale = Vector3.one * currentScale;
+        KhiVanChiTu.UI.CombatHUD.MobileDamageReadability.Begin(this,textMesh);
 
         UpdateVisuals();
         mainCamera = Camera.main;
@@ -100,6 +101,7 @@ public class DamagePopup : MonoBehaviour
         }
 
         textMesh.color = textColor;
+        KhiVanChiTu.UI.CombatHUD.MobileDamageReadability.Style(this,textMesh,totalDamage,isCritical);
     }
 
     private void Update()

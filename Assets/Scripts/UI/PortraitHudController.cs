@@ -430,10 +430,10 @@ public sealed class PortraitHudController : MonoBehaviour
     {
         if(realm==null)return;
         var title=realm.Find("StageText")?.GetComponent<UnityEngine.UI.Text>();
-        if(title!=null){Place(title.rectTransform,0,1,1,1,0,-24,-96,38);Text(title,28,TextAnchor.MiddleLeft);title.verticalOverflow=VerticalWrapMode.Truncate;}
-        if(cultivationValue!=null){Place(cultivationValue.rectTransform,0,1,1,1,0,-64,-96,36);Text(cultivationValue,26,TextAnchor.MiddleLeft);cultivationValue.verticalOverflow=VerticalWrapMode.Truncate;}
+        if(title!=null){Place(title.rectTransform,0,1,1,1,10,-32,-150,36);Text(title,28,TextAnchor.MiddleLeft);title.verticalOverflow=VerticalWrapMode.Truncate;}
+        if(cultivationValue!=null){Place(cultivationValue.rectTransform,0,1,1,1,10,-68,-150,34);Text(cultivationValue,26,TextAnchor.MiddleLeft);cultivationValue.verticalOverflow=VerticalWrapMode.Truncate;}
         var segments=realm.Find("PhaseSegments") as RectTransform;if(segments==null)return;
-        segments.anchorMin=new Vector2(0,0);segments.anchorMax=new Vector2(1,0);segments.pivot=new Vector2(.5f,0);segments.sizeDelta=new Vector2(-64,36);segments.anchoredPosition=new Vector2(0,12);
+        segments.anchorMin=new Vector2(0,0);segments.anchorMax=new Vector2(1,0);segments.pivot=new Vector2(.5f,0);segments.sizeDelta=new Vector2(-120,34);segments.anchoredPosition=new Vector2(0,16);
         foreach(var text in segments.GetComponentsInChildren<UnityEngine.UI.Text>(true)){Text(text,26,TextAnchor.MiddleCenter);Fill(text.rectTransform,6,2,6,2);text.resizeTextForBestFit=true;text.resizeTextMinSize=22;text.resizeTextMaxSize=26;text.verticalOverflow=VerticalWrapMode.Truncate;}
     }
 
@@ -448,7 +448,7 @@ public sealed class PortraitHudController : MonoBehaviour
         if(title!=null)
         {
             if(hasTimer)Place(title.rectTransform,0,1,1,1,0,-24,-160,42);
-            else Fill(title.rectTransform,80,26,80,26);
+            else Place(title.rectTransform,0,0,1,1,0,-8,-160,-70);
             Text(title,32,TextAnchor.MiddleCenter);title.resizeTextForBestFit=true;title.resizeTextMinSize=26;title.resizeTextMaxSize=32;title.verticalOverflow=VerticalWrapMode.Truncate;
         }
         if(timer!=null){Place(timer.rectTransform,.5f,0,.5f,0,0,20,476,36);Text(timer,28,TextAnchor.MiddleCenter);timer.verticalOverflow=VerticalWrapMode.Truncate;}

@@ -1,0 +1,33 @@
+{
+  "protectedFileCount": 323,
+  "changedOriginalSource": [
+    "Assets/UI/Reconstruction/Runtime/MobileUIReconstruction.cs",
+    "Assets/Scripts/Combat/DamagePopup.cs",
+    "Assets/Scripts/UI/JadeUITheme.cs",
+    "Assets/Scripts/UI/PortraitHudController.cs",
+    "ProjectSettings/TimeManager.asset"
+  ],
+  "unexpectedProtectedChanges": [
+    "ProjectSettings/TimeManager.asset"
+  ],
+  "originalMetaGuidsUnchanged": {
+    "Assets/Scripts/UI/PortraitHudController.cs.meta": true,
+    "Assets/Scripts/UI/JadeUITheme.cs.meta": true,
+    "Assets/UI/Reconstruction/Runtime/MobileUIReconstruction.cs.meta": true,
+    "Assets/Scripts/Combat/DamagePopup.cs.meta": true,
+    "Assets/Scenes/SampleScene_MobileWork.unity.meta": true
+  },
+  "originalSerializedObjectCount": 7369,
+  "missingOriginalObjectIds": [],
+  "originalSceneButtonCount": 187,
+  "missingOriginalButtonIds": [],
+  "changedOriginalPersistentButtonEvents": [],
+  "temporaryQaMarkerSerialized": false,
+  "newRuntimeScripts": [
+    "Assets/UI/CombatHUD/Runtime/CombatHudPresentation.cs",
+    "Assets/UI/CombatHUD/Runtime/MobileDamageReadability.cs"
+  ],
+  "passed": false,
+  "codeAndSerializedReferencesPreserved": true,
+  "engineSerializationReview": "engine-serialization-review.json"
+}

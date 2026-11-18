@@ -1,0 +1,115 @@
+--- before/Assets/Scripts/Combat/DamagePopup.cs
++++ after/Assets/Scripts/Combat/DamagePopup.cs
+@@ -36,6 +36,7 @@
+         disappearTimer = DISAPPEAR_TIMER_MAX;
+         currentScale = 1.3f;
+         transform.localScale = Vector3.one * currentScale;
++        KhiVanChiTu.UI.CombatHUD.MobileDamageReadability.Begin(this,textMesh);
+ 
+         UpdateVisuals();
+         mainCamera = Camera.main;
+@@ -100,6 +101,7 @@
+         }
+ 
+         textMesh.color = textColor;
++        KhiVanChiTu.UI.CombatHUD.MobileDamageReadability.Style(this,textMesh,totalDamage,isCritical);
+     }
+ 
+     private void Update()
+--- before/Assets/Scripts/UI/JadeUITheme.cs
++++ after/Assets/Scripts/UI/JadeUITheme.cs
+@@ -21,6 +21,8 @@
+     public void RefreshPresentation() { styled.Clear(); StyleTree(transform); }
+     public void StyleSkills()
+     {
++        var scopedHud=GetComponentInChildren<PortraitHudController>(true);
++        if(scopedHud!=null&&scopedHud.externalLayout)return;
+         var hud=GetComponentInChildren<MobileSkillHUD>(true);
+         if(hud==null||navigationIcons==null||navigationIcons.Length<5)return;
+         var buttons=new[]{hud.btnUltimate,hud.btnNormalSkills[0],hud.btnNormalSkills[1],hud.btnNormalSkills[2]};
+@@ -60,6 +62,7 @@
+         var all = root.GetComponentsInChildren<RectTransform>(true);
+         foreach (var rt in all)
+         {
++            if(rt.GetComponentInParent<KhiVanChiTu.UI.CombatHUD.CombatHudPresentation>()!=null)continue;
+             string n = rt.name;
+             if (rt == transform || n == "Content" || n == "GameplayChoicePanel" || n == "PagesContainer" || n == "SlotContainer" || n.StartsWith("Page_") || n.Contains("Grid") || n.Contains("Filter"))
+             {
+--- before/Assets/Scripts/UI/PortraitHudController.cs
++++ after/Assets/Scripts/UI/PortraitHudController.cs
+@@ -23,6 +23,8 @@
+     public bool IsSecondaryOpen => secondaryOverlay != null && secondaryOverlay.activeSelf;
+     public bool IsFocusMode => drawer != null && drawer.IsDockCollapsed;
+     public Rect CentralClearArea { get; private set; }
++    // Set only on the redesigned mobile scene. Legacy/PC scenes keep their existing layout.
++    public bool externalLayout;
+ 
+     MobileDrawerUIController drawer;
+     EconomyManager economy;
+@@ -174,17 +176,17 @@
+         if (!bound) return;
+         RefreshRenderScale();
+         if (economy != EconomyManager.Instance || cultivation != CultivationManager.Instance) Subscribe();
+-        if (bounds.rect.size != lastSize) ApplyLayout();
++        if (!externalLayout && bounds.rect.size != lastSize) ApplyLayout();
+         // Legacy tutorial collapse and character-name updates have no dedicated change event.
+         bool expanded = quest != null && quest.Find("TxtQuestTitle")?.gameObject.activeSelf == true;
+-        if (expanded != questExpanded || (questTitle!=null&&questTitle.fontSize!=36)) LayoutQuest();
+-        if (realmTitle!=null&&(realmTitle.fontSize!=32||realmTitle.rectTransform.rect.height<44)) LayoutRealm();
+-        if (bossTimerLabel!=null&&bossTimerLabel.gameObject.activeSelf!=lastBossTimerActive) LayoutStage();
++        if (!externalLayout && (expanded != questExpanded || (questTitle!=null&&questTitle.fontSize!=36))) LayoutQuest();
++        if (!externalLayout && realmTitle!=null&&(realmTitle.fontSize!=32||realmTitle.rectTransform.rect.height<44)) LayoutRealm();
++        if (!externalLayout && bossTimerLabel!=null&&bossTimerLabel.gameObject.activeSelf!=lastBossTimerActive) LayoutStage();
+         if ((sourceProfile != null && sourceProfile.text != lastProfile) ||
+             (cultivation != null && cultivation.CharacterName != lastCharacterName)) RefreshProfile();
+         // The legacy drawer animates this toggle in dock coordinates. The prototype owns its top anchor.
+-        Place(focusButton, 1, 1, 1, 1, -36, -348, 132, 144);
+-        if (drawer != null && drawer.dockToggleLabelText != null)
++        if (!externalLayout) Place(focusButton, 1, 1, 1, 1, -36, -348, 132, 144);
++        if (!externalLayout && drawer != null && drawer.dockToggleLabelText != null)
+         {
+             string label = IsFocusMode ? "Hiện\nHUD" : "Thu\ngọn";
+             if (drawer.dockToggleLabelText.text != label) drawer.dockToggleLabelText.text = label;
+@@ -257,6 +259,7 @@
+ 
+     public void ApplyLayout()
+     {
++        if (externalLayout) return;
+         if (bounds == null) bounds = (RectTransform)transform;
+         lastSize = bounds.rect.size;
+         bool shortView = lastSize.y < 1500;
+@@ -322,6 +325,7 @@
+ 
+     public void ConfigureViews()
+     {
++        if (externalLayout) return;
+         if(drawer==null)drawer=GetComponentInParent<MobileDrawerUIController>();
+         foreach(var outline in GetComponentsInChildren<UnityEngine.UI.Outline>(true)) outline.enabled=false;
+         foreach(var graphic in GetComponentsInChildren<UnityEngine.UI.Graphic>(true))
+@@ -391,6 +395,7 @@
+ 
+     public void LayoutStage()
+     {
++        if (externalLayout) return;
+         if(stage==null)return;
+         var title=stage.Find("StageText")?.GetComponent<UnityEngine.UI.Text>();
+         var timer=stage.Find("BossTimer")?.GetComponent<UnityEngine.UI.Text>();
+--- before/Assets/UI/Reconstruction/Runtime/MobileUIReconstruction.cs
++++ after/Assets/UI/Reconstruction/Runtime/MobileUIReconstruction.cs
+@@ -57,7 +57,7 @@
+     public void ApplyHudPresentation()
+     {
+         var hud=GetComponentInChildren<PortraitHudController>(true);
+-        if(hud==null||assets==null)return;
++        if(hud==null||assets==null||hud.externalLayout)return;
+         JadeUITheme.SetSurface(hud.profile.GetComponent<UnityEngine.UI.Image>(),assets.hud);
+         foreach(var bar in new[]{hud.hp,hud.mana})
+         {
+@@ -72,6 +72,7 @@
+ 
+     public void StyleElement(RectTransform rt)
+     {
++        if(rt!=null&&rt.GetComponentInParent<KhiVanChiTu.UI.CombatHUD.CombatHudPresentation>()!=null)return;
+         if (assets == null || rt == null || rt.name.StartsWith("P6")) return;
+         var image = rt.GetComponent<UnityEngine.UI.Image>();
+         if (image == null) return;

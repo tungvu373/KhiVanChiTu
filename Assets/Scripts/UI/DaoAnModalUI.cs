@@ -23,6 +23,7 @@ public class DaoAnModalUI : MonoBehaviour
     }
 
     private GameObject modalOverlay;
+    private KhiVanChiTu.UI.Progression.ProgressionScreen Phase6 => modalOverlay!=null?modalOverlay.GetComponent<KhiVanChiTu.UI.Progression.ProgressionScreen>():null;
     internal Transform ModalTransform => modalOverlay != null ? modalOverlay.transform : null;
     private RectTransform contentContainer;
     private ScrollRect scrollRectComp;
@@ -172,6 +173,7 @@ public class DaoAnModalUI : MonoBehaviour
         if (existingModal != null)
         {
             modalOverlay = existingModal.gameObject;
+            if(Phase6!=null)return;
             EnsureModalCanvasSorting(modalOverlay);
             WireModalComponents(modalOverlay);
             return;
@@ -197,6 +199,7 @@ public class DaoAnModalUI : MonoBehaviour
     {
         if (modal == null) return;
         modalOverlay = modal;
+        if(Phase6!=null)return;
 
         var boxTr = modal.transform.Find("ModalBox");
         if (boxTr == null) return;
@@ -239,8 +242,8 @@ public class DaoAnModalUI : MonoBehaviour
         {
             titleRt.anchorMin = new Vector2(0f, 1f);
             titleRt.anchorMax = new Vector2(1f, 1f);
-            titleRt.offsetMin = new Vector2(20f, -44f);
-            titleRt.offsetMax = new Vector2(-60f, -8f);
+            titleRt.offsetMin = new Vector2(92f, -120f);
+            titleRt.offsetMax = new Vector2(-178f, -64f);
             var tTxt = titleRt.GetComponent<Text>();
             if (tTxt != null) tTxt.alignment = TextAnchor.MiddleLeft;
         }
@@ -250,8 +253,8 @@ public class DaoAnModalUI : MonoBehaviour
         {
             subTitleRt.anchorMin = new Vector2(0f, 1f);
             subTitleRt.anchorMax = new Vector2(1f, 1f);
-            subTitleRt.offsetMin = new Vector2(20f, -68f);
-            subTitleRt.offsetMax = new Vector2(-20f, -44f);
+            subTitleRt.offsetMin = new Vector2(92f, -198f);
+            subTitleRt.offsetMax = new Vector2(-178f, -120f);
             var stTxt = subTitleRt.GetComponent<Text>();
             if (stTxt != null)
             {
@@ -385,10 +388,10 @@ public class DaoAnModalUI : MonoBehaviour
 
         // 6. Tiêu đề & Phụ đề
         CreateLabel("Title", box.transform, "THIÊN PHÚ: ĐẠO VẬN", 22, TextAnchor.MiddleLeft,
-            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(20f, -44f), new Vector2(-60f, -8f), new Color(0.96f, 0.78f, 0.26f), true);
+            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(92f, -120f), new Vector2(-178f, -64f), new Color(0.96f, 0.78f, 0.26f), true);
 
         CreateLabel("SubTitle", box.transform, "Cây Thiên Phú Bị Động - Vĩnh Viễn Không Mất Khi Độ Kiếp", 13, TextAnchor.MiddleLeft,
-            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(20f, -68f), new Vector2(-20f, -44f), new Color(0.65f, 0.72f, 0.82f));
+            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(92f, -198f), new Vector2(-178f, -120f), new Color(0.65f, 0.72f, 0.82f));
 
         // 7. Thanh Trạng Thái Hợp Nhất (StatsBar: Linh Thạch + Đạo Vị + Tóm tắt Buff)
         var statsBar = new GameObject("StatsBar", typeof(RectTransform), typeof(Image), typeof(Outline));
@@ -495,6 +498,7 @@ public class DaoAnModalUI : MonoBehaviour
 
         modalOverlay.SetActive(true);
         modalOverlay.transform.SetAsLastSibling();
+        if(Phase6!=null){Phase6.Opened();return;}
         Refresh();
     }
 
@@ -540,6 +544,7 @@ public class DaoAnModalUI : MonoBehaviour
 
     public void SetFilter(string filter)
     {
+        if(Phase6!=null){Phase6.SetBranch(filter);return;}
         currentFilter = filter;
         if (filterButtons.Count == 0)
         {
@@ -577,6 +582,7 @@ public class DaoAnModalUI : MonoBehaviour
 
     private void Update()
     {
+        if(Phase6!=null)return;
         if (!IsModalOpen || Time.unscaledTime < nextRefresh) return;
         nextRefresh = Time.unscaledTime + 0.5f;
         var cultivation = CultivationManager.Instance;
@@ -638,6 +644,7 @@ public class DaoAnModalUI : MonoBehaviour
 
     public void Refresh()
     {
+        if(Phase6!=null){Phase6.Refresh();return;}
         if (modalOverlay == null)
         {
             var tr = GameObject.Find("Canvas/DaoAnModal");

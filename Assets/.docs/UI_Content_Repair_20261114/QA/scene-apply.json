@@ -83,6 +83,16 @@
       "persistentCallbacks": 0
     },
     {
+      "path": "Canvas/MobileUIRoot/GlobalNavigationShell/ProgressionBottomSheet/BottomSheet/Close",
+      "labels": [],
+      "persistentCallbacks": 0
+    },
+    {
+      "path": "Canvas/MobileUIRoot/GlobalNavigationShell/SuppliesBottomSheet/BottomSheet/Close",
+      "labels": [],
+      "persistentCallbacks": 0
+    },
+    {
       "path": "Canvas/CharacterDetailModal/ModalBox/HeaderBar/CloseButton",
       "labels": [
         {

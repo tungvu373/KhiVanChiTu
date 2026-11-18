@@ -23,7 +23,36 @@ public class CultivationManager : MonoBehaviour
 
     // Tên nhân vật (lấy từ DataManager khi vào game)
     private string characterName = "Đạo Hữu";
-    public string CharacterName => characterName;
+    public string CharacterName
+    {
+        get
+        {
+            if ((string.IsNullOrWhiteSpace(characterName) || characterName == "Đạo Hữu") &&
+                DataManager.Instance != null && DataManager.Instance.gameSaveData != null)
+            {
+                int idx = DataManager.Instance.gameSaveData.lastPlayedSlotIndex;
+                if (idx >= 0 && idx < DataManager.Instance.gameSaveData.slots.Length)
+                {
+                    var slot = DataManager.Instance.gameSaveData.slots[idx];
+                    if (!slot.isSlotEmpty && !string.IsNullOrWhiteSpace(slot.characterName))
+                        characterName = slot.characterName;
+                }
+                if (string.IsNullOrWhiteSpace(characterName) || characterName == "Đạo Hữu")
+                {
+                    for (int i = 0; i < DataManager.Instance.gameSaveData.slots.Length; i++)
+                    {
+                        var s = DataManager.Instance.gameSaveData.slots[i];
+                        if (!s.isSlotEmpty && !string.IsNullOrWhiteSpace(s.characterName))
+                        {
+                            characterName = s.characterName;
+                            break;
+                        }
+                    }
+                }
+            }
+            return string.IsNullOrWhiteSpace(characterName) ? "Đạo Hữu" : characterName;
+        }
+    }
 
     public event Action<float, float> OnTuViChanged; // current, max
     public event Action<CultivationStageData> OnStageChanged;
@@ -49,6 +78,19 @@ public class CultivationManager : MonoBehaviour
 
     private void Start()
     {
+        if (string.IsNullOrWhiteSpace(characterName) || characterName == "Đạo Hữu")
+        {
+            if (DataManager.Instance != null && DataManager.Instance.gameSaveData != null)
+            {
+                int idx = DataManager.Instance.gameSaveData.lastPlayedSlotIndex;
+                if (idx >= 0 && idx < DataManager.Instance.gameSaveData.slots.Length)
+                {
+                    var slot = DataManager.Instance.gameSaveData.slots[idx];
+                    if (!slot.isSlotEmpty && !string.IsNullOrWhiteSpace(slot.characterName))
+                        characterName = slot.characterName;
+                }
+            }
+        }
         // Cập nhật UI ngay lúc bắt đầu
         if (allStages != null && currentStageIndex < allStages.Length)
         {
@@ -147,7 +189,7 @@ public class CultivationManager : MonoBehaviour
 
         if (characterInfoText != null)
         {
-            string nameDisplay = string.IsNullOrWhiteSpace(characterName) ? "Đạo Hữu" : characterName;
+            string nameDisplay = string.IsNullOrWhiteSpace(CharacterName) ? "Đạo Hữu" : CharacterName;
             string tuViCur = EconomyManager.FormatNumber(currentTuVi);
             string tuViReq = (currentStageData != null && currentStageData.requiredTuVi > 0) ? EconomyManager.FormatNumber(currentStageData.requiredTuVi) : "Max";
             characterInfoText.supportRichText = true;
@@ -164,6 +206,7 @@ public class CultivationManager : MonoBehaviour
         // Refresh UI ngay
         if (allStages != null && currentStageIndex < allStages.Length)
             UpdateDashboardUI(allStages[currentStageIndex]);
+        PortraitHudController.Instance?.RefreshProfile();
     }
 
     /// <summary>

@@ -16,7 +16,7 @@ public static class MobileUIContentSafety
         for (var parent = rect.parent; parent != null; parent = parent.parent)
         {
             if (parent.name.Contains("Footer")) return false;
-            if (parent.name.Contains("Header")) return true;
+            if (parent.name.Contains("Header") || parent.name.Contains("BottomSheet")) return true;
             if (parent.GetComponent<Canvas>() != null) break;
         }
         return rect.anchorMax.y > .75f && rect.anchorMax.x > .75f;
@@ -40,7 +40,17 @@ public static class MobileUIContentSafety
     static void StyleClose(UnityEngine.UI.Button button)
     {
         var rect = (RectTransform)button.transform;
-        foreach (var text in button.GetComponentsInChildren<UnityEngine.UI.Text>(true))
+        var texts = button.GetComponentsInChildren<UnityEngine.UI.Text>(true);
+        var tmps = button.GetComponentsInChildren<TMPro.TMP_Text>(true);
+        if (texts.Length == 0 && tmps.Length == 0)
+        {
+            var labelObj = new GameObject("Label", typeof(RectTransform), typeof(UnityEngine.UI.Text));
+            labelObj.transform.SetParent(button.transform, false);
+            var newText = labelObj.GetComponent<UnityEngine.UI.Text>();
+            newText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            texts = new[] { newText };
+        }
+        foreach (var text in texts)
         {
             text.text = "X";
             text.supportRichText = false;
@@ -57,6 +67,15 @@ public static class MobileUIContentSafety
             label.anchorMax = Vector2.one;
             label.offsetMin = new Vector2(rect.rect.width * .20f, rect.rect.height * .18f);
             label.offsetMax = -label.offsetMin;
+        }
+        foreach (var tmp in tmps)
+        {
+            tmp.text = "X";
+            tmp.color = CloseRed;
+            tmp.fontStyle = TMPro.FontStyles.Bold;
+            tmp.fontSize = Mathf.Clamp(Mathf.RoundToInt(rect.rect.height * .35f), 20, 44);
+            tmp.alignment = TMPro.TextAlignmentOptions.Center;
+            tmp.raycastTarget = false;
         }
     }
 
