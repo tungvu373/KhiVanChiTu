@@ -25,14 +25,14 @@ namespace KhiVanChiTu.UI.Equipment
             gameObject.SetActive(true);transform.SetAsLastSibling();
             RpgUI.Button(dismantle,"Phân giải",remove!=null&& (FeatureUnlockService.Instance==null||FeatureUnlockService.Instance.IsDismantleUnlocked()),()=>{var action=remove;Close();action?.Invoke();});
             selectMerge.gameObject.SetActive(item!=null&&MergeManager.Instance!=null&&!MergeManager.Instance.IsSwordEquipped(item));
-            selectMerge.Bind("Chọn ghép",()=>{if(sword!=null)MergeWorkbench.Find(this)?.Select(sword);Close();});
+            selectMerge.Bind(item!=null&&item.level>=SwordRules.MaxLevel?"Đã đạt cấp tối đa":"Chọn ghép",()=>{if(sword!=null)MergeWorkbench.Find(this)?.Select(sword);Close();},item!=null&&item.level<SwordRules.MaxLevel);
             RefreshEquip();Canvas.ForceUpdateCanvases();scroll.verticalNormalizedPosition=1;
         }
         public void ShowSword(MergeItem s,Action onRemove=null)
         {
             if(s==null)return;
             bool used=MergeManager.Instance!=null&&MergeManager.Instance.IsSwordEquipped(s);
-            string progress=s.level>=8?"Đã đạt cấp tối đa":$"Phôi tích lũy {s.currentPieces:N0}/{s.GetRequiredPieces():N0}\nGhép các kiếm cùng cấp trong kho; kéo vào ô xuất chiến để đổi trang bị.";
+            string progress=s.level>=SwordRules.MaxLevel?$"Đã đạt cấp tối đa {SwordRules.MaxLevel}":$"Phôi tích lũy {s.currentPieces:N0}/{s.GetRequiredPieces():N0}\nGhép các kiếm cùng cấp trong kho; kéo vào ô xuất chiến để đổi trang bị.";
             Show(DismantleService.GetSwordDisplayName(s.level),$"Bậc {RpgUI.SwordRarity(s.level)} · Cấp {s.level} · "+(used?"Đang trang bị":"Trong kho"),$"SÁT THƯƠNG  {FlyingSword.CalculateBaseDamage(s.level):N0}\nTỐC ĐỘ  {FlyingSword.CalculateBaseSpeed(s.level):N0}\n\n{progress}\n\nGhép không tốn tiền; số phôi cần theo cấp kiếm hiện tại.",RpgUI.SwordArt(s),RpgUI.SwordColor(s.level),onRemove,s);
         }
         void RefreshEquip()

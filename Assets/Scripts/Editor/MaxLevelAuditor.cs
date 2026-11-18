@@ -94,17 +94,17 @@ public static class MaxLevelAuditor
         // ─────────────────────────────────────────────────────────────────────
         sb.AppendLine("\n=== 3. KIẾM LÔ & NGỰ KIẾM (SWORD COMBAT & SCALING) ===");
         int maxSlots = 10;
-        int maxSwordLv = 8; // Max level kiếm hiện tại
-        float baseDmgPerSwordLv8 = FlyingSword.CalculateBaseDamage(maxSwordLv); // 8*8*10 = 640
-        float baseSpeedLv8 = FlyingSword.CalculateBaseSpeed(maxSwordLv);        // 5 + 8*2 = 21
-        float totalRawDps10Swords = maxSlots * baseDmgPerSwordLv8 * (1f / 0.45f); // ~14,222 DPS thô
+        int maxSwordLv = SwordRules.MaxLevel;
+        float baseDmgPerSword = FlyingSword.CalculateBaseDamage(maxSwordLv);
+        float baseSpeed = FlyingSword.CalculateBaseSpeed(maxSwordLv);
+        float totalRawDps10Swords = maxSlots * baseDmgPerSword * (1f / 0.45f); // DPS theo cấp giới hạn hiện tại
 
         // Khi có Kình Lực (+600) và Kiếm Ý (x2):
-        float enhancedDmgPerSword = (baseDmgPerSwordLv8 + swordDmgFromKìnhLực) * 2.5f;
+        float enhancedDmgPerSword = (baseDmgPerSword + swordDmgFromKìnhLực) * 2.5f;
         float totalEnhancedDps = maxSlots * enhancedDmgPerSword * (1f / 0.45f);
 
         passCount++;
-        sb.AppendLine($"[PASS] 10 Phi Kiếm Cấp 8: Sát thương gốc={baseDmgPerSwordLv8:N0}/kiếm, Tốc độ={baseSpeedLv8:F1}m/s.");
+        sb.AppendLine($"[PASS] 10 Phi Kiếm Cấp {maxSwordLv}: Sát thương gốc={baseDmgPerSword:N0}/kiếm, Tốc độ={baseSpeed:F1}m/s.");
         sb.AppendLine($"[INFO] DPS cơ bản 10 kiếm: ~{totalRawDps10Swords:N0} DPS.");
         sb.AppendLine($"[INFO] DPS khi cộng hưởng Thể Tu + Kiếm Ý: ~{totalEnhancedDps:N0} DPS.");
 
@@ -159,7 +159,7 @@ public static class MaxLevelAuditor
         if (hp100 > 50000000f) // > 50M
         {
             warningCount++;
-            sb.AppendLine($"[WARN] Máu quái ở Tầng 100 ({FormatNumber(hp100)}) tăng trưởng theo hàm 1.22^N hơi dốc so với tốc độ tăng trưởng DPS của Kiếm Cấp 8 (Cap 8). Cần mở rộng Kiếm Cấp 9-15 hoặc tinh chỉnh hệ số.");
+            sb.AppendLine($"[WARN] Máu quái ở Tầng 100 ({FormatNumber(hp100)}) tăng trưởng theo hàm 1.22^N hơi dốc so với tốc độ tăng trưởng DPS của Kiếm Cấp {maxSwordLv}. Cần đánh giá lại cân bằng endgame.");
         }
         else
         {
@@ -222,7 +222,7 @@ public static class MaxLevelAuditor
 
         for (int s = 0; s < 10; s++)
         {
-            maxSlot.swords[s] = new SwordSaveEntry { level = 8, isEquipped = true, equipSlotIndex = s };
+            maxSlot.swords[s] = new SwordSaveEntry { level = SwordRules.MaxLevel, isEquipped = true, equipSlotIndex = s };
         }
 
         string json = JsonUtility.ToJson(maxSlot);

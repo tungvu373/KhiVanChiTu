@@ -95,17 +95,17 @@ public class MergeManager : MonoBehaviour
         }
 
         // 2. Thống kê số lượng phôi theo từng cấp
-        int[] counts = new int[9]; // Mảng đếm phôi từ level 1 -> 8
+        int[] counts = new int[SwordRules.MaxLevel + 1];
         foreach (var item in allItems)
         {
-            counts[Mathf.Clamp(item.level, 1, 8)] += Mathf.Max(1, item.currentPieces);
+            counts[Mathf.Clamp(item.level, 1, SwordRules.MaxLevel)] += Mathf.Max(1, item.currentPieces);
             item.transform.SetParent(null); // Rời khỏi slot ngay lập tức để tạo chỗ trống
             Destroy(item.gameObject); // Xóa hết item cũ (sẽ thực thi cuối frame)
         }
 
         // 3. Xử lý gộp từ cấp thấp lên cấp cao
         int totalUpgrades = 0;
-        for (int L = 1; L < 8; L++)
+        for (int L = 1; L < SwordRules.MaxLevel; L++)
         {
             // Ưu tiên nâng kiếm đang trang bị ở cấp hiện tại; sau đó mới ghép phần kho còn lại.
             if (equipPanel != null)
@@ -138,7 +138,7 @@ public class MergeManager : MonoBehaviour
         }
 
         // 4. Sinh lại các thanh kiếm theo số lượng đã tính toán
-        for (int L = 1; L <= 8; L++)
+        for (int L = 1; L <= SwordRules.MaxLevel; L++)
         {
             if (counts[L] > 0)
             {
@@ -172,7 +172,7 @@ public class MergeManager : MonoBehaviour
             foreach (Transform slot in page)
             {
                 MergeItem item = slot.GetComponentInChildren<MergeItem>();
-                if (item != null && item.level == 8) // Giới hạn là kiếm cấp 8
+                if (item != null && item.level == 8) // Tế kiếm vẫn dùng cấp 8; đây không phải giới hạn ghép.
                 {
                     // Mỗi 1 phôi kiếm cấp 8 = 1 điểm Kiếm Ý
                     sacrificedCount += item.currentPieces;
@@ -276,10 +276,7 @@ public class MergeManager : MonoBehaviour
 
     private int GetRequiredPiecesForLevel(int level)
     {
-        if (level == 1) return 2;
-        if (level == 2) return 2;
-        if (level >= 8) return 9999;
-        return level;
+        return SwordRules.RequiredPieces(level);
     }
 
     private void TryAddSwordWithPieces(int level, int pieces)

@@ -9,7 +9,7 @@ public class FlyingSword : MonoBehaviour
     public int formationCount = 4; // tổng số kiếm đang active; dùng để tính góc orbit đều nhau
     public bool isUltimateClone = false; // Đánh dấu đây là kiếm của Ultimate
     
-    [Header("Sprites cho từng Level (1-8)")]
+    [Header("Sprites theo cấp kiếm (có thể dùng lại sprite cuối)")]
     public Sprite[] levelSprites;
     
     // Tách biệt rạch ròi Data của Kiếm và Data Nâng cấp (Upgrade)

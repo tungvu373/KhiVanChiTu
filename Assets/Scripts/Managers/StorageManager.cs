@@ -74,7 +74,7 @@ public class StorageManager : MonoBehaviour
     /// </summary>
     public bool HandleSwordDrop(int level, bool isMonsterDrop = false)
     {
-        level = Mathf.Clamp(level, 1, 8);
+        level = Mathf.Clamp(level, 1, SwordRules.MaxLevel);
 
         // 1. Kiểm tra kho merge có ô trống không
         if (MergeManager.Instance != null && MergeManager.Instance.HasEmptyInventorySlot())

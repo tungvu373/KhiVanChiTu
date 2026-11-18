@@ -104,6 +104,11 @@ Pinned sources, local adaptations and file hashes are recorded in
 <!-- END KHIVAN PROJECT SKILLS -->
 
 
+## Current sword progression rule
+
+- Sword **level** cap is **10**, confirmed by the owner on 18 November 2026. Use `Assets/Scripts/Data/SwordRules.cs` for merge boundaries and piece requirements. Do not infer the level cap from the 8-sprite array, the level-8 sacrifice action, the salvage price table, or sword slot capacity.
+- Levels 9–10 currently reuse the last available sword sprite. Existing rarity, drops, level-8 sacrifice and salvage payouts remain unchanged unless separately requested.
+
 <!-- BEGIN MOBILE UI PHASE 00 AUDIT -->
 ## Mobile UI redesign audit and preservation
 

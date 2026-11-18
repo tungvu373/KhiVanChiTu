@@ -27,26 +27,26 @@ namespace KhiVanChiTu.UI.Equipment
         {if(item==null||manager.IsSwordEquipped(item))return;if(a==item)a=null;else if(b==item)b=null;else if(a==null)a=item;else b=item;Refresh();}
         public void Refresh()
         {
-            bool valid=a!=null&&b!=null&&a!=b&&!manager.IsSwordEquipped(a)&&!manager.IsSwordEquipped(b)&&a.level==b.level&&a.level<8;
+            bool valid=a!=null&&b!=null&&a!=b&&!manager.IsSwordEquipped(a)&&!manager.IsSwordEquipped(b)&&a.level==b.level&&a.level<SwordRules.MaxLevel;
             Bind(first,a,"Nguyên liệu 1");Bind(second,b,"Nguyên liệu 2");
             merge.SetAvailable(valid&&!busy);
             if(valid)
             {
                 int l=a.level,p=a.currentPieces+b.currentPieces;
-                while(l<8&&p>=Required(l)){p-=Required(l);l++;if(p<=0)p=1;}
+                while(l<SwordRules.MaxLevel&&p>=Required(l)){p-=Required(l);l++;if(p<=0)p=1;}
                 var art=a.levelSprites!=null&&a.levelSprites.Length>=l?a.levelSprites[l-1]:RpgUI.SwordArt(a);
                 result.Bind(DismantleService.GetSwordDisplayName(l),$"Cấp {l}",art,$"{p:N0} phôi");result.detail.gameObject.SetActive(true);
                 preview.text=$"Kết quả: cấp {l} · {p:N0} phôi\nChi phí: {a.currentPieces:N0} + {b.currentPieces:N0} phôi cùng cấp · Không tốn tiền";
             }
-            else {result.Bind("Kết quả","",null,"");preview.text=a==null?"Chạm kiếm → Chọn ghép để đặt nguyên liệu.\nDùng hai kiếm cùng cấp trong kho, dưới cấp 8.":"Chọn thêm kiếm cùng cấp trong kho.\nKiếm đang xuất chiến không dùng làm nguyên liệu.";}
+            else {result.Bind("Kết quả","",null,"");preview.text=a==null?$"Chạm kiếm → Chọn ghép để đặt nguyên liệu.\nDùng hai kiếm cùng cấp trong kho, dưới cấp {SwordRules.MaxLevel}.":a.level>=SwordRules.MaxLevel?$"Kiếm đã đạt cấp tối đa {SwordRules.MaxLevel}.":"Chọn thêm kiếm cùng cấp trong kho.\nKiếm đang xuất chiến không dùng làm nguyên liệu.";}
             result.action.button.interactable=false;
         }
-        static int Required(int l)=>l<=2?2:l>=8?9999:l;
+        static int Required(int l)=>SwordRules.RequiredPieces(l);
         void Bind(FoundationItem target,MergeItem s,string empty)
         {target.Bind(s!=null?DismantleService.GetSwordDisplayName(s.level):empty,s!=null?$"Cấp {s.level}":"",RpgUI.SwordArt(s),s!=null?$"{s.currentPieces:N0} phôi":"",()=>{if(s!=null)Select(s);});target.action.button.interactable=s!=null;target.detail.gameObject.SetActive(true);target.SetSelected(s!=null);}
         IEnumerator Merge()
         {
-            if(a==null||b==null||a==b||a.level!=b.level||a.level>=8||manager.IsSwordEquipped(a)||manager.IsSwordEquipped(b)){feedback.text="Cần hai kiếm cùng cấp trong kho.";Refresh();yield break;}
+            if(a==null||b==null||a==b||a.level!=b.level||a.level>=SwordRules.MaxLevel||manager.IsSwordEquipped(a)||manager.IsSwordEquipped(b)){feedback.text="Cần hai kiếm cùng cấp trong kho, chưa đạt cấp tối đa.";Refresh();yield break;}
             busy=true;var target=a;var source=b;source.originalParent=source.transform.parent;
             target.GetComponentInParent<MergeSlot>().OnDrop(new PointerEventData(EventSystem.current){pointerDrag=source.gameObject});
             yield return null;a=b=null;busy=false;feedback.text=target!=null?$"Dung hợp thành công · Cấp {target.level}, {target.currentPieces:N0} phôi":"Đã cập nhật kho kiếm.";Refresh();

@@ -68,6 +68,8 @@
 Số ô xuất chiến của phi kiếm gắn liền với uy áp cảnh giới:
 * Luyện Khí: **1 Kiếm** | Trúc Cơ: **2 Kiếm** | Kim Đan: **3 Kiếm** | Nguyên Anh: **4 Kiếm** | Hóa Thần: **5 Kiếm** | Luyện Hư: **6 Kiếm** | Hợp Thể: **7 Kiếm** | Đại Thừa: **8 Kiếm** | Độ Kiếp: **10 Kiếm** (Vạn Kiếm Quy Tông).
 
+**Cấp phi kiếm tối đa hiện tại: 10** (xác nhận 18/11/2026). Giới hạn này khác với số ô xuất chiến. Ghép dùng 2 phôi ở cấp 1–2, sau đó số phôi bằng cấp hiện tại: 8 phôi cấp 8 → 1 kiếm cấp 9; 9 phôi cấp 9 → 1 kiếm cấp 10. Kiếm cấp 10 không ghép tiếp. Nguồn quy tắc runtime: `SwordRules`. Tế kiếm cấp 8, rarity, nguồn rơi và bảng hoàn trả phân giải hiện có không đổi trong lần cập nhật giới hạn này.
+
 ### 4.3 Hệ Thống Luyện Thể (Thể Tu - Thay Thế Kỹ Năng Cũ)
 Cây thiên phú thể phách tiêu hao Linh Thạch để củng cố nội lực tu sĩ:
 * **6 Nhánh Chỉ Số Cốt Lõi:**

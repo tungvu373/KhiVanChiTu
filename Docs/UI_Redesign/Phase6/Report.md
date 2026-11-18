@@ -8,7 +8,7 @@ Ngày 18/11/2026. Dự án Khí Vận Chi Tử, Unity 6000.6.4f1, Pipeline 0.9.1
 - DaoAnCatalog có 38 thiên phú, tổng 173 cấp có thể mua. DaoAnProgressionService kiểm prerequisite, cảnh giới theo cấp kế, số dư và chi phí; GetTotalBonus lấy hiệu ứng từ catalog. Nhánh lọc và các ngưỡng Đạo Vị lấy từ UI hiện hành.
 - Mốc không có unlock gate riêng: In Progress → Claimable → Completed. Locked chỉ áp dụng cho thiên phú có prerequisite/cảnh giới chưa đủ. Không tạo điều kiện khóa giả cho mốc.
 - Điều kiện mốc diệt quái đọc StageManager.enemiesKilled hiện tại, không phải một bộ đếm kill mới. Thưởng đan hỗ trợ được ApplyBuff ngay khi nhận, không tự tạo item kho mới.
-- Bất nhất dữ liệu có sẵn được giữ nguyên: mục tiêu sword_lvl_10 yêu cầu kiếm cấp 10 trong khi hệ ghép kiếm giới hạn cấp 8. Phase 6 không sửa điều kiện, công thức hay dữ liệu để che vấn đề này.
+- Tại thời điểm bàn giao Phase 6, code ghép còn giới hạn cấp 8 nên mốc sword_lvl_10 chưa đạt được. Chủ dự án xác nhận giới hạn đúng là 10 vào 18/11/2026; đã sửa riêng sau Phase 6, xem [SwordCap10](../SwordCap10/Report.md). Điều kiện và thưởng của mốc giữ nguyên.
 
 ## Thiết kế và binding
 
