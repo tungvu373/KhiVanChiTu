@@ -339,6 +339,9 @@ public class SecretRealmModalUI : MonoBehaviour
         enterButtons.Add(btn);
     }
 
+    // Presentation adapter; preserves the original admission transaction and launch path.
+    public void EnterRealm(SecretRealmType type) => OnEnterRealmClicked(type);
+
     private void OnEnterRealmClicked(SecretRealmType type)
     {
         if (SecretRealmService.Instance == null) return;
@@ -365,6 +368,8 @@ public class SecretRealmModalUI : MonoBehaviour
 
     public void RefreshUI()
     {
+        var phase7 = modalOverlay != null ? modalOverlay.GetComponent<KhiVanChiTu.UI.SecretRealm.RealmHubView>() : null;
+        if (phase7 != null) { phase7.Refresh(); return; }
         if (SecretRealmService.Instance == null) return;
 
         bool hasFree = SecretRealmService.Instance.HasFreeAttempt();

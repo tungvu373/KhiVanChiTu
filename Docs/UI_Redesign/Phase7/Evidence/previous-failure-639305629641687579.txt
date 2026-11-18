@@ -1,0 +1,5 @@
+System.Exception: Arena fits without covering controls
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Check (System.Boolean b, System.String m) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:54 
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.VerifyPlay (KhiVanChiTu.UI.SecretRealm.RealmPlayView view) [0x00050] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:82 
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA+<Run>d__37.MoveNext () [0x00622] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:113 
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Tick () [0x0001a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:50 

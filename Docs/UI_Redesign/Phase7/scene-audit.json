@@ -1,0 +1,46 @@
+[
+  {
+    "scene": "Assets/_Recovery/0.unity",
+    "realmDependencies": []
+  },
+  {
+    "scene": "Assets/Holotna/Mountain/Scenes/Demo.unity",
+    "realmDependencies": []
+  },
+  {
+    "scene": "Assets/Modules/PCContent/Scenes/ContentSandbox.unity",
+    "realmDependencies": []
+  },
+  {
+    "scene": "Assets/Modules/PCContent/Scenes/PCGameplayWork.unity",
+    "realmDependencies": []
+  },
+  {
+    "scene": "Assets/Scenes/Backups/SampleScene_MobileWork_PreJadeV2.unity",
+    "realmDependencies": [
+      "Assets/Scripts/UI/SecretRealmPlayController.cs",
+      "Assets/Scripts/UI/SecretRealmModalUI.cs",
+      "Assets/Scripts/Managers/SecretRealmService.cs"
+    ]
+  },
+  {
+    "scene": "Assets/Scenes/SampleScene.unity",
+    "realmDependencies": []
+  },
+  {
+    "scene": "Assets/Scenes/SampleScene_MobileWork.unity",
+    "realmDependencies": [
+      "Assets/Scripts/UI/SecretRealmModalUI.cs",
+      "Assets/Scripts/Managers/SecretRealmService.cs",
+      "Assets/Scripts/UI/SecretRealmPlayController.cs"
+    ]
+  },
+  {
+    "scene": "Assets/Scenes/test.unity",
+    "realmDependencies": []
+  },
+  {
+    "scene": "Assets/UI/Foundation/Showcase/UIFoundationShowcase.unity",
+    "realmDependencies": []
+  }
+]

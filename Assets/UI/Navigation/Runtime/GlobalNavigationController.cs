@@ -153,7 +153,9 @@ namespace KhiVanChiTu.UI.Navigation
                     hud.legacy.quickButtons[1].onClick.Invoke();
                     if(SecretRealmModalUI.Instance!=null&&!SecretRealmModalUI.Instance.IsModalOpen)SecretRealmModalUI.Instance.Open();
                     var realmScroll=rootCanvas.transform.Find("SecretRealmModal/ModalBox/ScrollView")?.GetComponent<UnityEngine.UI.ScrollRect>();
-                    if(realmScroll!=null){Canvas.ForceUpdateCanvases();realmScroll.verticalNormalizedPosition=route==NavigationRoute.RealmList?1:1-((int)route-(int)NavigationRoute.Horde)/4f;}break;
+                    if(realmScroll!=null){Canvas.ForceUpdateCanvases();realmScroll.verticalNormalizedPosition=route==NavigationRoute.RealmList?1:1-((int)route-(int)NavigationRoute.Horde)/4f;}
+                    var realmView=rootCanvas.transform.Find("SecretRealmModal")?.GetComponent<KhiVanChiTu.UI.SecretRealm.RealmHubView>();
+                    if(realmView!=null)realmView.Focus(route==NavigationRoute.RealmList?SecretRealmType.HordeSurvival:(SecretRealmType)((int)route-(int)NavigationRoute.Horde));break;
                 case NavigationRoute.Talents:
                     hud.legacy.quickButtons[2].onClick.Invoke();
                     if(DaoAnModalUI.Instance!=null&&!DaoAnModalUI.Instance.IsModalOpen)DaoAnModalUI.Instance.Open();

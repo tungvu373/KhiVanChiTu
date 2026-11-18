@@ -1,0 +1,16 @@
+UnityEngine.MissingComponentException: There is no 'CanvasRenderer' attached to the "DemonMask" game object, but a script is trying to access it.
+You probably need to add a CanvasRenderer to the game object "DemonMask". Or your script needs to check if the component is attached before using it.
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x000b4] in <93e6391e4688454a985ab5dc6ed6bd98>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x0000a] in <93e6391e4688454a985ab5dc6ed6bd98>:0 
+  at UnityEngine.CanvasRenderer.EnableRectClipping (UnityEngine.Rect rect) [0x00006] in <46f45de80d174b0197ed66b3543ec385>:0 
+  at UnityEngine.UI.MaskableGraphic.SetClipRect (UnityEngine.Rect clipRect, System.Boolean validRect) [0x00003] in .\Library\PackageCache\com.unity.ugui@0727b404f3a0\Runtime\UGUI\UI\Core\MaskableGraphic.cs:148 
+  at UnityEngine.UI.RectMask2D.PerformClipping () [0x000c3] in .\Library\PackageCache\com.unity.ugui@0727b404f3a0\Runtime\UGUI\UI\Core\RectMask2D.cs:253 
+  at UnityEngine.UI.ClipperRegistry.Cull () [0x00010] in .\Library\PackageCache\com.unity.ugui@0727b404f3a0\Runtime\UGUI\UI\Core\Culling\ClipperRegistry.cs:55 
+  at UnityEngine.UI.CanvasUpdateRegistry.PerformUpdate () [0x000d2] in .\Library\PackageCache\com.unity.ugui@0727b404f3a0\Runtime\UGUI\UI\Core\CanvasUpdateRegistry.cs:212 
+  at (wrapper delegate-invoke) <Module>.invoke_void()
+  at UnityEngine.Canvas.SendWillRenderCanvases () [0x00009] in <46f45de80d174b0197ed66b3543ec385>:0 
+  at UnityEngine.Canvas.ForceUpdateCanvases () [0x00005] in <46f45de80d174b0197ed66b3543ec385>:0 
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.VerifyText (UnityEngine.Transform root) [0x00000] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:76 
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.VerifyPlay (KhiVanChiTu.UI.SecretRealm.RealmPlayView view) [0x00006] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:81 
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA+<Run>d__37.MoveNext () [0x0064e] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:113 
+  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Tick () [0x0001a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:50 
