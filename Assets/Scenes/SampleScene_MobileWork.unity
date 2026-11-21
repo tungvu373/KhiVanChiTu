@@ -54520,7 +54520,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 68
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -54722,7 +54722,7 @@ MonoBehaviour:
   autoPositionCamera: 1
   overviewPosition: {x: 0.36, y: 13.5, z: -14}
   overviewRotation: {x: 45, y: 0, z: 0}
-  defaultFov: 60
+  defaultFov: 68
 --- !u!1 &330652538
 GameObject:
   m_ObjectHideFlags: 0
@@ -263237,8 +263237,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatManager
   normalEnemyPrefabs:
-  - {fileID: 4443152634686417654, guid: 1a3878e3848adf647900d227a0784c74, type: 3}
-  - {fileID: 4028828534253860085, guid: 47fc5150f866a7145a04157ae8453215, type: 3}
+  - {fileID: 3478838391996711892, guid: 30d5e739fd7e85d408940f7c358f6a27, type: 3}
+  - {fileID: 915468971582231951, guid: 427ecba9abaf0fd4c9df126ad1bdfe69, type: 3}
+  - {fileID: 6594949796885246462, guid: 210f2bdc9600bf14594b77b9d9997b73, type: 3}
+  useAllNormalEnemyPrefabs: 1
+  normalEnemySpeedMultiplier: 0.85
   bossEnemyPrefabs:
   - {fileID: 1655183359628877413, guid: 3609edc903336ea48b6a1be95c638de0, type: 3}
   damagePopupPrefab: {fileID: 4044406445546116383, guid: 1e369b1c68a9e7e4a9cc552c60f34b85, type: 3}

@@ -173,8 +173,18 @@ public class MasterBuilderTool
             enemyPrefab = PrefabUtility.SaveAsPrefabAsset(enemy, enemyPath);
             Object.DestroyImmediate(enemy);
         }
-        gmObj.GetComponent<CombatManager>().normalEnemyPrefabs = new GameObject[] { enemyPrefab };
-        gmObj.GetComponent<CombatManager>().bossEnemyPrefabs = new GameObject[] { enemyPrefab };
+        GameObject[] normalEnemyPrefabs =
+        {
+            AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/sói.prefab"),
+            AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/chim.prefab"),
+            AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/rùa.prefab")
+        };
+        if (normalEnemyPrefabs[0] != null && normalEnemyPrefabs[1] != null && normalEnemyPrefabs[2] != null)
+            gmObj.GetComponent<CombatManager>().normalEnemyPrefabs = normalEnemyPrefabs;
+
+        GameObject loadedBossPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Boss.prefab");
+        if (loadedBossPrefab != null)
+            gmObj.GetComponent<CombatManager>().bossEnemyPrefabs = new GameObject[] { loadedBossPrefab };
 
         // -- DamagePopup Prefab --
         string popupPath = "Assets/Prefabs/DamagePopup.prefab";

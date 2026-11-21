@@ -28,6 +28,9 @@ public class CombatManager : MonoBehaviour
 
     public GameObject[] normalEnemyPrefabs;
 
+    [SerializeField] private bool useAllNormalEnemyPrefabs = false;
+    [SerializeField, Range(0.5f, 1f)] private float normalEnemySpeedMultiplier = 1f;
+
 
 
     public GameObject[] bossEnemyPrefabs;
@@ -1305,7 +1308,8 @@ public class CombatManager : MonoBehaviour
 
 
 
-            GameObject prefab = normalEnemyPrefabs[Random.Range(0, normalEnemyPrefabs.Length)];
+            GameObject prefab = SelectNormalEnemyPrefab();
+            if (prefab == null) continue;
 
 
 
@@ -2522,10 +2526,49 @@ public class CombatManager : MonoBehaviour
         return spawnPos;
     }
 
+    private GameObject SelectNormalEnemyPrefab()
+    {
+        if (normalEnemyPrefabs == null || normalEnemyPrefabs.Length == 0) return null;
+        if (useAllNormalEnemyPrefabs)
+        {
+            int startIndex = Random.Range(0, normalEnemyPrefabs.Length);
+            for (int i = 0; i < normalEnemyPrefabs.Length; i++)
+            {
+                GameObject candidate = normalEnemyPrefabs[(startIndex + i) % normalEnemyPrefabs.Length];
+                if (candidate != null) return candidate;
+            }
+            return null;
+        }
+
+        if (normalEnemyPrefabs.Length != 3)
+            return normalEnemyPrefabs[Random.Range(0, normalEnemyPrefabs.Length)];
+
+        // Normal prefab order: wolf, bird, turtle. Introduce varieties as stages advance.
+        int stage = StageManager.Instance != null ? StageManager.Instance.currentStage : 1;
+        int index;
+        if (stage <= 10)
+            index = 0;
+        else if (stage <= 20)
+            index = Random.Range(0, 2);
+        else if (stage <= 30)
+            index = Random.Range(0, 3);
+        else
+        {
+            float roll = Random.value;
+            index = roll < 0.20f ? 0 : (roll < 0.55f ? 1 : 2);
+        }
+
+        if (normalEnemyPrefabs[index] != null) return normalEnemyPrefabs[index];
+        for (int i = 0; i < normalEnemyPrefabs.Length; i++)
+            if (normalEnemyPrefabs[i] != null) return normalEnemyPrefabs[i];
+        return null;
+    }
+
     private void SpawnEnemy()
     {
         if (normalEnemyPrefabs == null || normalEnemyPrefabs.Length == 0) return;
-        GameObject enemyPrefab = normalEnemyPrefabs[Random.Range(0, normalEnemyPrefabs.Length)];
+        GameObject enemyPrefab = SelectNormalEnemyPrefab();
+        if (enemyPrefab == null) return;
 
         Quaternion spawnRot;
         Vector3 spawnPos = CalculateSpawnPosition(out spawnRot);
@@ -2602,6 +2645,11 @@ public class CombatManager : MonoBehaviour
 
 
         enemy.Init(health, playerTransform, false);
+
+        // Use the prefab's authored speed each time so pooled enemies do not slow down cumulatively.
+        Enemy prefabEnemy = enemyPrefab.GetComponent<Enemy>();
+        if (prefabEnemy != null)
+            enemy.moveSpeed = prefabEnemy.moveSpeed * Mathf.Clamp(normalEnemySpeedMultiplier, 0.5f, 1f);
 
 
 

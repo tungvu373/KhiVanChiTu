@@ -83,9 +83,18 @@ public class CombatBuilderTool
         if (combatManager != null)
         {
             combatManager.playerTransform = player.transform;
-            GameObject loadedPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-            combatManager.normalEnemyPrefabs = new GameObject[] { loadedPrefab };
-            combatManager.bossEnemyPrefabs = new GameObject[] { loadedPrefab };
+            GameObject[] normalPrefabs =
+            {
+                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/sói.prefab"),
+                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/chim.prefab"),
+                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/rùa.prefab")
+            };
+            if (normalPrefabs[0] != null && normalPrefabs[1] != null && normalPrefabs[2] != null)
+                combatManager.normalEnemyPrefabs = normalPrefabs;
+
+            GameObject loadedBoss = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Boss.prefab");
+            if (loadedBoss != null)
+                combatManager.bossEnemyPrefabs = new GameObject[] { loadedBoss };
             EditorUtility.SetDirty(combatManager);
         }
         
