@@ -8,11 +8,9 @@
         </ui:VisualElement>
     </ui:VisualElement>
 
-    <!-- Toast Banner Stack -->
-    <ui:VisualElement name="toast-container" picking-mode="Ignore" class="full-screen" style="align-items: center; justify-content: flex-start; padding-top: 74px;">
-        <ui:VisualElement name="toast-pill" picking-mode="Ignore" class="pill-light" style="display: none; background-color: rgba(255, 250, 236, 0.96); padding: 7px 14px;">
-            <ui:Label name="toast-text" picking-mode="Ignore" text="" class="text-body" style="-unity-font-style: bold;" />
-        </ui:VisualElement>
+    <!-- Juicy Color-Coded Notification Banner Stack -->
+    <ui:VisualElement name="toast-container" picking-mode="Ignore" class="full-screen" style="align-items: center; justify-content: flex-start; padding-top: 84px;">
+        <ui:VisualElement name="toast-stack" picking-mode="Ignore" class="toast-stack" />
     </ui:VisualElement>
 
     <!-- Daylight Loading Overlay -->

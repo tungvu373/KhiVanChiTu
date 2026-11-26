@@ -19,6 +19,8 @@ namespace KhiVanChiTu.Remake
         public event Action<Vector3, double, bool> OnLoiPhatCast;
         public event Action<int, Vector3, double, bool> OnSkillCast;
         public event Action<string, double, double> OnBossStatusUpdated; // name, hp, maxHp (null when none)
+        public event Action<bool> OnTribulationStateChanged;
+        public event Action<int, int> OnTribulationStrike; // (strikeIndex 1..9, total)
 
         public double PlayerCurrentHp { get; private set; }
         public double PlayerMaxHp { get; private set; }
@@ -26,7 +28,26 @@ namespace KhiVanChiTu.Remake
         public float PlayerMaxMp { get; private set; } = 120f;
         public float LoiPhatCooldownRemaining => _skillCooldowns[0];
         public float LoiPhatCooldownTotal => SkillBaseCooldowns[0];
-        public bool IsBreakthroughReady => SaveService.Current.tuVi >= GetRequiredTuViForCurrent();
+        public bool IsBreakthroughReady => SaveService.Current.tuVi >= GetRequiredTuViForCurrent() && !IsInTribulation;
+
+        // Alchemy Brew Countdown (3.5s)
+        public bool IsBrewingPill { get; private set; }
+        public int BrewingTargetRealm { get; private set; }
+        public float BrewTimeRemaining { get; private set; }
+        public const float BrewDuration = 3.5f;
+        public float BrewProgress01 => IsBrewingPill ? Mathf.Clamp01(1f - BrewTimeRemaining / BrewDuration) : 0f;
+
+        // 15-Second Breakthrough Seclusion & Heavenly Tribulation (9 Lightning Strikes)
+        public bool IsInTribulation { get; private set; }
+        public float TribulationTimeRemaining { get; private set; }
+        public const float TribulationDuration = 15.0f;
+        public int TribulationStrikesDone { get; private set; }
+        public const int TribulationStrikesTotal = 9;
+        public float TribulationTargetChance { get; private set; }
+        public string TribulationTargetLabel { get; private set; }
+        private RemakePillQuality? _tribulationSelectedPill;
+        private bool _tribulationPillConsumed;
+        private float _tribulationNextStrikeTime;
 
         public bool HasActiveBoss { get; private set; }
         public string ActiveBossName { get; private set; }
@@ -84,6 +105,13 @@ namespace KhiVanChiTu.Remake
             ActiveArenaMode = RemakeArenaMode.Campaign;
             HasKyNgoAvailable = false;
             KyNgoTimeRemaining = 0f;
+            IsBrewingPill = false;
+            BrewTimeRemaining = 0f;
+            IsInTribulation = false;
+            TribulationTimeRemaining = 0f;
+            TribulationStrikesDone = 0;
+            _tribulationSelectedPill = null;
+            _tribulationPillConsumed = false;
             _kyNgoSpawnTimer = SaveService.IsTestAllProfileActive ? 6f : 95f;
             Array.Clear(_skillCooldowns, 0, _skillCooldowns.Length);
             SetActiveBoss(false, "", 0, 0);
@@ -136,6 +164,17 @@ namespace KhiVanChiTu.Remake
             {
                 _autosaveTimer = 0f;
                 SaveService.Save();
+            }
+
+            // Alchemy Brew 3.5s Countdown (runs even if modal is closed)
+            if (IsBrewingPill)
+                AdvanceBrewTimer(dt);
+
+            // 15-Second Breakthrough Seclusion & Tribulation Lightning Strikes
+            if (IsInTribulation)
+            {
+                AdvanceTribulation(dt);
+                return;
             }
 
             if (RemakeArenaController.Instance != null && RemakeArenaController.Instance.HasAliveTarget())
@@ -661,6 +700,7 @@ namespace KhiVanChiTu.Remake
 
         public void OnPlayerDamaged(double dmg)
         {
+            if (IsInTribulation) return;
             double mitigated = Math.Max(1, dmg * (1.0 - GetDamageReduction()));
             PlayerCurrentHp = Math.Max(0, PlayerCurrentHp - mitigated);
             if (PlayerCurrentHp <= 0)
@@ -736,8 +776,157 @@ namespace KhiVanChiTu.Remake
             SaveService.Save();
             OnStatsChanged?.Invoke();
             OnToastMessage?.Invoke(style == RemakeSwordStyle.KiemXuyen
-                ? "Chuyển Kiếm Ý: Kiếm Xuyên (+Tốc Độ & Bạo Kích)"
-                : "Chuyển Kiếm Ý: Phá Giáp (+Xuyên Giáp & Công Boss)");
+                ? "Chuyển Kiếm Pháp: Kiếm Xuyên (+Tốc Độ & Bạo Kích)"
+                : "Chuyển Kiếm Pháp: Phá Giáp (+Xuyên Giáp & Công Boss)");
+        }
+
+        public float GetSingleFodderMergeContribution(int mainLevel, int fodderLevel)
+        {
+            mainLevel = Mathf.Clamp(mainLevel, 1, 9);
+            fodderLevel = Mathf.Clamp(fodderLevel, 1, 10);
+            float basePair = CultivationTable.GetSwordMergeEffectiveChance(mainLevel, 0f);
+            float sameLevelContrib = Mathf.Clamp(basePair * 0.56f, 0.14f, 0.55f);
+            int delta = fodderLevel - mainLevel;
+            if (delta == 0) return sameLevelContrib;
+            if (delta == -1) return Mathf.Max(0.05f, sameLevelContrib * 0.45f);
+            if (delta == -2) return Mathf.Max(0.03f, sameLevelContrib * 0.20f);
+            if (delta <= -3) return Mathf.Max(0.02f, sameLevelContrib * 0.08f);
+            return Mathf.Min(0.95f, sameLevelContrib * (1.55f + (delta - 1) * 0.35f));
+        }
+
+        public float ComputeFifaSwordMergeChance(int mainLevel, IReadOnlyList<int> fodderLevels, bool useForgeTalisman, out float fodderSum, out float bonusSum)
+        {
+            fodderSum = 0f;
+            bonusSum = 0f;
+            if (mainLevel < 1 || mainLevel >= 10 || fodderLevels == null || fodderLevels.Count == 0)
+                return 0f;
+
+            var save = SaveService.Current;
+            bool isTutorialMerge = !save.tutorialCompleted && save.totalMerges == 0 && mainLevel == 1;
+            int count = Mathf.Min(5, fodderLevels.Count);
+            for (int i = 0; i < count; i++)
+                fodderSum += GetSingleFodderMergeContribution(mainLevel, fodderLevels[i]);
+
+            float pity = save.swordPityByLevel[mainLevel - 1];
+            float daoFortune = GetDaoVanLevel("wealth_fortune") * 0.02f;
+            float taliBonus = (useForgeTalisman && save.forgeTalismanCount > 0) ? 0.10f : 0f;
+            bonusSum = pity + daoFortune + taliBonus;
+            if (isTutorialMerge) return 1.0f;
+            return Mathf.Clamp(fodderSum + bonusSum, 0.03f, 1.0f);
+        }
+
+        public bool TryMergeSwordFifa(bool mainFromEquipped, int mainIndex, IReadOnlyList<int> fodderBagIndices, bool useForgeTalisman)
+        {
+            var save = SaveService.Current;
+            int mainLevel;
+            if (mainFromEquipped)
+            {
+                if (mainIndex < 0 || mainIndex >= save.equippedSwordLevels.Count)
+                {
+                    OnToastMessage?.Invoke("Vui lòng chọn 1 Kiếm Chính hợp lệ!");
+                    return false;
+                }
+                mainLevel = save.equippedSwordLevels[mainIndex];
+            }
+            else
+            {
+                if (mainIndex < 0 || mainIndex >= save.swordInventoryLevels.Count)
+                {
+                    OnToastMessage?.Invoke("Vui lòng chọn 1 Kiếm Chính hợp lệ!");
+                    return false;
+                }
+                mainLevel = save.swordInventoryLevels[mainIndex];
+            }
+
+            if (mainLevel < 1 || mainLevel >= 10)
+            {
+                OnToastMessage?.Invoke("Kiếm đã đạt cấp tối đa (Cấp 10)!");
+                return false;
+            }
+
+            var validFodders = new List<int>();
+            if (fodderBagIndices != null)
+            {
+                for (int i = 0; i < fodderBagIndices.Count && validFodders.Count < 5; i++)
+                {
+                    int bIdx = fodderBagIndices[i];
+                    if (bIdx < 0 || bIdx >= save.swordInventoryLevels.Count) continue;
+                    if (!mainFromEquipped && bIdx == mainIndex) continue;
+                    if (!validFodders.Contains(bIdx)) validFodders.Add(bIdx);
+                }
+            }
+
+            if (validFodders.Count == 0)
+            {
+                OnToastMessage?.Invoke("Hãy thêm ít nhất 1 phôi kiếm (tối đa 5 phôi) vào ô ghép!");
+                return false;
+            }
+
+            double cost = CultivationTable.GetSwordMergeCost(mainLevel);
+            bool isTutorialMerge = !save.tutorialCompleted && save.totalMerges == 0 && mainLevel == 1;
+            if (!isTutorialMerge && save.linhThach < cost)
+            {
+                OnToastMessage?.Invoke($"Thiếu {CultivationTable.FormatNumber(cost)} Linh Thạch để rèn hợp nhất!");
+                return false;
+            }
+            if (useForgeTalisman && save.forgeTalismanCount <= 0)
+                useForgeTalisman = false;
+
+            var fodderLevels = new List<int>(validFodders.Count);
+            for (int i = 0; i < validFodders.Count; i++)
+                fodderLevels.Add(save.swordInventoryLevels[validFodders[i]]);
+
+            float chance = ComputeFifaSwordMergeChance(mainLevel, fodderLevels, useForgeTalisman, out _, out _);
+            if (!isTutorialMerge) save.linhThach -= cost;
+            if (useForgeTalisman) save.forgeTalismanCount--;
+
+            bool success = UnityEngine.Random.value <= chance;
+
+            // Consume fodders descending while adjusting bag mainIndex if needed
+            validFodders.Sort();
+            int adjustedMainIdx = mainIndex;
+            for (int i = validFodders.Count - 1; i >= 0; i--)
+            {
+                int rm = validFodders[i];
+                save.swordInventoryLevels.RemoveAt(rm);
+                if (!mainFromEquipped && rm < adjustedMainIdx) adjustedMainIdx--;
+            }
+
+            save.totalMerges++;
+            if (success)
+            {
+                save.swordPityByLevel[mainLevel - 1] = 0f;
+                int newLevel = mainLevel + 1;
+                if (mainFromEquipped) save.equippedSwordLevels[mainIndex] = newLevel;
+                else save.swordInventoryLevels[adjustedMainIdx] = newLevel;
+
+                if (save.tutorialStep == 1 || save.tutorialStep == 2)
+                {
+                    save.tutorialStep = 3;
+                    save.tutorialCompleted = true;
+                }
+                if (save.mainQuestIndex == 1) save.mainQuestProgress = 1;
+
+                RemakeAudioService.Instance?.PlayMerge();
+                RemakeArenaController.Instance?.SyncPlayerSwordsVisual();
+                OnSwordMergeResolved?.Invoke(true, newLevel, 0f);
+                OnToastMessage?.Invoke($"Rèn thành công! Phi Kiếm thăng cấp Lv.{newLevel} ({Mathf.RoundToInt(chance * 100)}%)!");
+                if (newLevel >= 9)
+                    RemakeOnlineService.Instance?.BroadcastThienDaoAnnouncement($"{save.daoName} vừa rèn thành công Phi Kiếm Cấp {newLevel}!");
+            }
+            else
+            {
+                float basePity = CultivationTable.SwordMergePityStep[mainLevel - 1];
+                float pityGain = basePity * (0.55f + 0.15f * validFodders.Count);
+                save.swordPityByLevel[mainLevel - 1] = Mathf.Clamp01(save.swordPityByLevel[mainLevel - 1] + pityGain);
+                OnSwordMergeResolved?.Invoke(false, mainLevel, save.swordPityByLevel[mainLevel - 1]);
+                OnToastMessage?.Invoke($"Rèn thất bại ({Mathf.RoundToInt(chance * 100)}%)! Giữ nguyên Kiếm Lv.{mainLevel} (+{Mathf.RoundToInt(pityGain * 100)}% Chúc Phúc)");
+            }
+
+            SaveService.Save();
+            OnStatsChanged?.Invoke();
+            OnQuestOrTutorialChanged?.Invoke();
+            return success;
         }
 
         public bool TryMergeSwords(int fromLevel) => TryMergeSwords(fromLevel, false);
@@ -870,13 +1059,96 @@ namespace KhiVanChiTu.Remake
             RemakeArenaController.Instance?.SyncPlayerSwordsVisual();
             SaveService.Save();
             OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke($"Đã xuất trận Phi Kiếm Cấp {lv}!");
             return true;
         }
 
         // =========================================================
-        // LUYEN DAN M2 (8 PILLS + 8 RANKS + HOP DAN + TE DAN 4 FLAMES)
+        // LUYEN DAN M2 (8 PILLS + 8 RANKS + BREW SLIDER + EXCESS SINKS)
         // =========================================================
         public bool TryBrewTrucCoPill() => TryBrewPill(0);
+
+        public float GetAlchemyBrewSuccessChance(int targetRealm)
+        {
+            var save = SaveService.Current;
+            targetRealm = Mathf.Clamp(targetRealm, 0, 7);
+            return Mathf.Clamp(0.75f + (save.alchemistRank - targetRealm - 1) * 0.06f
+                + (save.spiritFlameTier - 1) * 0.04f
+                + GetDaoVanLevel("arts_alchemy") * 0.03f, 0.35f, 0.96f);
+        }
+
+        public void GetAlchemyQualityOdds(out int haPct, out int trungPct, out int thuongPct, out int cucPct)
+        {
+            var save = SaveService.Current;
+            float danTongBonus = GetEquipSetCount(RemakeEquipSet.DanTong) >= 4 ? 0.05f : 0f;
+            float shift = CultivationTable.GetAlchemistQualityBonus(save.alchemistRank) * 0.4f + (save.spiritFlameTier - 1) * 0.03f + danTongBonus;
+            float pCuc = Mathf.Clamp01(0.04f + shift);
+            float pThuong = Mathf.Clamp01(0.16f + shift) - pCuc;
+            float pTrung = Mathf.Clamp01(0.44f + shift) - (pCuc + pThuong);
+            float pHa = Mathf.Max(0f, 1f - pCuc - pThuong - pTrung);
+            cucPct = Mathf.RoundToInt(pCuc * 100f);
+            thuongPct = Mathf.RoundToInt(pThuong * 100f);
+            trungPct = Mathf.RoundToInt(pTrung * 100f);
+            haPct = Mathf.Max(0, 100 - cucPct - thuongPct - trungPct);
+        }
+
+        public bool TryStartBrewPill(int targetRealm)
+        {
+            var save = SaveService.Current;
+            if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Alchemy, save.realmIndex, save.subStage))
+            {
+                OnToastMessage?.Invoke("Luyện Đan mở ở Luyện Khí Tầng 7!");
+                return false;
+            }
+            if (IsBrewingPill)
+            {
+                OnToastMessage?.Invoke($"Đan Lô đang luyện đan ({BrewTimeRemaining:0.0}s), vui lòng chờ xuất lò!");
+                return false;
+            }
+
+            targetRealm = Mathf.Clamp(targetRealm, 0, 7);
+            int herbTierIdx = CultivationTable.GetPillRequiredHerbTier(targetRealm) - 1;
+            int herbNeed = CultivationTable.GetPillRequiredHerbCount(targetRealm);
+            double ltCost = CultivationTable.GetPillBrewLinhThachCost(targetRealm);
+
+            if (save.herbsByTier[herbTierIdx] < herbNeed)
+            {
+                OnToastMessage?.Invoke($"Cần {herbNeed} {ActStageDatabaseSO.GetHerbName(herbTierIdx + 1)}!");
+                return false;
+            }
+            if (save.linhThach < ltCost)
+            {
+                OnToastMessage?.Invoke($"Thiếu {CultivationTable.FormatNumber(ltCost)} Linh Thạch!");
+                return false;
+            }
+
+            save.herbsByTier[herbTierIdx] -= herbNeed;
+            save.linhThach -= ltCost;
+            IsBrewingPill = true;
+            BrewingTargetRealm = targetRealm;
+            BrewTimeRemaining = BrewDuration;
+
+            string pillName = CultivationTable.GetPillNameForRealmBreakthrough(targetRealm);
+            int pct = Mathf.RoundToInt(GetAlchemyBrewSuccessChance(targetRealm) * 100f);
+            RemakeAudioService.Instance?.PlayClick();
+            SaveService.Save();
+            OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke($"Khai lò luyện {pillName} ({pct}%) — Đang ngưng đan {BrewDuration:0.0}s...");
+            return true;
+        }
+
+        public void AdvanceBrewTimer(float dt)
+        {
+            if (!IsBrewingPill) return;
+            BrewTimeRemaining = Mathf.Max(0f, BrewTimeRemaining - Mathf.Max(0f, dt));
+            if (BrewTimeRemaining <= 0f)
+            {
+                int realm = BrewingTargetRealm;
+                IsBrewingPill = false;
+                BrewTimeRemaining = 0f;
+                ResolveBrewPillOutcome(realm);
+            }
+        }
 
         public bool TryBrewPill(int targetRealm)
         {
@@ -905,11 +1177,13 @@ namespace KhiVanChiTu.Remake
 
             save.herbsByTier[herbTierIdx] -= herbNeed;
             save.linhThach -= ltCost;
+            return ResolveBrewPillOutcome(targetRealm);
+        }
 
-            float baseSuccess = Mathf.Clamp(0.75f + (save.alchemistRank - targetRealm - 1) * 0.06f
-                + (save.spiritFlameTier - 1) * 0.04f
-                + GetDaoVanLevel("arts_alchemy") * 0.03f, 0.35f, 0.96f);
-
+        private bool ResolveBrewPillOutcome(int targetRealm)
+        {
+            var save = SaveService.Current;
+            float baseSuccess = GetAlchemyBrewSuccessChance(targetRealm);
             bool success = UnityEngine.Random.value <= baseSuccess;
             string pillName = CultivationTable.GetPillNameForRealmBreakthrough(targetRealm);
             if (success)
@@ -925,14 +1199,14 @@ namespace KhiVanChiTu.Remake
                 if (save.mainQuestIndex == 4) save.mainQuestProgress = 1;
                 if (quality == RemakePillQuality.CucPham)
                     RemakeOnlineService.Instance?.BroadcastThienDaoAnnouncement($"{save.daoName} vừa xuất lò {pillName} CỰC PHẨM (Đan Văn)!");
-                OnToastMessage?.Invoke($"Luyện thành công: {pillName} ({CultivationTable.GetPillQualityName(quality)})!");
+                OnToastMessage?.Invoke($"Xuất lò thành công: +1 {pillName} ({CultivationTable.GetPillQualityName(quality)})!");
             }
             else
             {
                 save.herbDust++;
                 AddPill(targetRealm, RemakePillQuality.PheDan, 1);
                 GrantAlchemistXp((targetRealm + 1) * 6);
-                OnToastMessage?.Invoke($"Nổ lò! Thu được 1 {pillName} (Phế Đan — dùng Tế Hỏa) & Dược Trần");
+                OnToastMessage?.Invoke($"Nổ lò thất bại! Thu được 1 {pillName} (Phế Đan — Tế Hỏa/Luyện Hóa) & +1 Dược Trần");
             }
 
             RemakeAudioService.Instance?.PlayMerge();
@@ -940,6 +1214,83 @@ namespace KhiVanChiTu.Remake
             OnStatsChanged?.Invoke();
             OnQuestOrTutorialChanged?.Invoke();
             return success;
+        }
+
+        public int TryMergeAllPills(int realmTarget)
+        {
+            int totalMerged = 0;
+            RemakePillQuality[] tiers = { RemakePillQuality.HaPham, RemakePillQuality.TrungPham };
+            for (int t = 0; t < tiers.Length; t++)
+            {
+                var q = tiers[t];
+                while (GetPillCount(realmTarget, q) >= 3)
+                {
+                    for (int i = 0; i < 3; i++) ConsumePill(realmTarget, q);
+                    RemakePillQuality next = q == RemakePillQuality.HaPham ? RemakePillQuality.TrungPham : RemakePillQuality.ThuongPham;
+                    AddPill(realmTarget, next, 1);
+                    GrantAlchemistXp(18);
+                    totalMerged++;
+                }
+            }
+            if (totalMerged > 0)
+            {
+                RemakeAudioService.Instance?.PlayMerge();
+                SaveService.Save();
+                OnStatsChanged?.Invoke();
+                OnToastMessage?.Invoke($"Hợp Nhanh thành công {totalMerged} lượt {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)}!");
+            }
+            else
+            {
+                OnToastMessage?.Invoke("Cần ít nhất 3 viên Hạ Phẩm hoặc Trung Phẩm để Hợp Nhanh!");
+            }
+            return totalMerged;
+        }
+
+        public bool TryConsumePillForTuVi(int realmTarget, RemakePillQuality quality, int count = 1)
+        {
+            int owned = GetPillCount(realmTarget, quality);
+            int actual = Mathf.Clamp(count, 1, owned);
+            if (owned <= 0)
+            {
+                OnToastMessage?.Invoke("Không có đan dược để hấp thu!");
+                return false;
+            }
+            for (int i = 0; i < actual; i++) ConsumePill(realmTarget, quality);
+            var save = SaveService.Current;
+            double perPillTuVi = Math.Round(CultivationTable.GetRequiredTuVi(Mathf.Clamp(realmTarget, 0, 7), 4) * (0.06 + (int)quality * 0.06));
+            double gainTuVi = perPillTuVi * actual;
+            double cap = GetRequiredTuViForCurrent();
+            save.tuVi = Math.Min(cap, save.tuVi + gainTuVi);
+            int dustGain = (1 + (int)quality) * actual;
+            save.herbDust += dustGain;
+            GrantAlchemistXp(6 * actual);
+            RemakeAudioService.Instance?.PlayMerge();
+            SaveService.Save();
+            OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke($"Hấp thu {actual} {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)}: +{CultivationTable.FormatNumber(gainTuVi)} Tu Vi & +{dustGain} Dược Trần!");
+            return true;
+        }
+
+        public bool TryRefinePillToLinhThach(int realmTarget, RemakePillQuality quality, int count = 1)
+        {
+            int owned = GetPillCount(realmTarget, quality);
+            int actual = Mathf.Clamp(count, 1, owned);
+            if (owned <= 0)
+            {
+                OnToastMessage?.Invoke("Không có đan dược để luyện hóa!");
+                return false;
+            }
+            for (int i = 0; i < actual; i++) ConsumePill(realmTarget, quality);
+            var save = SaveService.Current;
+            double perPillLt = Math.Round(CultivationTable.GetPillBrewLinhThachCost(Mathf.Clamp(realmTarget, 0, 7)) * (0.55 + (int)quality * 0.40));
+            double gainLt = Math.Max(40, perPillLt) * actual;
+            save.linhThach += gainLt;
+            GrantAlchemistXp(5 * actual);
+            RemakeAudioService.Instance?.PlayMerge();
+            SaveService.Save();
+            OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke($"Luyện hóa {actual} {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)}: +{CultivationTable.FormatNumber(gainLt)} Linh Thạch!");
+            return true;
         }
 
         public bool TryMergePills(int realmTarget, RemakePillQuality fromQuality)
@@ -994,12 +1345,16 @@ namespace KhiVanChiTu.Remake
             }
 
             save.spiritFlameXp += xpGain;
+            bool leveledUp = false;
             while (save.spiritFlameTier < 4 && save.spiritFlameXp >= CultivationTable.GetSpiritFlameNextTierXp(save.spiritFlameTier))
             {
                 save.spiritFlameXp -= CultivationTable.GetSpiritFlameNextTierXp(save.spiritFlameTier);
                 save.spiritFlameTier++;
+                leveledUp = true;
                 OnToastMessage?.Invoke($"Linh Hỏa thăng cấp: {CultivationTable.GetSpiritFlameName(save.spiritFlameTier)}!");
             }
+            if (!leveledUp)
+                OnToastMessage?.Invoke($"Tế Chân Hỏa thành công: +{xpGain} XP Hỏa Linh!");
 
             RemakeAudioService.Instance?.PlayMerge();
             SaveService.Save();
@@ -1126,6 +1481,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Save();
             OnStatsChanged?.Invoke();
             OnQuestOrTutorialChanged?.Invoke();
+            OnToastMessage?.Invoke($"Đã trang bị {CultivationTable.GetRarityName(nextItem.rarity)} {CultivationTable.GetEquipSlotName(nextItem.slot)} Bậc {nextItem.tier}!");
             return true;
         }
 
@@ -1186,11 +1542,14 @@ namespace KhiVanChiTu.Remake
                         return false;
                     }
                     int rar = (int)save.equipmentBag[i].rarity;
+                    int oreGain = 2 + rar * 3;
+                    double ltGain = 60 * (1 + rar);
                     save.equipmentBag.RemoveAt(i);
-                    save.ore += 2 + rar * 3;
-                    save.linhThach += 60 * (1 + rar);
+                    save.ore += oreGain;
+                    save.linhThach += ltGain;
                     SaveService.Save();
                     OnStatsChanged?.Invoke();
+                    OnToastMessage?.Invoke($"Phân rã thành công: +{oreGain} Quặng & +{CultivationTable.FormatNumber(ltGain)} LT!");
                     return true;
                 }
             }
@@ -1204,6 +1563,9 @@ namespace KhiVanChiTu.Remake
             item.isLocked = !item.isLocked;
             SaveService.Save();
             OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke(item.isLocked
+                ? $"Đã khóa bảo vệ {CultivationTable.GetEquipSlotName(item.slot)}!"
+                : $"Đã mở khóa {CultivationTable.GetEquipSlotName(item.slot)}!");
             return true;
         }
 
@@ -1348,7 +1710,101 @@ namespace KhiVanChiTu.Remake
             return true;
         }
 
+        public bool TryStartTribulation(RemakePillQuality? selectedPillQuality)
+        {
+            var save = SaveService.Current;
+            if (IsInTribulation)
+            {
+                OnToastMessage?.Invoke($"Đang bế quan đón Thiên Kiếp ({TribulationTimeRemaining:0.0}s)!");
+                return false;
+            }
+            double req = GetRequiredTuViForCurrent();
+            if (save.tuVi < req)
+            {
+                OnToastMessage?.Invoke("Tu Vi chưa đạt 100%, hãy tiếp tục tu luyện!");
+                return false;
+            }
+
+            CheckMindCalmReset();
+            bool isMajor = save.subStage >= 10;
+            bool pillConsumed = false;
+            RemakePillQuality? effectivePill = null;
+
+            if (isMajor && selectedPillQuality.HasValue && selectedPillQuality.Value != RemakePillQuality.PheDan)
+            {
+                if (!ConsumePill(save.realmIndex, selectedPillQuality.Value))
+                {
+                    OnToastMessage?.Invoke("Không đủ Đan Đột Phá đã chọn!");
+                    return false;
+                }
+                effectivePill = selectedPillQuality.Value;
+                pillConsumed = true;
+            }
+
+            if (ActiveArenaMode != RemakeArenaMode.Campaign)
+                ExitChallengeToCampaign();
+
+            int nextSub = save.subStage < 10 ? save.subStage + 1 : 1;
+            int nextRealm = save.subStage < 10 ? save.realmIndex : Mathf.Min(8, save.realmIndex + 1);
+
+            IsInTribulation = true;
+            TribulationTimeRemaining = TribulationDuration;
+            TribulationStrikesDone = 0;
+            TribulationTargetChance = isMajor ? ComputeBreakthroughChance(effectivePill) : 1.0f;
+            TribulationTargetLabel = CultivationTable.GetRealmDisplayName(nextRealm, nextSub);
+            _tribulationSelectedPill = effectivePill;
+            _tribulationPillConsumed = pillConsumed;
+            _tribulationNextStrikeTime = TribulationDuration - 0.5f;
+
+            PlayerCurrentHp = PlayerMaxHp;
+            PlayerCurrentMp = PlayerMaxMp;
+            SetActiveBoss(false, "", 0, 0);
+            SaveService.Save();
+
+            OnTribulationStateChanged?.Invoke(true);
+            OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke($"Tiến vào Bế Quan Đón Thiên Kiếp (15s) hướng tới {TribulationTargetLabel}!");
+            return true;
+        }
+
+        public void AdvanceTribulation(float dt)
+        {
+            if (!IsInTribulation) return;
+            TribulationTimeRemaining = Mathf.Max(0f, TribulationTimeRemaining - Mathf.Max(0f, dt));
+
+            float strikeStep = (TribulationDuration - 1.0f) / TribulationStrikesTotal;
+            while (TribulationStrikesDone < TribulationStrikesTotal && TribulationTimeRemaining <= _tribulationNextStrikeTime)
+            {
+                TribulationStrikesDone++;
+                _tribulationNextStrikeTime -= strikeStep;
+                OnTribulationStrike?.Invoke(TribulationStrikesDone, TribulationStrikesTotal);
+            }
+
+            if (TribulationTimeRemaining <= 0f)
+            {
+                while (TribulationStrikesDone < TribulationStrikesTotal)
+                {
+                    TribulationStrikesDone++;
+                    OnTribulationStrike?.Invoke(TribulationStrikesDone, TribulationStrikesTotal);
+                }
+                var pill = _tribulationSelectedPill;
+                bool consumed = _tribulationPillConsumed;
+                IsInTribulation = false;
+                TribulationTimeRemaining = 0f;
+                _tribulationSelectedPill = null;
+                _tribulationPillConsumed = false;
+
+                ResolveBreakthroughInternal(pill, consumed);
+                OnTribulationStateChanged?.Invoke(false);
+            }
+        }
+
         public bool TryAttemptBreakthrough(RemakePillQuality? selectedPillQuality)
+        {
+            return ResolveBreakthroughInternal(selectedPillQuality, false);
+        }
+
+        private bool ResolveBreakthroughInternal(RemakePillQuality? selectedPillQuality, bool pillAlreadyConsumed)
         {
             var save = SaveService.Current;
             double req = GetRequiredTuViForCurrent();
@@ -1383,7 +1839,7 @@ namespace KhiVanChiTu.Remake
             RemakePillQuality pillUsed = RemakePillQuality.PheDan;
             if (selectedPillQuality.HasValue && selectedPillQuality.Value != RemakePillQuality.PheDan)
             {
-                if (!ConsumePill(save.realmIndex, selectedPillQuality.Value))
+                if (!pillAlreadyConsumed && !ConsumePill(save.realmIndex, selectedPillQuality.Value))
                 {
                     OnToastMessage?.Invoke("Không đủ Đan Đột Phá đã chọn!");
                     return false;

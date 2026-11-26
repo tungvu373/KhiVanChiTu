@@ -60,12 +60,13 @@ namespace KhiVanChiTu.Remake
     }
 
     /// <summary>
-    /// Lop ve duong noi linh mach giua cac node Cay Ky Nang Dao Van bang Painter2D.
+    /// Lop ve duong noi linh mach giua cac node Cay Ky Nang Dao Van bang Painter2D (co Fog of War & Zoom).
     /// </summary>
     public sealed class DaoVanGraphLayer : VisualElement
     {
         private IReadOnlyList<DaoVanNodeSpec> _nodes;
         private Func<string, int> _levelLookup;
+        private Func<DaoVanNodeSpec, bool> _visibilityLookup;
         private Vector2 _panOffset;
         private float _zoom = 1f;
 
@@ -75,12 +76,13 @@ namespace KhiVanChiTu.Remake
             generateVisualContent += OnGenerateVisualContent;
         }
 
-        public void Bind(IReadOnlyList<DaoVanNodeSpec> nodes, Func<string, int> levelLookup, Vector2 pan, float zoom)
+        public void Bind(IReadOnlyList<DaoVanNodeSpec> nodes, Func<string, int> levelLookup, Vector2 pan, float zoom, Func<DaoVanNodeSpec, bool> visibilityLookup = null)
         {
             _nodes = nodes;
             _levelLookup = levelLookup;
+            _visibilityLookup = visibilityLookup;
             _panOffset = pan;
-            _zoom = Mathf.Clamp(zoom, 0.65f, 1.55f);
+            _zoom = Mathf.Clamp(zoom, 0.45f, 1.85f);
             MarkDirtyRepaint();
         }
 
@@ -97,8 +99,11 @@ namespace KhiVanChiTu.Remake
             {
                 var node = _nodes[i];
                 if (string.IsNullOrEmpty(node.parentId)) continue;
+                if (_visibilityLookup != null && !_visibilityLookup(node)) continue;
+
                 DaoVanNodeSpec parent = FindParent(node.parentId);
                 if (parent == null) continue;
+                if (_visibilityLookup != null && !_visibilityLookup(parent)) continue;
 
                 Vector2 a = new Vector2(cx + parent.normalizedPos.x * _zoom, cy + parent.normalizedPos.y * _zoom);
                 Vector2 b = new Vector2(cx + node.normalizedPos.x * _zoom, cy + node.normalizedPos.y * _zoom);
@@ -106,12 +111,12 @@ namespace KhiVanChiTu.Remake
                 bool unlocked = _levelLookup(node.id) > 0;
                 bool parentActive = _levelLookup(parent.id) > 0;
 
-                painter.lineWidth = unlocked ? 4.5f : 2.8f;
+                painter.lineWidth = Mathf.Clamp((unlocked ? 4.4f : 2.6f) * _zoom, 1.6f, 7.2f);
                 painter.strokeColor = unlocked
-                    ? new Color(0.84f, 0.60f, 0.16f, 0.92f)
+                    ? new Color(0.84f, 0.60f, 0.16f, 0.94f)
                     : parentActive
-                        ? new Color(0.16f, 0.58f, 0.46f, 0.72f)
-                        : new Color(0.62f, 0.70f, 0.67f, 0.48f);
+                        ? new Color(0.16f, 0.58f, 0.46f, 0.78f)
+                        : new Color(0.62f, 0.70f, 0.67f, 0.45f);
 
                 painter.BeginPath();
                 painter.MoveTo(a);

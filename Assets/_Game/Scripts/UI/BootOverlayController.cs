@@ -1,28 +1,43 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace KhiVanChiTu.Remake
 {
+    public enum RemakeFeedbackKind
+    {
+        GoldSuccess,
+        JadeReward,
+        CrimsonAlert
+    }
+
     public sealed class BootOverlayController : MonoBehaviour
     {
         public static BootOverlayController Instance { get; private set; }
 
         [SerializeField] private UIDocument uiDocument;
 
+        private sealed class BannerSlot
+        {
+            public VisualElement root;
+            public Label tag;
+            public Label msg;
+            public float remaining;
+            public float duration;
+        }
+
         private VisualElement _loadingOverlay;
         private VisualElement _loadingProgressFill;
         private Label _loadingStatusLabel;
         private VisualElement _afkDimVeil;
-        private VisualElement _toastPill;
-        private Label _toastText;
+        private VisualElement _toastStack;
+        private readonly List<BannerSlot> _bannerSlots = new List<BannerSlot>();
 
         private VisualElement _desktopInputModal;
         private Label _desktopInputTitle;
         private TextField _desktopInputField;
         private Action<string> _desktopInputCallback;
-
-        private float _toastTimer;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStaticState()
@@ -69,20 +84,93 @@ namespace KhiVanChiTu.Remake
 
         private void Update()
         {
-            if (_toastTimer > 0f)
+            float dt = Time.unscaledDeltaTime;
+            for (int i = 0; i < _bannerSlots.Count; i++)
             {
-                _toastTimer -= Time.unscaledDeltaTime;
-                if (_toastTimer <= 0f && _toastPill != null)
-                    _toastPill.style.display = DisplayStyle.None;
+                var slot = _bannerSlots[i];
+                if (slot.remaining <= 0f) continue;
+                slot.remaining -= dt;
+                if (slot.remaining <= 0f)
+                {
+                    slot.remaining = 0f;
+                    slot.root.style.display = DisplayStyle.None;
+                    continue;
+                }
+                float elapsed = slot.duration - slot.remaining;
+                float scaleVal = elapsed < 0.14f ? Mathf.Lerp(1.07f, 1.0f, elapsed / 0.14f) : 1.0f;
+                float alphaVal = slot.remaining < 0.45f ? Mathf.Clamp01(slot.remaining / 0.45f) : 1.0f;
+                slot.root.style.scale = new Scale(new Vector3(scaleVal, scaleVal, 1f));
+                slot.root.style.opacity = alphaVal;
             }
         }
 
         public void ShowToast(string message)
         {
-            if (_toastPill == null || _toastText == null || string.IsNullOrEmpty(message)) return;
-            _toastText.text = message;
-            _toastPill.style.display = DisplayStyle.Flex;
-            _toastTimer = 2.6f;
+            if (string.IsNullOrEmpty(message)) return;
+            RemakeFeedbackKind kind = ClassifyMessage(message, out string badge);
+            ShowFeedback(message, kind, badge);
+        }
+
+        public void ShowFeedback(string message, RemakeFeedbackKind kind, string badgeLabel = null)
+        {
+            if (_toastStack == null || _bannerSlots.Count == 0 || string.IsNullOrEmpty(message)) return;
+
+            // Reuse an inactive slot, or recycle the oldest active slot
+            BannerSlot target = null;
+            float lowestRem = float.MaxValue;
+            for (int i = 0; i < _bannerSlots.Count; i++)
+            {
+                if (_bannerSlots[i].remaining <= 0f) { target = _bannerSlots[i]; break; }
+                if (_bannerSlots[i].remaining < lowestRem) { lowestRem = _bannerSlots[i].remaining; target = _bannerSlots[i]; }
+            }
+            if (target == null) return;
+
+            target.root.RemoveFromClassList("toast-gold");
+            target.root.RemoveFromClassList("toast-jade");
+            target.root.RemoveFromClassList("toast-danger");
+
+            string cssClass = kind == RemakeFeedbackKind.GoldSuccess ? "toast-gold"
+                : kind == RemakeFeedbackKind.CrimsonAlert ? "toast-danger" : "toast-jade";
+            target.root.AddToClassList(cssClass);
+            target.tag.text = !string.IsNullOrEmpty(badgeLabel) ? badgeLabel
+                : kind == RemakeFeedbackKind.GoldSuccess ? "THÀNH CÔNG"
+                : kind == RemakeFeedbackKind.CrimsonAlert ? "CHÚ Ý" : "NHẬN";
+            target.msg.text = message;
+            target.duration = kind == RemakeFeedbackKind.GoldSuccess ? 3.4f : 2.8f;
+            target.remaining = target.duration;
+            target.root.style.display = DisplayStyle.Flex;
+            target.root.style.opacity = 1f;
+            target.root.style.scale = new Scale(new Vector3(1.07f, 1.07f, 1f));
+            target.root.BringToFront();
+        }
+
+        private static RemakeFeedbackKind ClassifyMessage(string message, out string badge)
+        {
+            string lo = message.ToLowerInvariant();
+            if (lo.Contains("thất bại") || lo.Contains("nổ lò") || lo.Contains("thiếu") ||
+                lo.Contains("không đủ") || lo.Contains("cần ") || lo.Contains("khóa") ||
+                lo.Contains("hết ") || lo.Contains("thất thủ") || lo.Contains("không thể") ||
+                lo.Contains("chưa đủ") || lo.Contains("chưa đạt") || lo.Contains("trống"))
+            {
+                badge = lo.Contains("thất bại") || lo.Contains("nổ lò") ? "THẤT BẠI" : "CHÚ Ý";
+                return RemakeFeedbackKind.CrimsonAlert;
+            }
+            if (lo.Contains("thành công") || lo.Contains("độ kiếp") || lo.Contains("thăng cấp") ||
+                lo.Contains("nâng ") || lo.Contains("cường hóa") || lo.Contains("hoàn thành") ||
+                lo.Contains("mở khóa") || lo.Contains("đột phá") || lo.Contains("thức tỉnh") ||
+                lo.Contains("vượt tháp") || lo.Contains("kỳ ngộ") || lo.Contains("cực phẩm") ||
+                lo.Contains("khai trận") || lo.Contains("đặt trận") || lo.Contains("tẩy luyện"))
+            {
+                badge = lo.Contains("độ kiếp") || lo.Contains("đột phá") ? "ĐỘT PHÁ"
+                    : lo.Contains("thăng cấp") || lo.Contains("nâng ") || lo.Contains("cường hóa") ? "THĂNG CẤP"
+                    : "THÀNH CÔNG";
+                return RemakeFeedbackKind.GoldSuccess;
+            }
+            badge = lo.Contains("nhặt") || lo.Contains("nhận") || lo.Contains("bổng lộc") ? "NHẬN"
+                : lo.Contains("bế quan") || lo.Contains("thiên kiếp") ? "THIÊN KIẾP"
+                : lo.Contains("khai lò") ? "LUYỆN ĐAN"
+                : "THÔNG BÁO";
+            return RemakeFeedbackKind.JadeReward;
         }
 
         public void PromptTextInput(string title, string initialText, int maxLength, Action<string> onConfirmed)
@@ -121,8 +209,29 @@ namespace KhiVanChiTu.Remake
             _loadingProgressFill = root.Q("loading-progress-fill");
             _loadingStatusLabel = root.Q<Label>("loading-status-label");
             _afkDimVeil = root.Q("afk-dim-veil");
-            _toastPill = root.Q("toast-pill");
-            _toastText = root.Q<Label>("toast-text");
+            _toastStack = root.Q("toast-stack");
+
+            if (_toastStack != null && _bannerSlots.Count == 0)
+            {
+                _toastStack.Clear();
+                for (int i = 0; i < 3; i++)
+                {
+                    var bRoot = new VisualElement { pickingMode = PickingMode.Ignore };
+                    bRoot.AddToClassList("toast-banner");
+                    bRoot.AddToClassList("toast-jade");
+                    bRoot.style.display = DisplayStyle.None;
+
+                    var tag = new Label("NHẬN") { pickingMode = PickingMode.Ignore };
+                    tag.AddToClassList("toast-tag");
+                    var msg = new Label("") { pickingMode = PickingMode.Ignore };
+                    msg.AddToClassList("toast-msg");
+
+                    bRoot.Add(tag);
+                    bRoot.Add(msg);
+                    _toastStack.Add(bRoot);
+                    _bannerSlots.Add(new BannerSlot { root = bRoot, tag = tag, msg = msg });
+                }
+            }
 
             var bgSlot = root.Q("loading-bg-art");
             Texture2D loadingTex = CodexArtLoader.LoadCodexTexture("Backgrounds/bg_loading_screen");

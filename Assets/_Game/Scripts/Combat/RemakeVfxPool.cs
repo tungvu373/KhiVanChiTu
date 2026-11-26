@@ -28,6 +28,7 @@ namespace KhiVanChiTu.Remake
         private float _palmTimer;
         private Vector3 _palmImpactPos;
         private int _hitStopToken;
+        private RemakeTribulationVfx _tribulationVfx;
 
         private Material _sparkMat;
         private Material _ringMat;
@@ -289,16 +290,58 @@ namespace KhiVanChiTu.Remake
             }
         }
 
+        public void SetTribulationSeclusionVisual(bool active, Vector3 playerPos)
+        {
+            EnsureTribulationVfxLoaded();
+            if (_tribulationVfx != null)
+                _tribulationVfx.SetSeclusionActive(active, playerPos);
+        }
+
         public void SpawnBreakthroughFlash(Vector3 pos, bool success)
         {
+            EnsureTribulationVfxLoaded();
+            if (_tribulationVfx != null)
+            {
+                _tribulationVfx.PlayOutcomeBurst(pos, success);
+                return;
+            }
             if (_shockwaveRing != null)
             {
                 var main = _shockwaveRing.main;
                 main.startColor = success ? new Color(1f, 0.85f, 0.28f, 0.95f) : new Color(0.90f, 0.25f, 0.20f, 0.9f);
                 _shockwaveRing.transform.position = pos + Vector3.up * 0.2f;
-                _shockwaveRing.Emit(2);
+                _shockwaveRing.Emit(3);
+            }
+            if (_critBurst != null)
+            {
+                _critBurst.transform.position = pos + Vector3.up * 1.0f;
+                _critBurst.Emit(success ? 24 : 16);
             }
             SpawnLoiPhatLightning(pos);
+        }
+
+        public void SpawnTribulationStrike(Vector3 playerPos, int strikeIndex, int totalStrikes)
+        {
+            EnsureTribulationVfxLoaded();
+            if (_tribulationVfx != null)
+            {
+                _tribulationVfx.PlayStrike(playerPos, strikeIndex, totalStrikes);
+                return;
+            }
+
+            // Fallback if prefab not yet baked
+            SpawnLoiPhatLightning(playerPos);
+        }
+
+        private void EnsureTribulationVfxLoaded()
+        {
+            if (_tribulationVfx != null) return;
+            var prefab = Resources.Load<RemakeTribulationVfx>("VFX/VFX_HeavenlyTribulation");
+            if (prefab != null)
+            {
+                _tribulationVfx = Instantiate(prefab, transform);
+                _tribulationVfx.name = "Pooled_HeavenlyTribulationVFX";
+            }
         }
 
         private void InitializePools()
@@ -382,6 +425,9 @@ namespace KhiVanChiTu.Remake
             pmMr.shadowCastingMode = ShadowCastingMode.Off;
             pmMr.receiveShadows = false;
             _palmStrikeDisc.SetActive(false);
+
+            // Prewarm Heavenly Tribulation VFX prefab once at boot (zero runtime Instantiate!)
+            EnsureTribulationVfxLoaded();
         }
 
         private ParticleSystem CreateBurstSystem(string goName, Material mat, Color startColor, float life, float minSpd, float maxSpd, float minSz, float maxSz)
@@ -469,12 +515,17 @@ namespace KhiVanChiTu.Remake
             if (mat.HasProperty("_BaseMap")) mat.SetTexture("_BaseMap", tex);
             if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", color);
             if (mat.HasProperty("_Surface")) mat.SetFloat("_Surface", 1f);
-            if (mat.HasProperty("_Blend")) mat.SetFloat("_Blend", additive ? 1f : 0f);
+            if (mat.HasProperty("_Blend")) mat.SetFloat("_Blend", additive ? 2f : 0f);
             if (mat.HasProperty("_SrcBlend")) mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
             if (mat.HasProperty("_DstBlend")) mat.SetFloat("_DstBlend", (float)(additive ? UnityEngine.Rendering.BlendMode.One : UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha));
+            if (mat.HasProperty("_SrcBlendAlpha")) mat.SetFloat("_SrcBlendAlpha", (float)UnityEngine.Rendering.BlendMode.One);
+            if (mat.HasProperty("_DstBlendAlpha")) mat.SetFloat("_DstBlendAlpha", (float)(additive ? UnityEngine.Rendering.BlendMode.One : UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha));
+            if (mat.HasProperty("_Cull")) mat.SetFloat("_Cull", 0f);
             if (mat.HasProperty("_ZWrite")) mat.SetFloat("_ZWrite", 0f);
+            mat.SetOverrideTag("RenderType", "Transparent");
             mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-            mat.renderQueue = 3000;
+            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
             return mat;
         }
 
@@ -491,7 +542,7 @@ namespace KhiVanChiTu.Remake
                     float dist = Mathf.Sqrt(dx * dx + dy * dy);
                     float a = Mathf.Clamp01(1f - dist);
                     a *= a;
-                    tex.SetPixel(x, y, new Color(1f, 1f, 1f, a));
+                    tex.SetPixel(x, y, new Color(a, a, a, a));
                 }
             }
             tex.Apply(false, true);
@@ -510,8 +561,8 @@ namespace KhiVanChiTu.Remake
                     float dy = (y - half) / half;
                     float dist = Mathf.Sqrt(dx * dx + dy * dy);
                     float dRing = (dist - 0.72f) / 0.14f;
-                    float a = dist <= 1f ? Mathf.Exp(-dRing * dRing) : 0f;
-                    tex.SetPixel(x, y, new Color(1f, 1f, 1f, a));
+                    float a = dist <= 0.98f ? Mathf.Exp(-dRing * dRing) : 0f;
+                    tex.SetPixel(x, y, new Color(a, a, a, a));
                 }
             }
             tex.Apply(false, true);

@@ -22,6 +22,14 @@ namespace KhiVanChiTu.Remake
 
         private Vector3 _baseCamLocalPos;
         private float _trauma;
+        private bool _stormActive;
+        private float _stormBlend;
+        private float _skyFlashTimer;
+        private Color _skyFlashTint = Color.white;
+        private Color _baseSkyColor;
+        private Color _baseEqColor;
+        private Color _baseGroundColor;
+        private Color _baseFogColor;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStaticState()
@@ -49,31 +57,85 @@ namespace KhiVanChiTu.Remake
         private void Start()
         {
             ApplyDaylightLighting(worldTheme);
+            _baseSkyColor = RenderSettings.ambientSkyColor;
+            _baseEqColor = RenderSettings.ambientEquatorColor;
+            _baseGroundColor = RenderSettings.ambientGroundColor;
+            _baseFogColor = RenderSettings.fogColor;
             TryBindCodexMapTextures();
         }
 
         private void LateUpdate()
         {
-            if (arenaCamera == null) return;
-            if (_trauma > 0f)
+            float dt = Time.deltaTime;
+            if (arenaCamera != null)
             {
-                _trauma = Mathf.Max(0f, _trauma - Time.deltaTime * 1.6f);
-                float shake = _trauma * _trauma;
-                float t = Time.unscaledTime * 28f;
-                arenaCamera.transform.localPosition = _baseCamLocalPos + new Vector3(
-                    Mathf.Sin(t * 1.7f) * 0.14f * shake,
-                    Mathf.Cos(t * 2.3f) * 0.10f * shake,
-                    0f);
+                if (_trauma > 0f)
+                {
+                    _trauma = Mathf.Max(0f, _trauma - dt * 1.55f);
+                    float shake = _trauma * _trauma;
+                    float t = Time.unscaledTime * 34f;
+                    arenaCamera.transform.localPosition = _baseCamLocalPos + new Vector3(
+                        Mathf.Sin(t * 1.7f) * 0.24f * shake,
+                        Mathf.Cos(t * 2.3f) * 0.18f * shake,
+                        0f);
+                }
+                else if (arenaCamera.transform.localPosition != _baseCamLocalPos)
+                {
+                    arenaCamera.transform.localPosition = _baseCamLocalPos;
+                }
             }
-            else if (arenaCamera.transform.localPosition != _baseCamLocalPos)
+
+            // Zero-cost RenderSettings storm darkening & sharp lightning sky flash during 15s Tribulation
+            float targetStorm = _stormActive ? 1f : 0f;
+            if (!Mathf.Approximately(_stormBlend, targetStorm) || _skyFlashTimer > 0f)
             {
-                arenaCamera.transform.localPosition = _baseCamLocalPos;
+                _stormBlend = Mathf.MoveTowards(_stormBlend, targetStorm, dt * 1.8f);
+                float flash = 0f;
+                if (_skyFlashTimer > 0f)
+                {
+                    _skyFlashTimer = Mathf.Max(0f, _skyFlashTimer - dt);
+                    flash = Mathf.Clamp01(_skyFlashTimer / 0.22f);
+                    flash *= flash;
+                }
+
+                Color stormSky = new Color(0.22f, 0.24f, 0.36f, 1f);
+                Color stormEq = new Color(0.28f, 0.32f, 0.42f, 1f);
+                Color stormGnd = new Color(0.32f, 0.34f, 0.38f, 1f);
+                Color stormFog = new Color(0.26f, 0.28f, 0.40f, 1f);
+
+                Color sky = Color.Lerp(_baseSkyColor, stormSky, _stormBlend);
+                Color eq = Color.Lerp(_baseEqColor, stormEq, _stormBlend);
+                Color gnd = Color.Lerp(_baseGroundColor, stormGnd, _stormBlend);
+                Color fog = Color.Lerp(_baseFogColor, stormFog, _stormBlend);
+
+                if (flash > 0.001f)
+                {
+                    sky = Color.Lerp(sky, _skyFlashTint, flash * 0.85f);
+                    eq = Color.Lerp(eq, _skyFlashTint, flash * 0.65f);
+                    fog = Color.Lerp(fog, _skyFlashTint, flash * 0.70f);
+                }
+
+                RenderSettings.ambientSkyColor = sky;
+                RenderSettings.ambientEquatorColor = eq;
+                RenderSettings.ambientGroundColor = gnd;
+                RenderSettings.fogColor = fog;
             }
         }
 
         public void AddCameraTrauma(float amount)
         {
             _trauma = Mathf.Clamp01(_trauma + amount);
+        }
+
+        public void SetTribulationStormMode(bool active)
+        {
+            _stormActive = active;
+        }
+
+        public void TriggerTribulationSkyFlash(float intensity, Color flashTint)
+        {
+            _skyFlashTimer = Mathf.Lerp(0.16f, 0.28f, Mathf.Clamp01(intensity));
+            _skyFlashTint = Color.Lerp(Color.white, flashTint, 0.38f);
         }
 
         public static void ApplyDaylightLighting(WorldThemePreset theme = WorldThemePreset.Act1Meadow)

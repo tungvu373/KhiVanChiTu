@@ -16,7 +16,7 @@
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:Label name="mini-fps-label" text="60 FPS" class="text-muted fps-good" style="margin-right: 8px;" />
-            <ui:Button name="btn-mini-breakthrough" text="Đột Phá" class="btn-primary" style="padding: 4px 8px; font-size: 11px; display: none;" />
+            <ui:Button name="btn-mini-breakthrough" text="Đột Phá !" class="btn-primary" style="padding: 4px 10px; font-size: 11px; display: none;" />
         </ui:VisualElement>
 
         <!-- =================================================
@@ -45,6 +45,7 @@
                 <ui:VisualElement name="wrap-btn-breakthrough" class="circle-btn-wrap" style="margin-top: 6px; margin-left: 2px; display: none;">
                     <ui:Button name="btn-breakthrough" class="circle-btn active">
                         <ui:VisualElement name="icon-breakthrough" class="circle-btn-icon art-slot" />
+                        <ui:Label name="badge-breakthrough-bang" text="!" picking-mode="Ignore" class="alert-bang-badge" />
                     </ui:Button>
                     <ui:Label text="Đột Phá" class="circle-btn-label text-gold" />
                 </ui:VisualElement>
@@ -135,25 +136,45 @@
             </ui:VisualElement>
         </ui:VisualElement>
 
+        <!-- Centered 15-Second Breakthrough Seclusion & Heavenly Tribulation Banner -->
+        <ui:VisualElement name="tribulation-hud-panel" picking-mode="Ignore" class="tribulation-hud-panel hide-in-mini" style="display: none;">
+            <ui:VisualElement style="flex-direction: row; justify-content: space-between; align-items: center;">
+                <ui:Label text="BẾ QUAN ĐÓN THIÊN KIẾP" class="text-danger" style="font-size: 11px;" />
+                <ui:Label name="tribulation-timer-label" text="15.0s" class="text-gold" style="font-size: 12px;" />
+            </ui:VisualElement>
+            <ui:Label name="tribulation-target-label" text="Hướng tới Trúc Cơ Sơ Kỳ · Tỉ lệ 100%" class="text-body" style="font-size: 10px; margin-top: 2px; -unity-font-style: bold;" />
+            <ui:VisualElement class="bar-track" style="height: 8px; margin-top: 4px;">
+                <ui:VisualElement name="tribulation-progress-fill" class="bar-fill-tribulation" style="width: 0%;" />
+            </ui:VisualElement>
+            <ui:Label name="tribulation-strike-label" text="Thiên Lôi giáng xuống: Đạo 0/9" class="text-muted" style="font-size: 10px; margin-top: 3px;" />
+        </ui:VisualElement>
+
         <!-- =================================================
-             MIDDLE ROW: Quest + Chat + Tiên Môn | Kỳ Ngộ Floating Orb
+             MIDDLE ROW: Collapsible Quest + Chat + Tiên Môn | Kỳ Ngộ Floating Orb
              ================================================= -->
         <ui:VisualElement picking-mode="Ignore" class="hud-middle-row hide-in-mini">
-            <ui:VisualElement picking-mode="Ignore" style="align-items: flex-start; max-width: 185px;">
-                <ui:Button name="btn-quest-tracker" class="panel-compact" style="padding: 7px 10px; align-items: flex-start;">
-                    <ui:Label name="quest-header-label" text="NHIỆM VỤ CHÍNH" class="text-section" style="font-size: 10px;" />
-                    <ui:Label name="quest-title-label" text="Tiêu diệt 5 Yêu Thú (0/5)" class="text-body" style="white-space: normal; -unity-font-style: bold; font-size: 11px; margin-top: 2px;" />
-                </ui:Button>
+            <ui:VisualElement picking-mode="Ignore" style="align-items: flex-start; max-width: 190px;">
+                <ui:VisualElement style="flex-direction: row; align-items: center;">
+                    <ui:Button name="btn-toggle-left-hud" text="◀ Ẩn Tiện Ích" class="hud-collapse-pill" />
+                    <ui:VisualElement name="badge-left-hud-collapsed" picking-mode="Ignore" class="badge-dot" style="position: relative; right: 0; top: -2px; margin-left: 4px; display: none;" />
+                </ui:VisualElement>
 
-                <ui:Button name="btn-chat-bubble" class="pill-light" style="margin-top: 6px; padding: 4px 10px; max-width: 185px; overflow: hidden;">
-                    <ui:VisualElement name="icon-chat-bubble" class="art-slot" style="width: 22px; height: 22px; min-width: 22px; margin-right: 6px; border-radius: 11px;" />
-                    <ui:Label name="chat-ticker-label" text="Chat Thế Giới &amp; Thiên Đạo" class="text-muted" style="font-size: 10px; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" />
-                </ui:Button>
+                <ui:VisualElement name="left-hud-collapsible" picking-mode="Ignore" style="align-items: flex-start;">
+                    <ui:Button name="btn-quest-tracker" class="panel-compact" style="padding: 7px 10px; align-items: flex-start;">
+                        <ui:Label name="quest-header-label" text="NHIỆM VỤ CHÍNH" class="text-section" style="font-size: 10px;" />
+                        <ui:Label name="quest-title-label" text="Tiêu diệt 5 Yêu Thú (0/5)" class="text-body" style="white-space: normal; -unity-font-style: bold; font-size: 11px; margin-top: 2px;" />
+                    </ui:Button>
 
-                <ui:Button name="btn-immortal-gate-quick" class="pill-light" style="margin-top: 6px; padding: 4px 10px; border-color: #2D8B74;">
-                    <ui:VisualElement name="icon-immortal-gate-quick" class="art-slot" style="width: 22px; height: 22px; min-width: 22px; margin-right: 6px; border-radius: 11px;" />
-                    <ui:Label text="Tiên Môn · Tháp / Bí Cảnh" class="text-section" style="font-size: 10px;" />
-                </ui:Button>
+                    <ui:Button name="btn-chat-bubble" class="pill-light" style="margin-top: 6px; padding: 4px 10px; max-width: 185px; overflow: hidden;">
+                        <ui:VisualElement name="icon-chat-bubble" class="art-slot" style="width: 22px; height: 22px; min-width: 22px; margin-right: 6px; border-radius: 11px;" />
+                        <ui:Label name="chat-ticker-label" text="Chat Thế Giới &amp; Thiên Đạo" class="text-muted" style="font-size: 10px; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" />
+                    </ui:Button>
+
+                    <ui:Button name="btn-immortal-gate-quick" class="pill-light" style="margin-top: 6px; padding: 4px 10px; border-color: #2D8B74;">
+                        <ui:VisualElement name="icon-immortal-gate-quick" class="art-slot" style="width: 22px; height: 22px; min-width: 22px; margin-right: 6px; border-radius: 11px;" />
+                        <ui:Label text="Tiên Môn · Tháp / Bí Cảnh" class="text-section" style="font-size: 10px;" />
+                    </ui:Button>
+                </ui:VisualElement>
 
                 <ui:VisualElement name="buff-double-tuvi-pill" class="pill-light" style="display: none; margin-top: 5px; padding: 2px 8px; border-color: #E2A220;">
                     <ui:Label name="buff-double-tuvi-label" text="x2 Tu Vi · 90s" class="text-gold" style="font-size: 10px;" />

@@ -485,3 +485,216 @@
     justify-content: center;
     padding: 0;
 }
+
+/* =========================================================
+   JUICY NOTIFICATION BANNERS, RED ! BADGE, GRIDS & TRIBULATION
+   ========================================================= */
+.toast-stack {
+    width: 92%;
+    max-width: 440px;
+    align-items: center;
+}
+
+.toast-banner {
+    flex-direction: row;
+    align-items: center;
+    max-width: 100%;
+    padding: 7px 13px;
+    margin-bottom: 5px;
+    border-radius: 13px;
+    border-width: 2px;
+    transition-property: scale, opacity;
+    transition-duration: 0.16s;
+}
+
+.toast-gold {
+    background-color: rgba(255, 249, 226, 0.98);
+    border-color: #D89416;
+}
+
+.toast-jade {
+    background-color: rgba(238, 252, 245, 0.98);
+    border-color: #1F8A6B;
+}
+
+.toast-danger {
+    background-color: rgba(255, 240, 238, 0.98);
+    border-color: #D13D2E;
+}
+
+.toast-tag {
+    border-radius: 6px;
+    padding: 2px 6px;
+    margin-right: 7px;
+    font-size: 9px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    flex-shrink: 0;
+}
+
+.toast-gold .toast-tag {
+    background-color: #D18710;
+}
+
+.toast-jade .toast-tag {
+    background-color: #1A7F62;
+}
+
+.toast-danger .toast-tag {
+    background-color: #C83425;
+}
+
+.toast-msg {
+    font-size: 11px;
+    -unity-font-style: bold;
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+.toast-gold .toast-msg {
+    color: #6B3F03;
+}
+
+.toast-jade .toast-msg {
+    color: #104939;
+}
+
+.toast-danger .toast-msg {
+    color: #8A1E14;
+}
+
+.alert-bang-badge {
+    position: absolute;
+    right: -3px;
+    top: -3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    background-color: #E02B1E;
+    border-width: 2px;
+    border-color: #FFFFFF;
+    color: #FFFFFF;
+    font-size: 13px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    padding: 0;
+}
+
+.hud-collapse-pill {
+    background-color: rgba(248, 244, 233, 0.94);
+    border-width: 1.5px;
+    border-color: #C89B3C;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: #1B5E4A;
+    margin-bottom: 5px;
+}
+
+.tribulation-hud-panel {
+    background-color: rgba(255, 249, 230, 0.97);
+    border-width: 2.5px;
+    border-color: #D98E14;
+    border-radius: 14px;
+    padding: 8px 14px;
+    width: 288px;
+    max-width: 92%;
+    align-self: center;
+    margin-top: 4px;
+}
+
+.bar-fill-tribulation {
+    height: 100%;
+    background-color: #8A46D9;
+}
+
+.bar-fill-alchemy {
+    height: 100%;
+    background-color: #E07D1E;
+}
+
+.grid-wrap {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.icon-fixed {
+    flex-shrink: 0;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.grid-tile {
+    background-color: rgba(253, 250, 242, 0.96);
+    border-width: 1.5px;
+    border-color: rgba(190, 165, 110, 0.65);
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    margin: 0;
+    overflow: hidden;
+}
+
+.grid-tile-selected {
+    background-color: rgba(255, 246, 214, 0.98);
+    border-width: 2.5px;
+    border-color: #D89416;
+}
+
+.fifa-main-slot {
+    width: 72px;
+    height: 78px;
+    background-color: rgba(255, 246, 216, 0.98);
+    border-width: 2.5px;
+    border-color: #D98D14;
+    border-radius: 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    margin: 0;
+}
+
+.fifa-fodder-slot {
+    width: 56px;
+    height: 68px;
+    background-color: rgba(242, 248, 244, 0.95);
+    border-width: 1.5px;
+    border-color: #469982;
+    border-radius: 9px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 4px 4px 0;
+    padding: 3px;
+}
+
+.fifa-fodder-slot-empty {
+    background-color: rgba(235, 240, 237, 0.72);
+    border-color: rgba(130, 155, 146, 0.65);
+}
+
+.dao-chip-btn {
+    background-color: #DDF0E7;
+    border-width: 1.5px;
+    border-color: #26876F;
+    border-radius: 9px;
+    padding: 4px 10px;
+    margin: 0 5px 5px 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+.dao-chip-btn.selected {
+    background-color: #22886F;
+    border-color: #155948;
+}
+
+.dao-chip-btn.selected Label {
+    color: #FFFFFF;
+}

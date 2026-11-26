@@ -27,6 +27,19 @@ namespace KhiVanChiTu.Remake
         private VisualElement _hpFill;
         private VisualElement _mpFill;
         private VisualElement _wrapBreakthrough;
+        private Label _badgeBreakthroughBang;
+
+        // Left Collapsible Utility Stack & 15s Tribulation Banner
+        private Button _btnToggleLeftHud;
+        private VisualElement _leftHudCollapsible;
+        private VisualElement _badgeLeftHudCollapsed;
+        private bool _leftHudExpanded = true;
+        private VisualElement _tribulationPanel;
+        private Label _tribulationTimerLabel;
+        private Label _tribulationTargetLabel;
+        private VisualElement _tribulationProgressFill;
+        private Label _tribulationStrikeLabel;
+        private float _tribulationPulseTimer;
 
         // Mini-Mode
         private Label _miniRealmStage;
@@ -156,6 +169,16 @@ namespace KhiVanChiTu.Remake
             _hpFill = root.Q("hud-hp-fill");
             _mpFill = root.Q("hud-mp-fill");
             _wrapBreakthrough = root.Q("wrap-btn-breakthrough");
+            _badgeBreakthroughBang = root.Q<Label>("badge-breakthrough-bang");
+
+            _btnToggleLeftHud = root.Q<Button>("btn-toggle-left-hud");
+            _leftHudCollapsible = root.Q("left-hud-collapsible");
+            _badgeLeftHudCollapsed = root.Q("badge-left-hud-collapsed");
+            _tribulationPanel = root.Q("tribulation-hud-panel");
+            _tribulationTimerLabel = root.Q<Label>("tribulation-timer-label");
+            _tribulationTargetLabel = root.Q<Label>("tribulation-target-label");
+            _tribulationProgressFill = root.Q("tribulation-progress-fill");
+            _tribulationStrikeLabel = root.Q<Label>("tribulation-strike-label");
 
             _miniRealmStage = root.Q<Label>("mini-realm-stage");
             _miniTuViFill = root.Q("mini-tuvi-fill");
@@ -255,6 +278,7 @@ namespace KhiVanChiTu.Remake
             });
             root.Q<Button>("btn-immortal-gate-quick")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.ImmortalGate));
             root.Q<Button>("btn-ky-ngo")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.KyNgo));
+            _btnToggleLeftHud?.RegisterCallback<ClickEvent>(_ => ToggleLeftHud());
             root.Q<Button>("btn-cluster-cultivation")?.RegisterCallback<ClickEvent>(_ => ToggleCultivationCluster());
             root.Q<Button>("btn-cluster-utility")?.RegisterCallback<ClickEvent>(_ => ToggleUtilityCluster());
             root.Q<Button>("btn-afk-dim")?.RegisterCallback<ClickEvent>(_ =>
@@ -319,6 +343,8 @@ namespace KhiVanChiTu.Remake
                 GameplayEngine.Instance.OnBossStatusUpdated += HandleBossStatus;
                 GameplayEngine.Instance.OnBreakthroughResolved += HandleBreakthroughOrMergeRefresh;
                 GameplayEngine.Instance.OnSwordMergeResolved += HandleSwordMergeRefresh;
+                GameplayEngine.Instance.OnTribulationStateChanged += HandleTribulationStateChanged;
+                GameplayEngine.Instance.OnTribulationStrike += HandleTribulationStrike;
             }
             if (FpsMonitorService.Instance != null)
                 FpsMonitorService.Instance.OnFpsUpdated += RefreshFpsHud;
@@ -340,6 +366,8 @@ namespace KhiVanChiTu.Remake
                 GameplayEngine.Instance.OnBossStatusUpdated -= HandleBossStatus;
                 GameplayEngine.Instance.OnBreakthroughResolved -= HandleBreakthroughOrMergeRefresh;
                 GameplayEngine.Instance.OnSwordMergeResolved -= HandleSwordMergeRefresh;
+                GameplayEngine.Instance.OnTribulationStateChanged -= HandleTribulationStateChanged;
+                GameplayEngine.Instance.OnTribulationStrike -= HandleTribulationStrike;
             }
             if (FpsMonitorService.Instance != null)
                 FpsMonitorService.Instance.OnFpsUpdated -= RefreshFpsHud;
@@ -361,6 +389,43 @@ namespace KhiVanChiTu.Remake
 
         private void HandleBreakthroughOrMergeRefresh(bool _, string __) => RefreshActiveDrawerIfOpen();
         private void HandleSwordMergeRefresh(bool _, int __, float ___) => RefreshActiveDrawerIfOpen();
+
+        private void HandleTribulationStateChanged(bool entering)
+        {
+            if (entering && _activeDrawer == DrawerKind.Breakthrough)
+                CloseDrawer();
+            RefreshAllHud();
+        }
+
+        private void HandleTribulationStrike(int strikeIndex, int totalStrikes)
+        {
+            _tribulationPulseTimer = 0.25f;
+        }
+
+        private void ToggleLeftHud()
+        {
+            RemakeAudioService.Instance?.PlayClick();
+            _leftHudExpanded = !_leftHudExpanded;
+            ApplyLeftHudVisibility();
+        }
+
+        private void ApplyLeftHudVisibility()
+        {
+            if (_leftHudCollapsible != null)
+                _leftHudCollapsible.style.display = _leftHudExpanded ? DisplayStyle.Flex : DisplayStyle.None;
+            if (_btnToggleLeftHud != null)
+                _btnToggleLeftHud.text = _leftHudExpanded ? "◀ Ẩn Tiện Ích" : "▶ Tiện Ích";
+            RefreshLeftHudCollapsedBadge();
+        }
+
+        private void RefreshLeftHudCollapsedBadge()
+        {
+            if (_badgeLeftHudCollapsed == null) return;
+            var save = SaveService.Current;
+            bool questDone = save != null && save.mainQuestIndex < RemakeCatalogs.MainQuests.Count &&
+                             save.mainQuestProgress >= RemakeCatalogs.MainQuests[save.mainQuestIndex].targetCount;
+            _badgeLeftHudCollapsed.style.display = (!_leftHudExpanded && questDone) ? DisplayStyle.Flex : DisplayStyle.None;
+        }
 
         private void ToggleCultivationCluster()
         {
@@ -508,15 +573,16 @@ namespace KhiVanChiTu.Remake
                     _skillAutoBtns[s].EnableInClassList("selected", engine.GetSkillAuto(s));
             }
 
-            // Notification badges (mergeable Lv.1 pair or unspent DaoPoint)
+            // Notification badges (mergeable pair or ANY upgradeable DaoVan node)
             bool hasMergeReady = HasMergeableSwordPair();
-            bool hasDaoReady = daoVanOpen && save.daoPoints > 0;
+            bool hasDaoReady = daoVanOpen && HasAnyUpgradeableDaoVanNode(engine);
             if (_badgeSwordPath != null) _badgeSwordPath.style.display = hasMergeReady ? DisplayStyle.Flex : DisplayStyle.None;
             if (_badgeDaoVan != null) _badgeDaoVan.style.display = hasDaoReady ? DisplayStyle.Flex : DisplayStyle.None;
             if (_badgeClusterBagua != null) _badgeClusterBagua.style.display = (hasMergeReady || hasDaoReady) ? DisplayStyle.Flex : DisplayStyle.None;
 
-            // Main Quest 1-Line Tracker
+            // Main Quest 1-Line Tracker & Collapsible Left HUD
             RefreshQuestTracker();
+            ApplyLeftHudVisibility();
             RefreshFpsHud();
             HandleBossStatus(engine.HasActiveBoss ? engine.ActiveBossName : null, engine.ActiveBossHp, engine.ActiveBossMaxHp);
             RefreshActiveDrawerIfOpen();
@@ -644,6 +710,59 @@ namespace KhiVanChiTu.Remake
                     ? $"Tháp T{engine.ActiveChallengeFloor} · {rem} (Còn {engine.ChallengeKillsRemaining})"
                     : $"Bí Cảnh T{engine.ActiveSecretRealmTier} · {rem} (Còn {engine.ChallengeKillsRemaining})";
             }
+
+            // Pulse Breakthrough Red '!' Badge when ready
+            if (_badgeBreakthroughBang != null && engine.IsBreakthroughReady)
+            {
+                float s = 1.0f + 0.14f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 5.2f));
+                _badgeBreakthroughBang.style.scale = new Scale(new Vector3(s, s, 1f));
+            }
+
+            // 15-Second Breakthrough Seclusion & Tribulation Banner
+            if (_tribulationPanel != null)
+            {
+                bool inTrib = engine.IsInTribulation;
+                _tribulationPanel.style.display = inTrib ? DisplayStyle.Flex : DisplayStyle.None;
+                if (inTrib)
+                {
+                    float frac = 1f - Mathf.Clamp01(engine.TribulationTimeRemaining / GameplayEngine.TribulationDuration);
+                    if (_tribulationTimerLabel != null)
+                        _tribulationTimerLabel.text = $"{engine.TribulationTimeRemaining:0.0}s";
+                    if (_tribulationTargetLabel != null)
+                        _tribulationTargetLabel.text = $"Hướng tới {engine.TribulationTargetLabel} · Tỉ lệ {Mathf.RoundToInt(engine.TribulationTargetChance * 100)}%";
+                    if (_tribulationProgressFill != null)
+                        _tribulationProgressFill.style.width = Length.Percent(frac * 100f);
+                    if (_tribulationStrikeLabel != null)
+                        _tribulationStrikeLabel.text = $"Thiên Lôi giáng xuống: Đạo {engine.TribulationStrikesDone}/{GameplayEngine.TribulationStrikesTotal}";
+                    if (_tribulationPulseTimer > 0f)
+                    {
+                        _tribulationPulseTimer = Mathf.Max(0f, _tribulationPulseTimer - Time.unscaledDeltaTime);
+                        float ps = 1f + 0.045f * (_tribulationPulseTimer / 0.25f);
+                        _tribulationPanel.style.scale = new Scale(new Vector3(ps, ps, 1f));
+                    }
+                    else
+                    {
+                        _tribulationPanel.style.scale = new Scale(Vector3.one);
+                    }
+                }
+            }
+
+            // Live Alchemy 3.5s Countdown Slide Bar (zero rebuild per frame)
+            if (_activeDrawer == DrawerKind.Alchemy && _modalBody != null)
+            {
+                var brewFill = _modalBody.Q("alchemy-brew-fill");
+                var brewLbl = _modalBody.Q<Label>("alchemy-brew-label");
+                if (engine.IsBrewingPill)
+                {
+                    float p = engine.BrewProgress01;
+                    if (brewFill != null) brewFill.style.width = Length.Percent(p * 100f);
+                    if (brewLbl != null)
+                    {
+                        string pillName = CultivationTable.GetPillNameForRealmBreakthrough(engine.BrewingTargetRealm);
+                        brewLbl.text = $"Đang luyện {pillName}... còn {engine.BrewTimeRemaining:0.0}s ({Mathf.RoundToInt(p * 100)}%)";
+                    }
+                }
+            }
         }
 
         private void RefreshActiveDrawerIfOpen()
@@ -675,8 +794,8 @@ namespace KhiVanChiTu.Remake
                     RemakeDrawerViews.BuildStages(_modalBody);
                     break;
                 case DrawerKind.Breakthrough:
-                    _modalTitle.text = "Đột Phá Cảnh Giới (Lôi Kiếp & Đan Dược)";
-                    RemakeDrawerViews.BuildBreakthrough(_modalBody);
+                    _modalTitle.text = "Đột Phá Cảnh Giới (Bế Quan Thiên Kiếp 15s)";
+                    RemakeDrawerViews.BuildBreakthrough(_modalBody, CloseDrawer);
                     break;
                 case DrawerKind.Settings:
                     _modalTitle.text = "Cài Đặt Đồ Họa 3D, FPS & Tiến Độ Codex";
@@ -878,13 +997,15 @@ namespace KhiVanChiTu.Remake
         private static bool HasMergeableSwordPair()
         {
             var save = SaveService.Current;
-            for (int lv = 1; lv < 10; lv++)
-            {
-                int count = 0;
-                for (int i = 0; i < save.equippedSwordLevels.Count; i++) if (save.equippedSwordLevels[i] == lv) count++;
-                for (int i = 0; i < save.swordInventoryLevels.Count; i++) if (save.swordInventoryLevels[i] == lv) count++;
-                if (count >= 2) return true;
-            }
+            return save.swordInventoryLevels.Count > 0 && (save.equippedSwordLevels.Count > 0 || save.swordInventoryLevels.Count >= 2);
+        }
+
+        private static bool HasAnyUpgradeableDaoVanNode(GameplayEngine engine)
+        {
+            if (engine == null) return false;
+            var all = RemakeCatalogs.StarterDaoVanNodes;
+            for (int i = 0; i < all.Count; i++)
+                if (engine.CanUnlockOrUpgradeNode(all[i])) return true;
             return false;
         }
     }

@@ -96,7 +96,7 @@ namespace KhiVanChiTu.Remake
             new DaoVanNodeSpec
             {
                 id = "sword_armor_pierce", parentId = "branch_sword", branchName = "Xuyên Phá",
-                title = "Phá Cương Kiếm Ý",
+                title = "Phá Cương Kiếm Đạo",
                 effectDesc = "+6% Xuyên Giáp Quái & +8% Công Boss / cấp",
                 codexIconKey = "DaoVan/branch_sword", reusedIconKey = "Sword08",
                 maxLevel = 10, costsDaoPoints = false, baseCost = 340, costGrowth = 1.62f,
@@ -293,7 +293,7 @@ namespace KhiVanChiTu.Remake
             new PioneerMilestoneSpec { index = 1, title = "Mốc 2 (Ngày 1 · ~24h): Hoành Tảo Hoang Mạc", targetHint = "Đạt Kim Đan Sơ Kỳ · Vượt 2-10", reqRealmIndex = 2, reqLinearStage = 19, rewardLinhThach = 12000, rewardDaoPoints = 3, rewardForgeTalismans = 2, rewardSkillScrolls = 2, rewardCalmIncense = 1 },
             new PioneerMilestoneSpec { index = 2, title = "Mốc 3 (Ngày 3 · ~72h): Đăng Đỉnh Bạch Ngọc", targetHint = "Đạt Nguyên Anh Sơ Kỳ · Vượt 3-10", reqRealmIndex = 3, reqLinearStage = 29, rewardLinhThach = 45000, rewardDaoPoints = 4, rewardForgeTalismans = 3, rewardSkillScrolls = 3, rewardCalmIncense = 1 },
             new PioneerMilestoneSpec { index = 3, title = "Mốc 4 (Ngày 7 · ~168h): Khai Phá Yêu Vực", targetHint = "Đạt Hóa Thần Sơ Kỳ (Mở 2 Trận & Ấn Chưởng)", reqRealmIndex = 4, reqLinearStage = 39, rewardLinhThach = 150000, rewardDaoPoints = 5, rewardForgeTalismans = 4, rewardSkillScrolls = 4, rewardCalmIncense = 2 },
-            new PioneerMilestoneSpec { index = 4, title = "Mốc 5 (Ngày 13 · ~312h): Hư Không Kiếm Ý", targetHint = "Đạt Luyện Hư Sơ Kỳ", reqRealmIndex = 5, reqLinearStage = 59, rewardLinhThach = 500000, rewardDaoPoints = 6, rewardForgeTalismans = 5, rewardSkillScrolls = 5, rewardCalmIncense = 2 },
+            new PioneerMilestoneSpec { index = 4, title = "Mốc 5 (Ngày 13 · ~312h): Hư Không Kiếm Đạo", targetHint = "Đạt Luyện Hư Sơ Kỳ", reqRealmIndex = 5, reqLinearStage = 59, rewardLinhThach = 500000, rewardDaoPoints = 6, rewardForgeTalismans = 5, rewardSkillScrolls = 5, rewardCalmIncense = 2 },
             new PioneerMilestoneSpec { index = 5, title = "Mốc 6 (Ngày 20 · ~492h): Hợp Nhất Thiên Địa", targetHint = "Đạt Hợp Thể Sơ Kỳ", reqRealmIndex = 6, reqLinearStage = 79, rewardLinhThach = 1800000, rewardDaoPoints = 8, rewardForgeTalismans = 6, rewardSkillScrolls = 6, rewardCalmIncense = 3 },
             new PioneerMilestoneSpec { index = 6, title = "Mốc 7 (Ngày 30 · 720h): Đại Thừa Đắc Đạo", targetHint = "Đạt Đại Thừa Sơ Kỳ (Mục tiêu 30 ngày)", reqRealmIndex = 7, reqLinearStage = 99, rewardLinhThach = 6000000, rewardDaoPoints = 12, rewardForgeTalismans = 10, rewardSkillScrolls = 10, rewardCalmIncense = 5 },
             new PioneerMilestoneSpec { index = 7, title = "Mốc 8 (Endgame): Tiên Kiếp Chí Tôn", targetHint = "Đạt Độ Kiếp & Chinh Phục Ải 120", reqRealmIndex = 8, reqLinearStage = 119, rewardLinhThach = 20000000, rewardDaoPoints = 20, rewardForgeTalismans = 15, rewardSkillScrolls = 15, rewardCalmIncense = 8 }

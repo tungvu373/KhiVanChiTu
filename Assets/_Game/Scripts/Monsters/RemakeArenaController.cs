@@ -62,6 +62,8 @@ namespace KhiVanChiTu.Remake
             {
                 GameplayEngine.Instance.OnLoiPhatCast += HandleLoiPhatCast;
                 GameplayEngine.Instance.OnSkillCast += HandleSkillCast;
+                GameplayEngine.Instance.OnTribulationStateChanged += HandleTribulationStateChanged;
+                GameplayEngine.Instance.OnTribulationStrike += HandleTribulationStrike;
             }
             if (GraphicsSettingsService.Instance != null)
                 GraphicsSettingsService.Instance.OnGraphicsChanged += HandleGraphicsChanged;
@@ -73,6 +75,8 @@ namespace KhiVanChiTu.Remake
             {
                 GameplayEngine.Instance.OnLoiPhatCast -= HandleLoiPhatCast;
                 GameplayEngine.Instance.OnSkillCast -= HandleSkillCast;
+                GameplayEngine.Instance.OnTribulationStateChanged -= HandleTribulationStateChanged;
+                GameplayEngine.Instance.OnTribulationStrike -= HandleTribulationStrike;
             }
             if (GraphicsSettingsService.Instance != null)
                 GraphicsSettingsService.Instance.OnGraphicsChanged -= HandleGraphicsChanged;
@@ -103,11 +107,12 @@ namespace KhiVanChiTu.Remake
                 SpawnNextWaveIfNeeded();
             }
 
-            // Keep ground formation ring & realm aura slowly rotating beneath Cultivator
+            // Keep ground formation ring & realm aura rotating (faster during 15s Tribulation Seclusion!)
+            bool inTrib = GameplayEngine.Instance != null && GameplayEngine.Instance.IsInTribulation;
             if (groundFormationRing != null)
-                groundFormationRing.Rotate(0f, 0f, 18f * Time.deltaTime, Space.Self);
+                groundFormationRing.Rotate(0f, 0f, (inTrib ? 92f : 18f) * Time.deltaTime, Space.Self);
             if (_playerRealmRing != null)
-                _playerRealmRing.transform.Rotate(0f, -24f * Time.deltaTime, 0f, Space.Self);
+                _playerRealmRing.transform.Rotate(0f, (inTrib ? -135f : -24f) * Time.deltaTime, 0f, Space.Self);
 
             // Face closest active enemy cleanly
             if (playerTransform != null && _activeMonsters.Count > 0)
@@ -226,7 +231,7 @@ namespace KhiVanChiTu.Remake
         {
             if (_spawnCooldown > 0f) return;
             var engine = GameplayEngine.Instance;
-            if (engine == null) return;
+            if (engine == null || engine.IsInTribulation) return;
 
             var stage = engine.GetCurrentStageSpec();
             Vector3 center = PlayerWorldPosition;
@@ -347,6 +352,47 @@ namespace KhiVanChiTu.Remake
             RemakeVfxPool.Instance?.SpawnLoiPhatLightning(targetPos);
             MeadowEnvironmentController.Instance?.AddCameraTrauma(0.35f);
             DamageEnemiesInRadius(targetPos, 4.0f, damage, 1.2f, 0.65, Vector3.zero, false);
+        }
+
+        private void HandleTribulationStateChanged(bool entering)
+        {
+            MeadowEnvironmentController.Instance?.SetTribulationStormMode(entering);
+            RemakeVfxPool.Instance?.SetTribulationSeclusionVisual(entering, PlayerWorldPosition);
+
+            if (entering)
+            {
+                for (int i = _activeMonsters.Count - 1; i >= 0; i--)
+                    ReturnMonsterToPool(_activeMonsters[i]);
+                _activeMonsters.Clear();
+                if (_playerRealmRingMat != null)
+                {
+                    Color gold = new Color(1.0f, 0.85f, 0.22f, 0.98f);
+                    _playerRealmRingMat.color = gold;
+                    if (_playerRealmRingMat.HasProperty("_BaseColor"))
+                        _playerRealmRingMat.SetColor("_BaseColor", gold);
+                }
+            }
+            else
+            {
+                SyncPlayerRealmAura();
+                _spawnCooldown = 0.75f;
+                SpawnNextWaveIfNeeded();
+            }
+        }
+
+        private void HandleTribulationStrike(int strikeIndex, int totalStrikes)
+        {
+            float intensity = Mathf.Clamp01((float)strikeIndex / Mathf.Max(1, totalStrikes));
+            Color flashTint = strikeIndex <= 3
+                ? new Color(0.55f, 0.92f, 1.0f, 1f)
+                : strikeIndex <= 6
+                    ? new Color(0.84f, 0.56f, 1.0f, 1f)
+                    : new Color(1.0f, 0.86f, 0.36f, 1f);
+
+            RemakeVfxPool.Instance?.SpawnTribulationStrike(PlayerWorldPosition, strikeIndex, totalStrikes);
+            MeadowEnvironmentController.Instance?.TriggerTribulationSkyFlash(intensity, flashTint);
+            MeadowEnvironmentController.Instance?.AddCameraTrauma(Mathf.Lerp(0.42f, 0.88f, intensity));
+            RemakeAudioService.Instance?.PlayLoiPhat();
         }
 
         private void HandleSkillCast(int slot, Vector3 targetPos, double damage, bool isCrit)
