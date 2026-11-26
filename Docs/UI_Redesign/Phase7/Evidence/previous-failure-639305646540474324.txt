@@ -1,5 +1,0 @@
-System.Exception: Native touch reaches DemonBadge_2
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Check (System.Boolean b, System.String m) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:54 
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Hit (UnityEngine.UI.Button button) [0x00078] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:65 
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA+<Run>d__37.MoveNext () [0x00743] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:120 
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Tick () [0x0001a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:50 

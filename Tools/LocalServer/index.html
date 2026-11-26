@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Khí Vận Chi Tử · Phòng thử LAN</title>
+<style>
+  :root { color-scheme: dark; font: 16px/1.5 system-ui, sans-serif; background: #101b1b; color: #efe8d5; }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  main { width: min(100% - 32px, 650px); margin: clamp(24px, 8vh, 84px) auto; }
+  p { margin: 0 0 14px; color: #bacac5; }
+  h1 { font: 500 clamp(30px, 8.5vw, 48px)/1.15 Georgia, serif; margin: 0 0 8px; }
+  h2 { font: 600 18px system-ui; margin: 0; }
+  section { margin-top: 24px; padding: 18px; background: #1b2928; border: 1px solid #384d45; border-radius: 12px; }
+  header { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  #connection { color: #b6dfc9; font-size: 13px; }
+  #status { font-size: 14px; }
+  ol { margin: 14px 0; padding: 0; list-style: none; min-height: 110px; max-height: 42vh; overflow: auto; }
+  li { padding: 9px 0; border-top: 1px solid #384d45; overflow-wrap: anywhere; }
+  li strong { display: block; font-size: 13px; color: #e6cd94; }
+  form { display: flex; gap: 8px; }
+  [hidden] { display: none; }
+  button, input { font: inherit; min-height: 44px; border-radius: 6px; padding: 8px 12px; }
+  button { border: 0; background: #e5cd96; color: #192522; font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: .6; }
+  input { flex: 1; min-width: 0; border: 1px solid #567064; color: #efe8d5; background: #111b1b; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Khí Vận Chi Tử</h1>
+  <p>Mở trang này trên hai thiết bị cùng mạng để thử gửi tin qua máy chủ local.</p>
+  <section>
+    <header><h2>Phòng thử LAN</h2><span id="connection">Chưa kết nối</span></header>
+    <ol id="history" role="log" aria-label="Tin nhắn"></ol>
+    <p id="status" role="status">Dùng hồ sơ khách trên trình duyệt này.</p>
+    <button id="join" type="button">Kết nối</button>
+    <form id="chat" hidden>
+      <input id="message" aria-label="Tin nhắn" placeholder="Nhập tin nhắn" autocomplete="off" maxlength="240" required>
+      <button id="send">Gửi</button>
+    </form>
+  </section>
+</main>
+<script defer src="/client.js"></script>
+</body>
+</html>

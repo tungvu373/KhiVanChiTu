@@ -1,5 +1,0 @@
-System.Exception: Scroll reaches dynamic details Alchemy (1080, 1920)
-  at KhiVanChiTu.UI.Equipment.Editor.Phase45QA.Check (System.Boolean b, System.String m) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Equipment\Editor\Phase45QA.cs:52 
-  at KhiVanChiTu.UI.Equipment.Editor.Phase45QA+<RunCultivation>d__27.MoveNext () [0x0051a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Equipment\Editor\Phase45QA.cs:110 
-  at KhiVanChiTu.UI.Equipment.Editor.Phase45QA+<Run>d__25.MoveNext () [0x00428] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Equipment\Editor\Phase45QA.cs:66 
-  at KhiVanChiTu.UI.Equipment.Editor.Phase45QA.Tick () [0x0001a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Equipment\Editor\Phase45QA.cs:48 

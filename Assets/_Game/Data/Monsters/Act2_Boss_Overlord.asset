@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cddbc7b583bb7e42a61af99bc1d4743, type: 3}
+  m_Name: Act2_Boss_Overlord
+  m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.MonsterDefinitionSO
+  monsterId: act2_boss_overlord
+  displayName: "Sa Ho\xE0ng Y\xEAu \u0110\u1EBF"
+  description: "Th\u1EE7 l\u0129nh \u1EA3i X-10 Hoang M\u1EA1c N\u1EAFng V\xE0ng."
+  archetype: 3
+  codexPortraitKey: Monsters/act2_boss_overlord
+  prefab: {fileID: 2027352406122920243, guid: a8275f208a9f41c43a51586f4bc61bcb, type: 3}
+  hpMultiplier: 1.15
+  damageMultiplier: 1.05
+  moveSpeed: 2
+  attackRange: 2.5
+  hoverHeight: 0
+  attackInterval: 1.35
+  armorMitigation: 0
+  tuViMultiplier: 1
+  linhThachMultiplier: 1
+  hpBarHeight: 3.5
+  visualScale: 1.55
+  isBoss: 1

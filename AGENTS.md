@@ -1,123 +1,43 @@
-# UNITY PIPELINE & CLI AGENT DIRECTIVES
-> **Project:** Khí Vận Chi Tử (The Chosen One)
+# UNITY PIPELINE & COMMERCIAL REMAKE DIRECTIVES
+> **Project:** Khí Vận Chi Tử (Commercial Remake)
 > **Project Root:** `C:\Lap trinh game\Save file\KhiVanChiTu`
-> **Active Editor:** Unity 6000.6.4f1 via `com.unity.pipeline` (Port 7800)
+> **Active Editor:** Unity 6000.6.4f1 via `com.unity.pipeline` (Unity CLI)
 
 ---
 
-## ⚡ NGUYÊN TẮC KỸ THUẬT CỐT LÕI (CORE PRINCIPLES)
+## ⚡ NGUYÊN TẮC KỸ THUẬT CỐT LÕI
 
 1. **Unity CLI + Pipeline kết nối vào Editor ĐANG MỞ:**
-   * Lệnh `unity command` qua gói `com.unity.pipeline` kết nối trực tiếp vào phiên Unity Editor đang chạy trên máy (qua cổng loopback IPC).
-   * Lệnh này **KHÔNG MỞ Editor thứ hai**. Tuyệt đối **KHÔNG YÊU CẦU NGƯỜI DÙNG ĐÓNG EDITOR** chỉ để thao tác Scene/GameObject/Prefab/Asset.
-   * Chỉ những tác vụ đặc biệt cần khởi chạy riêng biệt ở Batch Mode (như export build đóng gói release độc lập) mới yêu cầu đóng Editor.
+   - Lệnh `unity command` qua `com.unity.pipeline` kết nối trực tiếp vào phiên Unity Editor đang mở (IPC). Không yêu cầu người dùng đóng Editor khi thao tác Scene/GameObject/Prefab/Asset.
+   - Mọi lệnh Unity CLI chạy tại thư mục gốc dự án: `C:\Lap trinh game\Save file\KhiVanChiTu`.
+   - Không sửa file `.unity` hoặc `.prefab` bằng text thủ công; thao tác qua Unity Editor / Unity CLI.
 
-2. **Thư mục làm việc chuẩn (Working Directory):**
-   * Mọi lệnh Unity CLI phải được thực thi tại **thư mục gốc dự án**:
-     `C:\Lap trinh game\Save file\KhiVanChiTu`
-     *(Không chạy từ thư mục con `Assets`)*.
+2. **Kiến trúc Remake Thương Mại (Chuẩn Đã Chốt):**
+   - **Thư mục mã & nội dung mới:** Tập trung toàn bộ kiến trúc Remake trong `Assets/_Game/` (`Scenes/`, `Scripts/`, `UI/`, `Data/`, `Prefabs/`, `Resources/CodexDrop/`).
+   - **Công nghệ UI:** **UI Toolkit (`UXML` + `USS` + C# + `Painter2D`)** với **tông màu SÁNG (Light Sunlit Xianxia)**, HUD chia **2 cụm ô tròn độc lập có thể mở ra/thu vào**, hỗ trợ 3 chế độ hiển thị: Mobile dọc (9:16), Web PC ngang (16:9) và **Taskbar Mini-Mode** thu nhỏ góc màn hình.
+   - **Quy tắc Hình Ảnh (Bắt buộc):** Không thay thế vị trí cần hình minh họa bằng emoji/vector icon chữ. Mọi vị trí hình ảnh phải dùng slot `Texture2D`/`Sprite` tải qua `Resources/CodexDrop/` (kèm `AssetPostprocessor` nén tự động) theo đường dẫn chuẩn trong `Docs/CODEX_IMAGE_ASSET_MANIFEST.md` hoặc ảnh nền trong suốt tái sử dụng từ `Assets/UI/GameIcons/`.
+   - **Đa Scene & Hiệu Năng WebGL / iPhone Safari / Mobile:** Tách scene rõ ràng (`00_Boot`, `01_MainMenu`, `02_World_Meadow`, `03_World_Wasteland`, `04_World_Abyss`, `99_UI_Overlay`), chỉ load đúng 1 World Scene tại một thời điểm, tích hợp **hiển thị FPS** và **Cài Đặt Đồ Họa 3D** (Thấp/Trung/Cao, Render Scale, Bóng đổ, Giới hạn FPS, Chế độ Tĩnh Tọa tiết kiệm pin).
+   - **Gameplay cốt lõi:** Tham khảo vòng lặp Vực–Ải–Độ Khó (*Task Bar Hero*), mục tiêu **30 ngày 24/7 (720 giờ)** đạt Đại Thừa; **Cây Kỹ Năng Đạo Vận** (đã gộp 6 chỉ số Luyện Thể vào nhánh Thể Phách); **Kiếm Lộ** (drop quái tỉ lệ nhỏ + ghép xác suất + Pity); **Luyện Đan** (duy nhất Đan Đột Phá + Cảnh Giới Đan Sư riêng); **Đột Phá** (roll % trực tiếp dùng Đan tăng xác suất, thất bại -50% / -75% / -100% Tu Vi tiểu cảnh + Trấn Tâm 24h reset); **6 Đại Trận Pháp** phân tầng cảnh giới; **Trang Bị Loot RPG**; **4 Kỹ Năng** mở theo cảnh giới & nâng cấp dần. **Không sử dụng Cửa Hàng Thuốc cũ (`ShopManager`).**
+   - **Bản đồ & Quái vật:** Tone màu **xanh đồng cỏ ban ngày tươi sáng**, ánh sáng mềm rõ ràng, xây dựng lại hệ thống quái & Boss ải X-10.
 
-3. **Cơ chế Sandbox của Terminal:**
-   * Lệnh `unity` nằm tại `C:\Users\Admin\AppData\Local\Unity\bin\unity.exe` và kết nối mạng nội bộ (localhost:7800) đến Editor đang mở.
-   * Khi sandbox chặn truy cập tiến trình hoặc kết nối port, AI cần sử dụng `BypassSandbox: true` cho riêng các lệnh Unity CLI cần thiết; không tự ý tắt toàn bộ bảo vệ.
+3. **Demo Local LAN (iPhone Safari + Laptop Web):**
+   - Dùng máy chủ local sẵn có tại `Tools/LocalServer/` (Node.js + Nakama + PostgreSQL). Bản build Unity WebGL đặt tại `Builds/LocalWeb/` và mở qua `/game/`.
 
-4. **Tuyệt đối không sửa Scene/Prefab YAML thủ công:**
-   * Không sửa file `.unity` hoặc `.prefab` bằng text replacement khi có thể thao tác qua Unity Editor đang kết nối.
-   * Ưu tiên dùng `unity command scene`, `unity command gameobject`, `unity command component`, hoặc `unity command editor invoke_menu`.
-
----
-
-## 📋 QUY TRÌNH THỰC THI CHUẨN TRƯỚC KHI THAO TÁC (PRE-FLIGHT PIPELINE)
-
-Trước khi thực hiện bất kỳ thao tác Unity nào, AI phải tuân thủ:
-
-1. **Kiểm tra trạng thái kết nối Editor:**
-   ```powershell
-   Set-Location "C:\Lap trinh game\Save file\KhiVanChiTu"; unity status --format json
-   ```
-2. **Nếu kết nối sẵn sàng (`state: ready`):**
-   * Kiểm tra scene đang mở: `unity command scene list_open`
-   * Kiểm tra lỗi console/compile: `unity command console status` hoặc `unity recompile`
-   * Xem các lệnh hỗ trợ: `unity command` (hoặc `unity command <group>`: `scene`, `gameobject`, `component`, `editor`)
-   * Thực thi thay đổi trên đúng scene đang mở.
-   * Lưu scene sau khi hoàn thành: `unity command scene save`
-   * Xác nhận kết quả qua console: `unity command console get --tail 10`
-
-3. **Nếu `unity status` báo không có instance:**
-   * Không vội kết luận Editor đã đóng hoặc chưa cài Pipeline.
-   * Kiểm tra: Tiến trình `Unity.exe` có đang chạy không, đường dẫn dự án có khớp không, Editor có đang ở Safe Mode / Recompile không, hoặc Sandbox có chặn IPC không.
-   * Báo cáo rõ ràng kết quả kiểm tra cho người dùng trước khi quyết định bước tiếp theo.
+4. **Bảo Toàn Tài Sản & Phân Tách Workspace:**
+   - Bảo toàn dữ liệu save người chơi (`KhiVanChiTu_SaveData.json`) — luôn dùng hồ sơ cô lập (`WorkspaceSaveProfile`) khi chạy QA/test tự động.
+   - Không phá vỡ module `Assets/Modules/PCContent/` (xem [Assets/Modules/PCContent/AGENTS.md](Assets/Modules/PCContent/AGENTS.md)) và giữ `.meta` của mọi asset tái sử dụng.
 
 ---
 
-## 🛠️ CÁC LỆNH UNITY CLI PHỔ BIẾN
+## 📋 QUY TRÌNH PRE-FLIGHT TRƯỚC KHI THAO TÁC UNITY
 
-* **Kiểm tra trạng thái:** `unity status --format json`
-* **Biên dịch & kiểm tra lỗi C#:** `unity recompile`
-* **Xem scene đang mở:** `unity command scene list_open`
-* **Lưu scene đang mở:** `unity command scene save`
-* **Thực thi Menu Tool của dự án:** `unity command editor invoke_menu --path "<Menu Path>"`
-* **Tìm kiếm GameObject:** `unity command gameobject find --name "<Name>" --include_inactive true`
-* **Bật/Tắt GameObject:** `unity command gameobject set_active --target "<HierarchyPath or ID>" --active <true|false>`
-* **Đọc Log Console Editor:** `unity command console get --tail 20`
-* **Xóa Log Console:** `unity command console clear`
-
-
+1. `unity status --format json` → xác nhận `state: ready`.
+2. `unity command scene list_open` → xác nhận đúng scene đang mở.
+3. Sau khi sửa code/scene: `unity recompile`, `unity command scene save`, và kiểm tra `unity command console get --tail 15`.
 
 <!-- BEGIN KHIVAN PROJECT SKILLS -->
 ## Project skills
 
-Project-local skills are installed under `.agents/skills/` and may be selected
-automatically for related tasks. Load only skills relevant to the requested work.
-
-| Task | Skill |
-| --- | --- |
-| Save/load, slots, backups and migration | [save-systems](.agents/skills/save-systems/SKILL.md) |
-| Profiling, frame time, pooling and GC | [performance-optimization](.agents/skills/performance-optimization/SKILL.md) |
-| ScriptableObject configuration, runtime state and events | [unity-scriptableobjects](.agents/skills/unity-scriptableobjects/SKILL.md) |
-| Actions, maps, rebinding, mouse/touch/gamepad | [unity-input-system](.agents/skills/unity-input-system/SKILL.md) |
-| Hit feedback, camera shake, VFX/audio timing and polish | [game-feel](.agents/skills/game-feel/SKILL.md) |
-| Author and preview prompt-driven Particle System VFX | [unity-vfx](.agents/skills/unity-vfx/SKILL.md) |
-| DPS/TTK, progression, upgrade costs and resource flow | [balance-check](.agents/skills/balance-check/SKILL.md) |
-
-Use the already available official Unity skills for Editor control, uGUI, URP,
-physics, audio and navigation. Do not install a second Editor-control backend.
-
-Apply these skills to this project's actual Unity version and installed packages.
-The imported Unity examples target 6.3 LTS; verify APIs against the current
-`ProjectSettings/ProjectVersion.txt` and `Packages/manifest.json`. Translate
-cross-engine examples to Unity C# instead of introducing another engine.
-
-Use `Assets/.docs/GDD.md`, `Assets/.docs/TDD.md` and current implementation/data
-for project context. Preserve the existing portrait idle RPG and sword-merge
-design. Extend existing services/pools where appropriate; skill installation
-alone is not a request to retune gameplay or replace the architecture.
-
-Follow the Pipeline pre-flight above for Editor work. Read
-`Assets/Modules/PCContent/AGENTS.md` for PC-module ownership and save isolation.
-Keep player saves intact when validating persistence. Measure performance before
-claiming gains. For game feel, preserve pause/slow-motion ownership and restore
-the previous time scale rather than assuming it is always 1.
-
-Pinned sources, local adaptations and file hashes are recorded in
-`.agents/skill-sources.json`; upstream licenses are retained in `.agents/licenses/`.
+Project-local skills under `.agents/skills/` remain available for relevant tasks:
+- `save-systems`, `performance-optimization`, `unity-scriptableobjects`, `unity-input-system`, `game-feel`, `unity-vfx`, `balance-check`.
 <!-- END KHIVAN PROJECT SKILLS -->
-
-
-## Current sword progression rule
-
-- Sword **level** cap is **10**, confirmed by the owner on 18 November 2026. Use `Assets/Scripts/Data/SwordRules.cs` for merge boundaries and piece requirements. Do not infer the level cap from the 8-sprite array, the level-8 sacrifice action, the salvage price table, or sword slot capacity.
-- Levels 9–10 currently reuse the last available sword sprite. Existing rarity, drops, level-8 sacrifice and salvage payouts remain unchanged unless separately requested.
-
-<!-- BEGIN MOBILE UI PHASE 00 AUDIT -->
-## Mobile UI redesign audit and preservation
-
-- Read [the project audit](Docs/UI_Redesign/project_audit.md), [the baseline](Docs/UI_Redesign/project_baseline.json) and [the rollback plan](Docs/UI_Redesign/rollback_plan.md) before continuing the mobile UI redesign.
-- Phase 00 only inventories and backs up the project. Do not modify gameplay, UI layout, scenes, prefabs, PlayerSettings, build scenes, packages or player saves during this phase.
-- This audit starts after the Jade V2 UI commit. Treat the recorded HEAD as the current baseline; the retained PreJadeV2 scene and earlier audit describe the older presentation.
-- Preserve dirty and untracked user work. Do not use reset, clean, stash, a broad restore or an unrelated commit to prepare this workspace.
-- Keep .meta GUIDs and serialized object/event references. Use the connected Unity Editor for later scene/prefab edits, with CLI commands run from the project root.
-- Keep mobile and PC scenes/save profiles isolated. Read Assets/Modules/PCContent/AGENTS.md before PC-module work.
-- Local source backups in Docs/UI_Redesign/Backups/ are intentionally ignored by Git. Verify the recorded archive hash before selective rollback and preserve any later user edits.
-- Record existing console errors and unverified device states honestly. An audit is not a gameplay or physical-device test.
-<!-- END MOBILE UI PHASE 00 AUDIT -->

@@ -1,4 +1,0 @@
-System.Exception: Talent purchase keeps exact service cost and level (level=1, before=107450, after=107100, price=500, state=Available, enabled=True, root=True, layer=talents)
-  at KhiVanChiTu.UI.Progression.Editor.ProgressionQA.Check (System.Boolean b, System.String m) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Progression\Editor\ProgressionQA.cs:54 
-  at KhiVanChiTu.UI.Progression.Editor.ProgressionQA+<Run>d__25.MoveNext () [0x013a9] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Progression\Editor\ProgressionQA.cs:96 
-  at KhiVanChiTu.UI.Progression.Editor.ProgressionQA.Tick () [0x0001a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Progression\Editor\ProgressionQA.cs:50 

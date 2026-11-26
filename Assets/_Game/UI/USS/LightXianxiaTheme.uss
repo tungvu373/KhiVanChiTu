@@ -1,0 +1,487 @@
+* {
+    -unity-font-definition: resource("RemakeFontSDF");
+    color: #1F2B29;
+}
+
+.full-screen {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* =========================================================
+   LIGHT SUNLIT XIANXIA SURFACES (Bạch Ngọc / Giấy Tuyên Sáng)
+   ========================================================= */
+.panel-light {
+    background-image: resource("BakedMaps/hud_panel_light_9slice");
+    -unity-slice-scale: 0.20;
+    background-color: transparent;
+    border-width: 0;
+    padding: 14px;
+}
+
+.panel-compact {
+    background-color: rgba(247, 243, 232, 0.95);
+    border-width: 1.5px;
+    border-color: #C89B3C;
+    border-radius: 13px;
+}
+
+.card-light {
+    background-image: resource("BakedMaps/hud_card_light_9slice");
+    -unity-slice-scale: 0.16;
+    background-color: transparent;
+    border-width: 0;
+    padding: 12px 14px;
+}
+
+.pill-light {
+    background-color: rgba(248, 245, 236, 0.90);
+    border-width: 1.5px;
+    border-color: rgba(200, 155, 60, 0.65);
+    border-radius: 999px;
+    padding: 4px 10px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.text-title {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: #182725;
+}
+
+.text-section {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: #1B745C;
+}
+
+.text-body {
+    font-size: 12px;
+    color: #2A3A37;
+}
+
+.text-muted {
+    font-size: 11px;
+    color: #5A6E6A;
+}
+
+.text-gold {
+    color: #A06D10;
+    -unity-font-style: bold;
+}
+
+.text-danger {
+    color: #B83226;
+    -unity-font-style: bold;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.btn-primary {
+    background-image: resource("BakedMaps/hud_btn_primary_9slice");
+    -unity-slice-scale: 0.22;
+    background-color: transparent;
+    border-width: 0;
+    padding: 9px 26px;
+    min-width: 118px;
+    color: #4A2703;
+    -unity-font-style: bold;
+    font-size: 13px;
+    -unity-text-align: middle-center;
+    transition-property: scale, -unity-background-image-tint-color;
+    transition-duration: 0.12s;
+}
+
+.btn-primary:hover {
+    -unity-background-image-tint-color: #FFF4D4;
+}
+
+.btn-primary:active {
+    scale: 0.96 0.96;
+}
+
+.btn-secondary {
+    background-image: resource("BakedMaps/hud_btn_secondary_9slice");
+    -unity-slice-scale: 0.20;
+    background-color: transparent;
+    border-width: 0;
+    padding: 7px 20px;
+    min-width: 88px;
+    color: #12483A;
+    -unity-font-style: bold;
+    font-size: 12px;
+    -unity-text-align: middle-center;
+    transition-property: scale, -unity-background-image-tint-color;
+    transition-duration: 0.12s;
+}
+
+.btn-secondary:hover {
+    -unity-background-image-tint-color: #ECFAF4;
+}
+
+.btn-secondary:active {
+    scale: 0.96 0.96;
+}
+
+.btn-secondary.selected {
+    -unity-background-image-tint-color: #7ED4B4;
+    color: #07291F;
+}
+
+.btn-compact {
+    background-color: #DDF0E7;
+    border-width: 1.5px;
+    border-color: #26876F;
+    border-radius: 9px;
+    padding: 4px 10px;
+    color: #165B4A;
+    -unity-font-style: bold;
+    font-size: 11px;
+    -unity-text-align: middle-center;
+}
+
+.btn-compact:hover {
+    background-color: #CCE7DB;
+}
+
+.btn-compact:active {
+    scale: 0.95 0.95;
+}
+
+.btn-compact.selected {
+    background-color: #22886F;
+    color: #FFFFFF;
+    border-color: #155948;
+}
+
+.btn-danger {
+    background-color: #FBE6E4;
+    border-width: 1.5px;
+    border-color: #C94A38;
+    border-radius: 10px;
+    padding: 7px 12px;
+    color: #9F291B;
+    -unity-font-style: bold;
+    font-size: 12px;
+}
+
+/* =========================================================
+   CODEX ART PLACEHOLDERS (NEVER USE EMOJI / VECTOR TEXT)
+   ========================================================= */
+.art-slot {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.art-slot-cover {
+    background-size: cover;
+    background-position: center;
+}
+
+.art-slot-placeholder {
+    background-color: #E7F1EA;
+    border-width: 1px;
+    border-color: rgba(34, 136, 111, 0.55);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.art-placeholder-text {
+    font-size: 7px;
+    -unity-font-style: bold;
+    color: #1E6D59;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    padding: 1px;
+}
+
+/* =========================================================
+   CIRCULAR HUD BUTTONS (56px TOUCH TARGETS)
+   ========================================================= */
+.circle-btn-wrap {
+    width: 62px;
+    align-items: center;
+    margin: 3px;
+    transition-property: scale, opacity;
+    transition-duration: 0.16s;
+}
+
+.circle-btn {
+    width: 58px;
+    height: 58px;
+    background-image: resource("CodexDrop/HUD/hud_circle_btn_idle");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: transparent;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 9px;
+    transition-property: scale;
+    transition-duration: 0.12s;
+}
+
+.circle-btn:hover,
+.circle-btn.active {
+    background-image: resource("CodexDrop/HUD/hud_circle_btn_active");
+}
+
+.circle-btn:active {
+    scale: 0.93 0.93;
+}
+
+.circle-btn.locked {
+    background-image: resource("CodexDrop/HUD/hud_circle_btn_locked");
+    background-color: transparent;
+    border-width: 0;
+    opacity: 0.92;
+}
+
+.circle-btn.locked .circle-btn-icon {
+    opacity: 0.42;
+}
+
+.circle-btn-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 19px;
+}
+
+.circle-btn-label {
+    margin-top: 2px;
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: #1E2E2B;
+    background-color: rgba(250, 247, 238, 0.82);
+    border-radius: 6px;
+    padding: 1px 4px;
+    -unity-text-align: middle-center;
+}
+
+.badge-dot {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 6px;
+    background-color: #D83B2D;
+    border-width: 1.5px;
+    border-color: #FFFFFF;
+}
+
+/* =========================================================
+   HUD ROOT & RESPONSIVE BREAKPOINTS (MOBILE / WEB / MINI)
+   ========================================================= */
+.hud-root {
+    justify-content: space-between;
+}
+
+.hud-top-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.hud-middle-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-grow: 1;
+    margin-top: 6px;
+}
+
+.hud-bottom-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.cluster-panel {
+    background-image: resource("BakedMaps/hud_panel_light_9slice");
+    -unity-slice-scale: 0.16;
+    background-color: transparent;
+    border-width: 0;
+    padding: 12px;
+}
+
+.cluster-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 210px;
+    justify-content: flex-end;
+}
+
+.mini-mode .hide-in-mini {
+    display: none;
+}
+
+.mini-pill-bar {
+    display: none;
+}
+
+.mini-mode .mini-pill-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgba(248, 245, 236, 0.93);
+    border-width: 1.5px;
+    border-color: #C89B3C;
+    border-radius: 14px;
+    padding: 6px 10px;
+    width: 100%;
+}
+
+/* =========================================================
+   DRAWER / MODAL BACKDROP & SHEET
+   ========================================================= */
+.drawer-backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(24, 38, 35, 0.34);
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+}
+
+.drawer-sheet {
+    width: 100%;
+    max-width: 492px;
+    max-height: 86%;
+    -unity-slice-scale: 0.24;
+    padding: 18px 20px;
+}
+
+.desktop-wide .drawer-sheet {
+    max-width: 640px;
+}
+
+.bar-track {
+    height: 7px;
+    border-radius: 4px;
+    background-color: #DCE5DF;
+    overflow: hidden;
+}
+
+.bar-fill-hp {
+    height: 100%;
+    background-color: #2FA86E;
+}
+
+.bar-fill-mp {
+    height: 100%;
+    background-color: #3B8FD4;
+}
+
+.bar-fill-tuvi {
+    height: 100%;
+    background-color: #DFA12A;
+}
+
+.bar-fill-boss {
+    height: 100%;
+    background-color: #D9483B;
+}
+
+.fps-good { color: #197B56; -unity-font-style: bold; }
+.fps-warn { color: #B4740C; -unity-font-style: bold; }
+.fps-low { color: #C0352B; -unity-font-style: bold; }
+
+/* =========================================================
+   TUTORIAL POINTER HIGHLIGHT RING
+   ========================================================= */
+.tutorial-pointer-box {
+    position: absolute;
+    border-width: 3px;
+    border-color: #E59B1A;
+    border-radius: 32px;
+    background-color: rgba(255, 224, 130, 0.14);
+}
+
+.tutorial-tip-pill {
+    position: absolute;
+    background-color: #FFF9E6;
+    border-width: 2px;
+    border-color: #D48D15;
+    border-radius: 12px;
+    padding: 5px 10px;
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: #5D3C04;
+}
+
+.damage-popup-label {
+    position: absolute;
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: #1F2B29;
+    background-color: rgba(255, 253, 246, 0.72);
+    border-radius: 8px;
+    padding: 1px 5px;
+}
+
+.damage-popup-crit {
+    font-size: 19px;
+    color: #C73E1D;
+    background-color: rgba(255, 245, 214, 0.90);
+}
+
+/* =========================================================
+   V2 STAGES, PAPERDOLL, COMPARISON & COMING SOON BADGES
+   ========================================================= */
+.stage-hero-box {
+    background-color: rgba(255, 252, 244, 0.94);
+    border-width: 1.5px;
+    border-color: rgba(200, 155, 60, 0.72);
+    border-radius: 14px;
+    padding: 10px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.stat-up {
+    color: #167D52;
+    -unity-font-style: bold;
+}
+
+.stat-down {
+    color: #C73E1D;
+    -unity-font-style: bold;
+}
+
+.coming-soon-badge {
+    background-color: #D98E1F;
+    color: #FFFFFF;
+    border-radius: 6px;
+    padding: 2px 7px;
+    font-size: 9px;
+    -unity-font-style: bold;
+}
+
+.ky-ngo-orb-btn {
+    width: 54px;
+    height: 54px;
+    border-radius: 27px;
+    background-color: rgba(255, 250, 232, 0.95);
+    border-width: 2.5px;
+    border-color: #E2A220;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}

@@ -1,0 +1,2775 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af9cdacdd1efdfa4a804612e360aa245, type: 3}
+  m_Name: ActStageDatabase
+  m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.ActStageDatabaseSO
+  stages:
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 1
+    stageCode: 1-1
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 27
+    enemyHp: 42
+    enemyDamage: 4
+    tuViPerKill: 8
+    linhThachPerKill: 6
+    swordDropRate: 0.015
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.212
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 2
+    stageCode: 1-2
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 39
+    enemyHp: 60
+    enemyDamage: 5
+    tuViPerKill: 11
+    linhThachPerKill: 8
+    swordDropRate: 0.0165
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.224
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 3
+    stageCode: 1-3
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 55
+    enemyHp: 85
+    enemyDamage: 6
+    tuViPerKill: 15
+    linhThachPerKill: 10
+    swordDropRate: 0.018
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.236
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 4
+    stageCode: 1-4
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 78
+    enemyHp: 120
+    enemyDamage: 8
+    tuViPerKill: 20
+    linhThachPerKill: 13
+    swordDropRate: 0.0195
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.248
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 5
+    stageCode: 1-5
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 111
+    enemyHp: 171
+    enemyDamage: 10
+    tuViPerKill: 27
+    linhThachPerKill: 17
+    swordDropRate: 0.021
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.26
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 6
+    stageCode: 1-6
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 157
+    enemyHp: 242
+    enemyDamage: 13
+    tuViPerKill: 37
+    linhThachPerKill: 22
+    swordDropRate: 0.022499999
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.272
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 7
+    stageCode: 1-7
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 224
+    enemyHp: 344
+    enemyDamage: 16
+    tuViPerKill: 51
+    linhThachPerKill: 29
+    swordDropRate: 0.024
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.284
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 8
+    stageCode: 1-8
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 318
+    enemyHp: 489
+    enemyDamage: 20
+    tuViPerKill: 69
+    linhThachPerKill: 38
+    swordDropRate: 0.0255
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.296
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 9
+    stageCode: 1-9
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 451
+    enemyHp: 694
+    enemyDamage: 25
+    tuViPerKill: 94
+    linhThachPerKill: 49
+    swordDropRate: 0.026999999
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.308
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 10
+    stageCode: 1-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n (1-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 3525
+    enemyHp: 5423
+    enemyDamage: 59
+    tuViPerKill: 1019
+    linhThachPerKill: 636
+    swordDropRate: 0.0285
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 1
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 1
+    stageCode: 2-1
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 910
+    enemyHp: 1400
+    enemyDamage: 40
+    tuViPerKill: 173
+    linhThachPerKill: 83
+    swordDropRate: 0.015
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.212
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 2
+    stageCode: 2-2
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1292
+    enemyHp: 1988
+    enemyDamage: 51
+    tuViPerKill: 236
+    linhThachPerKill: 108
+    swordDropRate: 0.0165
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.224
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 3
+    stageCode: 2-3
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1835
+    enemyHp: 2823
+    enemyDamage: 64
+    tuViPerKill: 320
+    linhThachPerKill: 140
+    swordDropRate: 0.018
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.236
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 4
+    stageCode: 2-4
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 2606
+    enemyHp: 4009
+    enemyDamage: 81
+    tuViPerKill: 436
+    linhThachPerKill: 182
+    swordDropRate: 0.0195
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.248
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 5
+    stageCode: 2-5
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 3700
+    enemyHp: 5692
+    enemyDamage: 102
+    tuViPerKill: 592
+    linhThachPerKill: 236
+    swordDropRate: 0.021
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.26
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 6
+    stageCode: 2-6
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 5254
+    enemyHp: 8083
+    enemyDamage: 128
+    tuViPerKill: 806
+    linhThachPerKill: 307
+    swordDropRate: 0.022499999
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.272
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 7
+    stageCode: 2-7
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 7461
+    enemyHp: 11478
+    enemyDamage: 161
+    tuViPerKill: 1096
+    linhThachPerKill: 399
+    swordDropRate: 0.024
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.284
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 8
+    stageCode: 2-8
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 10594
+    enemyHp: 16299
+    enemyDamage: 203
+    tuViPerKill: 1490
+    linhThachPerKill: 519
+    swordDropRate: 0.0255
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.296
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 9
+    stageCode: 2-9
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 15044
+    enemyHp: 23144
+    enemyDamage: 256
+    tuViPerKill: 2027
+    linhThachPerKill: 675
+    swordDropRate: 0.026999999
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.308
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 10
+    stageCode: 2-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng (2-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 117491
+    enemyHp: 180755
+    enemyDamage: 597
+    tuViPerKill: 22051
+    linhThachPerKill: 8772
+    swordDropRate: 0.0285
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 1
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 1
+    stageCode: 3-1
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 30334
+    enemyHp: 46668
+    enemyDamage: 407
+    tuViPerKill: 3749
+    linhThachPerKill: 1140
+    swordDropRate: 0.015
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.212
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 2
+    stageCode: 3-2
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 43074
+    enemyHp: 66268
+    enemyDamage: 513
+    tuViPerKill: 5098
+    linhThachPerKill: 1482
+    swordDropRate: 0.0165
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.224
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 3
+    stageCode: 3-3
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 61166
+    enemyHp: 94101
+    enemyDamage: 646
+    tuViPerKill: 6933
+    linhThachPerKill: 1927
+    swordDropRate: 0.018
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.236
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 4
+    stageCode: 3-4
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 86855
+    enemyHp: 133623
+    enemyDamage: 814
+    tuViPerKill: 9429
+    linhThachPerKill: 2505
+    swordDropRate: 0.0195
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.248
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 5
+    stageCode: 3-5
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 123334
+    enemyHp: 189745
+    enemyDamage: 1026
+    tuViPerKill: 12824
+    linhThachPerKill: 3257
+    swordDropRate: 0.021
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.26
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 6
+    stageCode: 3-6
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 175134
+    enemyHp: 269437
+    enemyDamage: 1292
+    tuViPerKill: 17441
+    linhThachPerKill: 4234
+    swordDropRate: 0.022499999
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.272
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 7
+    stageCode: 3-7
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 248691
+    enemyHp: 382601
+    enemyDamage: 1628
+    tuViPerKill: 23719
+    linhThachPerKill: 5504
+    swordDropRate: 0.024
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.284
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 8
+    stageCode: 3-8
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 353141
+    enemyHp: 543294
+    enemyDamage: 2051
+    tuViPerKill: 32258
+    linhThachPerKill: 7155
+    swordDropRate: 0.0255
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.296
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 9
+    stageCode: 3-9
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 501460
+    enemyHp: 771477
+    enemyDamage: 2585
+    tuViPerKill: 43871
+    linhThachPerKill: 9302
+    swordDropRate: 0.026999999
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.308
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 10
+    stageCode: 3-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc (3-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 3916403
+    enemyHp: 6025235
+    enemyDamage: 6025
+    tuViPerKill: 477319
+    linhThachPerKill: 120923
+    swordDropRate: 0.0285
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 1
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 1
+    stageCode: 1-1
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1011144
+    enemyHp: 1555606
+    enemyDamage: 4104
+    tuViPerKill: 81144
+    linhThachPerKill: 15720
+    swordDropRate: 0.015999999
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 2
+    herbDropRate: 0.212
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 2
+    stageCode: 1-2
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1435825
+    enemyHp: 2208961
+    enemyDamage: 5171
+    tuViPerKill: 110356
+    linhThachPerKill: 20436
+    swordDropRate: 0.0175
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 2
+    herbDropRate: 0.224
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 3
+    stageCode: 1-3
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 2038871
+    enemyHp: 3136724
+    enemyDamage: 6515
+    tuViPerKill: 150084
+    linhThachPerKill: 26567
+    swordDropRate: 0.019
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 2
+    herbDropRate: 0.236
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 4
+    stageCode: 1-4
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 2895196
+    enemyHp: 4454148
+    enemyDamage: 8209
+    tuViPerKill: 204115
+    linhThachPerKill: 34537
+    swordDropRate: 0.0205
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 2
+    herbDropRate: 0.248
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 5
+    stageCode: 1-5
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 4111178
+    enemyHp: 6324890
+    enemyDamage: 10343
+    tuViPerKill: 277596
+    linhThachPerKill: 44898
+    swordDropRate: 0.022
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 2
+    herbDropRate: 0.26
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 6
+    stageCode: 1-6
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 5837874
+    enemyHp: 8981344
+    enemyDamage: 13033
+    tuViPerKill: 377530
+    linhThachPerKill: 58367
+    swordDropRate: 0.0235
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 2
+    herbDropRate: 0.272
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 7
+    stageCode: 1-7
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 8289781
+    enemyHp: 12753509
+    enemyDamage: 16421
+    tuViPerKill: 513441
+    linhThachPerKill: 75877
+    swordDropRate: 0.025
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 2
+    herbDropRate: 0.284
+    herbTier: 2
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 8
+    stageCode: 1-8
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 11771489
+    enemyHp: 18109983
+    enemyDamage: 20690
+    tuViPerKill: 698280
+    linhThachPerKill: 98641
+    swordDropRate: 0.0265
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 2
+    herbDropRate: 0.296
+    herbTier: 2
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 9
+    stageCode: 1-9
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 16715514
+    enemyHp: 25716175
+    enemyDamage: 26070
+    tuViPerKill: 949661
+    linhThachPerKill: 128233
+    swordDropRate: 0.027999999
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 2
+    herbDropRate: 0.308
+    herbTier: 2
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 10
+    stageCode: 1-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n (1-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 130548164
+    enemyHp: 200843329
+    enemyDamage: 60769
+    tuViPerKill: 10332309
+    linhThachPerKill: 1667025
+    swordDropRate: 0.0295
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 2
+    herbDropRate: 1
+    herbTier: 2
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 1
+    actIndex: 1
+    stageNumber: 1
+    stageCode: 2-1
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 33705162
+    enemyHp: 51854096
+    enemyDamage: 41389
+    tuViPerKill: 1756493
+    linhThachPerKill: 216713
+    swordDropRate: 0.015999999
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.212
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 1
+    actIndex: 1
+    stageNumber: 2
+    stageCode: 2-2
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 47861330
+    enemyHp: 73632816
+    enemyDamage: 52150
+    tuViPerKill: 2388830
+    linhThachPerKill: 281727
+    swordDropRate: 0.0175
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.224
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 1
+    actIndex: 1
+    stageNumber: 3
+    stageCode: 2-3
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 67963089
+    enemyHp: 104558599
+    enemyDamage: 65709
+    tuViPerKill: 3248809
+    linhThachPerKill: 366245
+    swordDropRate: 0.019
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.236
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 1
+    actIndex: 1
+    stageNumber: 4
+    stageCode: 2-4
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 96507586
+    enemyHp: 148473210
+    enemyDamage: 82793
+    tuViPerKill: 4418380
+    linhThachPerKill: 476119
+    swordDropRate: 0.0205
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.248
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 1
+    actIndex: 1
+    stageNumber: 5
+    stageCode: 2-5
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 137040773
+    enemyHp: 210831959
+    enemyDamage: 104319
+    tuViPerKill: 6008997
+    linhThachPerKill: 618955
+    swordDropRate: 0.022
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.26
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 1
+    actIndex: 1
+    stageNumber: 6
+    stageCode: 2-6
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 194597898
+    enemyHp: 299381381
+    enemyDamage: 131442
+    tuViPerKill: 8172235
+    linhThachPerKill: 804641
+    swordDropRate: 0.0235
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.272
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 1
+    actIndex: 1
+    stageNumber: 7
+    stageCode: 2-7
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 276329015
+    enemyHp: 425121561
+    enemyDamage: 165617
+    tuViPerKill: 11114240
+    linhThachPerKill: 1046033
+    swordDropRate: 0.025
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.284
+    herbTier: 2
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 1
+    actIndex: 1
+    stageNumber: 8
+    stageCode: 2-8
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 392387201
+    enemyHp: 603672617
+    enemyDamage: 208677
+    tuViPerKill: 15115366
+    linhThachPerKill: 1359843
+    swordDropRate: 0.0265
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.296
+    herbTier: 2
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 1
+    actIndex: 1
+    stageNumber: 9
+    stageCode: 2-9
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 557189825
+    enemyHp: 857215116
+    enemyDamage: 262934
+    tuViPerKill: 20556898
+    linhThachPerKill: 1767796
+    swordDropRate: 0.027999999
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.308
+    herbTier: 2
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 1
+    actIndex: 1
+    stageNumber: 10
+    stageCode: 2-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng (2-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 4351652537
+    enemyHp: 6694850057
+    enemyDamage: 612898
+    tuViPerKill: 223659054
+    linhThachPerKill: 22981349
+    swordDropRate: 0.0295
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 1
+    herbTier: 2
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 1
+    actIndex: 2
+    stageNumber: 1
+    stageCode: 3-1
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1123517564
+    enemyHp: 1728488560
+    enemyDamage: 417433
+    tuViPerKill: 38022039
+    linhThachPerKill: 2987575
+    swordDropRate: 0.015999999
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.212
+    herbTier: 3
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 2
+    stageNumber: 2
+    stageCode: 3-2
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1595394941
+    enemyHp: 2454453755
+    enemyDamage: 525966
+    tuViPerKill: 51709973
+    linhThachPerKill: 3883848
+    swordDropRate: 0.0175
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.224
+    herbTier: 3
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 2
+    stageNumber: 3
+    stageCode: 3-3
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 2265460816
+    enemyHp: 3485324333
+    enemyDamage: 662717
+    tuViPerKill: 70325564
+    linhThachPerKill: 5049002
+    swordDropRate: 0.019
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.236
+    herbTier: 3
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 2
+    stageNumber: 4
+    stageCode: 3-4
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 3216954359
+    enemyHp: 4949160552
+    enemyDamage: 835024
+    tuViPerKill: 95642767
+    linhThachPerKill: 6563703
+    swordDropRate: 0.0205
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.248
+    herbTier: 3
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 2
+    stageNumber: 5
+    stageCode: 3-5
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 4568075190
+    enemyHp: 7027807984
+    enemyDamage: 1052130
+    tuViPerKill: 130074163
+    linhThachPerKill: 8532814
+    swordDropRate: 0.022
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.26
+    herbTier: 3
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 2
+    stageNumber: 6
+    stageCode: 3-6
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 6486666770
+    enemyHp: 9979487338
+    enemyDamage: 1325684
+    tuViPerKill: 176900861
+    linhThachPerKill: 11092658
+    swordDropRate: 0.0235
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.272
+    herbTier: 3
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 2
+    stageNumber: 7
+    stageCode: 3-7
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 9211066813
+    enemyHp: 14170872020
+    enemyDamage: 1670362
+    tuViPerKill: 240585171
+    linhThachPerKill: 14420456
+    swordDropRate: 0.025
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.284
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 2
+    stageNumber: 8
+    stageCode: 3-8
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 13079714874
+    enemyHp: 20122638268
+    enemyDamage: 2104656
+    tuViPerKill: 327195833
+    linhThachPerKill: 18746592
+    swordDropRate: 0.0265
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.296
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 2
+    stageNumber: 9
+    stageCode: 3-9
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 18573195122
+    enemyHp: 28574146341
+    enemyDamage: 2651866
+    tuViPerKill: 444986333
+    linhThachPerKill: 24370570
+    swordDropRate: 0.027999999
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 0.308
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 2
+    stageNumber: 10
+    stageCode: 3-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc (3-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 145056653900
+    enemyHp: 223164082923
+    enemyDamage: 6181500
+    tuViPerKill: 4841451302
+    linhThachPerKill: 316817408
+    swordDropRate: 0.0295
+    swordDropMinLevel: 2
+    swordDropMaxLevel: 3
+    herbDropRate: 1
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 2
+    actIndex: 0
+    stageNumber: 1
+    stageCode: 1-1
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 37450990643
+    enemyHp: 57616908682
+    enemyDamage: 4210103
+    tuViPerKill: 823046721
+    linhThachPerKill: 41186263
+    swordDropRate: 0.016999999
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 3
+    herbDropRate: 0.212
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 2
+    actIndex: 0
+    stageNumber: 2
+    stageCode: 1-2
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 53180406713
+    enemyHp: 81816010328
+    enemyDamage: 5304730
+    tuViPerKill: 1119343541
+    linhThachPerKill: 53542142
+    swordDropRate: 0.0185
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 3
+    herbDropRate: 0.224
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 2
+    actIndex: 0
+    stageNumber: 3
+    stageCode: 1-3
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 75516177533
+    enemyHp: 116178734666
+    enemyDamage: 6683959
+    tuViPerKill: 1522307216
+    linhThachPerKill: 69604785
+    swordDropRate: 0.02
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 3
+    herbDropRate: 0.236
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 2
+    actIndex: 0
+    stageNumber: 4
+    stageCode: 1-4
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 107232972097
+    enemyHp: 164973803226
+    enemyDamage: 8421789
+    tuViPerKill: 2070337813
+    linhThachPerKill: 90486220
+    swordDropRate: 0.021499999
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 3
+    herbDropRate: 0.248
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 2
+    actIndex: 0
+    stageNumber: 5
+    stageCode: 1-5
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 152270820378
+    enemyHp: 234262800581
+    enemyDamage: 10611454
+    tuViPerKill: 2815659426
+    linhThachPerKill: 117632086
+    swordDropRate: 0.023
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 3
+    herbDropRate: 0.26
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 2
+    actIndex: 0
+    stageNumber: 6
+    stageCode: 1-6
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 216224564936
+    enemyHp: 332653176824
+    enemyDamage: 13370432
+    tuViPerKill: 3829296820
+    linhThachPerKill: 152921712
+    swordDropRate: 0.0245
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 3
+    herbDropRate: 0.272
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 2
+    actIndex: 0
+    stageNumber: 7
+    stageCode: 1-7
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 307038882209
+    enemyHp: 472367511091
+    enemyDamage: 16846744
+    tuViPerKill: 5207843675
+    linhThachPerKill: 198798225
+    swordDropRate: 0.026
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 3
+    herbDropRate: 0.284
+    herbTier: 3
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 2
+    actIndex: 0
+    stageNumber: 8
+    stageCode: 1-8
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 435995212737
+    enemyHp: 670761865749
+    enemyDamage: 21226897
+    tuViPerKill: 7082667398
+    linhThachPerKill: 258437693
+    swordDropRate: 0.0275
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 3
+    herbDropRate: 0.296
+    herbTier: 3
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 2
+    actIndex: 0
+    stageNumber: 9
+    stageCode: 1-9
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 619113202086
+    enemyHp: 952481849363
+    enemyDamage: 26745890
+    tuViPerKill: 9632427661
+    linhThachPerKill: 335969000
+    swordDropRate: 0.029
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 3
+    herbDropRate: 0.308
+    herbTier: 3
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 2
+    actIndex: 0
+    stageNumber: 10
+    stageCode: 1-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n (1-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 4835274108291
+    enemyHp: 7438883243525
+    enemyDamage: 62344670
+    tuViPerKill: 104800812951
+    linhThachPerKill: 4367597005
+    swordDropRate: 0.03
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 3
+    herbDropRate: 1
+    herbTier: 3
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 2
+    actIndex: 1
+    stageNumber: 1
+    stageCode: 2-1
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1248379860686
+    enemyHp: 1920584401056
+    enemyDamage: 42461775
+    tuViPerKill: 17816138202
+    linhThachPerKill: 567787611
+    swordDropRate: 0.016999999
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.212
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 2
+    actIndex: 1
+    stageNumber: 2
+    stageCode: 2-2
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1772699402174
+    enemyHp: 2727229849499
+    enemyDamage: 53501837
+    tuViPerKill: 24229947954
+    linhThachPerKill: 738123894
+    swordDropRate: 0.0185
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.224
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 2
+    actIndex: 1
+    stageNumber: 3
+    stageCode: 2-3
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 2517233151088
+    enemyHp: 3872666386289
+    enemyDamage: 67412315
+    tuViPerKill: 32952729218
+    linhThachPerKill: 959561062
+    swordDropRate: 0.02
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.236
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 2
+    actIndex: 1
+    stageNumber: 4
+    stageCode: 2-4
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 3574471074544
+    enemyHp: 5499186268530
+    enemyDamage: 84939517
+    tuViPerKill: 44815711736
+    linhThachPerKill: 1247429381
+    swordDropRate: 0.021499999
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.248
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 2
+    actIndex: 1
+    stageNumber: 5
+    stageCode: 2-5
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 5075748925853
+    enemyHp: 7808844501312
+    enemyDamage: 107023791
+    tuViPerKill: 60949367961
+    linhThachPerKill: 1621658195
+    swordDropRate: 0.023
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.26
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 2
+    actIndex: 1
+    stageNumber: 6
+    stageCode: 2-6
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 7207563474712
+    enemyHp: 11088559191864
+    enemyDamage: 134849977
+    tuViPerKill: 82891140427
+    linhThachPerKill: 2108155653
+    swordDropRate: 0.0245
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.272
+    herbTier: 3
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 2
+    actIndex: 1
+    stageNumber: 7
+    stageCode: 2-7
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 10234740134090
+    enemyHp: 15745754052446
+    enemyDamage: 169910970
+    tuViPerKill: 112731950981
+    linhThachPerKill: 2740602349
+    swordDropRate: 0.026
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.284
+    herbTier: 3
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 2
+    actIndex: 1
+    stageNumber: 8
+    stageCode: 2-8
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 14533330990408
+    enemyHp: 22358970754474
+    enemyDamage: 214087823
+    tuViPerKill: 153315453334
+    linhThachPerKill: 3562783054
+    swordDropRate: 0.0275
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.296
+    herbTier: 3
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 2
+    actIndex: 1
+    stageNumber: 9
+    stageCode: 2-9
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 20637330006379
+    enemyHp: 31749738471353
+    enemyDamage: 269750657
+    tuViPerKill: 208509016535
+    linhThachPerKill: 4631617971
+    swordDropRate: 0.029
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.308
+    herbTier: 3
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 2
+    actIndex: 1
+    stageNumber: 10
+    stageCode: 2-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng (2-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 161177547349822
+    enemyHp: 247965457461265
+    enemyDamage: 628788781
+    tuViPerKill: 2268578099897
+    linhThachPerKill: 60211033618
+    swordDropRate: 0.03
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 1
+    herbTier: 3
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 2
+    actIndex: 2
+    stageNumber: 1
+    stageCode: 3-1
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 41613112224863
+    enemyHp: 64020172653636
+    enemyDamage: 428256142
+    tuViPerKill: 385658276982
+    linhThachPerKill: 7827434370
+    swordDropRate: 0.016999999
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.212
+    herbTier: 4
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 2
+    actIndex: 2
+    stageNumber: 2
+    stageCode: 3-2
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 59090619359306
+    enemyHp: 90908645168163
+    enemyDamage: 539602739
+    tuViPerKill: 524495256696
+    linhThachPerKill: 10175664681
+    swordDropRate: 0.0185
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.224
+    herbTier: 4
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 2
+    actIndex: 2
+    stageNumber: 3
+    stageCode: 3-3
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 83908679490214
+    enemyHp: 129090276138791
+    enemyDamage: 679899452
+    tuViPerKill: 713313549107
+    linhThachPerKill: 13228364086
+    swordDropRate: 0.02
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.236
+    herbTier: 4
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 2
+    actIndex: 2
+    stageNumber: 4
+    stageCode: 3-4
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 119150324876104
+    enemyHp: 183308192117083
+    enemyDamage: 856673309
+    tuViPerKill: 970106426785
+    linhThachPerKill: 17196873312
+    swordDropRate: 0.021499999
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.248
+    herbTier: 4
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 2
+    actIndex: 2
+    stageNumber: 5
+    stageCode: 3-5
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 169193461324068
+    enemyHp: 260297632806258
+    enemyDamage: 1079408370
+    tuViPerKill: 1319344740428
+    linhThachPerKill: 22355935305
+    swordDropRate: 0.023
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.26
+    herbTier: 4
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 2
+    actIndex: 2
+    stageNumber: 6
+    stageCode: 3-6
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 240254715080176
+    enemyHp: 369622638584886
+    enemyDamage: 1360054546
+    tuViPerKill: 1794308846982
+    linhThachPerKill: 29062715897
+    swordDropRate: 0.0245
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.272
+    herbTier: 4
+    maxEquipmentRarity: 2
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 2
+    actIndex: 2
+    stageNumber: 7
+    stageCode: 3-7
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 341161695413850
+    enemyHp: 524864146790538
+    enemyDamage: 1713668728
+    tuViPerKill: 2440260031896
+    linhThachPerKill: 37781530666
+    swordDropRate: 0.026
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.284
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 2
+    actIndex: 2
+    stageNumber: 8
+    stageCode: 3-8
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 484449607487667
+    enemyHp: 745307088442564
+    enemyDamage: 2159222597
+    tuViPerKill: 3318753643378
+    linhThachPerKill: 49115989865
+    swordDropRate: 0.0275
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.296
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 2
+    actIndex: 2
+    stageNumber: 9
+    stageCode: 3-9
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 687918442632487
+    enemyHp: 1058336065588441
+    enemyDamage: 2720620472
+    tuViPerKill: 4513504954994
+    linhThachPerKill: 63850786825
+    swordDropRate: 0.029
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 0.308
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 2
+    actIndex: 2
+    stageNumber: 10
+    stageCode: 3-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc (3-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 5372643036959722
+    enemyHp: 8265604672245726
+    enemyDamage: 6341766320
+    tuViPerKill: 49106933910336
+    linhThachPerKill: 830060228721
+    swordDropRate: 0.03
+    swordDropMinLevel: 3
+    swordDropMaxLevel: 4
+    herbDropRate: 1
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 3
+    actIndex: 0
+    stageNumber: 1
+    stageCode: 1-1
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1387118747724146
+    enemyHp: 2134028842652533
+    enemyDamage: 4319257061
+    tuViPerKill: 8348178764757
+    linhThachPerKill: 107907829734
+    swordDropRate: 0.018
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 4
+    herbDropRate: 0.212
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 3
+    actIndex: 0
+    stageNumber: 2
+    stageCode: 1-2
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1969708621768288
+    enemyHp: 3030320956566596
+    enemyDamage: 5442263897
+    tuViPerKill: 11353523120070
+    linhThachPerKill: 140280178654
+    swordDropRate: 0.0195
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 4
+    herbDropRate: 0.224
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 3
+    actIndex: 0
+    stageNumber: 3
+    stageCode: 1-3
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 2796986242910968
+    enemyHp: 4303055758324567
+    enemyDamage: 6857252510
+    tuViPerKill: 15440791443295
+    linhThachPerKill: 182364232250
+    swordDropRate: 0.021
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 4
+    herbDropRate: 0.236
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 3
+    actIndex: 0
+    stageNumber: 4
+    stageCode: 1-4
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 3971720464933576
+    enemyHp: 6110339176820885
+    enemyDamage: 8640138163
+    tuViPerKill: 20999476362881
+    linhThachPerKill: 237073501925
+    swordDropRate: 0.022499999
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 4
+    herbDropRate: 0.248
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 3
+    actIndex: 0
+    stageNumber: 5
+    stageCode: 1-5
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 5639843060205677
+    enemyHp: 8676681631085656
+    enemyDamage: 10886574085
+    tuViPerKill: 28559287853518
+    linhThachPerKill: 308195552503
+    swordDropRate: 0.024
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 4
+    herbDropRate: 0.26
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 3
+    actIndex: 0
+    stageNumber: 6
+    stageCode: 1-6
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 8008577145492061
+    enemyHp: 12320887916141632
+    enemyDamage: 13717083347
+    tuViPerKill: 38840631480785
+    linhThachPerKill: 400654218253
+    swordDropRate: 0.0255
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 4
+    herbDropRate: 0.272
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 3
+    actIndex: 0
+    stageNumber: 7
+    stageCode: 1-7
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 11372179546598724
+    enemyHp: 17495660840921114
+    enemyDamage: 17283525018
+    tuViPerKill: 52823258813867
+    linhThachPerKill: 520850483729
+    swordDropRate: 0.027
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 4
+    herbDropRate: 0.284
+    herbTier: 4
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 3
+    actIndex: 0
+    stageNumber: 8
+    stageCode: 1-8
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 16148494956170188
+    enemyHp: 24843838394107980
+    enemyDamage: 21777241522
+    tuViPerKill: 71839631986859
+    linhThachPerKill: 677105628848
+    swordDropRate: 0.0285
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 4
+    herbDropRate: 0.296
+    herbTier: 4
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 3
+    actIndex: 0
+    stageNumber: 9
+    stageCode: 1-9
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 22930862837761668
+    enemyHp: 35278250519633332
+    enemyDamage: 27439324318
+    tuViPerKill: 97701899502129
+    linhThachPerKill: 880237317503
+    swordDropRate: 0.03
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 4
+    herbDropRate: 0.308
+    herbTier: 4
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 3
+    actIndex: 0
+    stageNumber: 10
+    stageCode: 1-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n (1-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 1.7909003876291862e+17
+    enemyHp: 2.7552313655833632e+17
+    enemyDamage: 63961064986
+    tuViPerKill: 1062996666583162
+    linhThachPerKill: 11443085127535
+    swordDropRate: 0.03
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 4
+    herbDropRate: 1
+    herbTier: 4
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 3
+    actIndex: 1
+    stageNumber: 1
+    stageCode: 2-1
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 46237791826062616
+    enemyHp: 71135064347788640
+    enemyDamage: 43562671288
+    tuViPerKill: 180709433319138
+    linhThachPerKill: 1487601066580
+    swordDropRate: 0.018
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.212
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 3
+    actIndex: 1
+    stageNumber: 2
+    stageCode: 2-2
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 65657664393008920
+    enemyHp: 1.0101179137385987e+17
+    enemyDamage: 54888965823
+    tuViPerKill: 245764829314027
+    linhThachPerKill: 1933881386553
+    swordDropRate: 0.0195
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.224
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 3
+    actIndex: 1
+    stageNumber: 3
+    stageCode: 2-3
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 93233883438072660
+    enemyHp: 1.4343674375088101e+17
+    enemyDamage: 69160096936
+    tuViPerKill: 334240167867077
+    linhThachPerKill: 2514045802520
+    swordDropRate: 0.021
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.236
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 3
+    actIndex: 1
+    stageNumber: 4
+    stageCode: 2-4
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1.3239211448206318e+17
+    enemyHp: 2.0368017612625104e+17
+    enemyDamage: 87141722140
+    tuViPerKill: 454566628299224
+    linhThachPerKill: 3268259543275
+    swordDropRate: 0.022499999
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.248
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 3
+    actIndex: 1
+    stageNumber: 5
+    stageCode: 2-5
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1.8799680256452966e+17
+    enemyHp: 2.892258500992764e+17
+    enemyDamage: 109798569896
+    tuViPerKill: 618210614486945
+    linhThachPerKill: 4248737406258
+    swordDropRate: 0.024
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.26
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 3
+    actIndex: 1
+    stageNumber: 6
+    stageCode: 2-6
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 2.6695545964163213e+17
+    enemyHp: 4.107007071409725e+17
+    enemyDamage: 138346198069
+    tuViPerKill: 840766435702246
+    linhThachPerKill: 5523358628135
+    swordDropRate: 0.0255
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.272
+    herbTier: 4
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 3
+    actIndex: 1
+    stageNumber: 7
+    stageCode: 2-7
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 3.790767526911176e+17
+    enemyHp: 5.831950041401809e+17
+    enemyDamage: 174316209567
+    tuViPerKill: 1143442352555054
+    linhThachPerKill: 7180366216576
+    swordDropRate: 0.027
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.284
+    herbTier: 4
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 3
+    actIndex: 1
+    stageNumber: 8
+    stageCode: 2-8
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 5.38288988821387e+17
+    enemyHp: 8.281369058790569e+17
+    enemyDamage: 219638424055
+    tuViPerKill: 1555081599474874
+    linhThachPerKill: 9334476081549
+    swordDropRate: 0.0285
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.296
+    herbTier: 4
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 3
+    actIndex: 1
+    stageNumber: 9
+    stageCode: 2-9
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 7.643703641263695e+17
+    enemyHp: 1.1759544063482609e+18
+    enemyDamage: 276744414309
+    tuViPerKill: 2114910975285829
+    linhThachPerKill: 12134818906013
+    swordDropRate: 0.03
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.308
+    herbTier: 4
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 3
+    actIndex: 1
+    stageNumber: 10
+    stageCode: 2-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng (2-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 5.969732543826945e+18
+    enemyHp: 9.184203913579915e+18
+    enemyDamage: 645091229754
+    tuViPerKill: 23010231411109820
+    linhThachPerKill: 157752645778174
+    swordDropRate: 0.03
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 1
+    herbTier: 4
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 3
+    actIndex: 2
+    stageNumber: 1
+    stageCode: 3-1
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1.5412764022244114e+18
+    enemyHp: 2.371194464960633e+18
+    enemyDamage: 439359432157
+    tuViPerKill: 3911739339888670
+    linhThachPerKill: 20507843951163
+    swordDropRate: 0.018
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.212
+    herbTier: 5
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 3
+    actIndex: 2
+    stageNumber: 2
+    stageCode: 3-2
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 2.1886124911586642e+18
+    enemyHp: 3.3670961402440986e+18
+    enemyDamage: 553592884517
+    tuViPerKill: 5319965502248591
+    linhThachPerKill: 26660197136511
+    swordDropRate: 0.0195
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.224
+    herbTier: 5
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 3
+    actIndex: 2
+    stageNumber: 3
+    stageCode: 3-3
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 3.1078297374453033e+18
+    enemyHp: 4.78127651914662e+18
+    enemyDamage: 697527034492
+    tuViPerKill: 7235153083058084
+    linhThachPerKill: 34658256277465
+    swordDropRate: 0.021
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.236
+    herbTier: 5
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 3
+    actIndex: 2
+    stageNumber: 4
+    stageCode: 3-4
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 4.413118227172329e+18
+    enemyHp: 6.789412657188198e+18
+    enemyDamage: 878884063460
+    tuViPerKill: 9839808192958996
+    linhThachPerKill: 45055733160704
+    swordDropRate: 0.022499999
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.248
+    herbTier: 5
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 3
+    actIndex: 2
+    stageNumber: 5
+    stageCode: 3-5
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 6.266627882584708e+18
+    enemyHp: 9.640965973207243e+18
+    enemyDamage: 1107393919960
+    tuViPerKill: 13382139142424234
+    linhThachPerKill: 58572453108916
+    swordDropRate: 0.024
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.26
+    herbTier: 5
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 3
+    actIndex: 2
+    stageNumber: 6
+    stageCode: 3-6
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 8.898611593270283e+18
+    enemyHp: 1.3690171681954281e+19
+    enemyDamage: 1395316339149
+    tuViPerKill: 18199709233696960
+    linhThachPerKill: 76144189041590
+    swordDropRate: 0.0255
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.272
+    herbTier: 5
+    maxEquipmentRarity: 3
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 3
+    actIndex: 2
+    stageNumber: 7
+    stageCode: 3-7
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1.2636028462443803e+19
+    enemyHp: 1.944004378837508e+19
+    enemyDamage: 1758098587328
+    tuViPerKill: 24751604557827868
+    linhThachPerKill: 98987445754067
+    swordDropRate: 0.027
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.284
+    herbTier: 5
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 3
+    actIndex: 2
+    stageNumber: 8
+    stageCode: 3-8
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 1.79431604166702e+19
+    enemyHp: 2.7604862179492614e+19
+    enemyDamage: 2215204220033
+    tuViPerKill: 33662182198645900
+    linhThachPerKill: 128683679480287
+    swordDropRate: 0.0285
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.296
+    herbTier: 5
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 3
+    actIndex: 2
+    stageNumber: 9
+    stageCode: 3-9
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    recommendedPower: 2.547928779167168e+19
+    enemyHp: 3.919890429487951e+19
+    enemyDamage: 2791157317242
+    tuViPerKill: 45780567790158430
+    linhThachPerKill: 167288783324374
+    swordDropRate: 0.03
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 0.308
+    herbTier: 5
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 3
+    actIndex: 2
+    stageNumber: 10
+    stageCode: 3-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc (3-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    recommendedPower: 1.9899323765295582e+20
+    enemyHp: 3.0614344254300894e+20
+    enemyDamage: 6506187706490
+    tuViPerKill: 4.980925775569238e+17
+    linhThachPerKill: 2174754183216857
+    swordDropRate: 0.03
+    swordDropMinLevel: 4
+    swordDropMaxLevel: 5
+    herbDropRate: 1
+    herbTier: 5
+    maxEquipmentRarity: 4
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}

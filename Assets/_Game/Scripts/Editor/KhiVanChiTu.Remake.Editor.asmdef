@@ -1,0 +1,21 @@
+{
+    "name": "KhiVanChiTu.Remake.Editor",
+    "rootNamespace": "KhiVanChiTu.Remake.Editor",
+    "references": [
+        "KhiVanChiTu.Remake.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime",
+        "KhiVanChiTu.Collaboration.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

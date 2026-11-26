@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cddbc7b583bb7e42a61af99bc1d4743, type: 3}
+  m_Name: Act1_Turtle
+  m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.MonsterDefinitionSO
+  monsterId: act1_turtle
+  displayName: "Huy\u1EC1n Gi\xE1p Quy"
+  description: "Gi\xE1p d\xE0y ch\u1ED1ng ch\u1ECBu cao, th\u01B0\u1EDFng Tu Vi kh\xE1."
+  archetype: 2
+  codexPortraitKey: Monsters/act1_turtle
+  prefab: {fileID: 4163651725457029712, guid: 251bcba8c66f8204abd86f97f3106e51, type: 3}
+  hpMultiplier: 1.45
+  damageMultiplier: 0.85
+  moveSpeed: 1.85
+  attackRange: 1.9
+  hoverHeight: 0
+  attackInterval: 1.35
+  armorMitigation: 0.22
+  tuViMultiplier: 1.25
+  linhThachMultiplier: 1
+  hpBarHeight: 1.9
+  visualScale: 1.05
+  isBoss: 0

@@ -1,4 +1,0 @@
-System.Exception: Existing partial rewards retained LightningDodge
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Check (System.Boolean b, System.String m) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:54 
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA+<Run>d__37.MoveNext () [0x01497] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:152 
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Tick () [0x0001a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:50 

@@ -1,4 +1,0 @@
-System.Exception: No runtime errors after launch HordeSurvival
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Check (System.Boolean b, System.String m) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:55 
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA+<Run>d__39.MoveNext () [0x00671] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:114 
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Tick () [0x0001a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:51 

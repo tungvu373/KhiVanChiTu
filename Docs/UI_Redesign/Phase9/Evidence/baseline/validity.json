@@ -1,5 +1,0 @@
-{
-  "status": "INVALID_FIXTURE",
-  "reason": "Native delayed LoadCurrentGame had not run before timeScale was set to zero. Exclude this profiling/scan attempt from acceptance and before/after comparisons.",
-  "replacement": "../polish/cases.json"
-}

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cddbc7b583bb7e42a61af99bc1d4743, type: 3}
+  m_Name: Act3_JadeCrane
+  m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.MonsterDefinitionSO
+  monsterId: act3_jade_crane
+  displayName: "B\u1EA1ch Ng\u1ECDc Linh C\u1EA7m"
+  description: "Phi c\u1EA7m ti\xEAn s\u01A1n bay l\u01B0\u1EE3n v\u1EDBi t\u1ED1c \u0111\u1ED9 c\u1EF1c cao."
+  archetype: 1
+  codexPortraitKey: Monsters/act3_thunder_spirit
+  prefab: {fileID: 1735219130031058411, guid: ddc238e287b4708438af9023f9da75dc, type: 3}
+  hpMultiplier: 1
+  damageMultiplier: 1.1
+  moveSpeed: 3.5
+  attackRange: 1.9
+  hoverHeight: 1.25
+  attackInterval: 1.35
+  armorMitigation: 0
+  tuViMultiplier: 1
+  linhThachMultiplier: 1
+  hpBarHeight: 2.1
+  visualScale: 1
+  isBoss: 0

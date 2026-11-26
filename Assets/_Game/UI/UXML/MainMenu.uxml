@@ -1,0 +1,64 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../USS/LightXianxiaTheme.uss" />
+
+    <ui:VisualElement name="menu-root" class="full-screen" style="background-color: #DDF2FF; align-items: center; justify-content: center; padding: 18px;">
+        <!-- Codex Daylight Menu Wallpaper Slot (A11) -->
+        <ui:VisualElement name="menu-bg-slot" class="full-screen art-slot art-slot-cover" style="opacity: 0.92;" />
+
+        <!-- Top Quick Graphics / FPS Corner -->
+        <ui:VisualElement style="position: absolute; top: 14px; right: 14px; flex-direction: row; align-items: center;">
+            <ui:VisualElement class="pill-light" style="margin-right: 8px;">
+                <ui:Label name="menu-fps-label" text="60 FPS" class="text-muted fps-good" />
+            </ui:VisualElement>
+            <ui:Button name="btn-menu-preset" text="Đồ Họa: Trung" class="btn-compact" style="padding: 5px 10px; font-size: 11px;" />
+        </ui:VisualElement>
+
+        <!-- Center Light Xianxia Card -->
+        <ui:VisualElement class="panel-light" style="width: 396px; max-width: 94%; padding: 24px 22px; align-items: center;">
+            <ui:VisualElement style="width: 92px; height: 92px; align-items: center; justify-content: center;">
+                <ui:VisualElement name="menu-portrait-slot" class="art-slot" style="width: 72px; height: 72px; border-radius: 36px; background-color: #FFFDF8;" />
+                <ui:VisualElement name="menu-avatar-frame" picking-mode="Ignore" class="full-screen art-slot" />
+            </ui:VisualElement>
+            <ui:Label text="KHÍ VẬN CHI TỬ" class="text-title" style="font-size: 26px; margin-top: 8px;" />
+            <ui:Label text="Bản Thương Mại · Vạn Giới Đồng Cỏ" class="text-muted" style="margin-top: 2px; margin-bottom: 12px;" />
+
+            <!-- Account Switcher (Main vs Full-Access Test Account) -->
+            <ui:VisualElement style="width: 100%; margin-bottom: 10px;">
+                <ui:Label text="Chọn Tài Khoản:" class="text-muted" style="margin-bottom: 4px;" />
+                <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
+                    <ui:Button name="btn-account-main" text="Tài Khoản Chính" class="btn-secondary" style="flex-grow: 1; margin-right: 4px; font-size: 11px;" />
+                    <ui:Button name="btn-account-test" text="Tài Khoản Test Full" class="btn-secondary" style="flex-grow: 1; font-size: 11px;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Existing Save Card OR New Character Card -->
+            <ui:VisualElement name="existing-save-box" class="card-light" style="width: 100%; display: none; margin-bottom: 12px;">
+                <ui:Label name="save-dao-name" text="Đạo Hữu: Thanh Vân Tử" class="text-section" />
+                <ui:Label name="save-realm-info" text="Luyện Khí Tầng 1 · Ải 1-1" class="text-body" style="margin-top: 3px;" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="create-char-box" class="card-light" style="width: 100%; margin-bottom: 12px;">
+                <ui:Label text="Đạo Hiệu (Tối đa 20 ký tự · Hỗ trợ Telex iOS)" class="text-muted" style="margin-bottom: 6px;" />
+                <ui:VisualElement style="flex-direction: row; align-items: center;">
+                    <ui:TextField name="input-dao-name" value="Thanh Vân Tử" max-length="20" style="flex-grow: 1; height: 34px; margin-right: 6px; background-color: #FFFFFF;" />
+                    <ui:Button name="btn-touch-keyboard" text="Sửa Tên" class="btn-compact" style="padding: 6px 10px;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Graphics Preset Selector -->
+            <ui:VisualElement style="width: 100%; margin-bottom: 14px;">
+                <ui:Label text="Cấu Hình 3D Khởi Đầu:" class="text-muted" style="margin-bottom: 6px;" />
+                <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
+                    <ui:Button name="btn-gfx-low" text="Thấp (iPhone)" class="btn-secondary" style="flex-grow: 1; margin-right: 4px;" />
+                    <ui:Button name="btn-gfx-med" text="Trung (Web)" class="btn-secondary" style="flex-grow: 1; margin-right: 4px;" />
+                    <ui:Button name="btn-gfx-high" text="Cao (PC)" class="btn-secondary" style="flex-grow: 1;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:Button name="btn-play-continue" text="TIẾP TỤC TU HÀNH" class="btn-primary" style="width: 100%; height: 44px; font-size: 15px; display: none; margin-bottom: 8px;" />
+            <ui:Button name="btn-start-new" text="KHAI MỞ ĐẠO LỘ" class="btn-primary" style="width: 100%; height: 44px; font-size: 15px;" />
+
+            <ui:Button name="btn-reset-remake-save" text="Tạo Lại Nhân Vật Mới" class="btn-danger" style="width: 100%; margin-top: 8px; display: none;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,4 +1,0 @@
-System.Exception: Six demon masks render on existing targets
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Check (System.Boolean b, System.String m) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:54 
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA+<Run>d__37.MoveNext () [0x0068e] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:113 
-  at KhiVanChiTu.UI.SecretRealm.Editor.RealmQA.Tick () [0x0001a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\SecretRealm\Editor\RealmQA.cs:50 

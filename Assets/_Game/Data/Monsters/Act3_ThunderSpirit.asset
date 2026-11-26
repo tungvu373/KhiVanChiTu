@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cddbc7b583bb7e42a61af99bc1d4743, type: 3}
+  m_Name: Act3_ThunderSpirit
+  m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.MonsterDefinitionSO
+  monsterId: act3_thunder_spirit
+  displayName: "C\u1EEDu Ti\xEAu L\xF4i Linh"
+  description: "Tinh linh ng\u1ECDc \u0111\u1EC9nh mang s\u1EA5m s\xE9t thanh khi\u1EBFt."
+  archetype: 0
+  codexPortraitKey: Monsters/act3_thunder_spirit
+  prefab: {fileID: 5099399970048823045, guid: e9bd66f98e355164f93d89fde6f58f31, type: 3}
+  hpMultiplier: 1.15
+  damageMultiplier: 1.15
+  moveSpeed: 3.25
+  attackRange: 1.9
+  hoverHeight: 0
+  attackInterval: 1.35
+  armorMitigation: 0
+  tuViMultiplier: 1
+  linhThachMultiplier: 1
+  hpBarHeight: 2.1
+  visualScale: 0.95
+  isBoss: 0

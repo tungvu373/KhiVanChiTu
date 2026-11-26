@@ -1,5 +1,0 @@
-System.Exception: Native list scroll ReadingScroll
-  at KhiVanChiTu.UI.Menu.Editor.MenuQA.Check (System.Boolean b, System.String text) [0x00015] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:49 
-  at KhiVanChiTu.UI.Menu.Editor.MenuQA.Drag (UnityEngine.UI.ScrollRect s) [0x00081] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:61 
-  at KhiVanChiTu.UI.Menu.Editor.MenuQA+<Run>d__30.MoveNext () [0x006b0] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:84 
-  at KhiVanChiTu.UI.Menu.Editor.MenuQA.Tick () [0x0002a] in C:\Lap trinh game\Save file\KhiVanChiTu\Assets\UI\Menu\Editor\MenuQA.cs:46 
