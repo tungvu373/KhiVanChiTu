@@ -1,0 +1,514 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc388ce1d456dc14c87e0caf4883fe52, type: 3}
+  m_Name: RemakeArtRegistry
+  m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.RemakeArtRegistrySO
+  reusedSprites:
+  - key: Amulet
+    sprite: {fileID: 21300000, guid: da065a37020348f4586b4f31793f41f3, type: 3}
+  - key: BloodFormation
+    sprite: {fileID: 21300000, guid: d3723869cc9b33446aabb42ab0d0edf0, type: 3}
+  - key: Body
+    sprite: {fileID: 21300000, guid: 78b9094f551171d47b3455a40026fff1, type: 3}
+  - key: Boots
+    sprite: {fileID: 21300000, guid: 7b2b8e947156577478f045479deaf2b4, type: 3}
+  - key: Cauldron
+    sprite: {fileID: 21300000, guid: 680ea77fd90e15d4fa85fb031543fa3f, type: 3}
+  - key: Chest
+    sprite: {fileID: 21300000, guid: 9f4b05f8a6ffe4e4992fcbaa864bf71d, type: 3}
+  - key: Crown
+    sprite: {fileID: 21300000, guid: 435b7c7ebe314bf4ea3082f82ee42c64, type: 3}
+  - key: Dust
+    sprite: {fileID: 21300000, guid: a489a652986c70b4a9bd3eb0f7fc54de, type: 3}
+  - key: FortuneCoin
+    sprite: {fileID: 21300000, guid: 499cf9910767cbe4da701747f29aaea7, type: 3}
+  - key: FrostFormation
+    sprite: {fileID: 21300000, guid: f1b5c7cb99419164282db50c4c32be19, type: 3}
+  - key: GoldenBell
+    sprite: {fileID: 21300000, guid: fe530a97a544b3543a83613e8f24c3c1, type: 3}
+  - key: HerbCondensing
+    sprite: {fileID: 21300000, guid: 6eec83cb18c7024458acc0de3845e8e1, type: 3}
+  - key: HerbLingzhi
+    sprite: {fileID: 21300000, guid: 69b9e3b5df5307b42b129c1be6890087, type: 3}
+  - key: HerbSnowLotus
+    sprite: {fileID: 21300000, guid: 86c71a6ccad34174e8a16c5bec892788, type: 3}
+  - key: Ore
+    sprite: {fileID: 21300000, guid: 90440d1a4e567d644a2c71f8114ccc0f, type: 3}
+  - key: PillBreakthrough
+    sprite: {fileID: 21300000, guid: f726458c033895741b7ec6408b11be3c, type: 3}
+  - key: PillCultivation
+    sprite: {fileID: 21300000, guid: 4624d03b9e8ef8b48a97e89db9c60727, type: 3}
+  - key: RealmPortal
+    sprite: {fileID: 21300000, guid: 7a64e46268fe6ab4b80b037890cdba07, type: 3}
+  - key: Robe
+    sprite: {fileID: 21300000, guid: 1b99e5aafd153b047be6abf7d49f8989, type: 3}
+  - key: SkillPalm
+    sprite: {fileID: 21300000, guid: a6131cddb801c70408228e66bff5dc48, type: 3}
+  - key: SkillSword
+    sprite: {fileID: 21300000, guid: f9999315f0fd9ba47862ce4e1dbe1627, type: 3}
+  - key: SkillThunder
+    sprite: {fileID: 21300000, guid: 567414047c6804e4e8ec53dcae39fb0e, type: 3}
+  - key: SkillYinYang
+    sprite: {fileID: 21300000, guid: 53ee81f0636695349ba133904b3c3437, type: 3}
+  - key: SpiritLotus
+    sprite: {fileID: 21300000, guid: 1713892a43cb0514dbcebd6730506538, type: 3}
+  - key: SpiritStone
+    sprite: {fileID: 21300000, guid: b3354a615cbd8c44ba4799612ae10699, type: 3}
+  - key: Sword01
+    sprite: {fileID: 21300000, guid: 08a078f5518101d4d8f8092f95a9e574, type: 3}
+  - key: Sword02
+    sprite: {fileID: 21300000, guid: 6519d7fb8a43cdb45963095d41b3a925, type: 3}
+  - key: Sword03
+    sprite: {fileID: 21300000, guid: 5b9f6d97dd956db43be642acccb4dc30, type: 3}
+  - key: Sword04
+    sprite: {fileID: 21300000, guid: 16acc740a9888db4bb4f8fb16e2de993, type: 3}
+  - key: Sword05
+    sprite: {fileID: 21300000, guid: 55f12ad69e33c8945ace413981ac78f6, type: 3}
+  - key: Sword06
+    sprite: {fileID: 21300000, guid: dc489205ae236074ebd5a40cce999c70, type: 3}
+  - key: Sword07
+    sprite: {fileID: 21300000, guid: 3f3aff4a89317f640b3e6cc0e8f180d8, type: 3}
+  - key: Sword08
+    sprite: {fileID: 21300000, guid: 88e30d82439feca42a22df474e4eb657, type: 3}
+  - key: Sword09
+    sprite: {fileID: 21300000, guid: 4464dc6e1902df54f8d4bfeb81e3ecd5, type: 3}
+  - key: Sword10
+    sprite: {fileID: 21300000, guid: 103633a443578544ba5aca52325955bc, type: 3}
+  - key: BodyDrain
+    sprite: {fileID: 21300000, guid: ca84b13cbf0f13143b882dc4b80b6cf2, type: 3}
+  - key: BodyFocus
+    sprite: {fileID: 21300000, guid: d02fd7531a86b57458b3468b083ec63a, type: 3}
+  - key: BodyForce
+    sprite: {fileID: 21300000, guid: 9fbddef9264a9924ca47c0bedfb303c1, type: 3}
+  - key: BodyGuard
+    sprite: {fileID: 21300000, guid: 91827402a578fdb43a3ee8ece56759eb, type: 3}
+  - key: BodyRecovery
+    sprite: {fileID: 21300000, guid: 649bb37a9f8614a4a85d84c510566545, type: 3}
+  - key: BodyVitality
+    sprite: {fileID: 21300000, guid: 58592dfe18fbd5b4c8aa88330f1be86a, type: 3}
+  - key: RouteAchievements
+    sprite: {fileID: 21300000, guid: 8a05ed16e7378f5498d52942106bc6ca, type: 3}
+  - key: RouteAlchemy
+    sprite: {fileID: 21300000, guid: abb57953b333d1e4186be58318b7287a, type: 3}
+  - key: RouteArtifact
+    sprite: {fileID: 21300000, guid: f8dc4b72a639296438ab879f48034d1d, type: 3}
+  - key: RouteBarrier
+    sprite: {fileID: 21300000, guid: 6ca3959c9f9e97f45ad9d68918073861, type: 3}
+  - key: RouteBody
+    sprite: {fileID: 21300000, guid: 0d37c6aacbd5ce041acc84c4c292c367, type: 3}
+  - key: RouteBuffs
+    sprite: {fileID: 21300000, guid: 28a349996b715c646a11578cd14f5dc3, type: 3}
+  - key: RouteCauldron
+    sprite: {fileID: 21300000, guid: 7454c0b3c8c81a8428435c3d63396867, type: 3}
+  - key: RouteCharacter
+    sprite: {fileID: 21300000, guid: b3e91be4d0fb9c14ea53d76f18692481, type: 3}
+  - key: RouteFormation
+    sprite: {fileID: 21300000, guid: 6968d7472d52b61489b9e4c5829de052, type: 3}
+  - key: RouteHorde
+    sprite: {fileID: 21300000, guid: ba01831d75ff8154294fed13196f4ce0, type: 3}
+  - key: RouteLightning
+    sprite: {fileID: 21300000, guid: 96516d98d93337f419626eafec6746c9, type: 3}
+  - key: RouteLog
+    sprite: {fileID: 21300000, guid: babf82f095cb89e4fa84ff41fc710607, type: 3}
+  - key: RouteMerge
+    sprite: {fileID: 21300000, guid: 9af73fe76f3035c4c887c32e748e36df, type: 3}
+  - key: RouteMilestones
+    sprite: {fileID: 21300000, guid: 8fb70b028d860634aa5e4b885ef177f8, type: 3}
+  - key: RouteProgression
+    sprite: {fileID: 21300000, guid: 82ff7241fe015914a8b7433d3da4e448, type: 3}
+  - key: RouteRealmList
+    sprite: {fileID: 21300000, guid: cec5c2fba030421469510f8fa9d15bc2, type: 3}
+  - key: RouteResources
+    sprite: {fileID: 21300000, guid: c08bd6ac9ea92f245b516031210f0503, type: 3}
+  - key: RouteSettings
+    sprite: {fileID: 21300000, guid: aee07aa7c05942840a5b84e90591b261, type: 3}
+  - key: RouteStorage
+    sprite: {fileID: 21300000, guid: 752616a801dd0844c84c037ab299bcb9, type: 3}
+  - key: RouteSupplies
+    sprite: {fileID: 21300000, guid: 3bc5acab7ab6f8a47a314f87aa465d92, type: 3}
+  - key: RouteSwordStyle
+    sprite: {fileID: 21300000, guid: 094399ebc273dea42bfd44a2ef2890e1, type: 3}
+  - key: RouteSwordTomb
+    sprite: {fileID: 21300000, guid: d23262e783ec9474881412a5e4d928ed, type: 3}
+  - key: RouteTalents
+    sprite: {fileID: 21300000, guid: 6ed154e486ea8cb48aa757a3df60a9b4, type: 3}
+  - key: RouteTribulation
+    sprite: {fileID: 21300000, guid: 263aa6da03b21a24cbe5903ae1d4bd8e, type: 3}
+  - key: CharacterPortrait
+    sprite: {fileID: 21300000, guid: cdabf03a2e92447439f16ea0a745d2b7, type: 3}
+  - key: FlyingSwordSheet
+    sprite: {fileID: 6556952790208019946, guid: c3b06f82b8096634c899fc8a9bb7e925, type: 3}
+  codexCatalog:
+  - code: A1
+    key: HUD/hud_circle_btn_idle
+    displayName: "Khung \xF4 tr\xF2n s\xE1ng (Idle)"
+    isMilestone1Priority: 1
+  - code: A2
+    key: HUD/hud_circle_btn_active
+    displayName: "Khung \xF4 tr\xF2n s\xE1ng (Active)"
+    isMilestone1Priority: 1
+  - code: A3
+    key: HUD/hud_circle_btn_locked
+    displayName: "Khung \xF4 tr\xF2n kh\xF3a"
+    isMilestone1Priority: 1
+  - code: A4
+    key: HUD/hud_toggle_bagua
+    displayName: "N\xFAt tr\xF2n B\xE1t Qu\xE1i \u0111\xF3ng/m\u1EDF"
+    isMilestone1Priority: 1
+  - code: A5
+    key: HUD/hud_avatar_frame
+    displayName: "Khung tr\xF2n Avatar s\xE1ng"
+    isMilestone1Priority: 1
+  - code: A6
+    key: HUD/hud_panel_light_9slice
+    displayName: "Khung b\u1EA3ng ch\xEDnh 9-slice s\xE1ng"
+    isMilestone1Priority: 1
+  - code: A7
+    key: HUD/hud_card_light_9slice
+    displayName: "Khung th\u1EBB con 9-slice s\xE1ng"
+    isMilestone1Priority: 1
+  - code: A8
+    key: HUD/hud_btn_primary_9slice
+    displayName: "N\xFAt ch\xEDnh 9-slice v\xE0ng kim"
+    isMilestone1Priority: 1
+  - code: A9
+    key: HUD/hud_btn_secondary_9slice
+    displayName: "N\xFAt ph\u1EE5 9-slice thanh ng\u1ECDc"
+    isMilestone1Priority: 1
+  - code: A10a
+    key: HUD/rarity_1_pham
+    displayName: "Khung ph\u1EA9m ch\u1EA5t Ph\xE0m"
+    isMilestone1Priority: 0
+  - code: A10b
+    key: HUD/rarity_2_linh
+    displayName: "Khung ph\u1EA9m ch\u1EA5t Linh"
+    isMilestone1Priority: 0
+  - code: A10c
+    key: HUD/rarity_3_huyen
+    displayName: "Khung ph\u1EA9m ch\u1EA5t Huy\u1EC1n"
+    isMilestone1Priority: 0
+  - code: A10d
+    key: HUD/rarity_4_dia
+    displayName: "Khung ph\u1EA9m ch\u1EA5t \u0110\u1ECBa"
+    isMilestone1Priority: 0
+  - code: A10e
+    key: HUD/rarity_5_thien
+    displayName: "Khung ph\u1EA9m ch\u1EA5t Thi\xEAn"
+    isMilestone1Priority: 0
+  - code: A11
+    key: Backgrounds/bg_main_menu_daylight
+    displayName: "N\u1EC1n Main Menu ban ng\xE0y"
+    isMilestone1Priority: 1
+  - code: A12
+    key: Backgrounds/bg_loading_screen
+    displayName: "N\u1EC1n Loading ban ng\xE0y"
+    isMilestone1Priority: 1
+  - code: B1
+    key: Pills/pill_00_waste
+    displayName: "Ph\u1EBF \u0110an"
+    isMilestone1Priority: 1
+  - code: B2
+    key: Pills/pill_01_truc_co
+    displayName: "Tr\xFAc C\u01A1 \u0110an"
+    isMilestone1Priority: 1
+  - code: B3
+    key: Pills/pill_02_ket_kim
+    displayName: "K\u1EBFt Kim \u0110an"
+    isMilestone1Priority: 1
+  - code: B4
+    key: Pills/pill_03_nguyen_anh
+    displayName: "Ng\u01B0ng Anh \u0110an"
+    isMilestone1Priority: 0
+  - code: B5
+    key: Pills/pill_04_hoa_than
+    displayName: "H\xF3a Th\u1EA7n \u0110an"
+    isMilestone1Priority: 0
+  - code: B6
+    key: Pills/pill_05_luyen_hu
+    displayName: "Luy\u1EC7n H\u01B0 \u0110an"
+    isMilestone1Priority: 0
+  - code: B7
+    key: Pills/pill_06_hop_the
+    displayName: "H\u1EE3p Th\u1EC3 \u0110an"
+    isMilestone1Priority: 0
+  - code: B8
+    key: Pills/pill_07_dai_thua
+    displayName: "\u0110\u1EA1i Th\u1EEBa \u0110an"
+    isMilestone1Priority: 0
+  - code: B9
+    key: Pills/pill_08_do_kiep
+    displayName: "\u0110\u1ED9 Ki\u1EBFp Ti\xEAn \u0110an"
+    isMilestone1Priority: 0
+  - code: B10
+    key: Pills/herb_04_long_huyet
+    displayName: "Long Huy\u1EBFt Th\u1EA3o"
+    isMilestone1Priority: 0
+  - code: B11
+    key: Pills/herb_05_phuong_hoang_chi
+    displayName: "Ph\u01B0\u1EE3ng Ho\xE0ng Chi"
+    isMilestone1Priority: 0
+  - code: B12
+    key: Pills/herb_06_tien_lo_lien
+    displayName: "Ti\xEAn L\u1ED9 Thanh Li\xEAn"
+    isMilestone1Priority: 0
+  - code: B13
+    key: Pills/alchemist_rank_1
+    displayName: "Huy hi\u1EC7u \u0110an S\u01B0 1 Ph\u1EA9m"
+    isMilestone1Priority: 1
+  - code: B14
+    key: Pills/alchemist_rank_2
+    displayName: "Huy hi\u1EC7u \u0110an S\u01B0 2 Ph\u1EA9m"
+    isMilestone1Priority: 0
+  - code: B15
+    key: Pills/alchemist_rank_3
+    displayName: "Huy hi\u1EC7u \u0110an S\u01B0 3 Ph\u1EA9m"
+    isMilestone1Priority: 0
+  - code: B16
+    key: Pills/alchemist_rank_4
+    displayName: "Huy hi\u1EC7u \u0110an S\u01B0 4 Ph\u1EA9m"
+    isMilestone1Priority: 0
+  - code: B17
+    key: Pills/alchemist_rank_5
+    displayName: "Huy hi\u1EC7u \u0110an S\u01B0 5 Ph\u1EA9m"
+    isMilestone1Priority: 0
+  - code: B18
+    key: Pills/alchemist_rank_6
+    displayName: "Huy hi\u1EC7u \u0110an S\u01B0 6 Ph\u1EA9m"
+    isMilestone1Priority: 0
+  - code: B19
+    key: Pills/alchemist_rank_7
+    displayName: "Huy hi\u1EC7u \u0110an S\u01B0 7 Ph\u1EA9m"
+    isMilestone1Priority: 0
+  - code: B20
+    key: Pills/alchemist_rank_8
+    displayName: "Huy hi\u1EC7u \u0110an S\u01B0 8 Ph\u1EA9m"
+    isMilestone1Priority: 0
+  - code: B21
+    key: Pills/flame_1_mortal
+    displayName: "Ph\xE0m H\u1ECFa L\xF2 \u0110an"
+    isMilestone1Priority: 1
+  - code: B22
+    key: Pills/flame_2_azure_lotus
+    displayName: "Thanh Li\xEAn H\u1ECFa"
+    isMilestone1Priority: 0
+  - code: B23
+    key: Pills/flame_3_violet_core
+    displayName: "T\u1EED C\u1EF1c H\u1ECFa"
+    isMilestone1Priority: 0
+  - code: B24
+    key: Pills/flame_4_immortal_gold
+    displayName: "Ti\xEAn Thi\xEAn H\u1ECFa"
+    isMilestone1Priority: 0
+  - code: C1
+    key: Formations/formation_thunder
+    displayName: "C\u1EEDu Thi\xEAn L\xF4i Tr\u1EADn"
+    isMilestone1Priority: 1
+  - code: C2
+    key: Formations/formation_sword_rain
+    displayName: "V\u1EA1n Ki\u1EBFm Quy T\xF4ng Tr\u1EADn"
+    isMilestone1Priority: 1
+  - code: C3
+    key: Formations/formation_ground_ring_light
+    displayName: "V\xF2ng tr\u1EADn \u0111\u1ED3 s\xE1ng d\u01B0\u1EDBi ch\xE2n"
+    isMilestone1Priority: 1
+  - code: D1
+    key: Equipment/equip_bracer
+    displayName: "H\u1ED9 Uy\u1EC3n (\xD4 #5)"
+    isMilestone1Priority: 0
+  - code: D2
+    key: Equipment/equip_ring
+    displayName: "Tr\u1EEF V\u1EADt Gi\u1EDBi (\xD4 #6)"
+    isMilestone1Priority: 0
+  - code: D3
+    key: Equipment/set_thanh_van
+    displayName: "Huy hi\u1EC7u B\u1ED9 Thanh V\xE2n"
+    isMilestone1Priority: 0
+  - code: D4
+    key: Equipment/set_huyen_vu
+    displayName: "Huy hi\u1EC7u B\u1ED9 Huy\u1EC1n V\u0169"
+    isMilestone1Priority: 0
+  - code: D5
+    key: Equipment/set_dan_tong
+    displayName: "Huy hi\u1EC7u B\u1ED9 \u0110an T\xF4ng"
+    isMilestone1Priority: 0
+  - code: D6
+    key: Equipment/mat_reforge_stone
+    displayName: "\u0110\xE1 T\u1EA9y Luy\u1EC7n"
+    isMilestone1Priority: 0
+  - code: D7
+    key: Equipment/mat_forge_talisman
+    displayName: "Ph\xF9 R\xE8n Ki\u1EBFm"
+    isMilestone1Priority: 0
+  - code: D8
+    key: Equipment/mat_skill_scroll
+    displayName: "T\xE0n Quy\u1EC3n C\xF4ng Ph\xE1p"
+    isMilestone1Priority: 0
+  - code: D9
+    key: Equipment/mat_dao_point
+    displayName: "\u0110i\u1EC3m \u0110\u1EA1o V\u1EADn"
+    isMilestone1Priority: 0
+  - code: D10
+    key: Equipment/mat_calm_incense
+    displayName: "T\u0129nh T\xE2m H\u01B0\u01A1ng"
+    isMilestone1Priority: 0
+  - code: E1
+    key: DaoVan/daovan_bg_canvas
+    displayName: "N\u1EC1n b\u1EA3n \u0111\u1ED3 C\xE2y \u0110\u1EA1o V\u1EADn"
+    isMilestone1Priority: 1
+  - code: E2
+    key: DaoVan/daovan_core_node
+    displayName: "Node g\u1ED1c \u0110\u1EA1o T\xE2m"
+    isMilestone1Priority: 1
+  - code: E3
+    key: DaoVan/branch_sword
+    displayName: "Nh\xE1nh Ki\u1EBFm \u0110\u1EA1o"
+    isMilestone1Priority: 0
+  - code: E4
+    key: DaoVan/branch_body
+    displayName: "Nh\xE1nh Th\u1EC3 Ph\xE1ch"
+    isMilestone1Priority: 0
+  - code: E5
+    key: DaoVan/branch_cultivation
+    displayName: "Nh\xE1nh Tu Luy\u1EC7n"
+    isMilestone1Priority: 0
+  - code: E6
+    key: DaoVan/branch_wealth
+    displayName: "Nh\xE1nh T\xE0i L\u1ED9c"
+    isMilestone1Priority: 0
+  - code: E7
+    key: DaoVan/branch_arts
+    displayName: "Nh\xE1nh B\xE1ch Ngh\u1EC7"
+    isMilestone1Priority: 0
+  - code: E8
+    key: DaoVan/node_frame_unlocked
+    displayName: "Khung node \u0110\u1EA1o V\u1EADn \u0111\xE3 m\u1EDF"
+    isMilestone1Priority: 1
+  - code: E9
+    key: DaoVan/node_frame_maxed
+    displayName: "Khung node \u0110\u1EA1o V\u1EADn t\u1ED1i \u0111a"
+    isMilestone1Priority: 1
+  - code: F1
+    key: Map/tex_grass_meadow_albedo
+    displayName: "Texture c\u1ECF \u0111\u1ED3ng b\u1EB1ng V\u1EF1c 1"
+    isMilestone1Priority: 1
+  - code: F2
+    key: Map/tex_dirt_patch_albedo
+    displayName: "M\u1EA3ng \u0111\u1EA5t v\xE0ng c\xE1t V\u1EF1c 1"
+    isMilestone1Priority: 1
+  - code: F3
+    key: Map/tex_sky_daylight_panorama
+    displayName: "B\u1EA7u tr\u1EDDi xanh ban ng\xE0y 360"
+    isMilestone1Priority: 1
+  - code: F4
+    key: Map/tex_act2_sand_bright
+    displayName: "Texture V\u1EF1c 2 Hoang M\u1EA1c S\xE1ng"
+    isMilestone1Priority: 0
+  - code: F5
+    key: Map/tex_act3_jade_cliff
+    displayName: "Texture V\u1EF1c 3 Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc"
+    isMilestone1Priority: 0
+  - code: F6
+    key: Map/prop_grass_tuft
+    displayName: "B\u1EE5i c\u1ECF stylized ban ng\xE0y"
+    isMilestone1Priority: 0
+  - code: F7
+    key: Map/prop_bush_tree_stylized
+    displayName: "C\xE2y / b\u1EE5i c\xE2y stylized ban ng\xE0y"
+    isMilestone1Priority: 0
+  - code: F8
+    key: Monsters/act1_wolf
+    displayName: "Ch\xE2n dung Thanh Phong Lang"
+    isMilestone1Priority: 1
+  - code: F9
+    key: Monsters/act1_bird
+    displayName: "Ch\xE2n dung Linh V\u0169 \u0110i\u1EC3u"
+    isMilestone1Priority: 1
+  - code: F10
+    key: Monsters/act1_turtle
+    displayName: "Ch\xE2n dung Huy\u1EC1n Gi\xE1p Quy"
+    isMilestone1Priority: 1
+  - code: F11
+    key: Monsters/act1_boss_guardian
+    displayName: "Ch\xE2n dung Boss C\u1ED5 M\u1ED9c Y\xEAu V\u01B0\u01A1ng"
+    isMilestone1Priority: 1
+  - code: F12
+    key: Monsters/act2_scorpion
+    displayName: "Ch\xE2n dung Qu\xE1i V\u1EF1c 2"
+    isMilestone1Priority: 0
+  - code: F13
+    key: Monsters/act2_boss_overlord
+    displayName: "Ch\xE2n dung Boss V\u1EF1c 2"
+    isMilestone1Priority: 0
+  - code: F14
+    key: Monsters/act3_thunder_spirit
+    displayName: "Ch\xE2n dung Qu\xE1i V\u1EF1c 3"
+    isMilestone1Priority: 0
+  - code: F15
+    key: Monsters/act3_boss_archon
+    displayName: "Ch\xE2n dung Boss V\u1EF1c 3"
+    isMilestone1Priority: 0
+  - code: G1
+    key: HUD/nav_leaderboard
+    displayName: "N\xFAt B\u1EA3ng X\u1EBFp H\u1EA1ng"
+    isMilestone1Priority: 0
+  - code: G2
+    key: HUD/nav_world_chat
+    displayName: "N\xFAt Chat Th\u1EBF Gi\u1EDBi"
+    isMilestone1Priority: 0
+  - code: G3
+    key: HUD/nav_friends
+    displayName: "N\xFAt \u0110\u1EA1o H\u1EEFu / K\u1EBFt B\u1EA1n"
+    isMilestone1Priority: 0
+  - code: G4
+    key: HUD/nav_skills
+    displayName: "N\xFAt K\u1EF9 N\u0103ng Chi\u1EBFn \u0110\u1EA5u"
+    isMilestone1Priority: 1
+  - code: G5
+    key: HUD/nav_map_stage
+    displayName: "N\xFAt B\u1EA3n \u0110\u1ED3 \u1EA2i"
+    isMilestone1Priority: 1
+  - code: G6
+    key: HUD/nav_breakthrough
+    displayName: "N\xFAt \u0110\u1ED9t Ph\xE1 C\u1EA3nh Gi\u1EDBi"
+    isMilestone1Priority: 1
+  - code: H1
+    key: HUD/nav_immortal_gate
+    displayName: "N\xFAt Ti\xEAn M\xF4n (Th\xE1p & B\xED C\u1EA3nh)"
+    isMilestone1Priority: 0
+  - code: H2
+    key: Stages/stage_sword_forge
+    displayName: "S\xE2n kh\u1EA5u \u0110\xE0i R\xE8n Ki\u1EBFm L\u1ED9 V2"
+    isMilestone1Priority: 0
+  - code: H3
+    key: Stages/stage_alchemy_cauldron
+    displayName: "S\xE2n kh\u1EA5u \u0110an L\xF4 C\u1EEDu Long V2"
+    isMilestone1Priority: 0
+  - code: H4
+    key: Stages/stage_tribulation_altar
+    displayName: "S\xE2n kh\u1EA5u \u0110\u1ED9 Ki\u1EBFp \u0110\xE0i V2"
+    isMilestone1Priority: 0
+  - code: H5
+    key: Stages/mode_demon_tower
+    displayName: "Minh h\u1ECDa V\u1EA1n Y\xEAu Th\xE1p (100 T\u1EA7ng)"
+    isMilestone1Priority: 0
+  - code: H6
+    key: Stages/mode_secret_realm
+    displayName: "Minh h\u1ECDa Th\xE1i H\u01B0 B\xED C\u1EA3nh"
+    isMilestone1Priority: 0
+  - code: H7
+    key: Stages/mode_pvp_arena
+    displayName: "Minh h\u1ECDa Lu\u1EADn Ki\u1EBFm \u0110\xE0i (Coming Soon)"
+    isMilestone1Priority: 0
+  - code: H8
+    key: Stages/event_fortuitous_orb
+    displayName: "N\xFAt K\u1EF3 Ng\u1ED9 Linh C\u01A1"
+    isMilestone1Priority: 0

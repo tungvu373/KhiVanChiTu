@@ -50,14 +50,14 @@ public class MergeSlot : MonoBehaviour, IDropHandler
                 StartCoroutine(PunchBounce(currentItem.transform));
                 StartCoroutine(PunchBounce(droppedItem.transform));
             }
-            else if (!fromEquipSlot && currentItem.level == droppedItem.level && currentItem.level < 8)
+            else if (!fromEquipSlot && currentItem.level == droppedItem.level && currentItem.level < SwordRules.MaxLevel)
             {
                 // Hợp nhất (Merge) cộng dồn phôi
                 currentItem.currentPieces += droppedItem.currentPieces;
                 Destroy(droppedItem.gameObject);
                 
                 // Kiểm tra nếu đủ phôi thì lên cấp (có thể lên nhiều cấp nếu đập 1 cục to vào)
-                while (currentItem.currentPieces >= currentItem.GetRequiredPieces() && currentItem.level < 8)
+                while (currentItem.currentPieces >= currentItem.GetRequiredPieces() && currentItem.level < SwordRules.MaxLevel)
                 {
                     currentItem.currentPieces -= currentItem.GetRequiredPieces();
                     currentItem.level++;

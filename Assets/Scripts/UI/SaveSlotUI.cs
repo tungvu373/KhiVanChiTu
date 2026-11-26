@@ -47,6 +47,7 @@ public class SaveSlotUI : MonoBehaviour
             // Xóa nhân vật
             if(deleteButton != null) deleteButton.onClick.AddListener(() => menuManager.AskConfirmDeleteSlot(slotIndex));
         }
+        GetComponent<KhiVanChiTu.UI.Menu.MenuCharacterCard>()?.Bind(data, index);
     }
 
     private void RefreshUI()

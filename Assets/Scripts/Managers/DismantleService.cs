@@ -88,6 +88,8 @@ public class DismantleService : MonoBehaviour
     public DismantleReward CalculateSwordReward(int level, int pieces)
     {
         DismantleReward reward = new DismantleReward();
+        // Salvage prices still use the existing 1–8 table; this is not the merge cap.
+        // Levels 9–10 retain the existing top-table payout until separately balanced.
         level = Mathf.Clamp(level, 1, 8);
         pieces = Mathf.Max(1, pieces);
 

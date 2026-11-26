@@ -57,7 +57,7 @@ public sealed class MobileUIReconstruction : MonoBehaviour
     public void ApplyHudPresentation()
     {
         var hud=GetComponentInChildren<PortraitHudController>(true);
-        if(hud==null||assets==null)return;
+        if(hud==null||assets==null||hud.externalLayout)return;
         JadeUITheme.SetSurface(hud.profile.GetComponent<UnityEngine.UI.Image>(),assets.hud);
         foreach(var bar in new[]{hud.hp,hud.mana})
         {
@@ -72,6 +72,9 @@ public sealed class MobileUIReconstruction : MonoBehaviour
 
     public void StyleElement(RectTransform rt)
     {
+        if(rt.GetComponentInParent<KhiVanChiTu.UI.Equipment.RpgViewScope>(true)!=null)return;
+        if(rt!=null&&rt.GetComponentInParent<KhiVanChiTu.UI.Navigation.GlobalNavigationController>()!=null)return;
+        if(rt!=null&&rt.GetComponentInParent<KhiVanChiTu.UI.CombatHUD.CombatHudPresentation>()!=null)return;
         if (assets == null || rt == null || rt.name.StartsWith("P6")) return;
         var image = rt.GetComponent<UnityEngine.UI.Image>();
         if (image == null) return;

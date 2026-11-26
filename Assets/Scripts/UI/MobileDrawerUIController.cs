@@ -25,6 +25,9 @@ public class MobileDrawerUIController : MonoBehaviour
     public Text dockToggleLabelText;
     public RectTransform playerHpBar;
     public bool IsDockCollapsed { get; private set; } = false;
+    // Portrait presentation owns every HUD RectTransform. Do not run the legacy
+    // bottom-dock animation against its top-right restore control.
+    public bool externalDockLayout;
 
     private int activeIndex = -1;
     private bool isTransitioning = false;
@@ -166,7 +169,12 @@ public class MobileDrawerUIController : MonoBehaviour
     {
         IsDockCollapsed = !IsDockCollapsed;
         if (dockSlideCoroutine != null) StopCoroutine(dockSlideCoroutine);
-        dockSlideCoroutine = StartCoroutine(AnimateDockCollapse(IsDockCollapsed));
+        if (externalDockLayout)
+        {
+            dockSlideCoroutine = null;
+            if (IsDockCollapsed && activeIndex != -1) CloseActiveDrawer();
+        }
+        else dockSlideCoroutine = StartCoroutine(AnimateDockCollapse(IsDockCollapsed));
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
         OnDockCollapseChanged?.Invoke(IsDockCollapsed);

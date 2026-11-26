@@ -23,6 +23,8 @@ public sealed class PortraitHudController : MonoBehaviour
     public bool IsSecondaryOpen => secondaryOverlay != null && secondaryOverlay.activeSelf;
     public bool IsFocusMode => drawer != null && drawer.IsDockCollapsed;
     public Rect CentralClearArea { get; private set; }
+    // Set only on the redesigned mobile scene. Legacy/PC scenes keep their existing layout.
+    public bool externalLayout;
 
     MobileDrawerUIController drawer;
     EconomyManager economy;
@@ -103,8 +105,36 @@ public sealed class PortraitHudController : MonoBehaviour
         Bind(buffsButton, ShowBuffs);
         Bind(logButton, ShowLog);
         Bind(walletButton, ShowWallet);
-        Bind(achievementButton, CloseSecondary);
-        if (quickButtons != null) foreach (var button in quickButtons) Bind(button, CloseSecondary);
+        if (achievementButton != null)
+        {
+            foreach (var mb in achievementButton.GetComponents<MonoBehaviour>())
+            {
+                if (mb is AchievementButtonHandler)
+                {
+                    mb.SendMessage("Awake", SendMessageOptions.DontRequireReceiver);
+                    mb.SendMessage("Start", SendMessageOptions.DontRequireReceiver);
+                }
+            }
+            Bind(achievementButton, CloseSecondary);
+        }
+        if (quickButtons != null)
+        {
+            foreach (var button in quickButtons)
+            {
+                if (button != null)
+                {
+                    foreach (var mb in button.GetComponents<MonoBehaviour>())
+                    {
+                        if (mb is StorageButtonHandler || mb is BiCanhButtonHandler || mb is DaoAnButtonHandler || mb is AchievementButtonHandler)
+                        {
+                            mb.SendMessage("Awake", SendMessageOptions.DontRequireReceiver);
+                            mb.SendMessage("Start", SendMessageOptions.DontRequireReceiver);
+                        }
+                    }
+                    Bind(button, CloseSecondary);
+                }
+            }
+        }
         bound = true;
         Subscribe();
         ConfigureViews();
@@ -174,17 +204,17 @@ public sealed class PortraitHudController : MonoBehaviour
         if (!bound) return;
         RefreshRenderScale();
         if (economy != EconomyManager.Instance || cultivation != CultivationManager.Instance) Subscribe();
-        if (bounds.rect.size != lastSize) ApplyLayout();
+        if (!externalLayout && bounds.rect.size != lastSize) ApplyLayout();
         // Legacy tutorial collapse and character-name updates have no dedicated change event.
         bool expanded = quest != null && quest.Find("TxtQuestTitle")?.gameObject.activeSelf == true;
-        if (expanded != questExpanded || (questTitle!=null&&questTitle.fontSize!=36)) LayoutQuest();
-        if (realmTitle!=null&&(realmTitle.fontSize!=32||realmTitle.rectTransform.rect.height<44)) LayoutRealm();
-        if (bossTimerLabel!=null&&bossTimerLabel.gameObject.activeSelf!=lastBossTimerActive) LayoutStage();
+        if (!externalLayout && (expanded != questExpanded || (questTitle!=null&&questTitle.fontSize!=36))) LayoutQuest();
+        if (!externalLayout && realmTitle!=null&&(realmTitle.fontSize!=32||realmTitle.rectTransform.rect.height<44)) LayoutRealm();
+        if (!externalLayout && bossTimerLabel!=null&&bossTimerLabel.gameObject.activeSelf!=lastBossTimerActive) LayoutStage();
         if ((sourceProfile != null && sourceProfile.text != lastProfile) ||
             (cultivation != null && cultivation.CharacterName != lastCharacterName)) RefreshProfile();
         // The legacy drawer animates this toggle in dock coordinates. The prototype owns its top anchor.
-        Place(focusButton, 1, 1, 1, 1, -36, -348, 132, 144);
-        if (drawer != null && drawer.dockToggleLabelText != null)
+        if (!externalLayout) Place(focusButton, 1, 1, 1, 1, -36, -348, 132, 144);
+        if (!externalLayout && drawer != null && drawer.dockToggleLabelText != null)
         {
             string label = IsFocusMode ? "Hiện\nHUD" : "Thu\ngọn";
             if (drawer.dockToggleLabelText.text != label) drawer.dockToggleLabelText.text = label;
@@ -227,8 +257,24 @@ public sealed class PortraitHudController : MonoBehaviour
         var cm = CultivationManager.Instance;
         if (cm == null) return;
         string name = cm.CharacterName;
-        lastCharacterName = name;
+        if (string.IsNullOrWhiteSpace(name) || name == "Đạo Hữu")
+        {
+            if (DataManager.Instance != null && DataManager.Instance.gameSaveData != null)
+            {
+                int idx = DataManager.Instance.gameSaveData.lastPlayedSlotIndex;
+                if (idx >= 0 && idx < DataManager.Instance.gameSaveData.slots.Length)
+                {
+                    var slot = DataManager.Instance.gameSaveData.slots[idx];
+                    if (!slot.isSlotEmpty && !string.IsNullOrWhiteSpace(slot.characterName))
+                    {
+                        name = slot.characterName;
+                        cm.SetCharacterName(name);
+                    }
+                }
+            }
+        }
         if (string.IsNullOrWhiteSpace(name)) name = "Đạo Hữu";
+        lastCharacterName = name;
         playerName.text = name;
         playerRealm.text = cm.GetDisplayRealmName();
         // Realm is displayed once in the segmented progression area, leaving two full name lines here.
@@ -257,6 +303,7 @@ public sealed class PortraitHudController : MonoBehaviour
 
     public void ApplyLayout()
     {
+        if (externalLayout) return;
         if (bounds == null) bounds = (RectTransform)transform;
         lastSize = bounds.rect.size;
         bool shortView = lastSize.y < 1500;
@@ -322,6 +369,7 @@ public sealed class PortraitHudController : MonoBehaviour
 
     public void ConfigureViews()
     {
+        if (externalLayout) return;
         if(drawer==null)drawer=GetComponentInParent<MobileDrawerUIController>();
         foreach(var outline in GetComponentsInChildren<UnityEngine.UI.Outline>(true)) outline.enabled=false;
         foreach(var graphic in GetComponentsInChildren<UnityEngine.UI.Graphic>(true))
@@ -382,15 +430,16 @@ public sealed class PortraitHudController : MonoBehaviour
     {
         if(realm==null)return;
         var title=realm.Find("StageText")?.GetComponent<UnityEngine.UI.Text>();
-        if(title!=null){Place(title.rectTransform,0,1,1,1,0,-14,-96,44);Text(title,32,TextAnchor.MiddleLeft);title.verticalOverflow=VerticalWrapMode.Truncate;}
-        if(cultivationValue!=null){Place(cultivationValue.rectTransform,0,1,1,1,0,-59,-96,42);Text(cultivationValue,30,TextAnchor.MiddleLeft);cultivationValue.verticalOverflow=VerticalWrapMode.Truncate;}
+        if(title!=null){Place(title.rectTransform,0,1,1,1,10,-32,-150,36);Text(title,28,TextAnchor.MiddleLeft);title.verticalOverflow=VerticalWrapMode.Truncate;}
+        if(cultivationValue!=null){Place(cultivationValue.rectTransform,0,1,1,1,10,-68,-150,34);Text(cultivationValue,26,TextAnchor.MiddleLeft);cultivationValue.verticalOverflow=VerticalWrapMode.Truncate;}
         var segments=realm.Find("PhaseSegments") as RectTransform;if(segments==null)return;
-        segments.anchorMin=new Vector2(0,0);segments.anchorMax=new Vector2(1,0);segments.pivot=new Vector2(.5f,0);segments.sizeDelta=new Vector2(-64,36);segments.anchoredPosition=new Vector2(0,12);
+        segments.anchorMin=new Vector2(0,0);segments.anchorMax=new Vector2(1,0);segments.pivot=new Vector2(.5f,0);segments.sizeDelta=new Vector2(-120,34);segments.anchoredPosition=new Vector2(0,16);
         foreach(var text in segments.GetComponentsInChildren<UnityEngine.UI.Text>(true)){Text(text,26,TextAnchor.MiddleCenter);Fill(text.rectTransform,6,2,6,2);text.resizeTextForBestFit=true;text.resizeTextMinSize=22;text.resizeTextMaxSize=26;text.verticalOverflow=VerticalWrapMode.Truncate;}
     }
 
     public void LayoutStage()
     {
+        if (externalLayout) return;
         if(stage==null)return;
         var title=stage.Find("StageText")?.GetComponent<UnityEngine.UI.Text>();
         var timer=stage.Find("BossTimer")?.GetComponent<UnityEngine.UI.Text>();
@@ -398,9 +447,9 @@ public sealed class PortraitHudController : MonoBehaviour
         lastBossTimerActive=hasTimer;
         if(title!=null)
         {
-            if(hasTimer)Place(title.rectTransform,0,1,1,1,0,-20,-160,48);
-            else Fill(title.rectTransform,80,24,80,24);
-            Text(title,36,TextAnchor.MiddleCenter);title.resizeTextForBestFit=true;title.resizeTextMinSize=28;title.resizeTextMaxSize=36;title.verticalOverflow=VerticalWrapMode.Truncate;
+            if(hasTimer)Place(title.rectTransform,0,1,1,1,0,-24,-160,42);
+            else Place(title.rectTransform,0,0,1,1,0,-8,-160,-70);
+            Text(title,32,TextAnchor.MiddleCenter);title.resizeTextForBestFit=true;title.resizeTextMinSize=26;title.resizeTextMaxSize=32;title.verticalOverflow=VerticalWrapMode.Truncate;
         }
         if(timer!=null){Place(timer.rectTransform,.5f,0,.5f,0,0,20,476,36);Text(timer,28,TextAnchor.MiddleCenter);timer.verticalOverflow=VerticalWrapMode.Truncate;}
     }
@@ -570,7 +619,7 @@ public sealed class PortraitHudController : MonoBehaviour
         if(detailsKind=="wallet")
         {
             var e=EconomyManager.Instance;var a=ArtifactService.Instance;
-            detailsText.text=e==null?"Chưa có dữ liệu tài nguyên.":"Linh Thạch\n"+e.currentLinhThach.ToString("N0")+"\n\nCơ Duyên\n"+e.currentCoDuyen.ToString("N0")+"\n\nQuặng\n"+(a!=null?a.Ore.ToString("N0"):"0");
+            detailsText.text=e==null?"Chưa có dữ liệu tài nguyên.":"Linh Thạch\n"+KhiVanChiTu.UI.Equipment.RpgUI.Number(e.currentLinhThach)+"\n\nCơ Duyên\n"+e.currentCoDuyen.ToString("N0")+"\n\nQuặng\n"+(a!=null?a.Ore.ToString("N0"):"0");
         }
         if(detailsKind=="buffs")
         {

@@ -21,6 +21,8 @@ public sealed class JadeUITheme : MonoBehaviour
     public void RefreshPresentation() { styled.Clear(); StyleTree(transform); }
     public void StyleSkills()
     {
+        var scopedHud=GetComponentInChildren<PortraitHudController>(true);
+        if(scopedHud!=null&&scopedHud.externalLayout)return;
         var hud=GetComponentInChildren<MobileSkillHUD>(true);
         if(hud==null||navigationIcons==null||navigationIcons.Length<5)return;
         var buttons=new[]{hud.btnUltimate,hud.btnNormalSkills[0],hud.btnNormalSkills[1],hud.btnNormalSkills[2]};
@@ -60,6 +62,9 @@ public sealed class JadeUITheme : MonoBehaviour
         var all = root.GetComponentsInChildren<RectTransform>(true);
         foreach (var rt in all)
         {
+            if(rt.GetComponentInParent<KhiVanChiTu.UI.Equipment.RpgViewScope>(true)!=null)continue;
+            if(rt.GetComponentInParent<KhiVanChiTu.UI.Navigation.GlobalNavigationController>()!=null)continue;
+            if(rt.GetComponentInParent<KhiVanChiTu.UI.CombatHUD.CombatHudPresentation>()!=null)continue;
             string n = rt.name;
             if (rt == transform || n == "Content" || n == "GameplayChoicePanel" || n == "PagesContainer" || n == "SlotContainer" || n.StartsWith("Page_") || n.Contains("Grid") || n.Contains("Filter"))
             {
@@ -76,6 +81,7 @@ public sealed class JadeUITheme : MonoBehaviour
     }
     public void StyleElement(RectTransform rt)
     {
+        if(rt.GetComponentInParent<KhiVanChiTu.UI.Equipment.RpgViewScope>(true)!=null)return;
         string n = rt.name;
         var text = rt.GetComponent<UnityEngine.UI.Text>();
         if (text != null)

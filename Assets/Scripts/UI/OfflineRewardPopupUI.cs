@@ -492,11 +492,11 @@ public class OfflineRewardPopupUI : MonoBehaviour
         btnCloseTxtObj.transform.SetParent(btnCloseObj.transform, false);
         Text btnCloseTxt = btnCloseTxtObj.GetComponent<Text>();
         btnCloseTxt.font = fontToUse;
-        btnCloseTxt.text = "×";
+        btnCloseTxt.text = "X";
         btnCloseTxt.fontSize = 28;
         btnCloseTxt.fontStyle = FontStyle.Bold;
         btnCloseTxt.alignment = TextAnchor.MiddleCenter;
-        btnCloseTxt.color = Color.white;
+        btnCloseTxt.color = MobileUIContentSafety.CloseRed;
         RectTransform bctRt = btnCloseTxtObj.GetComponent<RectTransform>();
         bctRt.anchorMin = Vector2.zero; bctRt.anchorMax = Vector2.one;
         bctRt.offsetMin = Vector2.zero; bctRt.offsetMax = Vector2.zero;

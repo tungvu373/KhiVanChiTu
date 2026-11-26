@@ -14,12 +14,21 @@ public sealed class JadeButtonFeedback : MonoBehaviour, IPointerDownHandler, IPo
     private void Awake()
     {
         selectable=GetComponent<UnityEngine.UI.Selectable>();motion=MobileUIAnimationDirector.For(this);
+        CacheVisual();
+    }
+    private void CacheVisual()
+    {
+        // Redesigned buttons use TMP; animate their visible caption, never the hit rectangle.
+        foreach(var caption in GetComponentsInChildren<TMPro.TMP_Text>(true))
+            if(caption.enabled&&caption.gameObject.activeSelf&&caption.transform!=transform)
+            {visual=caption.rectTransform;rest=visual.localScale;return;}
         label = GetComponentInChildren<UnityEngine.UI.Text>(true);
         if (label != null && label.transform != transform) { visual = label.rectTransform; rest = visual.localScale; }
     }
     public void OnPointerDown(PointerEventData e)
     {
         if(e.button!=PointerEventData.InputButton.Left||selectable==null||!selectable.IsInteractable())return;
+        if(visual==null)CacheVisual();
         target=.96f;if(motion!=null)motion.Press(visual,rest,true);
     }
     public void OnPointerUp(PointerEventData e) { target = 1f;if(motion!=null)motion.Press(visual,rest,false); }

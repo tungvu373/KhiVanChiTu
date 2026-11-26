@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53ca34c71479dec4588781f1e50bec36, type: 3}
+  m_Name: GameIconCatalogue
+  m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.GameIcons.GameIconCatalogue
+  swords:
+  - {fileID: 21300000, guid: 08a078f5518101d4d8f8092f95a9e574, type: 3}
+  - {fileID: 21300000, guid: 6519d7fb8a43cdb45963095d41b3a925, type: 3}
+  - {fileID: 21300000, guid: 5b9f6d97dd956db43be642acccb4dc30, type: 3}
+  - {fileID: 21300000, guid: 16acc740a9888db4bb4f8fb16e2de993, type: 3}
+  - {fileID: 21300000, guid: 55f12ad69e33c8945ace413981ac78f6, type: 3}
+  - {fileID: 21300000, guid: dc489205ae236074ebd5a40cce999c70, type: 3}
+  - {fileID: 21300000, guid: 3f3aff4a89317f640b3e6cc0e8f180d8, type: 3}
+  - {fileID: 21300000, guid: 88e30d82439feca42a22df474e4eb657, type: 3}
+  - {fileID: 21300000, guid: 4464dc6e1902df54f8d4bfeb81e3ecd5, type: 3}
+  - {fileID: 21300000, guid: 103633a443578544ba5aca52325955bc, type: 3}
+  skills:
+  - {fileID: 21300000, guid: f9999315f0fd9ba47862ce4e1dbe1627, type: 3}
+  - {fileID: 21300000, guid: a6131cddb801c70408228e66bff5dc48, type: 3}
+  - {fileID: 21300000, guid: 567414047c6804e4e8ec53dcae39fb0e, type: 3}
+  - {fileID: 21300000, guid: 53ee81f0636695349ba133904b3c3437, type: 3}
+  herbs:
+  - {fileID: 21300000, guid: 69b9e3b5df5307b42b129c1be6890087, type: 3}
+  - {fileID: 21300000, guid: 6eec83cb18c7024458acc0de3845e8e1, type: 3}
+  - {fileID: 21300000, guid: 86c71a6ccad34174e8a16c5bec892788, type: 3}
+  artifacts:
+  - {fileID: 21300000, guid: 1b99e5aafd153b047be6abf7d49f8989, type: 3}
+  - {fileID: 21300000, guid: 435b7c7ebe314bf4ea3082f82ee42c64, type: 3}
+  - {fileID: 21300000, guid: 7b2b8e947156577478f045479deaf2b4, type: 3}
+  - {fileID: 21300000, guid: da065a37020348f4586b4f31793f41f3, type: 3}
+  formations:
+  - {fileID: 21300000, guid: 567414047c6804e4e8ec53dcae39fb0e, type: 3}
+  - {fileID: 21300000, guid: 1713892a43cb0514dbcebd6730506538, type: 3}
+  - {fileID: 21300000, guid: f1b5c7cb99419164282db50c4c32be19, type: 3}
+  - {fileID: 21300000, guid: f9999315f0fd9ba47862ce4e1dbe1627, type: 3}
+  - {fileID: 21300000, guid: d3723869cc9b33446aabb42ab0d0edf0, type: 3}
+  - {fileID: 21300000, guid: fe530a97a544b3543a83613e8f24c3c1, type: 3}
+  navigation:
+  - {fileID: 21300000, guid: f9999315f0fd9ba47862ce4e1dbe1627, type: 3}
+  - {fileID: 21300000, guid: 1b99e5aafd153b047be6abf7d49f8989, type: 3}
+  - {fileID: 21300000, guid: 1713892a43cb0514dbcebd6730506538, type: 3}
+  - {fileID: 21300000, guid: 7a64e46268fe6ab4b80b037890cdba07, type: 3}
+  - {fileID: 21300000, guid: 9f4b05f8a6ffe4e4992fcbaa864bf71d, type: 3}
+  progression:
+  - {fileID: 21300000, guid: f9999315f0fd9ba47862ce4e1dbe1627, type: 3}
+  - {fileID: 21300000, guid: b3354a615cbd8c44ba4799612ae10699, type: 3}
+  - {fileID: 21300000, guid: 1713892a43cb0514dbcebd6730506538, type: 3}
+  - {fileID: 21300000, guid: 680ea77fd90e15d4fa85fb031543fa3f, type: 3}
+  - {fileID: 21300000, guid: 78b9094f551171d47b3455a40026fff1, type: 3}
+  cultivationPill: {fileID: 21300000, guid: 4624d03b9e8ef8b48a97e89db9c60727, type: 3}
+  breakthroughPill: {fileID: 21300000, guid: f726458c033895741b7ec6408b11be3c, type: 3}
+  ore: {fileID: 21300000, guid: 90440d1a4e567d644a2c71f8114ccc0f, type: 3}
+  dust: {fileID: 21300000, guid: a489a652986c70b4a9bd3eb0f7fc54de, type: 3}
+  chest: {fileID: 21300000, guid: 9f4b05f8a6ffe4e4992fcbaa864bf71d, type: 3}
+  cauldron: {fileID: 21300000, guid: 680ea77fd90e15d4fa85fb031543fa3f, type: 3}
+  body: {fileID: 21300000, guid: 78b9094f551171d47b3455a40026fff1, type: 3}
+  stone: {fileID: 21300000, guid: b3354a615cbd8c44ba4799612ae10699, type: 3}
+  fortune: {fileID: 21300000, guid: 499cf9910767cbe4da701747f29aaea7, type: 3}

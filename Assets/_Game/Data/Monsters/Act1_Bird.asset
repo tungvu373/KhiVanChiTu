@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cddbc7b583bb7e42a61af99bc1d4743, type: 3}
+  m_Name: Act1_Bird
+  m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.MonsterDefinitionSO
+  monsterId: act1_bird
+  displayName: "Linh V\u0169 \u0110i\u1EC3u"
+  description: "Phi c\u1EA7m linh kh\xED nh\u1EB9, bay l\u01A1 l\u1EEDng t\u1EA7m trung."
+  archetype: 1
+  codexPortraitKey: Monsters/act1_bird
+  prefab: {fileID: 333698274962115085, guid: 1d5b2f240550b7248a35252847a8dc97, type: 3}
+  hpMultiplier: 0.85
+  damageMultiplier: 0.95
+  moveSpeed: 3.2
+  attackRange: 1.9
+  hoverHeight: 1.15
+  attackInterval: 1.35
+  armorMitigation: 0
+  tuViMultiplier: 1
+  linhThachMultiplier: 1
+  hpBarHeight: 2.2
+  visualScale: 1
+  isBoss: 0

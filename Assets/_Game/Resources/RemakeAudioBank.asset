@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca990978a144c304099231799b2eba87, type: 3}
+  m_Name: RemakeAudioBank
+  m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.RemakeAudioBankSO
+  menuBgm: {fileID: 8300000, guid: 2ab10ea1a777b2842afb103f07df71b3, type: 3}
+  gameBgm: {fileID: 8300000, guid: d1ae27456a61c13418c222d38d065358, type: 3}
+  clickSfx: {fileID: 8300000, guid: 85f6e69c073670145adcf75b5b1ad794, type: 3}
+  swordHitSfx: {fileID: 8300000, guid: a8ee2ebb71a20904ebfd18cf663abb43, type: 3}
+  swordMergeSfx: {fileID: 8300000, guid: b28eb7f5f4783674eba09ab0c3e2a6d9, type: 3}
+  loiPhatSfx: {fileID: 8300000, guid: 2694065f6bc29df41a15366e383c348a, type: 3}
+  breakthroughSfx: {fileID: 8300000, guid: 0ac6b528e6a88c642bdcd9b1c673511b, type: 3}

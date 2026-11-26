@@ -16,6 +16,15 @@ public sealed class JadeModalPresentation : MonoBehaviour, UnityEngine.EventSyst
         JadeUIAdaptiveSkin.Apply((RectTransform)transform,theme);
         if (theme.reconstruction != null) theme.reconstruction.StyleElement((RectTransform)transform);
         if (theme.reconstruction != null) MobileUIResponsiveRepairs.ApplyTree(theme.reconstruction,transform);
+        if(name=="GameplayChoicePanel")
+        {
+            var nav=KhiVanChiTu.UI.Navigation.GlobalNavigationController.Instance;
+            if(nav!=null&&nav.gameObject.scene==UnityEngine.SceneManagement.SceneManager.GetActiveScene())
+            {
+                var polish=GetComponent<KhiVanChiTu.UI.Polish.LegacySurfacePolish>()??gameObject.AddComponent<KhiVanChiTu.UI.Polish.LegacySurfacePolish>();
+                polish.theme=nav.hud.theme;polish.target=transform;polish.Invalidate();
+            }
+        }
         var director=MobileUIAnimationDirector.For(this);
         bool native=GetComponentInParent<StorageModalUI>()!=null||GetComponentInParent<DismantleConfirmModalUI>()!=null||
             GetComponentInParent<CharacterDetailModalUI>()!=null||GetComponentInParent<TribulationModalUI>()!=null||

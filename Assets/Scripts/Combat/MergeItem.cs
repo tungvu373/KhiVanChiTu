@@ -34,13 +34,10 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public int GetRequiredPieces()
     {
-        if (level == 1) return 2;
-        if (level == 2) return 2;
-        if (level >= 8) return 9999; // Giới hạn cấp 8
-        return level; // Cấp 3 cần 3, Cấp 4 cần 4...
+        return SwordRules.RequiredPieces(level);
     }
 
-    [Header("Sprites cho từng Level (1-8)")]
+    [Header("Sprites theo cấp kiếm (có thể dùng lại sprite cuối)")]
     public Sprite[] levelSprites;
     
     public void SetLevel(int newLevel, int newPieces = 1)
@@ -191,6 +188,11 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            var sheet = KhiVanChiTu.UI.Equipment.ItemDetailSheet.Find(this);
+            if (sheet != null) { sheet.ShowSword(this); return; }
+        }
         // Nhấn chuột phải để trang bị/tháo gỡ nhanh
         if (eventData.button == PointerEventData.InputButton.Right)
         {
@@ -286,7 +288,7 @@ public class MergeItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             
             string info = $"<color=#00FF00>Kiếm Phôi Cấp {level}</color>\nSát thương: {dmg:F0}\nTốc độ: {spd:F0}\n\n";
             
-            if (level >= 8)
+            if (level >= SwordRules.MaxLevel)
             {
                 info += "<color=orange>Đã đạt Cấp Tối Đa</color>\n";
             }

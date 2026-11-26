@@ -165,6 +165,7 @@ public class MilestoneModalUI : MonoBehaviour
         transform.SetAsLastSibling(); // Luôn nổi lên trên cùng
         EnsureButtonsWired();
         RefreshUI();
+        GetComponent<KhiVanChiTu.UI.Progression.ProgressionScreen>()?.Opened();
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlayClickSFX();
     }
@@ -185,6 +186,8 @@ public class MilestoneModalUI : MonoBehaviour
 
     public void RefreshUI()
     {
+        var redesigned=GetComponent<KhiVanChiTu.UI.Progression.ProgressionScreen>();
+        if(redesigned!=null){redesigned.Refresh();return;}
         if (MilestoneManager.Instance == null || contentContainer == null) return;
 
         EnsureContainerLayout();

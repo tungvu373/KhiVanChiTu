@@ -47,8 +47,8 @@ public static class JadeUIAdaptiveSkin
         foreach(var t in box.GetComponentsInChildren<UnityEngine.UI.Text>(true))if(t.fontSize<minFont)Font(t.transform,minFont);
         if(owner=="DaoAnModal"||owner=="SecretRealmModal")
         {
-            Top(box.Find("Title"),60,36,Mathf.Max(100,box.rect.width-252),64);Font(box.Find("Title"),40);
-            Top(box.Find("SubTitle"),60,108,Mathf.Max(100,box.rect.width-252),96);Font(box.Find("SubTitle"),36);
+            Top(box.Find("Title"),92,64,Mathf.Max(100,box.rect.width-270),56);Font(box.Find("Title"),32);
+            Top(box.Find("SubTitle"),92,124,Mathf.Max(100,box.rect.width-270),84);Font(box.Find("SubTitle"),26);
             Top(box.Find("BtnCloseX"),-24,24,144,144,1);
             Rect(box.Find("StatsBar"),new Vector2(0,1),Vector2.one,new Vector2(.5f,1),new Vector2(0,-220),new Vector2(-96,128));
             var stats=box.Find("StatsBar");

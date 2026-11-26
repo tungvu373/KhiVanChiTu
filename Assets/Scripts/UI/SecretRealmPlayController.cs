@@ -75,6 +75,10 @@ public class SecretRealmPlayController : MonoBehaviour
     private GameObject resultModal;
     private Coroutine resultReveal;
 
+    public bool PresentationActionAvailable => isGameRunning &&
+        (activeType != SecretRealmType.SwordTomb || (!needlePaused && swordTombAttemptsLeft > 0)) &&
+        (activeType != SecretRealmType.DanCauldron || !cauldronChosen);
+
     public Transform ActiveNavigationLayer => resultModal != null && resultModal.activeInHierarchy
         ? resultModal.transform : rootModal != null && rootModal.activeInHierarchy ? rootModal.transform : null;
 
@@ -160,6 +164,7 @@ public class SecretRealmPlayController : MonoBehaviour
                 SetupSwordTomb();
                 break;
         }
+        rootModal.GetComponent<KhiVanChiTu.UI.SecretRealm.RealmPlayView>()?.Begin(activeType);
         var motionOwner=MobileUIAnimationDirector.For(this);
         var presentation=motionOwner!=null?motionOwner.GetComponent<MobileUIReconstruction>():null;
         if(presentation!=null)MobileUIResponsiveRepairs.ApplyTree(presentation,rootModal.transform);
@@ -1093,6 +1098,13 @@ public class SecretRealmPlayController : MonoBehaviour
 
     public void ShowResultModal(SecretRealmService.RewardResult reward = default)
     {
+        var phase7 = GameObject.Find("Canvas")?.transform.Find("SecretRealmResultModal")?.GetComponent<KhiVanChiTu.UI.SecretRealm.RealmResultView>();
+        if (phase7 != null)
+        {
+            resultModal = phase7.gameObject;
+            phase7.Show(activeType, currentScore, reward, CloseAll);
+            return;
+        }
         if (resultModal == null)
         {
             var canvas = GameObject.Find("Canvas");
@@ -1328,7 +1340,8 @@ public class SecretRealmPlayController : MonoBehaviour
             btnQuit.onClick.AddListener(CloseAll);
         }
 
-        var arenaTr = root.Find("ArenaContainer");
+        var phase7Arena = root.GetComponent<KhiVanChiTu.UI.SecretRealm.RealmPlayView>();
+        var arenaTr = phase7Arena != null ? phase7Arena.arena : root.Find("ArenaContainer");
         if (arenaTr != null)
         {
             arenaContainer = arenaTr as RectTransform;
@@ -1400,6 +1413,7 @@ public class SecretRealmPlayController : MonoBehaviour
         txt.text = title;
 
         actionButtonGo.GetComponent<Button>().onClick.AddListener(action);
+        rootModal.GetComponent<KhiVanChiTu.UI.SecretRealm.RealmPlayView>()?.StyleAction(actionButtonGo);
     }
 
     private GameObject CreateResultModal()

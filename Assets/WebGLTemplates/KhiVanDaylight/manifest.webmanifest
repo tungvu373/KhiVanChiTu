@@ -1,0 +1,17 @@
+{
+  "name": "Khí Vận Chi Tử",
+  "short_name": "Khí Vận Chi Tử",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#dff3ff",
+  "theme_color": "#cbeeff",
+  "description": "Khí Vận Chi Tử — Idle Tu Tiên 3D",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

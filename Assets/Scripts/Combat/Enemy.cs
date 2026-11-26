@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
     public float maxHp = 35f;
     public float hp = 35f;
     public float moveSpeed = 2f;
+    [Min(0f)] public float hoverHeight = 0f;
     
     public bool isBoss = false;
     public float damage = 10f;
@@ -27,6 +28,8 @@ public class Enemy : MonoBehaviour
     public bool isDead = false;
     public int SpawnVersion { get; private set; }
     protected bool hasIsMovingParam = false;
+    protected bool hasAttackTriggerParam = false;
+    protected bool hasDieTriggerParam = false;
     
     // UI Damage Popup (Cộng dồn sát thương tránh đè chữ)
     protected DamagePopup activePopup;
@@ -118,6 +121,12 @@ public class Enemy : MonoBehaviour
         visualHp = health;
         playerTarget = target;
         isBoss = boss;
+        if (!boss && hoverHeight > 0f)
+        {
+            Vector3 spawnPosition = transform.position;
+            spawnPosition.y += hoverHeight;
+            transform.position = spawnPosition;
+        }
         damage = boss ? health * 0.2f : Mathf.Max(2f, health * 0.05f); // Sát thương tỉ lệ theo máu (tối thiểu 2)
         isDead = false;
         attackTimer = 0.5f;
@@ -157,15 +166,22 @@ public class Enemy : MonoBehaviour
         
         if (animator == null) animator = GetComponentInChildren<Animator>();
         hasIsMovingParam = false;
+        hasAttackTriggerParam = false;
+        hasDieTriggerParam = false;
         if (animator != null)
         {
             foreach (var p in animator.parameters)
             {
-                if (p.name == "IsMoving") { hasIsMovingParam = true; break; }
+                if (p.name == "IsMoving" && p.type == AnimatorControllerParameterType.Bool)
+                    hasIsMovingParam = true;
+                else if (p.name == "Attack" && p.type == AnimatorControllerParameterType.Trigger)
+                    hasAttackTriggerParam = true;
+                else if (p.name == "Die" && p.type == AnimatorControllerParameterType.Trigger)
+                    hasDieTriggerParam = true;
             }
 
-            animator.ResetTrigger("Die");
-            animator.ResetTrigger("Attack");
+            if (hasDieTriggerParam) animator.ResetTrigger("Die");
+            if (hasAttackTriggerParam) animator.ResetTrigger("Attack");
             if (hasIsMovingParam) animator.SetBool("IsMoving", false);
 
             // Đưa Animator về trạng thái ban đầu để tránh bị đông cứng ở thế nằm chết
@@ -369,7 +385,7 @@ public class Enemy : MonoBehaviour
             {
                 attackTimer = isBoss ? 1.5f : (1f / attackSpeed);
                 
-                if (animator != null) animator.SetTrigger("Attack"); // Kích hoạt Anim Đánh
+                if (animator != null && hasAttackTriggerParam) animator.SetTrigger("Attack"); // Kích hoạt Anim Đánh nếu controller có state tương ứng
                 
                 if (!isBoss && HitVFXManager.Instance != null)
                 {
@@ -442,7 +458,7 @@ public class Enemy : MonoBehaviour
         {
             isDead = true;
             activePopup = null;
-            if (animator != null) animator.SetTrigger("Die");
+            if (animator != null && hasDieTriggerParam) animator.SetTrigger("Die");
             
             // Ẩn Canvas máu ngay khi chết
             Transform canvasTr = transform.Find("HPCanvas");

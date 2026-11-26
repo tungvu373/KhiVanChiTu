@@ -143,7 +143,7 @@ public class ArtifactPanelUI : MonoBehaviour
         }
     }
 
-    private string GetSlotStatsFormatted(ArtifactSlot slot, int level)
+    public static string GetSlotStatsFormatted(ArtifactSlot slot, int level)
     {
         switch (slot)
         {

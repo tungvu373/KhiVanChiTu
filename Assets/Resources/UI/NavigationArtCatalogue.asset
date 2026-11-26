@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b10f16b7758c2e4fbcd063caf25c23c, type: 3}
+  m_Name: NavigationArtCatalogue
+  m_EditorClassIdentifier: Assembly-CSharp::KhiVanChiTu.UI.GameIcons.NavigationArtCatalogue
+  routes:
+  - route: 0
+    icon: {fileID: 21300000, guid: 9af73fe76f3035c4c887c32e748e36df, type: 3}
+  - route: 1
+    icon: {fileID: 21300000, guid: 752616a801dd0844c84c037ab299bcb9, type: 3}
+  - route: 2
+    icon: {fileID: 21300000, guid: 0d37c6aacbd5ce041acc84c4c292c367, type: 3}
+  - route: 3
+    icon: {fileID: 21300000, guid: abb57953b333d1e4186be58318b7287a, type: 3}
+  - route: 4
+    icon: {fileID: 21300000, guid: f8dc4b72a639296438ab879f48034d1d, type: 3}
+  - route: 5
+    icon: {fileID: 21300000, guid: 6968d7472d52b61489b9e4c5829de052, type: 3}
+  - route: 6
+    icon: {fileID: 21300000, guid: 82ff7241fe015914a8b7433d3da4e448, type: 3}
+  - route: 7
+    icon: {fileID: 21300000, guid: 263aa6da03b21a24cbe5903ae1d4bd8e, type: 3}
+  - route: 8
+    icon: {fileID: 21300000, guid: cec5c2fba030421469510f8fa9d15bc2, type: 3}
+  - route: 9
+    icon: {fileID: 21300000, guid: ba01831d75ff8154294fed13196f4ce0, type: 3}
+  - route: 10
+    icon: {fileID: 21300000, guid: 6ca3959c9f9e97f45ad9d68918073861, type: 3}
+  - route: 11
+    icon: {fileID: 21300000, guid: 7454c0b3c8c81a8428435c3d63396867, type: 3}
+  - route: 12
+    icon: {fileID: 21300000, guid: 96516d98d93337f419626eafec6746c9, type: 3}
+  - route: 13
+    icon: {fileID: 21300000, guid: d23262e783ec9474881412a5e4d928ed, type: 3}
+  - route: 14
+    icon: {fileID: 21300000, guid: 6ed154e486ea8cb48aa757a3df60a9b4, type: 3}
+  - route: 15
+    icon: {fileID: 21300000, guid: 8fb70b028d860634aa5e4b885ef177f8, type: 3}
+  - route: 16
+    icon: {fileID: 21300000, guid: 8a05ed16e7378f5498d52942106bc6ca, type: 3}
+  - route: 17
+    icon: {fileID: 21300000, guid: b3e91be4d0fb9c14ea53d76f18692481, type: 3}
+  - route: 18
+    icon: {fileID: 21300000, guid: c08bd6ac9ea92f245b516031210f0503, type: 3}
+  - route: 19
+    icon: {fileID: 21300000, guid: 28a349996b715c646a11578cd14f5dc3, type: 3}
+  - route: 20
+    icon: {fileID: 21300000, guid: babf82f095cb89e4fa84ff41fc710607, type: 3}
+  - route: 21
+    icon: {fileID: 21300000, guid: aee07aa7c05942840a5b84e90591b261, type: 3}
+  - route: 22
+    icon: {fileID: 21300000, guid: 3bc5acab7ab6f8a47a314f87aa465d92, type: 3}
+  - route: 23
+    icon: {fileID: 21300000, guid: 094399ebc273dea42bfd44a2ef2890e1, type: 3}
+  bodyNodes:
+  - {fileID: 21300000, guid: 58592dfe18fbd5b4c8aa88330f1be86a, type: 3}
+  - {fileID: 21300000, guid: 91827402a578fdb43a3ee8ece56759eb, type: 3}
+  - {fileID: 21300000, guid: 649bb37a9f8614a4a85d84c510566545, type: 3}
+  - {fileID: 21300000, guid: 9fbddef9264a9924ca47c0bedfb303c1, type: 3}
+  - {fileID: 21300000, guid: ca84b13cbf0f13143b882dc4b80b6cf2, type: 3}
+  - {fileID: 21300000, guid: d02fd7531a86b57458b3468b083ec63a, type: 3}
