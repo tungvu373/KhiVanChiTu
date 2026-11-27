@@ -66,7 +66,10 @@ namespace KhiVanChiTu.Remake
             if (SceneFlowController.Instance != null)
                 SceneFlowController.Instance.OnLoadingOverlayChanged += HandleLoadingChanged;
             if (GameplayEngine.Instance != null)
+            {
                 GameplayEngine.Instance.OnToastMessage += ShowToast;
+                GameplayEngine.Instance.OnWaveStarted += HandleWaveStarted;
+            }
             if (GraphicsSettingsService.Instance != null)
                 GraphicsSettingsService.Instance.OnGraphicsChanged += RefreshAfkVeil;
             RefreshAfkVeil();
@@ -77,9 +80,19 @@ namespace KhiVanChiTu.Remake
             if (SceneFlowController.Instance != null)
                 SceneFlowController.Instance.OnLoadingOverlayChanged -= HandleLoadingChanged;
             if (GameplayEngine.Instance != null)
+            {
                 GameplayEngine.Instance.OnToastMessage -= ShowToast;
+                GameplayEngine.Instance.OnWaveStarted -= HandleWaveStarted;
+            }
             if (GraphicsSettingsService.Instance != null)
                 GraphicsSettingsService.Instance.OnGraphicsChanged -= RefreshAfkVeil;
+        }
+
+        private void HandleWaveStarted(int waveIdx, int totalWaves, string bannerText)
+        {
+            if (string.IsNullOrEmpty(bannerText)) return;
+            bool isBossOrElite = waveIdx >= totalWaves && (bannerText.Contains("Thủ Lĩnh") || bannerText.Contains("Tinh Anh"));
+            ShowFeedback(bannerText, isBossOrElite ? RemakeFeedbackKind.GoldSuccess : RemakeFeedbackKind.JadeReward, $"ĐỢT {waveIdx}/{totalWaves}");
         }
 
         private void Update()

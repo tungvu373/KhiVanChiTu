@@ -698,3 +698,148 @@
 .dao-chip-btn.selected Label {
     color: #FFFFFF;
 }
+
+/* =========================================================
+   WEB PC / LAPTOP HORIZONTAL LANDSCAPE LAYOUT (16:9)
+   ========================================================= */
+.menu-card {
+    width: 396px;
+    max-width: 94%;
+    padding: 24px 22px;
+    align-items: center;
+}
+
+.menu-card-body {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+}
+
+.menu-brand-col {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-form-col {
+    width: 100%;
+    align-items: stretch;
+}
+
+.desktop-wide .menu-card {
+    width: 820px;
+    max-width: 90%;
+    padding: 26px 28px;
+}
+
+.desktop-wide .menu-card-body {
+    flex-direction: row;
+    align-items: center;
+}
+
+.desktop-wide .menu-brand-col {
+    width: 40%;
+    margin-right: 22px;
+    padding-right: 18px;
+    border-right-width: 1.5px;
+    border-right-color: rgba(200, 155, 60, 0.35);
+}
+
+.desktop-wide .menu-form-col {
+    width: 58%;
+    flex-grow: 1;
+}
+
+.hud-top-left-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.desktop-wide .hud-top-left-wrap {
+    flex-direction: row;
+    align-items: center;
+}
+
+.desktop-wide .hud-breakthrough-wrap {
+    margin-top: 0;
+    margin-left: 10px;
+}
+
+.desktop-wide #cluster-utility-drawer {
+    flex-direction: row;
+    padding: 8px 10px;
+}
+
+.desktop-wide .hud-cultivation-dock {
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.desktop-wide #cluster-cultivation-drawer {
+    margin-bottom: 0;
+    margin-right: 8px;
+    padding: 8px 10px;
+}
+
+.desktop-wide .cluster-grid {
+    width: auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+}
+
+.desktop-wide .drawer-sheet {
+    width: 92%;
+    max-width: 960px;
+    max-height: 86%;
+    padding: 18px 22px;
+}
+
+.pc-split-row {
+    flex-direction: column;
+    width: 100%;
+}
+
+.pc-split-left {
+    width: 100%;
+}
+
+.pc-split-right {
+    width: 100%;
+}
+
+.desktop-wide .pc-split-row {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.desktop-wide .pc-split-left {
+    width: 45%;
+    flex-shrink: 0;
+    margin-right: 14px;
+}
+
+.desktop-wide .pc-split-right {
+    width: 53%;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.pc-hotkey-badge {
+    display: none;
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    background-color: rgba(24, 39, 37, 0.85);
+    color: #FFF7D6;
+    font-size: 9px;
+    -unity-font-style: bold;
+    border-radius: 5px;
+    padding: 1px 4px;
+    border-width: 1px;
+    border-color: rgba(212, 162, 52, 0.8);
+}
+
+.desktop-wide .pc-hotkey-badge {
+    display: flex;
+}

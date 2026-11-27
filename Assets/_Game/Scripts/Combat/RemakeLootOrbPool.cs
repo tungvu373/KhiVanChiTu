@@ -38,8 +38,11 @@ namespace KhiVanChiTu.Remake
         }
 
         private const int PoolSize = 28;
+        private const int MaxNormalOrbsPerFrame = 8;
         private readonly OrbSlot[] _pool = new OrbSlot[PoolSize];
         private int _cursor;
+        private int _lastOrbFrame = -1;
+        private int _normalOrbsThisFrame;
         private Material _unlitOrbMat;
         private Material _beamMat;
         private Texture2D _softGlowTex;
@@ -117,16 +120,25 @@ namespace KhiVanChiTu.Remake
 
         public void SpawnMonsterDrops(Vector3 worldPos, bool isBoss, bool droppedHerb, bool droppedSword, RemakeRarity? equipRarity)
         {
+            if (_lastOrbFrame != Time.frameCount)
+            {
+                _lastOrbFrame = Time.frameCount;
+                _normalOrbsThisFrame = 0;
+            }
+
             bool minimal = GraphicsSettingsService.Instance != null && GraphicsSettingsService.Instance.Settings.vfxDensity == RemakeVfxDensity.Minimal;
             int tuViOrbs = minimal ? 1 : (isBoss ? 4 : 2);
             int ltOrbs = minimal ? 1 : (isBoss ? 4 : 1);
 
-            for (int i = 0; i < tuViOrbs; i++)
+            for (int i = 0; i < tuViOrbs && _normalOrbsThisFrame < MaxNormalOrbsPerFrame; i++, _normalOrbsThisFrame++)
                 SpawnOrb(worldPos, RemakeLootOrbKind.TuViGold, Color.white);
-            for (int i = 0; i < ltOrbs; i++)
+            for (int i = 0; i < ltOrbs && _normalOrbsThisFrame < MaxNormalOrbsPerFrame; i++, _normalOrbsThisFrame++)
                 SpawnOrb(worldPos, RemakeLootOrbKind.LinhThachCyan, Color.white);
-            if (droppedHerb)
+            if (droppedHerb && _normalOrbsThisFrame < MaxNormalOrbsPerFrame)
+            {
+                _normalOrbsThisFrame++;
                 SpawnOrb(worldPos, RemakeLootOrbKind.HerbGreen, Color.white);
+            }
             if (droppedSword)
                 SpawnOrb(worldPos, RemakeLootOrbKind.SwordEmbryoBeam, new Color(1.0f, 0.72f, 0.18f, 1f));
             if (equipRarity.HasValue && (!minimal || equipRarity.Value >= RemakeRarity.Linh))
@@ -237,17 +249,26 @@ namespace KhiVanChiTu.Remake
 
         private static void ConfigureTransparentBlend(Material mat)
         {
+            if (mat.HasProperty("_BaseMap")) mat.SetTexture("_BaseMap", mat.mainTexture);
+            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", Color.white);
             if (mat.HasProperty("_Surface")) mat.SetFloat("_Surface", 1f);
-            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            mat.SetInt("_ZWrite", 0);
+            if (mat.HasProperty("_Blend")) mat.SetFloat("_Blend", 2f);
+            if (mat.HasProperty("_SrcBlend")) mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            if (mat.HasProperty("_DstBlend")) mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
+            if (mat.HasProperty("_SrcBlendAlpha")) mat.SetFloat("_SrcBlendAlpha", (float)UnityEngine.Rendering.BlendMode.One);
+            if (mat.HasProperty("_DstBlendAlpha")) mat.SetFloat("_DstBlendAlpha", (float)UnityEngine.Rendering.BlendMode.One);
+            if (mat.HasProperty("_Cull")) mat.SetFloat("_Cull", 0f);
+            if (mat.HasProperty("_ZWrite")) mat.SetFloat("_ZWrite", 0f);
+            mat.SetOverrideTag("RenderType", "Transparent");
+            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
             mat.renderQueue = 3020;
         }
 
         private static Texture2D CreateGlowTex()
         {
             const int sz = 32;
-            var t = new Texture2D(sz, sz, TextureFormat.RGBA32, false);
+            var t = new Texture2D(sz, sz, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
             for (int y = 0; y < sz; y++)
                 for (int x = 0; x < sz; x++)
                 {
@@ -255,7 +276,8 @@ namespace KhiVanChiTu.Remake
                     float dy = (y + 0.5f) / sz * 2f - 1f;
                     float d = Mathf.Sqrt(dx * dx + dy * dy);
                     float a = Mathf.Clamp01(1f - d);
-                    t.SetPixel(x, y, new Color(1f, 1f, 1f, a * a));
+                    a *= a;
+                    t.SetPixel(x, y, new Color(a, a, a, a));
                 }
             t.Apply();
             return t;
@@ -264,7 +286,7 @@ namespace KhiVanChiTu.Remake
         private static Texture2D CreateBeamTex()
         {
             const int w = 16, h = 64;
-            var t = new Texture2D(w, h, TextureFormat.RGBA32, false);
+            var t = new Texture2D(w, h, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
             for (int y = 0; y < h; y++)
             {
                 float vy = y / (float)(h - 1);
@@ -273,7 +295,7 @@ namespace KhiVanChiTu.Remake
                 {
                     float hx = Mathf.Abs((x + 0.5f) / w * 2f - 1f);
                     float a = Mathf.Clamp01((1f - hx) * (1f - hx)) * Mathf.Clamp01(verticalFade);
-                    t.SetPixel(x, y, new Color(1f, 1f, 1f, a));
+                    t.SetPixel(x, y, new Color(a, a, a, a));
                 }
             }
             t.Apply();

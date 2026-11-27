@@ -27,6 +27,9 @@ namespace KhiVanChiTu.Remake
         private SpriteRenderer _spriteRenderer;
         private Material _runtimeTrailMat;
         private Color _swordColor = new Color(0.28f, 0.85f, 0.72f, 1f);
+        private Gradient _gradOrbit;
+        private Gradient _gradDash;
+        private Gradient _gradRetreat;
 
         private void Awake()
         {
@@ -67,6 +70,7 @@ namespace KhiVanChiTu.Remake
                 <= 8 => new Color(0.98f, 0.76f, 0.22f, 1f), // Kim Quang
                 _ => new Color(1.0f, 0.92f, 0.58f, 1f)      // Tien Bach Kim
             };
+            RebuildCachedTrailGradients();
             SetTrailState(_state);
         }
 
@@ -223,38 +227,49 @@ namespace KhiVanChiTu.Remake
             }
         }
 
+        private void RebuildCachedTrailGradients()
+        {
+            _gradOrbit = BuildTrailGradient(0.32f);
+            _gradDash = BuildTrailGradient(0.90f);
+            _gradRetreat = BuildTrailGradient(0.22f);
+        }
+
+        private Gradient BuildTrailGradient(float peakAlpha)
+        {
+            var g = new Gradient();
+            g.SetKeys(
+                new[] { new GradientColorKey(Color.Lerp(_swordColor, Color.white, 0.45f), 0f), new GradientColorKey(_swordColor, 1f) },
+                new[] { new GradientAlphaKey(peakAlpha, 0f), new GradientAlphaKey(0f, 1f) });
+            return g;
+        }
+
         private void SetTrailState(MotionState newState)
         {
             _state = newState;
             if (_trail == null) return;
-            float peakAlpha;
+            if (_gradOrbit == null) RebuildCachedTrailGradients();
+
             switch (newState)
             {
                 case MotionState.Dashing:
                     _trail.time = 0.24f;
                     _trail.startWidth = 0.30f;
                     _trail.endWidth = 0.03f;
-                    peakAlpha = 0.90f;
+                    _trail.colorGradient = _gradDash;
                     break;
                 case MotionState.Retreating:
                     _trail.time = 0.10f;
                     _trail.startWidth = 0.14f;
                     _trail.endWidth = 0f;
-                    peakAlpha = 0.22f;
+                    _trail.colorGradient = _gradRetreat;
                     break;
                 default:
                     _trail.time = 0.14f;
                     _trail.startWidth = 0.18f;
                     _trail.endWidth = 0f;
-                    peakAlpha = 0.32f;
+                    _trail.colorGradient = _gradOrbit;
                     break;
             }
-
-            var g = new Gradient();
-            g.SetKeys(
-                new[] { new GradientColorKey(Color.Lerp(_swordColor, Color.white, 0.45f), 0f), new GradientColorKey(_swordColor, 1f) },
-                new[] { new GradientAlphaKey(peakAlpha, 0f), new GradientAlphaKey(0f, 1f) });
-            _trail.colorGradient = g;
         }
     }
 }

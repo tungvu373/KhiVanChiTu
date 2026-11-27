@@ -38,6 +38,18 @@ MonoBehaviour:
     m_path: Assets/_Game/Scenes/04_World_Act3_JadePeaks.unity
     m_guid: a170236fac4cf3c4898fd0fb90331bfa
   - m_enabled: 1
+    m_path: Assets/_Game/Scenes/05_World_DemonTower.unity
+    m_guid: 5e8b7e67d9c122b45ad8ff10e3c271c8
+  - m_enabled: 1
+    m_path: Assets/_Game/Scenes/06_World_Secret_SwordTomb.unity
+    m_guid: 42e1697acf621464a886ed3e13b5c71e
+  - m_enabled: 1
+    m_path: Assets/_Game/Scenes/07_World_Secret_HerbGarden.unity
+    m_guid: 1e7feec1d4fa69e49aab39cccf561693
+  - m_enabled: 1
+    m_path: Assets/_Game/Scenes/08_World_Secret_OreCavern.unity
+    m_guid: 852aeb16e01698442bb9025269b5590b
+  - m_enabled: 1
     m_path: Assets/_Game/Scenes/99_UI_Overlay.unity
     m_guid: d40ae69ddde245749b47b647ed08af74
   m_HasScriptingDefines: 0

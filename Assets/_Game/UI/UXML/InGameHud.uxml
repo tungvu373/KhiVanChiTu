@@ -24,8 +24,8 @@
              ================================================= -->
         <ui:VisualElement picking-mode="Ignore" class="hud-top-bar hide-in-mini">
 
-            <!-- TOP-LEFT: Circular Avatar + Painter2D TuVi Ring + Breakthrough below -->
-            <ui:VisualElement style="align-items: flex-start;">
+            <!-- TOP-LEFT: Circular Avatar + Painter2D TuVi Ring + Breakthrough (vertical mobile / horizontal PC) -->
+            <ui:VisualElement class="hud-top-left-wrap">
                 <ui:VisualElement style="flex-direction: row; align-items: center;">
                     <ui:VisualElement name="avatar-ring-host" style="width: 62px; height: 62px; align-items: center; justify-content: center;">
                         <ui:VisualElement name="avatar-portrait" class="art-slot" style="width: 44px; height: 44px; border-radius: 22px; background-color: #FFFDF8;" />
@@ -42,7 +42,7 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement name="wrap-btn-breakthrough" class="circle-btn-wrap" style="margin-top: 6px; margin-left: 2px; display: none;">
+                <ui:VisualElement name="wrap-btn-breakthrough" class="circle-btn-wrap hud-breakthrough-wrap" style="margin-top: 6px; margin-left: 2px; display: none;">
                     <ui:Button name="btn-breakthrough" class="circle-btn active">
                         <ui:VisualElement name="icon-breakthrough" class="circle-btn-icon art-slot" />
                         <ui:Label name="badge-breakthrough-bang" text="!" picking-mode="Ignore" class="alert-bang-badge" />
@@ -200,6 +200,7 @@
                     <ui:VisualElement name="cd-host-0" style="width: 54px; height: 54px; align-items: center; justify-content: center;">
                         <ui:Button name="btn-skill-0" class="circle-btn" style="width: 48px; height: 48px;">
                             <ui:VisualElement name="icon-skill-0" class="circle-btn-icon art-slot" style="width: 32px; height: 32px;" />
+                            <ui:Label text="1" picking-mode="Ignore" class="pc-hotkey-badge" />
                         </ui:Button>
                     </ui:VisualElement>
                     <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 2px;">
@@ -212,6 +213,7 @@
                     <ui:VisualElement name="cd-host-1" style="width: 54px; height: 54px; align-items: center; justify-content: center;">
                         <ui:Button name="btn-skill-1" class="circle-btn" style="width: 48px; height: 48px;">
                             <ui:VisualElement name="icon-skill-1" class="circle-btn-icon art-slot" style="width: 32px; height: 32px;" />
+                            <ui:Label text="2" picking-mode="Ignore" class="pc-hotkey-badge" />
                         </ui:Button>
                     </ui:VisualElement>
                     <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 2px;">
@@ -224,6 +226,7 @@
                     <ui:VisualElement name="cd-host-2" style="width: 54px; height: 54px; align-items: center; justify-content: center;">
                         <ui:Button name="btn-skill-2" class="circle-btn" style="width: 48px; height: 48px;">
                             <ui:VisualElement name="icon-skill-2" class="circle-btn-icon art-slot" style="width: 32px; height: 32px;" />
+                            <ui:Label text="3" picking-mode="Ignore" class="pc-hotkey-badge" />
                         </ui:Button>
                     </ui:VisualElement>
                     <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 2px;">
@@ -236,6 +239,7 @@
                     <ui:VisualElement name="cd-host-3" style="width: 54px; height: 54px; align-items: center; justify-content: center;">
                         <ui:Button name="btn-skill-3" class="circle-btn" style="width: 48px; height: 48px;">
                             <ui:VisualElement name="icon-skill-3" class="circle-btn-icon art-slot" style="width: 32px; height: 32px;" />
+                            <ui:Label text="4" picking-mode="Ignore" class="pc-hotkey-badge" />
                         </ui:Button>
                     </ui:VisualElement>
                     <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 2px;">
@@ -245,8 +249,8 @@
                 </ui:VisualElement>
             </ui:VisualElement>
 
-            <!-- BOTTOM-RIGHT: Cluster 1 Cultivation (☯ Toggle + 6 Circular Slots) -->
-            <ui:VisualElement style="align-items: flex-end;">
+            <!-- BOTTOM-RIGHT: Cluster 1 Cultivation (☯ Toggle + 6 Circular Slots; horizontal dock on PC) -->
+            <ui:VisualElement class="hud-cultivation-dock" style="align-items: flex-end;">
                 <ui:VisualElement name="cluster-cultivation-drawer" class="cluster-panel" style="display: none; margin-bottom: 6px;">
                     <ui:VisualElement class="cluster-grid">
                         <ui:VisualElement class="circle-btn-wrap">

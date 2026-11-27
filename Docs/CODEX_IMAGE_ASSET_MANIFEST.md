@@ -156,8 +156,28 @@ Các ảnh dưới đây đã kiểm tra trực tiếp: **nền trong suốt s�
 
 ---
 
+### Nhóm I — Bản Đồ Riêng Vạn Yêu Tháp & 3 Thái Hư Bí Cảnh (12 ảnh mới cho Codex — Chuẩn WebGL/iPhone)
+
+| # | Đường dẫn con trong `Resources/CodexDrop/` | Kích thước | Nền | Mô tả chi tiết cho Codex (Light Sunlit Xianxia — Tuyệt đối KHÔNG nền đen tối) |
+| :-: | :--- | :---: | :---: | :--- |
+| I1 | `Map/tex_tower_floor_albedo.png` | 512×512 | Seamless | **Sàn Vạn Yêu Tháp**: phiến đá bạch ngọc sáng khắc hoa văn phù văn vàng đồng mảnh, nối khít 4 cạnh top-down. |
+| I2 | `Map/tex_tower_sky_panorama.jpg` | 1024×512 | Panorama | **Khung cảnh Vạn Yêu Tháp**: biển mây trắng nắng vàng ban ngày nhìn từ đài tháp cao, mái ngói ngọc xa xa. |
+| I3 | `Map/prop_tower_pillar.png` | 512×512 | Trong suốt | **Trụ đá cổ Vạn Yêu Tháp**: cột đá bạch ngọc chạm rồng mây vàng đồng + đèn linh thạch sáng trên đỉnh. |
+| I4 | `Map/tex_secret_sword_floor.png` | 512×512 | Seamless | **Sàn Bí Cảnh Kiếm Mộ Cổ**: đá phiến xanh xám sáng điểm rêu ngọc & khe kiếm khí vàng nhạt, nối khít 4 cạnh. |
+| I5 | `Map/tex_secret_sword_sky.jpg` | 1024×512 | Panorama | **Bầu trời Kiếm Mộ Cổ**: trời nắng thanh khiết pha mây vàng nhạt, bóng núi kiếm & cổ kiếm khổng lồ xa chân trời. |
+| I6 | `Map/prop_giant_ancient_sword.png` | 512×512 | Trong suốt | **Cổ Kiếm Khổng Lồ**: thanh kiếm đá-ngọc cắm nghiêng trên mô đá rêu xanh, dải lụa & kiếm khí sáng. |
+| I7 | `Map/tex_secret_herb_floor.png` | 512×512 | Seamless | **Sàn Bí Cảnh Bách Thảo Viên**: thảm cỏ linh thảo xanh ngọc tươi sáng xen sỏi trắng & cánh hoa nhỏ, nối khít 4 cạnh. |
+| I8 | `Map/tex_secret_herb_sky.jpg` | 1024×512 | Panorama | **Bầu trời Bách Thảo Viên**: thung lũng tiên dược ngập nắng sớm, thác mây trắng & vách núi ngọc bích. |
+| I9 | `Map/prop_spirit_herb_cluster.png` | 512×512 | Trong suốt | **Khóm Tiên Thảo**: nấm linh chi vàng cam + thanh liên phát sáng + lá ngọc bích tươi trên mô đất nhỏ. |
+| I10 | `Map/tex_secret_ore_floor.png` | 512×512 | Seamless | **Sàn Bí Cảnh Tinh Thiết Động**: nền đá thạch anh sáng ấm điểm mạch tinh thiết xanh lam & vàng hổ phách, nối khít 4 cạnh. |
+| I11 | `Map/tex_secret_ore_sky.jpg` | 1024×512 | Panorama | **Vòm hang lộ thiên Tinh Thiết Động**: giếng trời xanh nắng chiếu sáng rực, vách đá sáng đính cụm pha lê lam-ngọc. |
+| I12 | `Map/prop_crystal_vein.png` | 512×512 | Trong suốt | **Cụm Tinh Thể Tinh Thiết**: tinh thể pha lê xanh lam ngọc + hổ phách mọc từ tảng đá sáng ban ngày. |
+
+---
+
 ### Tổng kết tiến độ hình ảnh hiện tại
 * **Đợt 1 (Nhóm A–G):** **83/83 ảnh vật lý** đã hoàn thành trong `Assets/_Game/Resources/CodexDrop/` kèm bản bake seamless & 9-slice trong `Assets/_Game/Resources/BakedMaps/`.
-* **Đợt 2 bổ sung nâng cấp V2 (Nhóm H):** **8 ảnh mới (`H1`–`H8`)** cho Sân khấu UI V2 & Sảnh Tiên Môn (nâng tổng kho CodexDrop lên **91 ảnh**).
+* **Đợt 2 bổ sung nâng cấp V2 (Nhóm H):** **8 ảnh (`H1`–`H8`)** cho Sân khấu UI V2 & Sảnh Tiên Môn.
+* **Đợt 3 Map Chuyên Biệt (Nhóm I):** **12 ảnh (`I1`–`I12`)** cho Vạn Yêu Tháp & 3 Thái Hư Bí Cảnh (nâng tổng danh mục CodexDrop lên **103 ảnh**).
 * **Tài sản có sẵn tái sử dụng ngay:** **47 ảnh** nền trong suốt sắc nét trong `Assets/UI/GameIcons/` & `Assets/UI/Menu/Art/`.
-* Mọi vị trí chưa có file PNG từ Codex sẽ dùng **Khung Bạch Ngọc Sáng có nhãn mã file** qua `CodexArtLoader` — tuyệt đối **không** thay thế bằng icon chữ/emoji.
+* Mọi vị trí chưa có file PNG từ Codex sẽ dùng **texture procedural tông sáng** (Map) hoặc **Khung Bạch Ngọc Sáng có nhãn mã file** (UI) qua `CodexArtLoader` — tuyệt đối **không** thay thế bằng icon chữ/emoji.

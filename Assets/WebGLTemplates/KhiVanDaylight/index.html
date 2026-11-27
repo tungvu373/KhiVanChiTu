@@ -261,7 +261,7 @@
           }
         };
 
-        // Unlock WebAudio cleanly on iPhone Safari touch
+        // Unlock WebAudio cleanly on iPhone Safari touch + tab return
         var unlockAudio = function () {
           try {
             if (window.WEBAudio && window.WEBAudio.audioContext && window.WEBAudio.audioContext.state === "suspended") {
@@ -269,10 +269,38 @@
             }
           } catch (e) {}
         };
+        window.addEventListener("touchstart", unlockAudio, { passive: true });
         window.addEventListener("touchend", unlockAudio, { passive: true });
         window.addEventListener("pointerup", unlockAudio, { passive: true });
+        document.addEventListener("visibilitychange", function () {
+          if (document.visibilityState === "visible") setTimeout(unlockAudio, 120);
+        });
+
+        // Handle Safari iOS / Android WebGL Context Lost gracefully
+        canvas.addEventListener("webglcontextlost", function (e) {
+          e.preventDefault();
+          unityShowBanner("Trình duyệt vừa tạm ngắt đồ họa WebGL khi chuyển ứng dụng. Đang khôi phục hoặc hãy tải lại trang!", "error");
+        }, false);
+        canvas.addEventListener("webglcontextrestored", function () {
+          unityShowBanner("Đã khôi phục đồ họa WebGL thành công!", "warning");
+        }, false);
+
+        // Keep canvas flush with Safari dynamic address bar / Android viewport resize
+        if (window.visualViewport) {
+          var resizeTimer = null;
+          var syncViewport = function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+              var c = document.getElementById("unity-container");
+              if (c) c.style.height = window.visualViewport.height + "px";
+            }, 80);
+          };
+          window.visualViewport.addEventListener("resize", syncViewport);
+          syncViewport();
+        }
       })();
 
+      var isMobileBrowser = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || "");
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
       var config = {
@@ -295,7 +323,12 @@
         productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
         productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
         showBanner: unityShowBanner,
-        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+        // Cap DPR to 1.5 on iPhone/Android (cuts mobile pixel fill by ~44% & prevents Safari VRAM pressure)
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, isMobileBrowser ? 1.5 : 2),
+        webglContextAttributes: {
+          preserveDrawingBuffer: false,
+          powerPreference: isMobileBrowser ? "default" : "high-performance"
+        },
       };
 
       var script = document.createElement("script");

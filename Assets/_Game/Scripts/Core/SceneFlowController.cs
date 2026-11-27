@@ -14,6 +14,10 @@ namespace KhiVanChiTu.Remake
         public const string WorldAct1Scene = "02_World_Act1_Meadow";
         public const string WorldAct2Scene = "03_World_Act2_Wasteland";
         public const string WorldAct3Scene = "04_World_Act3_JadePeaks";
+        public const string WorldDemonTowerScene = "05_World_DemonTower";
+        public const string WorldSecretSwordScene = "06_World_Secret_SwordTomb";
+        public const string WorldSecretHerbScene = "07_World_Secret_HerbGarden";
+        public const string WorldSecretOreScene = "08_World_Secret_OreCavern";
         public const string UiOverlayScene = "99_UI_Overlay";
 
         public static string GetWorldSceneForAct(int actIndex) => Mathf.Clamp(actIndex, 0, 2) switch
@@ -21,6 +25,13 @@ namespace KhiVanChiTu.Remake
             1 => WorldAct2Scene,
             2 => WorldAct3Scene,
             _ => WorldAct1Scene
+        };
+
+        public static string GetWorldSceneForSecretRealm(RemakeSecretRealmKind kind) => kind switch
+        {
+            RemakeSecretRealmKind.SwordTomb => WorldSecretSwordScene,
+            RemakeSecretRealmKind.HerbGarden => WorldSecretHerbScene,
+            _ => WorldSecretOreScene
         };
 
         public bool IsTransitioning { get; private set; }
@@ -59,7 +70,25 @@ namespace KhiVanChiTu.Remake
         {
             string target = GetWorldSceneForAct(actIndex);
             if (!IsTransitioning && ActiveWorldSceneName != target)
-                StartCoroutine(SwitchWorldActRoutine(target, actIndex));
+                StartCoroutine(SwitchWorldSceneRoutine(target, ActStageDatabaseSO.GetActLabel(actIndex)));
+        }
+
+        public void SwitchToArenaScene(string targetSceneName, string displayTitle)
+        {
+            if (string.IsNullOrEmpty(targetSceneName) || !IsInGame) return;
+            if (ActiveWorldSceneName == targetSceneName)
+            {
+                RemakeArenaController.Instance?.ResetForStageChange();
+                return;
+            }
+            if (!IsTransitioning)
+                StartCoroutine(SwitchWorldSceneRoutine(targetSceneName, displayTitle));
+        }
+
+        public void ReturnToCampaignWorld()
+        {
+            int act = SaveService.Current != null ? SaveService.Current.activeAct : 0;
+            SwitchToArenaScene(GetWorldSceneForAct(act), ActStageDatabaseSO.GetActLabel(act));
         }
 
         public void ReturnToMainMenu()
@@ -125,12 +154,12 @@ namespace KhiVanChiTu.Remake
             IsTransitioning = false;
         }
 
-        private IEnumerator SwitchWorldActRoutine(string nextWorldSceneName, int actIndex)
+        private IEnumerator SwitchWorldSceneRoutine(string nextWorldSceneName, string displayTitle)
         {
             IsTransitioning = true;
             IsInGame = false;
-            string actTitle = ActStageDatabaseSO.GetActLabel(actIndex);
-            OnLoadingOverlayChanged?.Invoke(true, 0.15f, $"Đang thu hồi đấu trường & chuyển tới {actTitle}...");
+            string title = string.IsNullOrEmpty(displayTitle) ? nextWorldSceneName : displayTitle;
+            OnLoadingOverlayChanged?.Invoke(true, 0.15f, $"Đang thu hồi đấu trường & chuyển tới {title}...");
 
             if (!string.IsNullOrEmpty(ActiveWorldSceneName) && IsSceneLoaded(ActiveWorldSceneName))
             {
@@ -139,9 +168,9 @@ namespace KhiVanChiTu.Remake
                 GC.Collect();
             }
 
-            OnLoadingOverlayChanged?.Invoke(true, 0.45f, $"Đang dựng {actTitle}...");
+            OnLoadingOverlayChanged?.Invoke(true, 0.45f, $"Đang dựng {title}...");
             yield return LoadSceneAdditiveAsync(nextWorldSceneName, p =>
-                OnLoadingOverlayChanged?.Invoke(true, 0.45f + p * 0.50f, $"Đang tải {actTitle}..."));
+                OnLoadingOverlayChanged?.Invoke(true, 0.45f + p * 0.50f, $"Đang tải {title}..."));
             ActiveWorldSceneName = nextWorldSceneName;
             SetActiveSceneByName(nextWorldSceneName);
 

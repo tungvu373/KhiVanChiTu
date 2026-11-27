@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 namespace KhiVanChiTu.Remake
@@ -112,11 +113,18 @@ namespace KhiVanChiTu.Remake
         private Vector2 _daoVanPan = Vector2.zero;
         private float _daoVanZoom = 0.72f;
 
+        // Coalesced HUD dirty flags (max 1 HUD update per frame -> zero AoE event storms!)
+        private bool _hudDirty = true;
+        private bool _drawerDirty;
+        private float _badgeCheckCooldown;
+        private bool _cachedHasDaoReady;
+        private bool _desktopDockInitialized;
+
         private void OnEnable()
         {
             BindHudVisuals();
             SubscribeEvents();
-            RefreshAllHud();
+            RefreshAllHudImmediate();
         }
 
         private void OnDisable()
@@ -126,9 +134,46 @@ namespace KhiVanChiTu.Remake
 
         private void Update()
         {
+            HandlePcKeyboardHotkeys();
             UpdateRealtimeBars();
             UpdateDamagePopups();
             UpdateTutorialPointerPosition();
+        }
+
+        private void HandlePcKeyboardHotkeys()
+        {
+            var kb = Keyboard.current;
+            if (kb == null || PlatformWebBridge.IsTouchPlatform()) return;
+            var engine = GameplayEngine.Instance;
+
+            if (kb.escapeKey.wasPressedThisFrame)
+            {
+                if (_activeDrawer != DrawerKind.None) CloseDrawer();
+                else OpenDrawer(DrawerKind.Settings);
+                return;
+            }
+            if (_activeDrawer != DrawerKind.None) return;
+
+            if (kb.tabKey.wasPressedThisFrame) ToggleLeftHud();
+            if (engine == null) return;
+            if (kb.digit1Key.wasPressedThisFrame) engine.TryCastSkill(0);
+            else if (kb.digit2Key.wasPressedThisFrame) engine.TryCastSkill(1);
+            else if (kb.digit3Key.wasPressedThisFrame) engine.TryCastSkill(2);
+            else if (kb.digit4Key.wasPressedThisFrame) engine.TryCastSkill(3);
+        }
+
+        private void LateUpdate()
+        {
+            if (_hudDirty)
+            {
+                _hudDirty = false;
+                RefreshAllHudImmediate();
+            }
+            if (_drawerDirty)
+            {
+                _drawerDirty = false;
+                RefreshActiveDrawerIfOpen();
+            }
         }
 
         private void BindHudVisuals()
@@ -337,19 +382,20 @@ namespace KhiVanChiTu.Remake
         {
             if (GameplayEngine.Instance != null)
             {
-                GameplayEngine.Instance.OnStatsChanged += RefreshAllHud;
-                GameplayEngine.Instance.OnStageChanged += RefreshAllHud;
-                GameplayEngine.Instance.OnQuestOrTutorialChanged += RefreshAllHud;
+                GameplayEngine.Instance.OnStatsChanged += MarkHudDirty;
+                GameplayEngine.Instance.OnStageChanged += HandleStageChanged;
+                GameplayEngine.Instance.OnQuestOrTutorialChanged += MarkHudDirty;
                 GameplayEngine.Instance.OnBossStatusUpdated += HandleBossStatus;
                 GameplayEngine.Instance.OnBreakthroughResolved += HandleBreakthroughOrMergeRefresh;
                 GameplayEngine.Instance.OnSwordMergeResolved += HandleSwordMergeRefresh;
+                GameplayEngine.Instance.OnAlchemyBrewResolved += HandleAlchemyBrewResolved;
                 GameplayEngine.Instance.OnTribulationStateChanged += HandleTribulationStateChanged;
                 GameplayEngine.Instance.OnTribulationStrike += HandleTribulationStrike;
             }
             if (FpsMonitorService.Instance != null)
                 FpsMonitorService.Instance.OnFpsUpdated += RefreshFpsHud;
             if (GraphicsSettingsService.Instance != null)
-                GraphicsSettingsService.Instance.OnGraphicsChanged += RefreshAllHud;
+                GraphicsSettingsService.Instance.OnGraphicsChanged += HandleGraphicsChanged;
             if (RemakeVfxPool.Instance != null)
                 RemakeVfxPool.Instance.OnDamagePopupRequested += SpawnDamagePopup;
             if (RemakeOnlineService.Instance != null)
@@ -360,23 +406,47 @@ namespace KhiVanChiTu.Remake
         {
             if (GameplayEngine.Instance != null)
             {
-                GameplayEngine.Instance.OnStatsChanged -= RefreshAllHud;
-                GameplayEngine.Instance.OnStageChanged -= RefreshAllHud;
-                GameplayEngine.Instance.OnQuestOrTutorialChanged -= RefreshAllHud;
+                GameplayEngine.Instance.OnStatsChanged -= MarkHudDirty;
+                GameplayEngine.Instance.OnStageChanged -= HandleStageChanged;
+                GameplayEngine.Instance.OnQuestOrTutorialChanged -= MarkHudDirty;
                 GameplayEngine.Instance.OnBossStatusUpdated -= HandleBossStatus;
                 GameplayEngine.Instance.OnBreakthroughResolved -= HandleBreakthroughOrMergeRefresh;
                 GameplayEngine.Instance.OnSwordMergeResolved -= HandleSwordMergeRefresh;
+                GameplayEngine.Instance.OnAlchemyBrewResolved -= HandleAlchemyBrewResolved;
                 GameplayEngine.Instance.OnTribulationStateChanged -= HandleTribulationStateChanged;
                 GameplayEngine.Instance.OnTribulationStrike -= HandleTribulationStrike;
             }
             if (FpsMonitorService.Instance != null)
                 FpsMonitorService.Instance.OnFpsUpdated -= RefreshFpsHud;
             if (GraphicsSettingsService.Instance != null)
-                GraphicsSettingsService.Instance.OnGraphicsChanged -= RefreshAllHud;
+                GraphicsSettingsService.Instance.OnGraphicsChanged -= HandleGraphicsChanged;
             if (RemakeVfxPool.Instance != null)
                 RemakeVfxPool.Instance.OnDamagePopupRequested -= SpawnDamagePopup;
             if (RemakeOnlineService.Instance != null)
                 RemakeOnlineService.Instance.OnOnlineStateUpdated -= HandleOnlineUpdated;
+        }
+
+        private void MarkHudDirty() => _hudDirty = true;
+
+        private void HandleStageChanged()
+        {
+            _hudDirty = true;
+            if (_activeDrawer == DrawerKind.Stages || _activeDrawer == DrawerKind.ImmortalGate)
+                _drawerDirty = true;
+        }
+
+        private void HandleGraphicsChanged()
+        {
+            _hudDirty = true;
+            if (_activeDrawer == DrawerKind.Settings)
+                _drawerDirty = true;
+        }
+
+        private void HandleAlchemyBrewResolved()
+        {
+            _hudDirty = true;
+            if (_activeDrawer == DrawerKind.Alchemy)
+                _drawerDirty = true;
         }
 
         private void HandleOnlineUpdated()
@@ -384,17 +454,26 @@ namespace KhiVanChiTu.Remake
             if (_chatTickerLabel != null && RemakeOnlineService.Instance != null)
                 _chatTickerLabel.text = RemakeOnlineService.Instance.LatestChatTicker;
             if (_activeDrawer == DrawerKind.Leaderboard || _activeDrawer == DrawerKind.Friends || _activeDrawer == DrawerKind.WorldChat)
-                RefreshActiveDrawerIfOpen();
+                _drawerDirty = true;
         }
 
-        private void HandleBreakthroughOrMergeRefresh(bool _, string __) => RefreshActiveDrawerIfOpen();
-        private void HandleSwordMergeRefresh(bool _, int __, float ___) => RefreshActiveDrawerIfOpen();
+        private void HandleBreakthroughOrMergeRefresh(bool _, string __)
+        {
+            _hudDirty = true;
+            if (_activeDrawer == DrawerKind.Breakthrough) _drawerDirty = true;
+        }
+
+        private void HandleSwordMergeRefresh(bool _, int __, float ___)
+        {
+            _hudDirty = true;
+            if (_activeDrawer == DrawerKind.SwordPath) _drawerDirty = true;
+        }
 
         private void HandleTribulationStateChanged(bool entering)
         {
             if (entering && _activeDrawer == DrawerKind.Breakthrough)
                 CloseDrawer();
-            RefreshAllHud();
+            _hudDirty = true;
         }
 
         private void HandleTribulationStrike(int strikeIndex, int totalStrikes)
@@ -495,7 +574,7 @@ namespace KhiVanChiTu.Remake
             }
         }
 
-        private void RefreshAllHud()
+        private void RefreshAllHudImmediate()
         {
             var save = SaveService.Current;
             var engine = GameplayEngine.Instance;
@@ -522,16 +601,17 @@ namespace KhiVanChiTu.Remake
             var stage = engine.GetCurrentStageSpec();
             if (_hudStageLabel != null)
             {
+                string waveTxt = $"Đợt {engine.CurrentWaveIndex}/{engine.TotalWavesInStage}";
                 if (engine.ActiveArenaMode == RemakeArenaMode.DemonTower)
-                    _hudStageLabel.text = $"Vạn Yêu Tháp · Tầng {engine.ActiveChallengeFloor}";
+                    _hudStageLabel.text = $"Vạn Yêu Tháp T{engine.ActiveChallengeFloor} · {waveTxt}";
                 else if (engine.ActiveArenaMode == RemakeArenaMode.SecretRealm)
-                    _hudStageLabel.text = CultivationTable.GetSecretRealmTierSpec(engine.ActiveSecretRealmKind, engine.ActiveSecretRealmTier).title;
+                    _hudStageLabel.text = $"{CultivationTable.GetSecretRealmTierSpec(engine.ActiveSecretRealmKind, engine.ActiveSecretRealmTier).title} · {waveTxt}";
                 else
                 {
                     string diffName = ActStageDatabaseSO.GetDifficultyLabel(stage.difficulty);
                     _hudStageLabel.text = stage.isBossStage
-                        ? $"{diffName} · {stage.stageCode} (Boss)"
-                        : $"{diffName} · {stage.stageCode} · {save.stageWaveKills}/{stage.killsToClearWave}";
+                        ? $"{diffName} · {stage.stageCode} · {waveTxt} (Boss)"
+                        : $"{diffName} · {stage.stageCode} · {waveTxt} ({engine.WaveEnemiesRemaining})";
                 }
             }
             if (_btnChallengeBoss != null)
@@ -573,19 +653,23 @@ namespace KhiVanChiTu.Remake
                     _skillAutoBtns[s].EnableInClassList("selected", engine.GetSkillAuto(s));
             }
 
-            // Notification badges (mergeable pair or ANY upgradeable DaoVan node)
+            // Notification badges (throttled DaoVan scan so combat kills stay ultra-cheap!)
             bool hasMergeReady = HasMergeableSwordPair();
-            bool hasDaoReady = daoVanOpen && HasAnyUpgradeableDaoVanNode(engine);
+            if (Time.unscaledTime >= _badgeCheckCooldown)
+            {
+                _badgeCheckCooldown = Time.unscaledTime + 0.35f;
+                _cachedHasDaoReady = daoVanOpen && HasAnyUpgradeableDaoVanNode(engine);
+            }
+            bool hasDaoReady = daoVanOpen && _cachedHasDaoReady;
             if (_badgeSwordPath != null) _badgeSwordPath.style.display = hasMergeReady ? DisplayStyle.Flex : DisplayStyle.None;
             if (_badgeDaoVan != null) _badgeDaoVan.style.display = hasDaoReady ? DisplayStyle.Flex : DisplayStyle.None;
             if (_badgeClusterBagua != null) _badgeClusterBagua.style.display = (hasMergeReady || hasDaoReady) ? DisplayStyle.Flex : DisplayStyle.None;
 
-            // Main Quest 1-Line Tracker & Collapsible Left HUD
+            // Main Quest 1-Line Tracker & Collapsible Left HUD (NO modal rebuild on combat kills!)
             RefreshQuestTracker();
             ApplyLeftHudVisibility();
             RefreshFpsHud();
             HandleBossStatus(engine.HasActiveBoss ? engine.ActiveBossName : null, engine.ActiveBossHp, engine.ActiveBossMaxHp);
-            RefreshActiveDrawerIfOpen();
         }
 
         private void RefreshQuestTracker()
@@ -707,8 +791,8 @@ namespace KhiVanChiTu.Remake
                 _challengeBanner.style.display = DisplayStyle.Flex;
                 string rem = $"{Mathf.Max(0f, engine.ChallengeModeTimeRemaining):0}s";
                 _challengeBannerLabel.text = engine.ActiveArenaMode == RemakeArenaMode.DemonTower
-                    ? $"Tháp T{engine.ActiveChallengeFloor} · {rem} (Còn {engine.ChallengeKillsRemaining})"
-                    : $"Bí Cảnh T{engine.ActiveSecretRealmTier} · {rem} (Còn {engine.ChallengeKillsRemaining})";
+                    ? $"Tháp T{engine.ActiveChallengeFloor} · Đợt {engine.CurrentWaveIndex}/{engine.TotalWavesInStage} · {rem}"
+                    : $"Bí Cảnh T{engine.ActiveSecretRealmTier} · Đợt {engine.CurrentWaveIndex}/{engine.TotalWavesInStage} · {rem}";
             }
 
             // Pulse Breakthrough Red '!' Badge when ready
@@ -847,14 +931,42 @@ namespace KhiVanChiTu.Remake
         private void ApplySafeAreaAndBreakpoints()
         {
             if (_safeRoot == null || uiDocument == null || uiDocument.rootVisualElement == null) return;
+            int swRaw = Mathf.Max(1, Screen.width);
+            int shRaw = Mathf.Max(1, Screen.height);
+            bool isMiniScreen = (!PlatformWebBridge.IsTouchPlatform() && ((swRaw < 480 && shRaw < 540) || shRaw < 400));
+            bool isLandscapeDesktop = (swRaw > shRaw * 1.15f) && swRaw >= 700 && shRaw >= 420 && !isMiniScreen;
+
+            if (uiDocument.panelSettings != null)
+            {
+                Vector2Int targetRes = isLandscapeDesktop ? new Vector2Int(1280, 720) : new Vector2Int(540, 960);
+                float targetMatch = isLandscapeDesktop ? 1f : 0f;
+                if (uiDocument.panelSettings.referenceResolution != targetRes || !Mathf.Approximately(uiDocument.panelSettings.match, targetMatch))
+                {
+                    uiDocument.panelSettings.referenceResolution = targetRes;
+                    uiDocument.panelSettings.match = targetMatch;
+                }
+            }
+
             float w = uiDocument.rootVisualElement.resolvedStyle.width;
             float h = uiDocument.rootVisualElement.resolvedStyle.height;
             if (float.IsNaN(w) || float.IsNaN(h) || w <= 0 || h <= 0) return;
 
-            bool isMini = w < 450f || h < 420f || (!PlatformWebBridge.IsTouchPlatform() && ((Screen.width < 460 && Screen.height < 520) || Screen.height < 380));
-            bool isDesktop = w > h * 1.15f && !isMini;
+            bool isMini = isMiniScreen || w < 450f || h < 420f;
+            bool isDesktop = (w > h * 1.15f || isLandscapeDesktop) && !isMini;
+
+            // Apply on rootVisualElement so BOTH hud-safe-root AND modal-backdrop/drawer-sheet receive desktop-wide / mini-mode!
+            uiDocument.rootVisualElement.EnableInClassList("mini-mode", isMini);
+            uiDocument.rootVisualElement.EnableInClassList("desktop-wide", isDesktop);
             _safeRoot.EnableInClassList("mini-mode", isMini);
             _safeRoot.EnableInClassList("desktop-wide", isDesktop);
+
+            // On PC/Laptop landscape, open the horizontal 6-button Cultivation Dock by default once (user can still collapse via Bagua!)
+            if (isDesktop && !_desktopDockInitialized)
+            {
+                _desktopDockInitialized = true;
+                _cultivationExpanded = true;
+                ApplyClusterVisibility();
+            }
 
             Rect safe = Screen.safeArea;
             float sw = Mathf.Max(1f, Screen.width);

@@ -512,3 +512,51 @@ MonoBehaviour:
     key: Stages/event_fortuitous_orb
     displayName: "N\xFAt K\u1EF3 Ng\u1ED9 Linh C\u01A1"
     isMilestone1Priority: 0
+  - code: I1
+    key: Map/tex_tower_floor_albedo
+    displayName: "S\xE0n \u0111\xE1 V\u1EA1n Y\xEAu Th\xE1p"
+    isMilestone1Priority: 0
+  - code: I2
+    key: Map/tex_tower_sky_panorama
+    displayName: "Khung c\u1EA3nh V\u1EA1n Y\xEAu Th\xE1p 360"
+    isMilestone1Priority: 0
+  - code: I3
+    key: Map/prop_tower_pillar
+    displayName: "Tr\u1EE5 \u0111\xE1 ph\xF9 v\u0103n V\u1EA1n Y\xEAu Th\xE1p"
+    isMilestone1Priority: 0
+  - code: I4
+    key: Map/tex_secret_sword_floor
+    displayName: "S\xE0n \u0111\xE1 B\xED C\u1EA3nh Ki\u1EBFm M\u1ED9 C\u1ED5"
+    isMilestone1Priority: 0
+  - code: I5
+    key: Map/tex_secret_sword_sky
+    displayName: "B\u1EA7u tr\u1EDDi B\xED C\u1EA3nh Ki\u1EBFm M\u1ED9 C\u1ED5"
+    isMilestone1Priority: 0
+  - code: I6
+    key: Map/prop_giant_ancient_sword
+    displayName: "C\u1ED5 Ki\u1EBFm kh\u1ED5ng l\u1ED3 Ki\u1EBFm M\u1ED9"
+    isMilestone1Priority: 0
+  - code: I7
+    key: Map/tex_secret_herb_floor
+    displayName: "S\xE0n linh th\u1EA3o B\xE1ch Th\u1EA3o Vi\xEAn"
+    isMilestone1Priority: 0
+  - code: I8
+    key: Map/tex_secret_herb_sky
+    displayName: "Thung l\u0169ng B\xE1ch Th\u1EA3o Vi\xEAn"
+    isMilestone1Priority: 0
+  - code: I9
+    key: Map/prop_spirit_herb_cluster
+    displayName: "Kh\xF3m Ti\xEAn Th\u1EA3o B\xE1ch Th\u1EA3o Vi\xEAn"
+    isMilestone1Priority: 0
+  - code: I10
+    key: Map/tex_secret_ore_floor
+    displayName: "S\xE0n kho\xE1ng m\u1EA1ch Tinh Thi\u1EBFt \u0110\u1ED9ng"
+    isMilestone1Priority: 0
+  - code: I11
+    key: Map/tex_secret_ore_sky
+    displayName: "Gi\u1EBFng tr\u1EDDi Tinh Thi\u1EBFt \u0110\u1ED9ng"
+    isMilestone1Priority: 0
+  - code: I12
+    key: Map/prop_crystal_vein
+    displayName: "C\u1EE5m tinh th\u1EC3 Tinh Thi\u1EBFt \u0110\u1ED9ng"
+    isMilestone1Priority: 0

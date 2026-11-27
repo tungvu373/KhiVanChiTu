@@ -29,6 +29,24 @@ namespace KhiVanChiTu.Remake
         private static readonly List<int> _fifaFodderBagIndices = new List<int>();
         private static int _swordBagTapMode = 0; // 0 = Them Phoi, 1 = Chon Chinh, 2 = Xuat Tran
 
+        private static void CreatePcSplit(VisualElement parent, out VisualElement leftCol, out VisualElement rightCol, bool wideLeft = false)
+        {
+            var split = new VisualElement();
+            split.AddToClassList("pc-split-row");
+            leftCol = new VisualElement();
+            leftCol.AddToClassList("pc-split-left");
+            rightCol = new VisualElement();
+            rightCol.AddToClassList("pc-split-right");
+            if (wideLeft)
+            {
+                leftCol.style.flexGrow = 1.35f;
+                rightCol.style.flexGrow = 0.85f;
+            }
+            split.Add(leftCol);
+            split.Add(rightCol);
+            parent.Add(split);
+        }
+
         // =========================================================
         // 1. KIEM LO — FIFA ONLINE 1 MAIN + 5 FODDER FORGE & GRIDS
         // =========================================================
@@ -218,8 +236,9 @@ namespace KhiVanChiTu.Remake
             quickBtn.style.marginBottom = 4;
             actionRow.Add(quickBtn);
 
+            CreatePcSplit(body, out var swLeft, out var swRight);
             hero.Add(actionRow);
-            body.Add(hero);
+            swLeft.Add(hero);
 
             // SWORD STYLE
             var styleCard = new VisualElement();
@@ -230,7 +249,7 @@ namespace KhiVanChiTu.Remake
                 engine.SetSwordStyle((RemakeSwordStyle)idx);
                 Refresh();
             });
-            body.Add(styleCard);
+            swLeft.Add(styleCard);
 
             // EQUIPPED SWORDS GRID (TAP TO SELECT AS MAIN)
             var eqCard = new VisualElement();
@@ -273,7 +292,7 @@ namespace KhiVanChiTu.Remake
                 eqGrid.Add(tile);
             }
             eqCard.Add(eqGrid);
-            body.Add(eqCard);
+            swRight.Add(eqCard);
 
             // SWORD BAG GRID (TAP TO ADD FODDER / PICK MAIN / EQUIP)
             var bagCard = new VisualElement();
@@ -371,7 +390,7 @@ namespace KhiVanChiTu.Remake
                 }
                 bagCard.Add(bagGrid);
             }
-            body.Add(bagCard);
+            swRight.Add(bagCard);
         }
 
         private static void SanitizeFifaSelection(RemakeSaveData save)
@@ -618,6 +637,16 @@ namespace KhiVanChiTu.Remake
             };
             canvas.Add(anchor);
 
+            // PC Mouse Wheel Zoom In/Out directly on constellation viewport
+            canvas.RegisterCallback<WheelEvent>(evt =>
+            {
+                float step = evt.delta.y < 0f ? 0.14f : -0.14f;
+                float nextZoom = Mathf.Clamp(clampedZoom + step, 0.48f, 1.75f);
+                if (!Mathf.Approximately(nextZoom, clampedZoom))
+                    onViewportChanged?.Invoke(pan, nextZoom);
+                evt.StopPropagation();
+            });
+
             // Pointer drag panning on constellation background
             bool isDragging = false;
             Vector2 dragStart = Vector2.zero;
@@ -765,7 +794,8 @@ namespace KhiVanChiTu.Remake
 
                 anchor.Add(nodeWrap);
             }
-            body.Add(canvas);
+            CreatePcSplit(body, out var daoLeft, out var daoRight, true);
+            daoLeft.Add(canvas);
 
             // SELECTED NODE INSPECTOR CARD
             int selLv = engine.GetDaoVanLevel(sel.id);
@@ -804,7 +834,7 @@ namespace KhiVanChiTu.Remake
             upBtn.SetEnabled(selCan);
             dAct.Add(upBtn);
             detail.Add(dAct);
-            body.Add(detail);
+            daoRight.Add(detail);
         }
 
         private static void ComputeDaoVanFitViewport(List<DaoVanNodeSpec> visibleNodes, out Vector2 pan, out float zoom)
@@ -955,9 +985,10 @@ namespace KhiVanChiTu.Remake
             };
             brewBtn.AddToClassList("btn-primary");
             brewBtn.SetEnabled(unlocked && !engine.IsBrewingPill);
+            CreatePcSplit(body, out var alcLeft, out var alcRight);
             recipeRow.Add(brewBtn);
             hero.Add(recipeRow);
-            body.Add(hero);
+            alcLeft.Add(hero);
 
             // SMART OWNED PILL INVENTORY GRID + EXCESS PILL SINKS
             var ownedStacks = new List<RemakePillStackEntry>();
@@ -1125,7 +1156,7 @@ namespace KhiVanChiTu.Remake
                 dustBtn.style.marginTop = 6;
                 invCard.Add(dustBtn);
             }
-            body.Add(invCard);
+            alcRight.Add(invCard);
         }
 
         private static string GetShortPillQuality(RemakePillQuality q) => q switch
@@ -1239,8 +1270,9 @@ namespace KhiVanChiTu.Remake
             paperRow.Add(leftCol);
             paperRow.Add(centerCol);
             paperRow.Add(rightCol);
+            CreatePcSplit(body, out var eqLeft, out var eqRight);
             hero.Add(paperRow);
-            body.Add(hero);
+            eqLeft.Add(hero);
 
             // AUTO-DISMANTLE ROW
             var filterCard = new VisualElement();
@@ -1251,7 +1283,7 @@ namespace KhiVanChiTu.Remake
                 engine.SetAutoDismantleMaxRarity(idx - 1);
                 Refresh();
             });
-            body.Add(filterCard);
+            eqLeft.Add(filterCard);
 
             // RESOLVE SELECTED BAG ITEM & LIVE COMPARISON CARD
             RemakeEquipmentItem selectedItem = null;
@@ -1332,7 +1364,7 @@ namespace KhiVanChiTu.Remake
                 btns.Add(disBtn);
 
                 cmp.Add(btns);
-                body.Add(cmp);
+                eqRight.Add(cmp);
             }
 
             // EQUIPMENT BAG AS COMPACT MULTI-COLUMN GRID
@@ -1393,7 +1425,7 @@ namespace KhiVanChiTu.Remake
                 }
                 bagCard.Add(bagGrid);
             }
-            body.Add(bagCard);
+            eqRight.Add(bagCard);
         }
 
         private static string GetShortEquipSlot(RemakeEquipSlot slot) => slot switch

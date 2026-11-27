@@ -28,6 +28,10 @@ namespace KhiVanChiTu.Remake
         private Material _playerRealmRingMat;
         private float _spawnCooldown;
         private float _waveCheckTimer = 0.25f;
+        private int _currentWaveIndex;
+        private int _totalWaves = 3;
+        private int[] _waveCounts = { 3, 3, 4 };
+        private bool _finalWaveIsBoss;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStaticState()
@@ -207,6 +211,7 @@ namespace KhiVanChiTu.Remake
                 ReturnMonsterToPool(_activeMonsters[i]);
             }
             _activeMonsters.Clear();
+            _currentWaveIndex = 0;
             _spawnCooldown = 0f;
             GameplayEngine.Instance?.SetActiveBoss(false, "", 0, 0);
             SpawnNextWaveIfNeeded();
@@ -229,93 +234,117 @@ namespace KhiVanChiTu.Remake
 
         private void SpawnNextWaveIfNeeded()
         {
-            if (_spawnCooldown > 0f) return;
+            // Strict Wave-Based Spawning: NEVER trickle-spawn replacements while current wave still has alive monsters!
+            if (_activeMonsters.Count > 0 || _spawnCooldown > 0f) return;
             var engine = GameplayEngine.Instance;
             if (engine == null || engine.IsInTribulation) return;
 
             var stage = engine.GetCurrentStageSpec();
+            GameplayEngine.GetWavePlan(engine.ActiveArenaMode, stage.isBossStage, engine.ActiveChallengeFloor,
+                out _totalWaves, out _waveCounts, out _finalWaveIsBoss);
+
+            _currentWaveIndex++;
+            if (_currentWaveIndex > _totalWaves)
+            {
+                if (engine.ActiveArenaMode == RemakeArenaMode.Campaign)
+                    _currentWaveIndex = 1; // Continuous idle wave loop in Campaign
+                else
+                    return; // Challenge mode ends on last kill
+            }
+
+            int count = _waveCounts[Mathf.Clamp(_currentWaveIndex - 1, 0, _waveCounts.Length - 1)];
+            bool isFinalWave = _currentWaveIndex >= _totalWaves;
             Vector3 center = PlayerWorldPosition;
+            MonsterDefinitionSO[] pool = ResolveNormalPool(engine);
+            MonsterDefinitionSO bossDef = ResolveBossDefinition(engine);
+
+            string banner = null;
 
             if (engine.ActiveArenaMode == RemakeArenaMode.DemonTower)
             {
-                if (_activeMonsters.Count > 0) return;
                 var towerSpec = CultivationTable.GetDemonTowerFloorSpec(engine.ActiveChallengeFloor);
-                if (towerSpec.enemyCount == 1)
+                if (_finalWaveIsBoss && isFinalWave && bossDef != null)
                 {
-                    MonsterDefinitionSO bossDef = ResolveBossDefinition(engine);
-                    if (bossDef != null)
-                    {
-                        SpawnOneCustom(bossDef, towerSpec.hp, towerSpec.dmg, center + new Vector3(1.1f, 0f, 2.5f));
-                        engine.SetActiveBoss(true, $"Hộ Tháp Tầng {engine.ActiveChallengeFloor}", towerSpec.hp, towerSpec.hp);
-                    }
+                    SpawnOneCustom(bossDef, towerSpec.hp, towerSpec.dmg, center + new Vector3(1.0f, 0f, 2.6f));
+                    engine.SetActiveBoss(true, $"Hộ Tháp Tầng {engine.ActiveChallengeFloor}", towerSpec.hp, towerSpec.hp);
+                    MeadowEnvironmentController.Instance?.AddCameraTrauma(0.24f);
+                    banner = $"Hộ Tháp Thủ Lĩnh Tầng {engine.ActiveChallengeFloor} xuất hiện!";
                 }
-                else
+                else if (pool != null && pool.Length > 0)
                 {
-                    MonsterDefinitionSO[] pool = ResolveNormalPool(engine);
-                    if (pool != null && pool.Length > 0)
-                    {
-                        for (int i = 0; i < engine.ChallengeKillsRemaining; i++)
-                        {
-                            float rad = (i * (360f / Mathf.Max(1, engine.ChallengeKillsRemaining))) * Mathf.Deg2Rad;
-                            Vector3 pos = center + new Vector3(Mathf.Cos(rad) * 3.8f, 0f, Mathf.Sin(rad) * 4.5f);
-                            SpawnOneCustom(pool[i % pool.Length], towerSpec.hp, towerSpec.dmg, pos);
-                        }
-                    }
+                    double waveHp = _finalWaveIsBoss ? Math.Round(towerSpec.hp * 0.22) : towerSpec.hp;
+                    SpawnWaveRingCustom(pool, count, waveHp, towerSpec.dmg, center, isFinalWave && !_finalWaveIsBoss);
+                    banner = isFinalWave ? $"Tầng {engine.ActiveChallengeFloor} — Đợt Cuối (Tinh Anh)!" : $"Vạn Yêu Tháp T{engine.ActiveChallengeFloor} — Đợt {_currentWaveIndex}/{_totalWaves}";
                 }
-                _spawnCooldown = 0.7f;
-                return;
             }
-
-            if (engine.ActiveArenaMode == RemakeArenaMode.SecretRealm)
+            else if (engine.ActiveArenaMode == RemakeArenaMode.SecretRealm)
             {
-                if (_activeMonsters.Count > 0) return;
                 var srSpec = CultivationTable.GetSecretRealmTierSpec(engine.ActiveSecretRealmKind, engine.ActiveSecretRealmTier);
-                MonsterDefinitionSO[] pool = ResolveNormalPool(engine);
                 if (pool != null && pool.Length > 0)
                 {
-                    int spawnCnt = Mathf.Clamp(engine.ChallengeKillsRemaining, 1, 6);
-                    for (int i = 0; i < spawnCnt; i++)
-                    {
-                        float rad = (i * (360f / spawnCnt) + 20f) * Mathf.Deg2Rad;
-                        Vector3 pos = center + new Vector3(Mathf.Cos(rad) * 4.0f, 0f, Mathf.Sin(rad) * 4.8f);
-                        SpawnOneCustom(pool[i % pool.Length], srSpec.hp, srSpec.dmg, pos);
-                    }
+                    SpawnWaveRingCustom(pool, count, srSpec.hp, srSpec.dmg, center, isFinalWave);
+                    banner = isFinalWave ? $"{srSpec.title} — Đợt Cuối (Thủ Vệ Tinh Anh)!" : $"{srSpec.title} — Đợt {_currentWaveIndex}/{_totalWaves}";
                 }
-                _spawnCooldown = 0.7f;
-                return;
             }
-
-            if (stage.isBossStage)
+            else if (_finalWaveIsBoss && isFinalWave)
             {
-                MonsterDefinitionSO bossDef = ResolveBossDefinition(engine);
-                if (_activeMonsters.Count == 0 && bossDef != null)
+                if (bossDef != null)
                 {
-                    SpawnOne(bossDef, stage, center + new Vector3(1.2f, 0f, 2.2f));
+                    SpawnOne(bossDef, stage, center + new Vector3(1.1f, 0f, 2.4f));
                     engine.SetActiveBoss(true, bossDef.displayName, stage.enemyHp * bossDef.hpMultiplier, stage.enemyHp * bossDef.hpMultiplier);
-                    _spawnCooldown = 0.8f;
+                    MeadowEnvironmentController.Instance?.AddCameraTrauma(0.28f);
+                    banner = $"Thủ Lĩnh {bossDef.displayName} giáng lâm!";
                 }
-                return;
+            }
+            else if (pool != null && pool.Length > 0)
+            {
+                double hpMult = stage.isBossStage ? 0.20 : 1.0; // Vanguard wave before Boss X-10
+                SpawnWaveRingCampaign(pool, count, stage, center, hpMult, isFinalWave && !stage.isBossStage);
+                if (_currentWaveIndex >= 2)
+                    banner = isFinalWave ? $"Ải {stage.stageCode} — Đợt Cuối (Yêu Thú Tinh Anh)!" : $"Ải {stage.stageCode} — Đợt {_currentWaveIndex}/{_totalWaves}";
+                else if (stage.isBossStage)
+                    banner = $"Ải Boss {stage.stageCode} — Dọn Hộ Vệ Đợt 1/{_totalWaves}!";
             }
 
-            const int desired = 6;
-            MonsterDefinitionSO[] normPool = ResolveNormalPool(engine);
-            if (_activeMonsters.Count < desired && normPool != null && normPool.Length > 0)
+            RemakeVfxPool.Instance?.SpawnDeathDissolve(center + Vector3.up * 0.3f);
+            engine.ReportWaveState(_currentWaveIndex, _totalWaves, _activeMonsters.Count, banner);
+        }
+
+        private void SpawnWaveRingCampaign(MonsterDefinitionSO[] pool, int count, ActStageDatabaseSO.StageSpec stage, Vector3 center, double hpScale, bool includeElite)
+        {
+            float baseAngle = UnityEngine.Random.Range(0f, 360f);
+            float sector = 360f / Mathf.Max(1, count);
+            for (int i = 0; i < count; i++)
             {
-                int toSpawn = desired - _activeMonsters.Count;
-                float baseAngle = UnityEngine.Random.Range(0f, 360f);
-                float sector = 360f / Mathf.Max(1, toSpawn);
-                for (int i = 0; i < toSpawn; i++)
-                {
-                    MonsterDefinitionSO def = normPool[UnityEngine.Random.Range(0, normPool.Length)];
-                    if (def == null) continue;
-                    float deg = baseAngle + i * sector + UnityEngine.Random.Range(-22f, 22f);
-                    float rad = deg * Mathf.Deg2Rad;
-                    float rx = UnityEngine.Random.Range(3.3f, 4.2f);
-                    float rz = UnityEngine.Random.Range(4.2f, 6.2f);
-                    Vector3 spawnPos = center + new Vector3(Mathf.Cos(rad) * rx, 0f, Mathf.Sin(rad) * rz);
-                    SpawnOne(def, stage, spawnPos);
-                }
-                _spawnCooldown = 0.65f;
+                MonsterDefinitionSO def = pool[UnityEngine.Random.Range(0, pool.Length)];
+                if (def == null) continue;
+                bool isElite = includeElite && i == 0;
+                float deg = baseAngle + i * sector + UnityEngine.Random.Range(-18f, 18f);
+                float rad = deg * Mathf.Deg2Rad;
+                Vector3 pos = center + new Vector3(Mathf.Cos(rad) * UnityEngine.Random.Range(3.4f, 4.3f), 0f, Mathf.Sin(rad) * UnityEngine.Random.Range(4.0f, 5.8f));
+                double hp = Math.Round(stage.enemyHp * def.hpMultiplier * hpScale * (isElite ? 1.35 : 1.0));
+                double dmg = Math.Round(stage.enemyDamage * def.damageMultiplier * (isElite ? 1.15 : 1.0));
+                SpawnOneCustom(def, hp, dmg, pos);
+                if (isElite && _activeMonsters.Count > 0)
+                    _activeMonsters[_activeMonsters.Count - 1].transform.localScale *= 1.18f;
+            }
+        }
+
+        private void SpawnWaveRingCustom(MonsterDefinitionSO[] pool, int count, double baseHp, double baseDmg, Vector3 center, bool includeElite)
+        {
+            float baseAngle = UnityEngine.Random.Range(0f, 360f);
+            float sector = 360f / Mathf.Max(1, count);
+            for (int i = 0; i < count; i++)
+            {
+                MonsterDefinitionSO def = pool[i % pool.Length];
+                if (def == null) continue;
+                bool isElite = includeElite && i == 0;
+                float deg = baseAngle + i * sector + UnityEngine.Random.Range(-16f, 16f);
+                float rad = deg * Mathf.Deg2Rad;
+                Vector3 pos = center + new Vector3(Mathf.Cos(rad) * 3.9f, 0f, Mathf.Sin(rad) * 4.8f);
+                SpawnOneCustom(def, baseHp * (isElite ? 1.35 : 1.0), baseDmg * (isElite ? 1.15 : 1.0), pos);
+                if (isElite && _activeMonsters.Count > 0)
+                    _activeMonsters[_activeMonsters.Count - 1].transform.localScale *= 1.18f;
             }
         }
 
@@ -344,7 +373,9 @@ namespace KhiVanChiTu.Remake
         {
             _activeMonsters.Remove(deadActor);
             ReturnMonsterToPool(deadActor);
-            _spawnCooldown = 0.35f;
+            GameplayEngine.Instance?.ReportWaveState(_currentWaveIndex, _totalWaves, _activeMonsters.Count, null);
+            if (_activeMonsters.Count == 0)
+                _spawnCooldown = 0.75f; // Clean breather between waves before next wave spawns
         }
 
         private void HandleLoiPhatCast(Vector3 targetPos, double damage, bool isCrit)
@@ -421,18 +452,28 @@ namespace KhiVanChiTu.Remake
         {
             float radSq = radius * radius;
             float inSq = innerRadius * innerRadius;
-            for (int i = _activeMonsters.Count - 1; i >= 0; i--)
+            var engine = GameplayEngine.Instance;
+            engine?.BeginAoEDamageBatch();
+            try
             {
-                var m = _activeMonsters[i];
-                if (m == null || !m.IsAlive) continue;
-                float distSq = (m.transform.position - center).sqrMagnitude;
-                if (distSq <= radSq)
+                for (int i = _activeMonsters.Count - 1; i >= 0; i--)
                 {
-                    double dmg = distSq < inSq ? fullDmg : fullDmg * outerRatio;
-                    Vector3 push = knockBias.sqrMagnitude > 0.01f ? knockBias : (m.transform.position - PlayerWorldPosition).normalized;
-                    m.ApplyDamage(dmg, !randomCrit || UnityEngine.Random.value < 0.5f, push);
-                    RemakeVfxPool.Instance?.RequestDamagePopup(m.HitTargetPoint, dmg, true);
+                    if (i >= _activeMonsters.Count) continue;
+                    var m = _activeMonsters[i];
+                    if (m == null || !m.IsAlive) continue;
+                    float distSq = (m.transform.position - center).sqrMagnitude;
+                    if (distSq <= radSq)
+                    {
+                        double dmg = distSq < inSq ? fullDmg : fullDmg * outerRatio;
+                        Vector3 push = knockBias.sqrMagnitude > 0.01f ? knockBias : (m.transform.position - PlayerWorldPosition).normalized;
+                        m.ApplyDamage(dmg, !randomCrit || UnityEngine.Random.value < 0.5f, push);
+                        RemakeVfxPool.Instance?.RequestDamagePopup(m.HitTargetPoint, dmg, true);
+                    }
                 }
+            }
+            finally
+            {
+                engine?.EndAoEDamageBatch();
             }
         }
 

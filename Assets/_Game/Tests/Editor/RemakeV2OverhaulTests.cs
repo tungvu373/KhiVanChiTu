@@ -78,6 +78,8 @@ namespace KhiVanChiTu.Remake.Tests
                 save.swordInventoryLevels.Add(1);
                 save.swordInventoryLevels.Add(1);
                 save.swordInventoryLevels.Add(1);
+                save.swordPityByLevel[0] = 0.25f; // Deterministic 100% Lv.1 merge in CI
+                save.swordPityByLevel[1] = 0.25f;
 
                 int merged = engine.TryQuickMergeSwords(3);
                 Assert.GreaterOrEqual(merged, 2, "Quick merge should fuse available Lv.1-2 pairs cleanly");
@@ -381,6 +383,99 @@ namespace KhiVanChiTu.Remake.Tests
             {
                 UnityEngine.Object.DestroyImmediate(instance.gameObject);
             }
+        }
+
+        [Test]
+        public void AoEDamageBatch_CoalescesSixKillsIntoSingleEventSetAndInvalidatesStatCache()
+        {
+            var go = new GameObject("TestEngineV3_AoEBatch");
+            try
+            {
+                var engine = go.AddComponent<GameplayEngine>();
+                var save = SaveService.Current;
+                save.hasCreatedCharacter = true;
+                save.realmIndex = 1;
+                save.subStage = 1;
+                save.activeAct = 0;
+                save.activeStage = 2;
+                save.equippedSwordLevels.Clear();
+                save.equippedSwordLevels.Add(1);
+                save.swordInventoryLevels.Clear();
+                save.swordInventoryLevels.Add(4);
+                engine.InvalidateStatCache();
+
+                double atkBefore = engine.GetTotalSwordAttackPower();
+                Assert.IsTrue(engine.TryEquipFromBag(0));
+                double atkAfterEquip = engine.GetTotalSwordAttackPower();
+                Assert.Greater(atkAfterEquip, atkBefore, "Stat cache must invalidate on TryEquipFromBag");
+
+                engine.SetSwordStyle(RemakeSwordStyle.PhaGiap);
+                float spdBefore = engine.GetSwordSpeedMultiplier();
+                engine.SetSwordStyle(RemakeSwordStyle.KiemXuyen);
+                Assert.Greater(engine.GetSwordSpeedMultiplier(), spdBefore, "Stat cache must invalidate on SetSwordStyle");
+
+                int statsEvents = 0, stageEvents = 0, questEvents = 0;
+                engine.OnStatsChanged += () => statsEvents++;
+                engine.OnStageChanged += () => stageEvents++;
+                engine.OnQuestOrTutorialChanged += () => questEvents++;
+
+                engine.BeginAoEDamageBatch();
+                try
+                {
+                    for (int i = 0; i < 6; i++)
+                        engine.OnMonsterKilled(null, false, null);
+                }
+                finally
+                {
+                    engine.EndAoEDamageBatch();
+                }
+
+                Assert.That(statsEvents, Is.EqualTo(1), "6 simultaneous AoE kills must coalesce into 1 OnStatsChanged");
+                Assert.That(stageEvents, Is.EqualTo(1), "6 simultaneous AoE kills must coalesce into 1 OnStageChanged");
+                Assert.That(questEvents, Is.EqualTo(1), "6 simultaneous AoE kills must coalesce into 1 OnQuestOrTutorialChanged");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void WavePlans_And_ChallengeSceneRoutingMatchDesign()
+        {
+            // Campaign normal stage: 3 waves (3+3+4 = 10 kills matching 30-day economy)
+            GameplayEngine.GetWavePlan(RemakeArenaMode.Campaign, false, 1, out int wCamp, out int[] cCamp, out bool bCamp);
+            Assert.That(wCamp, Is.EqualTo(3));
+            Assert.That(cCamp, Is.EqualTo(new[] { 3, 3, 4 }));
+            Assert.IsFalse(bCamp);
+
+            // Campaign Boss stage X-10: 2 waves (3 guards -> 1 Boss)
+            GameplayEngine.GetWavePlan(RemakeArenaMode.Campaign, true, 1, out int wBoss, out int[] cBoss, out bool bBoss);
+            Assert.That(wBoss, Is.EqualTo(2));
+            Assert.That(cBoss, Is.EqualTo(new[] { 3, 1 }));
+            Assert.IsTrue(bBoss);
+
+            // Demon Tower normal vs floor-5 Boss
+            GameplayEngine.GetWavePlan(RemakeArenaMode.DemonTower, false, 3, out int wTNorm, out int[] cTNorm, out bool bTNorm);
+            Assert.That(wTNorm, Is.EqualTo(2));
+            Assert.That(cTNorm, Is.EqualTo(new[] { 4, 5 }));
+            Assert.IsFalse(bTNorm);
+
+            GameplayEngine.GetWavePlan(RemakeArenaMode.DemonTower, false, 5, out int wTBoss, out int[] cTBoss, out bool bTBoss);
+            Assert.That(wTBoss, Is.EqualTo(2));
+            Assert.That(cTBoss, Is.EqualTo(new[] { 3, 1 }));
+            Assert.IsTrue(bTBoss);
+
+            // Secret Realm: 3 waves (4+5+4 = 13 enemies)
+            GameplayEngine.GetWavePlan(RemakeArenaMode.SecretRealm, false, 1, out int wSr, out int[] cSr, out bool bSr);
+            Assert.That(wSr, Is.EqualTo(3));
+            Assert.That(cSr, Is.EqualTo(new[] { 4, 5, 4 }));
+            Assert.IsFalse(bSr);
+
+            // Dedicated scene mapping for 3 Secret Realms + Demon Tower
+            Assert.That(SceneFlowController.GetWorldSceneForSecretRealm(RemakeSecretRealmKind.SwordTomb), Is.EqualTo(SceneFlowController.WorldSecretSwordScene));
+            Assert.That(SceneFlowController.GetWorldSceneForSecretRealm(RemakeSecretRealmKind.HerbGarden), Is.EqualTo(SceneFlowController.WorldSecretHerbScene));
+            Assert.That(SceneFlowController.GetWorldSceneForSecretRealm(RemakeSecretRealmKind.OreCavern), Is.EqualTo(SceneFlowController.WorldSecretOreScene));
         }
     }
 }

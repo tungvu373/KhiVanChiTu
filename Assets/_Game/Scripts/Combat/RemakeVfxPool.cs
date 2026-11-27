@@ -19,9 +19,8 @@ namespace KhiVanChiTu.Remake
         private float[] _boltTimers;
         private int _boltCursor;
 
-        // V2 Distinct Skill VFX pools
-        private LineRenderer[] _swordRainPool;
-        private float[] _swordRainTimers;
+        // V2 Distinct Skill VFX pools (single-draw-call Shuriken sword rain, zero LineRenderer mesh churn!)
+        private ParticleSystem _wanJianRainPs;
         private GameObject _yinYangDisc;
         private float _yinYangTimer;
         private GameObject _palmStrikeDisc;
@@ -33,9 +32,9 @@ namespace KhiVanChiTu.Remake
         private Material _sparkMat;
         private Material _ringMat;
         private Material _boltMat;
-        private Material _swordRayMat;
         private Material _yinYangMat;
         private Material _palmMat;
+        private Material _wanJianMat;
         private Texture2D _glowTex;
         private Texture2D _ringTex;
 
@@ -62,9 +61,9 @@ namespace KhiVanChiTu.Remake
             if (_sparkMat != null) Destroy(_sparkMat);
             if (_ringMat != null) Destroy(_ringMat);
             if (_boltMat != null) Destroy(_boltMat);
-            if (_swordRayMat != null) Destroy(_swordRayMat);
             if (_yinYangMat != null) Destroy(_yinYangMat);
             if (_palmMat != null) Destroy(_palmMat);
+            if (_wanJianMat != null) Destroy(_wanJianMat);
             if (_glowTex != null) Destroy(_glowTex);
             if (_ringTex != null) Destroy(_ringTex);
             if (Instance == this) Instance = null;
@@ -82,26 +81,6 @@ namespace KhiVanChiTu.Remake
                         _boltTimers[i] -= dt;
                         if (_boltTimers[i] <= 0f && _boltPool[i] != null)
                             _boltPool[i].enabled = false;
-                    }
-                }
-            }
-
-            if (_swordRainPool != null)
-            {
-                for (int i = 0; i < _swordRainPool.Length; i++)
-                {
-                    if (_swordRainTimers[i] > 0f)
-                    {
-                        _swordRainTimers[i] -= dt;
-                        float u = 1f - Mathf.Clamp01(_swordRainTimers[i] / 0.36f);
-                        var lr = _swordRainPool[i];
-                        if (lr != null && lr.enabled)
-                        {
-                            Vector3 start = lr.GetPosition(0);
-                            Vector3 end = lr.GetPosition(1);
-                            lr.SetPosition(0, Vector3.Lerp(start, end, dt * 7f));
-                            if (_swordRainTimers[i] <= 0f) lr.enabled = false;
-                        }
                     }
                 }
             }
@@ -234,36 +213,41 @@ namespace KhiVanChiTu.Remake
             }
         }
 
+        private static readonly ParticleSystem.Burst[] WanJianBurstsMinimal =
+        {
+            new ParticleSystem.Burst(0.00f, 6),
+            new ParticleSystem.Burst(0.18f, 6)
+        };
+
+        private static readonly ParticleSystem.Burst[] WanJianBurstsFull =
+        {
+            new ParticleSystem.Burst(0.00f, 10),
+            new ParticleSystem.Burst(0.14f, 10),
+            new ParticleSystem.Burst(0.28f, 8)
+        };
+
         public void SpawnWanJianVolley(Vector3 targetPos)
         {
-            if (_swordRainPool != null)
+            bool minimal = GraphicsSettingsService.Instance != null && GraphicsSettingsService.Instance.Settings.vfxDensity == RemakeVfxDensity.Minimal;
+            if (_wanJianRainPs != null)
             {
-                bool minimal = GraphicsSettingsService.Instance != null && GraphicsSettingsService.Instance.Settings.vfxDensity == RemakeVfxDensity.Minimal;
-                int count = minimal ? 6 : _swordRainPool.Length;
-                for (int i = 0; i < count; i++)
-                {
-                    var lr = _swordRainPool[i];
-                    if (lr == null) continue;
-                    Vector2 off = UnityEngine.Random.insideUnitCircle * 3.8f;
-                    Vector3 dst = new Vector3(targetPos.x + off.x, 0.08f, targetPos.z + off.y);
-                    Vector3 src = dst + new Vector3(UnityEngine.Random.Range(-1.8f, -0.6f), 9.5f + UnityEngine.Random.Range(0f, 3f), UnityEngine.Random.Range(-1.2f, 1.2f));
-                    lr.SetPosition(0, src);
-                    lr.SetPosition(1, dst);
-                    lr.enabled = true;
-                    _swordRainTimers[i] = 0.36f;
-                }
+                _wanJianRainPs.transform.position = targetPos + new Vector3(-1.4f, 5.6f, 0.8f);
+                var em = _wanJianRainPs.emission;
+                em.SetBursts(minimal ? WanJianBurstsMinimal : WanJianBurstsFull);
+                _wanJianRainPs.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                _wanJianRainPs.Play(true);
             }
             if (_critBurst != null)
             {
                 _critBurst.transform.position = targetPos + Vector3.up * 0.75f;
-                _critBurst.Emit(12);
+                _critBurst.Emit(minimal ? 6 : 12);
             }
             if (_shockwaveRing != null)
             {
                 var main = _shockwaveRing.main;
                 main.startColor = new Color(0.98f, 0.82f, 0.25f, 0.92f);
                 _shockwaveRing.transform.position = targetPos + Vector3.up * 0.15f;
-                _shockwaveRing.Emit(2);
+                _shockwaveRing.Emit(minimal ? 1 : 2);
             }
         }
 
@@ -353,12 +337,13 @@ namespace KhiVanChiTu.Remake
             _sparkMat = CreateTransparentParticleMat(particleShader, _glowTex, new Color(1f, 0.92f, 0.55f, 1f), true);
             _ringMat = CreateTransparentParticleMat(particleShader, _ringTex, new Color(0.95f, 0.85f, 0.35f, 0.95f), true);
             _boltMat = CreateTransparentParticleMat(particleShader, _glowTex, new Color(1f, 0.94f, 0.45f, 1f), true);
-            _swordRayMat = CreateTransparentParticleMat(particleShader, _glowTex, new Color(1f, 0.86f, 0.30f, 1f), true);
 
             _hitSparks = CreateBurstSystem("VFX_HitSparks", _sparkMat, new Color(1f, 0.88f, 0.35f, 1f), 0.24f, 3.2f, 6.2f, 0.14f, 0.24f);
             _critBurst = CreateBurstSystem("VFX_CritBurst", _sparkMat, new Color(1f, 0.55f, 0.16f, 1f), 0.32f, 4.2f, 8.2f, 0.20f, 0.34f);
             _deathDissolve = CreateBurstSystem("VFX_DeathDissolve", _ringMat, new Color(0.45f, 0.95f, 0.78f, 0.85f), 0.42f, 1.8f, 3.6f, 0.22f, 0.38f);
             _shockwaveRing = CreateRingSystem("VFX_Shockwave", _ringMat, new Color(0.95f, 0.85f, 0.32f, 0.9f), 0.35f, 3.6f);
+            _wanJianMat = CreateTransparentParticleMat(particleShader, _glowTex, Color.white, false);
+            _wanJianRainPs = CreateWanJianRainSystem("VFX_WanJianRain", _wanJianMat);
 
             _boltPool = new LineRenderer[3];
             _boltTimers = new float[3];
@@ -378,26 +363,6 @@ namespace KhiVanChiTu.Remake
                 lr.receiveShadows = false;
                 lr.enabled = false;
                 _boltPool[i] = lr;
-            }
-
-            _swordRainPool = new LineRenderer[14];
-            _swordRainTimers = new float[14];
-            for (int i = 0; i < 14; i++)
-            {
-                var go = new GameObject($"VFX_SwordRay_{i}");
-                go.transform.SetParent(transform, false);
-                var lr = go.AddComponent<LineRenderer>();
-                lr.sharedMaterial = _swordRayMat;
-                lr.positionCount = 2;
-                lr.useWorldSpace = true;
-                lr.startWidth = 0.08f;
-                lr.endWidth = 0.26f;
-                lr.startColor = new Color(1f, 0.96f, 0.75f, 0.95f);
-                lr.endColor = new Color(0.98f, 0.74f, 0.18f, 1f);
-                lr.shadowCastingMode = ShadowCastingMode.Off;
-                lr.receiveShadows = false;
-                lr.enabled = false;
-                _swordRainPool[i] = lr;
             }
 
             Texture2D yyTex = CodexArtLoader.LoadReusedSprite("SkillYinYang")?.texture ?? _ringTex;
@@ -504,6 +469,66 @@ namespace KhiVanChiTu.Remake
             var r = ps.GetComponent<ParticleSystemRenderer>();
             r.sharedMaterial = mat;
             r.renderMode = ParticleSystemRenderMode.HorizontalBillboard;
+            r.shadowCastingMode = ShadowCastingMode.Off;
+            r.receiveShadows = false;
+            return ps;
+        }
+
+        private ParticleSystem CreateWanJianRainSystem(string goName, Material mat)
+        {
+            var go = new GameObject(goName);
+            go.transform.SetParent(transform, false);
+            var ps = go.AddComponent<ParticleSystem>();
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = ps.main;
+            main.playOnAwake = false;
+            main.loop = false;
+            main.duration = 0.55f;
+            main.maxParticles = 40;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.38f, 0.52f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(14f, 20f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.36f, 0.54f);
+            main.startColor = new ParticleSystem.MinMaxGradient(
+                new Color(1f, 0.92f, 0.36f, 1f),
+                new Color(0.98f, 0.56f, 0.08f, 1f));
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+
+            var em = ps.emission;
+            em.enabled = true;
+            em.rateOverTime = 0f;
+            em.SetBursts(WanJianBurstsFull);
+
+            var shape = ps.shape;
+            shape.enabled = true;
+            shape.shapeType = ParticleSystemShapeType.Cone;
+            shape.angle = 5f;
+            shape.radius = 3.8f;
+            shape.rotation = new Vector3(72f, 28f, 0f); // Diagonal sky-to-ground sword rain across camera angle
+
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+            var grad = new Gradient();
+            grad.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(new Color(1f, 0.98f, 0.75f), 0f),
+                    new GradientColorKey(new Color(0.98f, 0.72f, 0.14f), 0.6f),
+                    new GradientColorKey(new Color(0.88f, 0.34f, 0.06f), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(0f, 0f),
+                    new GradientAlphaKey(1f, 0.10f),
+                    new GradientAlphaKey(0.92f, 0.75f),
+                    new GradientAlphaKey(0f, 1f)
+                });
+            col.color = grad;
+
+            var r = ps.GetComponent<ParticleSystemRenderer>();
+            r.sharedMaterial = mat;
+            r.renderMode = ParticleSystemRenderMode.Stretch;
+            r.lengthScale = 8.5f;
+            r.velocityScale = 0.09f;
             r.shadowCastingMode = ShadowCastingMode.Off;
             r.receiveShadows = false;
             return ps;

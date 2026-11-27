@@ -23,10 +23,20 @@ namespace KhiVanChiTu.Remake.Editor
             if (!AssetDatabase.IsValidFolder(BakedRoot))
                 AssetDatabase.CreateFolder("Assets/_Game/Resources", "BakedMaps");
 
-            BakeSeamlessTile("Map/tex_grass_meadow_albedo.png", "tex_grass_meadow_seamless.png", 0.16f, 1024);
-            BakeSeamlessTile("Map/tex_act2_sand_bright.png", "tex_act2_sand_seamless.png", 0.16f, 1024);
-            BakeSeamlessTile("Map/tex_act3_jade_cliff.png", "tex_act3_jade_seamless.png", 0.16f, 1024);
-            BakeHorizontalPanorama("Map/tex_sky_daylight_panorama.jpg", "tex_sky_daylight_seamless.jpg", 0.14f, 2048);
+            BakeSeamlessTile("Map/tex_grass_meadow_albedo.png", "tex_grass_meadow_seamless.png", 0.16f, 512);
+            BakeSeamlessTile("Map/tex_act2_sand_bright.png", "tex_act2_sand_seamless.png", 0.16f, 512);
+            BakeSeamlessTile("Map/tex_act3_jade_cliff.png", "tex_act3_jade_seamless.png", 0.16f, 512);
+            BakeHorizontalPanorama("Map/tex_sky_daylight_panorama.jpg", "tex_sky_daylight_seamless.jpg", 0.14f, 1024);
+
+            // Group I: Dedicated Demon Tower & 3 Secret Realm Maps (auto-baked as soon as Codex drops them!)
+            BakeSeamlessTile("Map/tex_tower_floor_albedo.png", "tex_tower_floor_seamless.png", 0.16f, 512);
+            BakeHorizontalPanorama("Map/tex_tower_sky_panorama.jpg", "tex_tower_sky_seamless.jpg", 0.14f, 1024);
+            BakeSeamlessTile("Map/tex_secret_sword_floor.png", "tex_secret_sword_seamless.png", 0.16f, 512);
+            BakeHorizontalPanorama("Map/tex_secret_sword_sky.jpg", "tex_secret_sword_sky_seamless.jpg", 0.14f, 1024);
+            BakeSeamlessTile("Map/tex_secret_herb_floor.png", "tex_secret_herb_seamless.png", 0.16f, 512);
+            BakeHorizontalPanorama("Map/tex_secret_herb_sky.jpg", "tex_secret_herb_sky_seamless.jpg", 0.14f, 1024);
+            BakeSeamlessTile("Map/tex_secret_ore_floor.png", "tex_secret_ore_seamless.png", 0.16f, 512);
+            BakeHorizontalPanorama("Map/tex_secret_ore_sky.jpg", "tex_secret_ore_sky_seamless.jpg", 0.14f, 1024);
 
             BakeNineSlicePanel("HUD/hud_panel_light_9slice.png", "hud_panel_light_9slice.png", true, true, new Vector4(146, 118, 146, 118));
             BakeNineSlicePanel("HUD/hud_card_light_9slice.png", "hud_card_light_9slice.png", false, false, new Vector4(110, 84, 110, 142));
@@ -107,6 +117,7 @@ namespace KhiVanChiTu.Remake.Editor
                     imp.alphaIsTransparency = false;
                     imp.maxTextureSize = maxSize;
                     imp.textureCompression = TextureImporterCompression.Compressed;
+                    CodexArtImportPostprocessor.ApplyWebGlMobileCompression(imp, maxSize);
                     imp.SaveAndReimport();
                 }
 
@@ -168,6 +179,7 @@ namespace KhiVanChiTu.Remake.Editor
                     imp.npotScale = TextureImporterNPOTScale.None;
                     imp.maxTextureSize = maxSize;
                     imp.textureCompression = TextureImporterCompression.Compressed;
+                    CodexArtImportPostprocessor.ApplyWebGlMobileCompression(imp, maxSize);
                     imp.SaveAndReimport();
                 }
 
@@ -309,6 +321,7 @@ namespace KhiVanChiTu.Remake.Editor
                 imp.npotScale = TextureImporterNPOTScale.None;
                 imp.maxTextureSize = 512;
                 imp.textureCompression = TextureImporterCompression.Compressed;
+                CodexArtImportPostprocessor.ApplyWebGlMobileCompression(imp, 256);
                 imp.SaveAndReimport();
             }
         }

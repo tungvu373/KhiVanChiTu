@@ -28,10 +28,13 @@ namespace KhiVanChiTu.Remake.Editor
 
             var importer = (TextureImporter)assetImporter;
             string rel = p.Substring(CanonicalDropRoot.Length);
-            bool isMapGround = rel.StartsWith("Map/tex_", StringComparison.OrdinalIgnoreCase) ||
+            bool isMapGround = (rel.StartsWith("Map/tex_", StringComparison.OrdinalIgnoreCase) &&
+                                rel.IndexOf("sky", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                rel.IndexOf("panorama", StringComparison.OrdinalIgnoreCase) < 0) ||
                                rel.StartsWith("DaoVan/daovan_bg_canvas", StringComparison.OrdinalIgnoreCase);
             bool isSkyOrBg = rel.StartsWith("Backgrounds/", StringComparison.OrdinalIgnoreCase) ||
-                             rel.IndexOf("panorama", StringComparison.OrdinalIgnoreCase) >= 0;
+                             rel.IndexOf("panorama", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                             rel.IndexOf("_sky", StringComparison.OrdinalIgnoreCase) >= 0;
             bool is9SliceOrBigDecal = rel.IndexOf("9slice", StringComparison.OrdinalIgnoreCase) >= 0 ||
                                       rel.IndexOf("dirt_patch", StringComparison.OrdinalIgnoreCase) >= 0 ||
                                       rel.IndexOf("ground_ring", StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -50,18 +53,34 @@ namespace KhiVanChiTu.Remake.Editor
             else if (rel.Equals("HUD/hud_btn_secondary_9slice.png", StringComparison.OrdinalIgnoreCase))
                 importer.spriteBorder = new Vector4(116, 42, 116, 42);
             importer.mipmapEnabled = isMapGround;
-            importer.alphaIsTransparency = !p.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase);
+            bool hasAlpha = !p.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase);
+            importer.alphaIsTransparency = hasAlpha;
             importer.npotScale = TextureImporterNPOTScale.None;
             importer.filterMode = FilterMode.Bilinear;
-            importer.wrapMode = (rel.StartsWith("Map/tex_grass", StringComparison.OrdinalIgnoreCase) ||
+            importer.wrapMode = (isMapGround ||
+                                 rel.StartsWith("Map/tex_grass", StringComparison.OrdinalIgnoreCase) ||
                                  rel.StartsWith("Map/tex_act", StringComparison.OrdinalIgnoreCase) ||
-                                 rel.StartsWith("DaoVan/daovan_bg_canvas", StringComparison.OrdinalIgnoreCase))
+                                 rel.StartsWith("Map/tex_tower_floor", StringComparison.OrdinalIgnoreCase) ||
+                                 rel.StartsWith("Map/tex_secret_", StringComparison.OrdinalIgnoreCase) && !isSkyOrBg)
                 ? TextureWrapMode.Repeat
                 : TextureWrapMode.Clamp;
 
-            int maxSize = isSkyOrBg ? 2048 : isMapGround ? 1024 : is9SliceOrBigDecal ? 512 : 256;
+            int maxSize = isSkyOrBg ? 1024 : isMapGround ? 512 : is9SliceOrBigDecal ? 512 : 256;
             importer.maxTextureSize = maxSize;
             importer.textureCompression = TextureImporterCompression.Compressed;
+            ApplyWebGlMobileCompression(importer, isSkyOrBg ? 1024 : isMapGround ? 512 : is9SliceOrBigDecal ? 256 : 128);
+        }
+
+        public static void ApplyWebGlMobileCompression(TextureImporter importer, int webGlMaxSize)
+        {
+            if (importer == null) return;
+            var webGl = importer.GetPlatformTextureSettings("WebGL");
+            webGl.overridden = true;
+            webGl.maxTextureSize = webGlMaxSize;
+            // ASTC 6x6 is natively GPU-decoded on iOS Safari WebGL2 & Android Chrome WebGL2 (avoids 4-8x RGBA32 RAM blowup!)
+            webGl.format = TextureImporterFormat.ASTC_6x6;
+            webGl.compressionQuality = 50;
+            importer.SetPlatformTextureSettings(webGl);
         }
 
         private static void OnPostprocessAllAssets(
@@ -267,6 +286,20 @@ namespace KhiVanChiTu.Remake.Editor
             Add("H6", "Stages/mode_secret_realm", "Minh họa Thái Hư Bí Cảnh", false);
             Add("H7", "Stages/mode_pvp_arena", "Minh họa Luận Kiếm Đài (Coming Soon)", false);
             Add("H8", "Stages/event_fortuitous_orb", "Nút Kỳ Ngộ Linh Cơ", false);
+
+            // Nhom I (12 — Bản Đồ Vạn Yêu Tháp & 3 Thái Hư Bí Cảnh)
+            Add("I1", "Map/tex_tower_floor_albedo", "Sàn đá Vạn Yêu Tháp", false);
+            Add("I2", "Map/tex_tower_sky_panorama", "Khung cảnh Vạn Yêu Tháp 360", false);
+            Add("I3", "Map/prop_tower_pillar", "Trụ đá phù văn Vạn Yêu Tháp", false);
+            Add("I4", "Map/tex_secret_sword_floor", "Sàn đá Bí Cảnh Kiếm Mộ Cổ", false);
+            Add("I5", "Map/tex_secret_sword_sky", "Bầu trời Bí Cảnh Kiếm Mộ Cổ", false);
+            Add("I6", "Map/prop_giant_ancient_sword", "Cổ Kiếm khổng lồ Kiếm Mộ", false);
+            Add("I7", "Map/tex_secret_herb_floor", "Sàn linh thảo Bách Thảo Viên", false);
+            Add("I8", "Map/tex_secret_herb_sky", "Thung lũng Bách Thảo Viên", false);
+            Add("I9", "Map/prop_spirit_herb_cluster", "Khóm Tiên Thảo Bách Thảo Viên", false);
+            Add("I10", "Map/tex_secret_ore_floor", "Sàn khoáng mạch Tinh Thiết Động", false);
+            Add("I11", "Map/tex_secret_ore_sky", "Giếng trời Tinh Thiết Động", false);
+            Add("I12", "Map/prop_crystal_vein", "Cụm tinh thể Tinh Thiết Động", false);
 
             return items;
         }

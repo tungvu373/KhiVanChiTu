@@ -37,7 +37,24 @@ namespace KhiVanChiTu.Remake
             }
             Instance = this;
             CaptureUrpSnapshot();
+            ApplyMobileWebSmartDefaultIfNeeded();
             ApplyFromSave();
+        }
+
+        private void ApplyMobileWebSmartDefaultIfNeeded()
+        {
+            var save = SaveService.Current;
+            if (save == null || save.hasCreatedCharacter || !PlatformWebBridge.IsTouchPlatform()) return;
+            // First-time iPhone Safari / Android visitor: shadow-free mobile balanced preset (zero shadow pass & bloom RT)
+            var g = save.graphics;
+            if (g.preset == RemakeGraphicsPreset.Medium && g.shadowMode == RemakeShadowMode.Low)
+            {
+                g.preset = RemakeGraphicsPreset.Low;
+                g.renderScaleIndex = 1; // 85% * 1.5 DPR = crisp & cool battery
+                g.shadowMode = RemakeShadowMode.Off;
+                g.vfxDensity = RemakeVfxDensity.Full;
+                g.targetFps = 60;
+            }
         }
 
         private void OnDestroy()
@@ -143,7 +160,12 @@ namespace KhiVanChiTu.Remake
         {
             var g = Settings;
             QualitySettings.vSyncCount = 0;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // On WebGL (Safari iPhone / Android Chrome / Desktop), -1 follows browser requestAnimationFrame natively without jitter!
+            Application.targetFrameRate = g.afkDimMode ? 15 : (g.targetFps <= 35 ? 30 : -1);
+#else
             Application.targetFrameRate = g.afkDimMode ? 15 : (g.targetFps <= 35 ? 30 : 60);
+#endif
 
             var urp = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
             if (urp != null)
@@ -166,7 +188,16 @@ namespace KhiVanChiTu.Remake
                         urp.shadowDistance = 40f;
                         break;
                 }
-                urp.msaaSampleCount = g.preset == RemakeGraphicsPreset.High ? 2 : 1;
+                urp.msaaSampleCount = (g.preset == RemakeGraphicsPreset.High && !PlatformWebBridge.IsTouchPlatform()) ? 2 : 1;
+            }
+
+            // Disable Post-Processing (Bloom RT allocation & blur passes) on Low preset or touch mobile Low/Medium for cool battery & low Safari RAM
+            bool enablePostFx = g.preset == RemakeGraphicsPreset.High ||
+                                (g.preset == RemakeGraphicsPreset.Medium && !PlatformWebBridge.IsTouchPlatform());
+            var cams = FindObjectsByType<UniversalAdditionalCameraData>(FindObjectsInactive.Exclude);
+            for (int i = 0; i < cams.Length; i++)
+            {
+                if (cams[i] != null) cams[i].renderPostProcessing = enablePostFx;
             }
 
             Light[] lights = FindObjectsByType<Light>(FindObjectsInactive.Exclude);

@@ -21,6 +21,76 @@ namespace KhiVanChiTu.Remake
         public event Action<string, double, double> OnBossStatusUpdated; // name, hp, maxHp (null when none)
         public event Action<bool> OnTribulationStateChanged;
         public event Action<int, int> OnTribulationStrike; // (strikeIndex 1..9, total)
+        public event Action OnAlchemyBrewResolved;
+        public event Action<int, int, string> OnWaveStarted;
+
+        // AoE Batching & O(1) Cached Combat/Drop Multipliers (zero event storms & zero per-hit list scans!)
+        private int _aoeBatchDepth;
+        private bool _batchStatsDirty;
+        private bool _batchStageDirty;
+        private bool _batchQuestDirty;
+        private bool _batchPendingArenaReset;
+
+        private bool _statCacheDirty = true;
+        private float _cachedSwordDmgMult = 1f;
+        private float _cachedSwordSpeedMult = 1f;
+        private float _cachedArmorPen;
+        private float _cachedBossMult = 1f;
+        private float _cachedDamageReduction;
+        private float _cachedTuViMultNoKyNgo = 1f;
+        private float _cachedLinhThachMult = 1f;
+        private float _cachedCritChance = 0.08f;
+        private double _cachedCritDmgMult = 2.0;
+        private double _cachedTotalSwordAtk = 10.0;
+        private float _cachedBodyLeechPct;
+        private float _cachedHerbMult = 1f;
+        private float _cachedOreMult = 1f;
+        private float _cachedGearMult = 1f;
+        private float _cachedSwordDropMult = 1f;
+        private float _cachedCdRate = 1f;
+        private float _cachedMpRegen = 7.5f;
+
+        public void InvalidateStatCache() => _statCacheDirty = true;
+
+        public void BeginAoEDamageBatch()
+        {
+            _aoeBatchDepth++;
+        }
+
+        public void EndAoEDamageBatch()
+        {
+            if (_aoeBatchDepth <= 0) return;
+            _aoeBatchDepth--;
+            if (_aoeBatchDepth > 0) return;
+
+            bool resetArena = _batchPendingArenaReset;
+            bool stats = _batchStatsDirty;
+            bool stage = _batchStageDirty;
+            bool quest = _batchQuestDirty;
+            _batchPendingArenaReset = false;
+            _batchStatsDirty = false;
+            _batchStageDirty = false;
+            _batchQuestDirty = false;
+
+            if (resetArena) SyncArenaOrReturnToCampaignScene();
+            if (stats) OnStatsChanged?.Invoke();
+            if (stage) OnStageChanged?.Invoke();
+            if (quest) OnQuestOrTutorialChanged?.Invoke();
+        }
+
+        private void EmitKillEvents(bool stats, bool stage, bool quest)
+        {
+            if (_aoeBatchDepth > 0)
+            {
+                if (stats) _batchStatsDirty = true;
+                if (stage) _batchStageDirty = true;
+                if (quest) _batchQuestDirty = true;
+                return;
+            }
+            if (stats) OnStatsChanged?.Invoke();
+            if (stage) OnStageChanged?.Invoke();
+            if (quest) OnQuestOrTutorialChanged?.Invoke();
+        }
 
         public double PlayerCurrentHp { get; private set; }
         public double PlayerMaxHp { get; private set; }
@@ -63,6 +133,64 @@ namespace KhiVanChiTu.Remake
         public int ActiveSecretRealmTier { get; private set; } = 1;
         public float ChallengeModeTimeRemaining { get; private set; }
         public int ChallengeKillsRemaining { get; private set; }
+        public int CurrentWaveIndex { get; private set; } = 1;
+        public int TotalWavesInStage { get; private set; } = 3;
+        public int WaveEnemiesRemaining { get; private set; }
+
+        public void ReportWaveState(int waveIndex, int totalWaves, int enemiesRemaining, string bannerText = null)
+        {
+            CurrentWaveIndex = Mathf.Max(1, waveIndex);
+            TotalWavesInStage = Mathf.Max(1, totalWaves);
+            WaveEnemiesRemaining = Mathf.Max(0, enemiesRemaining);
+            EmitKillEvents(false, true, false);
+            if (!string.IsNullOrEmpty(bannerText))
+                OnWaveStarted?.Invoke(CurrentWaveIndex, TotalWavesInStage, bannerText);
+        }
+
+        public static void GetWavePlan(RemakeArenaMode mode, bool isBossStage, int towerFloor, out int totalWaves, out int[] waveCounts, out bool finalWaveIsBoss)
+        {
+            if (mode == RemakeArenaMode.DemonTower)
+            {
+                bool towerBoss = (towerFloor % 5 == 0);
+                totalWaves = 2;
+                waveCounts = towerBoss ? new[] { 3, 1 } : new[] { 4, 5 };
+                finalWaveIsBoss = towerBoss;
+                return;
+            }
+            if (mode == RemakeArenaMode.SecretRealm)
+            {
+                totalWaves = 3;
+                waveCounts = new[] { 4, 5, 4 };
+                finalWaveIsBoss = false;
+                return;
+            }
+            if (isBossStage)
+            {
+                totalWaves = 2;
+                waveCounts = new[] { 3, 1 };
+                finalWaveIsBoss = true;
+                return;
+            }
+            totalWaves = 3;
+            waveCounts = new[] { 3, 3, 4 }; // 3 + 3 + 4 = 10 kills/stage (matches 30-day economy!)
+            finalWaveIsBoss = false;
+        }
+
+        private void SyncArenaOrReturnToCampaignScene()
+        {
+            if (ActiveArenaMode == RemakeArenaMode.Campaign &&
+                SceneFlowController.Instance != null &&
+                SceneFlowController.Instance.IsInGame)
+            {
+                string expected = SceneFlowController.GetWorldSceneForAct(SaveService.Current.activeAct);
+                if (SceneFlowController.Instance.ActiveWorldSceneName != expected)
+                {
+                    SceneFlowController.Instance.ReturnToCampaignWorld();
+                    return;
+                }
+            }
+            RemakeArenaController.Instance?.ResetForStageChange();
+        }
 
         // V2 Active Engagement: Ky Ngo Linh Co (25s floating orb every ~160s)
         public bool HasKyNgoAvailable { get; private set; }
@@ -128,16 +256,14 @@ namespace KhiVanChiTu.Remake
             if (SceneFlowController.Instance == null || !SceneFlowController.Instance.IsInGame) return;
 
             float dt = Time.deltaTime;
-            float cdReduction = Mathf.Clamp(GetDaoVanLevel("cult_enlightenment") * 0.04f, 0f, 0.35f);
-            float cdRate = 1f / (1f - cdReduction);
+            EnsureStatCache();
             for (int i = 0; i < 4; i++)
             {
                 if (_skillCooldowns[i] > 0f)
-                    _skillCooldowns[i] = Mathf.Max(0f, _skillCooldowns[i] - dt * cdRate);
+                    _skillCooldowns[i] = Mathf.Max(0f, _skillCooldowns[i] - dt * _cachedCdRate);
             }
 
-            float mpRegen = 7.5f + GetFormationTuViPct() * 0.1f;
-            PlayerCurrentMp = Mathf.Min(PlayerMaxMp, PlayerCurrentMp + mpRegen * dt);
+            PlayerCurrentMp = Mathf.Min(PlayerMaxMp, PlayerCurrentMp + _cachedMpRegen * dt);
 
             _regenTimer += dt;
             if (_regenTimer >= 1.0f)
@@ -205,7 +331,7 @@ namespace KhiVanChiTu.Remake
                     ActiveArenaMode = RemakeArenaMode.Campaign;
                     SetActiveBoss(false, "", 0, 0);
                     PlayerCurrentHp = PlayerMaxHp;
-                    RemakeArenaController.Instance?.ResetForStageChange();
+                    SyncArenaOrReturnToCampaignScene();
                     OnStageChanged?.Invoke();
                     OnToastMessage?.Invoke("Hết giờ thử thách! Quay về Đấu Trường chính.");
                 }
@@ -397,113 +523,113 @@ namespace KhiVanChiTu.Remake
 
         private float GetFormationTuViPct() => GetFormationBonus(f => f.tuViPct);
 
-        public float GetSwordDamageMultiplier()
+        private void EnsureStatCache()
         {
-            float daoMult = 1f
-                + GetDaoVanLevel("core_daotam") * 0.10f
-                + GetDaoVanLevel("branch_sword") * 0.15f
-                + GetDaoVanLevel("body_leech") * 0.10f
-                + GetDaoVanLevel("sword_mastery") * 0.28f;
+            if (!_statCacheDirty) return;
+            _statCacheDirty = false;
+            var save = SaveService.Current;
 
-            float eqPct = GetEquipmentStatSum(RemakeEquipStatType.SwordDamagePct) / 100f;
+            int coreLv = GetDaoVanLevel("core_daotam");
+            int branchSwordLv = GetDaoVanLevel("branch_sword");
+            int swordCritDmgLv = GetDaoVanLevel("sword_crit_dmg");
+            int swordArmorPenLv = GetDaoVanLevel("sword_armor_pierce");
+            int swordMasteryLv = GetDaoVanLevel("sword_mastery");
+            int bodyArmorLv = GetDaoVanLevel("body_armor");
+            int bodyLeechLv = GetDaoVanLevel("body_leech");
+            int branchCultLv = GetDaoVanLevel("branch_cultivation");
+            int cultEnlightLv = GetDaoVanLevel("cult_enlightenment");
+            int branchWealthLv = GetDaoVanLevel("branch_wealth");
+            int wealthOreLv = GetDaoVanLevel("wealth_ore");
+            int wealthFortuneLv = GetDaoVanLevel("wealth_fortune");
+            int branchArtsLv = GetDaoVanLevel("branch_arts");
+
             int thanhVan = GetEquipSetCount(RemakeEquipSet.ThanhVan);
-            if (thanhVan >= 2) eqPct += 0.15f;
-            if (thanhVan >= 4) eqPct += 0.30f;
-            if (thanhVan >= 6) eqPct += 0.60f;
-
-            float formPct = GetFormationBonus(f => f.swordDamagePct) / 100f;
-            return daoMult * (1f + eqPct + formPct);
-        }
-
-        public float GetSwordSpeedMultiplier()
-        {
-            var save = SaveService.Current;
-            float baseSpd = 1f + GetDaoVanLevel("core_daotam") * 0.05f;
-            if ((RemakeSwordStyle)save.swordStyle == RemakeSwordStyle.KiemXuyen)
-                baseSpd += 0.28f;
-            baseSpd += GetFormationBonus(f => f.swordSpeedPct) / 100f;
-            return baseSpd;
-        }
-
-        public float GetArmorPenetration()
-        {
-            var save = SaveService.Current;
-            float pen = GetDaoVanLevel("sword_armor_pierce") * 0.06f;
-            if ((RemakeSwordStyle)save.swordStyle == RemakeSwordStyle.PhaGiap)
-                pen += 0.60f;
-            return Mathf.Clamp01(pen);
-        }
-
-        public float GetBossBonusMultiplier()
-        {
-            float b = 1f + GetDaoVanLevel("sword_armor_pierce") * 0.08f;
-            if ((RemakeSwordStyle)SaveService.Current.swordStyle == RemakeSwordStyle.PhaGiap)
-                b += 0.35f;
-            return b;
-        }
-
-        public float GetDamageReduction()
-        {
-            float dr = GetDaoVanLevel("body_armor") * 0.03f;
             int huyenVu = GetEquipSetCount(RemakeEquipSet.HuyenVu);
+            int danTong = GetEquipSetCount(RemakeEquipSet.DanTong);
+
+            // Sword Damage Mult
+            float daoSwordMult = 1f + coreLv * 0.10f + branchSwordLv * 0.15f + bodyLeechLv * 0.10f + swordMasteryLv * 0.28f;
+            float eqSwordPct = GetEquipmentStatSum(RemakeEquipStatType.SwordDamagePct) / 100f;
+            if (thanhVan >= 2) eqSwordPct += 0.15f;
+            if (thanhVan >= 4) eqSwordPct += 0.30f;
+            if (thanhVan >= 6) eqSwordPct += 0.60f;
+            float formSwordPct = GetFormationBonus(f => f.swordDamagePct) / 100f;
+            _cachedSwordDmgMult = daoSwordMult * (1f + eqSwordPct + formSwordPct);
+
+            // Sword Speed Mult
+            float spd = 1f + coreLv * 0.05f;
+            if ((RemakeSwordStyle)save.swordStyle == RemakeSwordStyle.KiemXuyen) spd += 0.28f;
+            spd += GetFormationBonus(f => f.swordSpeedPct) / 100f;
+            _cachedSwordSpeedMult = spd;
+
+            // Armor Pen & Boss Mult
+            float pen = swordArmorPenLv * 0.06f;
+            if ((RemakeSwordStyle)save.swordStyle == RemakeSwordStyle.PhaGiap) pen += 0.60f;
+            _cachedArmorPen = Mathf.Clamp01(pen);
+
+            float bossB = 1f + swordArmorPenLv * 0.08f;
+            if ((RemakeSwordStyle)save.swordStyle == RemakeSwordStyle.PhaGiap) bossB += 0.35f;
+            _cachedBossMult = bossB;
+
+            // Damage Reduction
+            float dr = bodyArmorLv * 0.03f;
             if (huyenVu >= 2) dr += 0.06f;
             if (huyenVu >= 4) dr += 0.12f;
             if (huyenVu >= 6) dr += 0.20f;
             dr += GetFormationBonus(f => f.damageReductionPct) / 100f;
-            return Mathf.Clamp(dr, 0f, 0.72f);
-        }
+            _cachedDamageReduction = Mathf.Clamp(dr, 0f, 0.72f);
 
-        public float GetTuViMultiplier()
-        {
-            float daoMult = 1f
-                + GetDaoVanLevel("core_daotam") * 0.12f
-                + GetDaoVanLevel("branch_cultivation") * 0.15f
-                + GetDaoVanLevel("cult_enlightenment") * 0.25f;
-            float eqPct = GetEquipmentStatSum(RemakeEquipStatType.TuViGainPct) / 100f;
-            int danTong = GetEquipSetCount(RemakeEquipSet.DanTong);
-            if (danTong >= 2) eqPct += 0.15f;
-            if (danTong >= 4) eqPct += 0.30f;
-            if (danTong >= 6) eqPct += 0.55f;
-            float formPct = GetFormationBonus(f => f.tuViPct) / 100f;
-            float kyNgoMult = IsTuViDoubleBuffActive ? 2.0f : 1.0f;
-            return daoMult * (1f + eqPct + formPct) * kyNgoMult;
-        }
+            // Tu Vi & Linh Thach Mults
+            float daoTuVi = 1f + coreLv * 0.12f + branchCultLv * 0.15f + cultEnlightLv * 0.25f;
+            float eqTuVi = GetEquipmentStatSum(RemakeEquipStatType.TuViGainPct) / 100f;
+            if (danTong >= 2) eqTuVi += 0.15f;
+            if (danTong >= 4) eqTuVi += 0.30f;
+            if (danTong >= 6) eqTuVi += 0.55f;
+            float formTuVi = GetFormationBonus(f => f.tuViPct) / 100f;
+            _cachedTuViMultNoKyNgo = daoTuVi * (1f + eqTuVi + formTuVi);
 
-        public float GetLinhThachMultiplier()
-        {
-            float daoMult = 1f
-                + GetDaoVanLevel("branch_wealth") * 0.15f
-                + GetDaoVanLevel("wealth_fortune") * 0.30f;
-            float eqPct = GetEquipmentStatSum(RemakeEquipStatType.LinhThachPct) / 100f;
-            return daoMult * (1f + eqPct);
-        }
+            float daoLt = 1f + branchWealthLv * 0.15f + wealthFortuneLv * 0.30f;
+            float eqLt = GetEquipmentStatSum(RemakeEquipStatType.LinhThachPct) / 100f;
+            _cachedLinhThachMult = daoLt * (1f + eqLt);
 
-        public float GetCritChance()
-        {
-            float crit = 0.08f + GetDaoVanLevel("branch_sword") * 0.02f;
-            if ((RemakeSwordStyle)SaveService.Current.swordStyle == RemakeSwordStyle.KiemXuyen)
-                crit += 0.08f;
+            // Crit
+            float crit = 0.08f + branchSwordLv * 0.02f;
+            if ((RemakeSwordStyle)save.swordStyle == RemakeSwordStyle.KiemXuyen) crit += 0.08f;
             crit += GetEquipmentStatSum(RemakeEquipStatType.CritChancePct) / 100f;
             crit += GetFormationBonus(f => f.critChancePct) / 100f;
-            return Mathf.Clamp(crit, 0.05f, 0.85f);
-        }
+            _cachedCritChance = Mathf.Clamp(crit, 0.05f, 0.85f);
+            _cachedCritDmgMult = 2.0 + swordCritDmgLv * 0.18;
 
-        public double GetCritDamageMultiplier()
-        {
-            return 2.0 + GetDaoVanLevel("sword_crit_dmg") * 0.18;
-        }
-
-        public double GetTotalSwordAttackPower()
-        {
-            var save = SaveService.Current;
+            // Total Sword Attack Power
             int maxSlots = CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex);
             double total = 0;
             for (int i = 0; i < save.equippedSwordLevels.Count && i < maxSlots; i++)
                 total += CultivationTable.CalculateSwordDamage(save.equippedSwordLevels[i]);
             if (total <= 0) total = CultivationTable.CalculateSwordDamage(1);
             total += GetEquipmentStatSum(RemakeEquipStatType.FlatSwordAtk);
-            return Math.Round(total * GetSwordDamageMultiplier());
+            _cachedTotalSwordAtk = Math.Round(total * _cachedSwordDmgMult);
+
+            // Drop, Leech, CD & MP Regen multipliers
+            _cachedBodyLeechPct = bodyLeechLv * 0.008f;
+            _cachedHerbMult = 1f + branchArtsLv * 0.15f;
+            _cachedOreMult = 1f + wealthOreLv * 0.20f;
+            _cachedGearMult = 1f + wealthOreLv * 0.12f;
+            _cachedSwordDropMult = 1f + branchWealthLv * 0.08f;
+            float cdRed = Mathf.Clamp(cultEnlightLv * 0.04f, 0f, 0.35f);
+            _cachedCdRate = 1f / (1f - cdRed);
+            _cachedMpRegen = 7.5f + formTuVi * 10f;
         }
+
+        public float GetSwordDamageMultiplier() { EnsureStatCache(); return _cachedSwordDmgMult; }
+        public float GetSwordSpeedMultiplier() { EnsureStatCache(); return _cachedSwordSpeedMult; }
+        public float GetArmorPenetration() { EnsureStatCache(); return _cachedArmorPen; }
+        public float GetBossBonusMultiplier() { EnsureStatCache(); return _cachedBossMult; }
+        public float GetDamageReduction() { EnsureStatCache(); return _cachedDamageReduction; }
+        public float GetTuViMultiplier() { EnsureStatCache(); return _cachedTuViMultNoKyNgo * (IsTuViDoubleBuffActive ? 2.0f : 1.0f); }
+        public float GetLinhThachMultiplier() { EnsureStatCache(); return _cachedLinhThachMult; }
+        public float GetCritChance() { EnsureStatCache(); return _cachedCritChance; }
+        public double GetCritDamageMultiplier() { EnsureStatCache(); return _cachedCritDmgMult; }
+        public double GetTotalSwordAttackPower() { EnsureStatCache(); return _cachedTotalSwordAtk; }
 
         // =========================================================
         // COMBAT KILLS, LOOT DROPS & 120-STAGE PROGRESSION
@@ -522,6 +648,7 @@ namespace KhiVanChiTu.Remake
                 return;
             }
 
+            EnsureStatCache();
             var stage = GetCurrentStageSpec();
             double tuViGain = Math.Round(stage.tuViPerKill * (monster != null ? monster.tuViMultiplier : 1f) * GetTuViMultiplier());
             double linhThachGain = Math.Round(stage.linhThachPerKill * (monster != null ? monster.linhThachMultiplier : 1f) * GetLinhThachMultiplier());
@@ -534,12 +661,12 @@ namespace KhiVanChiTu.Remake
             save.linhThach += linhThachGain;
 
             // Lifesteal sustain on hit/kill
-            double heal = PlayerMaxHp * (GetDaoVanLevel("body_leech") * 0.008);
+            double heal = PlayerMaxHp * _cachedBodyLeechPct;
             if (heal > 0) PlayerCurrentHp = Math.Min(PlayerMaxHp, PlayerCurrentHp + heal);
 
             // Herb drops
             bool droppedHerb = false;
-            float herbChance = stage.herbDropRate * (1f + GetDaoVanLevel("branch_arts") * 0.15f);
+            float herbChance = stage.herbDropRate * _cachedHerbMult;
             if (UnityEngine.Random.value <= herbChance)
             {
                 int tierIdx = Mathf.Clamp(stage.herbTier - 1, 0, save.herbsByTier.Length - 1);
@@ -551,7 +678,7 @@ namespace KhiVanChiTu.Remake
             bool equipUnlocked = CultivationTable.IsFeatureUnlocked(RemakeFeatureId.EquipmentLoot, save.realmIndex, save.subStage);
             if (equipUnlocked && (wasBoss || UnityEngine.Random.value <= 0.25f))
             {
-                int oreQty = Mathf.RoundToInt((wasBoss ? 4 : 1) * (1f + GetDaoVanLevel("wealth_ore") * 0.2f));
+                int oreQty = Mathf.RoundToInt((wasBoss ? 4 : 1) * _cachedOreMult);
                 save.ore += Math.Max(1, oreQty);
             }
 
@@ -559,7 +686,7 @@ namespace KhiVanChiTu.Remake
             RemakeRarity? droppedEquipRarity = null;
             if (equipUnlocked)
             {
-                float gearChance = (wasBoss ? 1.0f : 0.04f) * (1f + GetDaoVanLevel("wealth_ore") * 0.12f);
+                float gearChance = (wasBoss ? 1.0f : 0.04f) * _cachedGearMult;
                 if (UnityEngine.Random.value <= gearChance)
                     droppedEquipRarity = RollAndGrantEquipment(stage, wasBoss);
             }
@@ -584,7 +711,7 @@ namespace KhiVanChiTu.Remake
             }
             else
             {
-                float chance = stage.swordDropRate * (1f + GetDaoVanLevel("branch_wealth") * 0.08f);
+                float chance = stage.swordDropRate * _cachedSwordDropMult;
                 if (UnityEngine.Random.value <= chance)
                 {
                     dropSword = true;
@@ -633,11 +760,12 @@ namespace KhiVanChiTu.Remake
                             OnToastMessage?.Invoke($"Đã mở Ải Thủ Lĩnh {stage.actIndex + 1}-10!");
                     }
 
-                    // V2 Flow: Crossing X-9 auto-challenges Boss X-10 if autoChallengeBoss is enabled
+                    // V2 Flow: Crossing X-9 auto-challenges Boss X-10 (deferred safely if inside AoE damage loop!)
                     if (stage.stageNumber == 9 && save.autoChallengeBoss && nextLinear <= save.highestUnlockedLinearStage)
                     {
                         save.activeStage = 10;
-                        RemakeArenaController.Instance?.ResetForStageChange();
+                        if (_aoeBatchDepth > 0) _batchPendingArenaReset = true;
+                        else RemakeArenaController.Instance?.ResetForStageChange();
                     }
                 }
             }
@@ -659,9 +787,7 @@ namespace KhiVanChiTu.Remake
 
             if (wasBoss) SetActiveBoss(false, "", 0, 0);
 
-            OnStatsChanged?.Invoke();
-            OnStageChanged?.Invoke();
-            OnQuestOrTutorialChanged?.Invoke();
+            EmitKillEvents(true, true, true);
         }
 
         public void SetActiveBoss(bool active, string bossName, double hp, double maxHp)
@@ -710,7 +836,7 @@ namespace KhiVanChiTu.Remake
                 {
                     ActiveArenaMode = RemakeArenaMode.Campaign;
                     SetActiveBoss(false, "", 0, 0);
-                    RemakeArenaController.Instance?.ResetForStageChange();
+                    SyncArenaOrReturnToCampaignScene();
                     OnStageChanged?.Invoke();
                     OnToastMessage?.Invoke("Thất bại trong thử thách! Quay về Đấu Trường chính.");
                 }
@@ -732,11 +858,17 @@ namespace KhiVanChiTu.Remake
                 }
             }
             OnStatsChanged?.Invoke();
+
         }
 
+
+
         // =========================================================
+
         // STAGE SELECTION
+
         // =========================================================
+
         public bool TrySelectStage(RemakeDifficulty diff, int act, int stageNumber)
         {
             var spec = GetStageSpec(diff, act, stageNumber);
@@ -773,6 +905,7 @@ namespace KhiVanChiTu.Remake
         public void SetSwordStyle(RemakeSwordStyle style)
         {
             SaveService.Current.swordStyle = (int)style;
+            InvalidateStatCache();
             SaveService.Save();
             OnStatsChanged?.Invoke();
             OnToastMessage?.Invoke(style == RemakeSwordStyle.KiemXuyen
@@ -899,6 +1032,7 @@ namespace KhiVanChiTu.Remake
                 int newLevel = mainLevel + 1;
                 if (mainFromEquipped) save.equippedSwordLevels[mainIndex] = newLevel;
                 else save.swordInventoryLevels[adjustedMainIdx] = newLevel;
+                InvalidateStatCache();
 
                 if (save.tutorialStep == 1 || save.tutorialStep == 2)
                 {
@@ -1005,6 +1139,7 @@ namespace KhiVanChiTu.Remake
                     RemoveOneSwordFromBag(fromLevel);
                     save.swordInventoryLevels.Add(newLevel);
                 }
+                InvalidateStatCache();
 
                 if (save.tutorialStep == 1 || save.tutorialStep == 2)
                 {
@@ -1056,6 +1191,7 @@ namespace KhiVanChiTu.Remake
                 save.swordInventoryLevels[bagIndex] = oldLv;
             }
 
+            InvalidateStatCache();
             RemakeArenaController.Instance?.SyncPlayerSwordsVisual();
             SaveService.Save();
             OnStatsChanged?.Invoke();
@@ -1213,6 +1349,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Save();
             OnStatsChanged?.Invoke();
             OnQuestOrTutorialChanged?.Invoke();
+            OnAlchemyBrewResolved?.Invoke();
             return success;
         }
 
@@ -1618,7 +1755,10 @@ namespace KhiVanChiTu.Remake
             SaveService.Current.autoDismantleMaxRarity = Mathf.Clamp(maxRarity, -1, 2);
             SaveService.Save();
             OnStatsChanged?.Invoke();
+
         }
+
+
 
         private RemakeEquipmentItem FindGearByUid(string uid)
         {
@@ -1935,7 +2075,10 @@ namespace KhiVanChiTu.Remake
             }
             SaveService.Save();
             OnStatsChanged?.Invoke();
+
         }
+
+
 
         // =========================================================
         // V2: BOSS CHALLENGE, KY NGO, DEMON TOWER & SECRET REALM
@@ -2024,16 +2167,24 @@ namespace KhiVanChiTu.Remake
             int nextFloor = Mathf.Clamp(floor, 1, save.demonTowerHighestFloor + 1);
             if (nextFloor > 100) nextFloor = 100;
 
-            var spec = CultivationTable.GetDemonTowerFloorSpec(nextFloor);
+            GetWavePlan(RemakeArenaMode.DemonTower, false, nextFloor, out int totalWaves, out int[] counts, out _);
+            int totalEnemies = 0;
+            for (int i = 0; i < counts.Length; i++) totalEnemies += counts[i];
             ActiveArenaMode = RemakeArenaMode.DemonTower;
             ActiveChallengeFloor = nextFloor;
-            ChallengeModeTimeRemaining = 45f;
-            ChallengeKillsRemaining = spec.enemyCount;
+            ChallengeModeTimeRemaining = 55f;
+            ChallengeKillsRemaining = totalEnemies;
+            CurrentWaveIndex = 1;
+            TotalWavesInStage = totalWaves;
+            WaveEnemiesRemaining = counts[0];
             PlayerCurrentHp = PlayerMaxHp;
             SetActiveBoss(false, "", 0, 0);
-            RemakeArenaController.Instance?.ResetForStageChange();
+            if (SceneFlowController.Instance != null && SceneFlowController.Instance.IsInGame)
+                SceneFlowController.Instance.SwitchToArenaScene(SceneFlowController.WorldDemonTowerScene, $"Vạn Yêu Tháp · Tầng {nextFloor}");
+            else
+                RemakeArenaController.Instance?.ResetForStageChange();
             OnStageChanged?.Invoke();
-            OnToastMessage?.Invoke($"Vào Vạn Yêu Tháp Tầng {nextFloor} (45s)!");
+            OnToastMessage?.Invoke($"Vào Vạn Yêu Tháp Tầng {nextFloor} ({totalWaves} Đợt · 55s)!");
             return true;
         }
 
@@ -2079,17 +2230,27 @@ namespace KhiVanChiTu.Remake
             }
             tier = Mathf.Clamp(tier, 1, 5);
             save.secretRealmDailyRemaining--;
+            GetWavePlan(RemakeArenaMode.SecretRealm, false, 1, out int totalWaves, out int[] counts, out _);
+            int totalEnemies = 0;
+            for (int i = 0; i < counts.Length; i++) totalEnemies += counts[i];
+            string title = CultivationTable.GetSecretRealmTierSpec(kind, tier).title;
             ActiveArenaMode = RemakeArenaMode.SecretRealm;
             ActiveSecretRealmKind = kind;
             ActiveSecretRealmTier = tier;
-            ChallengeModeTimeRemaining = 45f;
-            ChallengeKillsRemaining = 5;
+            ChallengeModeTimeRemaining = 60f;
+            ChallengeKillsRemaining = totalEnemies;
+            CurrentWaveIndex = 1;
+            TotalWavesInStage = totalWaves;
+            WaveEnemiesRemaining = counts[0];
             PlayerCurrentHp = PlayerMaxHp;
             SetActiveBoss(false, "", 0, 0);
             SaveService.Save();
-            RemakeArenaController.Instance?.ResetForStageChange();
+            if (SceneFlowController.Instance != null && SceneFlowController.Instance.IsInGame)
+                SceneFlowController.Instance.SwitchToArenaScene(SceneFlowController.GetWorldSceneForSecretRealm(kind), title);
+            else
+                RemakeArenaController.Instance?.ResetForStageChange();
             OnStageChanged?.Invoke();
-            OnToastMessage?.Invoke($"Tiến vào {CultivationTable.GetSecretRealmTierSpec(kind, tier).title}!");
+            OnToastMessage?.Invoke($"Tiến vào {title} ({totalWaves} Đợt · 60s)!");
             return true;
         }
 
@@ -2121,7 +2282,7 @@ namespace KhiVanChiTu.Remake
             ActiveArenaMode = RemakeArenaMode.Campaign;
             SetActiveBoss(false, "", 0, 0);
             PlayerCurrentHp = PlayerMaxHp;
-            RemakeArenaController.Instance?.ResetForStageChange();
+            SyncArenaOrReturnToCampaignScene();
             OnStageChanged?.Invoke();
         }
 
@@ -2134,7 +2295,7 @@ namespace KhiVanChiTu.Remake
 
             if (ChallengeKillsRemaining > 0)
             {
-                OnStageChanged?.Invoke();
+                EmitKillEvents(false, true, false);
                 return;
             }
 
@@ -2157,7 +2318,8 @@ namespace KhiVanChiTu.Remake
                 SetActiveBoss(false, "", 0, 0);
                 PlayerCurrentHp = PlayerMaxHp;
                 SaveService.Save();
-                RemakeArenaController.Instance?.ResetForStageChange();
+                if (_aoeBatchDepth > 0) _batchPendingArenaReset = true;
+                else SyncArenaOrReturnToCampaignScene();
             }
             else if (ActiveArenaMode == RemakeArenaMode.SecretRealm)
             {
@@ -2169,11 +2331,11 @@ namespace KhiVanChiTu.Remake
                 SetActiveBoss(false, "", 0, 0);
                 PlayerCurrentHp = PlayerMaxHp;
                 SaveService.Save();
-                RemakeArenaController.Instance?.ResetForStageChange();
+                if (_aoeBatchDepth > 0) _batchPendingArenaReset = true;
+                else SyncArenaOrReturnToCampaignScene();
             }
 
-            OnStatsChanged?.Invoke();
-            OnStageChanged?.Invoke();
+            EmitKillEvents(true, true, false);
         }
 
         private void GrantSecretRealmRewards(RemakeSecretRealmKind kind, int tier)
@@ -2203,6 +2365,7 @@ namespace KhiVanChiTu.Remake
             }
             RemakeAudioService.Instance?.PlayBreakthrough();
         }
+
 
 
         public bool TryCastLoiPhat() => TryCastSkill(0);
@@ -2235,10 +2398,18 @@ namespace KhiVanChiTu.Remake
             double dmg = Math.Round(GetTotalSwordAttackPower() * coef * awakenMult);
 
             RemakeAudioService.Instance?.PlayLoiPhat();
-            if (slot == 0) OnLoiPhatCast?.Invoke(targetPos, dmg, true);
-            OnSkillCast?.Invoke(slot, targetPos, dmg, true);
-            CheckDaoVanAndSkillQuest();
-            OnStatsChanged?.Invoke();
+            BeginAoEDamageBatch();
+            try
+            {
+                if (slot == 0) OnLoiPhatCast?.Invoke(targetPos, dmg, true);
+                OnSkillCast?.Invoke(slot, targetPos, dmg, true);
+                CheckDaoVanAndSkillQuest();
+                EmitKillEvents(true, false, false);
+            }
+            finally
+            {
+                EndAoEDamageBatch();
+            }
             return true;
         }
 
@@ -2377,6 +2548,7 @@ namespace KhiVanChiTu.Remake
 
         private void RecomputePlayerVitals(bool fillToMax)
         {
+            InvalidateStatCache();
             var save = SaveService.Current;
             int realm = save.realmIndex;
             double baseHp = 220.0 * Math.Pow(2.3, realm) + save.subStage * 28.0 * Math.Pow(1.8, realm);

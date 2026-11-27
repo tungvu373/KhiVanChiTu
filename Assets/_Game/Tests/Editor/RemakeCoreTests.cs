@@ -97,11 +97,11 @@ namespace KhiVanChiTu.Remake.Tests
         }
 
         [Test]
-        public void CodexArtRegistryContains91CatalogItemsAndReusedSprites()
+        public void CodexArtRegistryContains103CatalogItemsAndReusedSprites()
         {
             var reg = CodexArtLoader.Registry;
             Assert.IsNotNull(reg, "RemakeArtRegistry should exist in Resources");
-            Assert.That(reg.CodexCatalog.Count, Is.EqualTo(91));
+            Assert.That(reg.CodexCatalog.Count, Is.EqualTo(103));
             Assert.GreaterOrEqual(reg.ReusedSprites.Count, 40);
             Assert.IsNotNull(CodexArtLoader.LoadCodexTexture("HUD/hud_toggle_bagua"));
             Assert.IsNotNull(CodexArtLoader.LoadCodexTexture("HUD/nav_immortal_gate"));

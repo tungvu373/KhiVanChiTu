@@ -51,6 +51,8 @@ namespace KhiVanChiTu.Remake
             if (uiDocument.rootVisualElement.childCount == 0 && uiDocument.visualTreeAsset != null)
                 uiDocument.visualTreeAsset.CloneTree(uiDocument.rootVisualElement);
             var root = uiDocument.rootVisualElement;
+            root.RegisterCallback<GeometryChangedEvent>(_ => ApplyMenuResponsiveLayout());
+            ApplyMenuResponsiveLayout();
 
             var bgSlot = root.Q("menu-bg-slot");
             CodexArtLoader.ApplyIconOrPlaceholder(bgSlot, "Backgrounds/bg_main_menu_daylight", "[A11: Nền Sơn Môn Ban Ngày]");
@@ -210,6 +212,27 @@ namespace KhiVanChiTu.Remake
             if (_fpsLabel == null || FpsMonitorService.Instance == null) return;
             _fpsLabel.text = FpsMonitorService.Instance.DisplayText;
             _fpsLabel.style.display = SaveService.Current.graphics.showFpsCounter ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        private void ApplyMenuResponsiveLayout()
+        {
+            if (uiDocument == null || uiDocument.rootVisualElement == null) return;
+            int sw = Mathf.Max(1, Screen.width);
+            int sh = Mathf.Max(1, Screen.height);
+            bool isLandscapeDesktop = (sw > sh * 1.15f) && sw >= 700 && sh >= 420;
+
+            if (uiDocument.panelSettings != null)
+            {
+                Vector2Int targetRes = isLandscapeDesktop ? new Vector2Int(1280, 720) : new Vector2Int(540, 960);
+                float targetMatch = isLandscapeDesktop ? 1f : 0f;
+                if (uiDocument.panelSettings.referenceResolution != targetRes || !Mathf.Approximately(uiDocument.panelSettings.match, targetMatch))
+                {
+                    uiDocument.panelSettings.referenceResolution = targetRes;
+                    uiDocument.panelSettings.match = targetMatch;
+                }
+            }
+
+            uiDocument.rootVisualElement.EnableInClassList("desktop-wide", isLandscapeDesktop);
         }
     }
 }
