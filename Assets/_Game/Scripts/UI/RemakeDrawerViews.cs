@@ -26,8 +26,93 @@ namespace KhiVanChiTu.Remake
         // FIFA Online 1 Main + up to 5 Fodder Sword Merge UI State
         private static bool _fifaMainFromEquipped = true;
         private static int _fifaMainIndex = 0;
+        private static int _selectedEquippedSwordIdx = 0;
+        private static int _selectedEquippedGearSlot = -1;
         private static readonly List<int> _fifaFodderBagIndices = new List<int>();
         private static int _swordBagTapMode = 0; // 0 = Them Phoi, 1 = Chon Chinh, 2 = Xuat Tran
+
+        private static void ApplyEquipmentQualityGlow(VisualElement tile, RemakeRarity rarity, int tier, int enhanceLv, bool isSelected, float radius = 10f)
+        {
+            tile.style.overflow = Overflow.Visible;
+            int qualityRank = (int)rarity;
+            float powerBoost = Mathf.Clamp01((tier - 1) * 0.10f + enhanceLv * 0.06f);
+
+            Color borderCol;
+            Color bgTint;
+            Color haloCol = Color.clear;
+            Color innerRimCol = Color.clear;
+            float borderW = isSelected ? 2.5f : 1.5f;
+
+            switch (rarity)
+            {
+                case RemakeRarity.Linh:
+                    borderCol = new Color(0.14f, 0.72f, 0.48f, 1f);
+                    bgTint = new Color(0.93f, 0.99f, 0.96f, 0.98f);
+                    haloCol = new Color(0.18f, 0.86f, 0.58f, 0.24f + powerBoost * 0.22f);
+                    borderW = isSelected ? 2.5f : 2.0f;
+                    break;
+                case RemakeRarity.Huyen:
+                    borderCol = new Color(0.18f, 0.62f, 0.96f, 1f);
+                    bgTint = new Color(0.92f, 0.97f, 1.00f, 0.98f);
+                    haloCol = new Color(0.26f, 0.72f, 1.00f, 0.34f + powerBoost * 0.25f);
+                    innerRimCol = new Color(0.68f, 0.90f, 1.00f, 0.45f);
+                    borderW = isSelected ? 3.0f : 2.0f;
+                    break;
+                case RemakeRarity.Dia:
+                    borderCol = new Color(0.64f, 0.32f, 0.96f, 1f);
+                    bgTint = new Color(0.97f, 0.93f, 1.00f, 0.98f);
+                    haloCol = new Color(0.74f, 0.40f, 1.00f, 0.42f + powerBoost * 0.28f);
+                    innerRimCol = new Color(0.90f, 0.72f, 1.00f, 0.60f);
+                    borderW = isSelected ? 3.0f : 2.2f;
+                    break;
+                case RemakeRarity.Thien:
+                    borderCol = new Color(0.96f, 0.68f, 0.08f, 1f);
+                    bgTint = new Color(1.00f, 0.97f, 0.86f, 0.99f);
+                    haloCol = new Color(1.00f, 0.78f, 0.16f, 0.56f + powerBoost * 0.30f);
+                    innerRimCol = new Color(1.00f, 0.94f, 0.55f, 0.78f);
+                    borderW = isSelected ? 3.2f : 2.5f;
+                    break;
+                default: // Pham
+                    borderCol = enhanceLv >= 5 ? new Color(0.32f, 0.66f, 0.56f, 0.95f) : new Color(0.74f, 0.72f, 0.66f, 0.90f);
+                    bgTint = new Color(0.99f, 0.98f, 0.94f, 0.96f);
+                    if (enhanceLv >= 6 || tier >= 4)
+                        haloCol = new Color(0.32f, 0.80f, 0.66f, 0.22f);
+                    break;
+            }
+
+            if (isSelected)
+                borderCol = new Color(0.94f, 0.56f, 0.06f, 1f);
+
+            tile.style.backgroundColor = bgTint;
+            SetBorderAndRadius(tile, borderCol, borderW, radius);
+
+            if (haloCol.a > 0.05f)
+            {
+                var halo = new VisualElement { pickingMode = PickingMode.Ignore };
+                halo.AddToClassList("rarity-halo-outer");
+                float spread = qualityRank >= 3 ? -4f : -2.5f;
+                halo.style.left = spread; halo.style.right = spread; halo.style.top = spread; halo.style.bottom = spread;
+                SetBorderAndRadius(halo, haloCol, qualityRank >= 3 ? 3.0f : 2.0f, radius + 3f);
+                tile.Add(halo);
+            }
+            if (innerRimCol.a > 0.05f)
+            {
+                var inner = new VisualElement { pickingMode = PickingMode.Ignore };
+                inner.AddToClassList("rarity-halo-inner");
+                SetBorderAndRadius(inner, innerRimCol, 1.2f, Mathf.Max(4f, radius - 2f));
+                tile.Add(inner);
+            }
+        }
+
+        private static void ApplySwordTierBorderGlow(VisualElement tile, int swordLv, bool isSelected, float radius = 10f)
+        {
+            RemakeRarity mapped = swordLv >= 9 ? RemakeRarity.Thien
+                : swordLv >= 7 ? RemakeRarity.Dia
+                : swordLv >= 5 ? RemakeRarity.Huyen
+                : swordLv >= 3 ? RemakeRarity.Linh
+                : RemakeRarity.Pham;
+            ApplyEquipmentQualityGlow(tile, mapped, swordLv, swordLv >= 8 ? 6 : 0, isSelected, radius);
+        }
 
         private static void CreatePcSplit(VisualElement parent, out VisualElement leftCol, out VisualElement rightCol, bool wideLeft = false)
         {
@@ -93,23 +178,26 @@ namespace KhiVanChiTu.Remake
 
             var info = new VisualElement { style = { flexGrow = 1, marginLeft = 8, flexShrink = 1 } };
             info.Add(new Label("Cổ Kiếm Trủng · Rèn Kiếm 1 Chính + 5 Phôi") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal } });
+            float effMainSpd = CultivationTable.CalculateSwordSpeed(Mathf.Clamp(mainLevel, 1, 10)) * engine.GetSwordSpeedMultiplier();
+            float effMainCd = CultivationTable.CalculateSwordAttackCooldown(Mathf.Clamp(mainLevel, 1, 10));
             info.Add(new Label($"Tổng Công: {CultivationTable.FormatNumber(engine.GetTotalSwordAttackPower())} · Xuất trận: {save.equippedSwordLevels.Count}/{CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex)}") { style = { fontSize = 10, marginTop = 2 } });
-            info.Add(new Label($"Phù Rèn (+10%): {save.forgeTalismanCount} · Tổng lượt rèn: {save.totalMerges}") { style = { fontSize = 10, color = new Color(0.32f, 0.42f, 0.37f), marginTop = 1 } });
+            info.Add(new Label($"Kiếm Lv.{Mathf.Clamp(mainLevel, 1, 10)}: ST {CultivationTable.FormatNumber(CultivationTable.CalculateSwordDamage(Mathf.Clamp(mainLevel, 1, 10)))} · Bay {effMainSpd:0.0} u/s · Hồi {effMainCd:0.00}s · Phù: {save.forgeTalismanCount}") { style = { fontSize = 10, color = new Color(0.24f, 0.44f, 0.36f), marginTop = 1, whiteSpace = WhiteSpace.Normal } });
             topRow.Add(info);
             hero.Add(topRow);
 
-            // MAIN SWORD -> TARGET PREVIEW
+            // MAIN SWORD -> TARGET PREVIEW (SNUG 3D SWORD FIT + TIER GLOW)
             var mainStageRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, justifyContent = Justify.Center, marginTop = 8 } };
 
             var mainSlot = new VisualElement();
             mainSlot.AddToClassList("fifa-main-slot");
             if (mainLevel > 0)
             {
+                ApplySwordTierBorderGlow(mainSlot, mainLevel, true, 12f);
                 mainSlot.Add(new Label("KIẾM CHÍNH") { style = { fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.44f, 0.04f), flexShrink = 0 } });
-                var mIco = new VisualElement { style = { width = 34, height = 34, minWidth = 34, minHeight = 34, flexShrink = 0, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(mainLevel)) } };
+                var mIco = new VisualElement { style = { width = 56, height = 56, minWidth = 56, minHeight = 56, flexShrink = 0, marginTop = -2, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(mainLevel)) } };
                 mIco.AddToClassList("icon-fixed");
                 mainSlot.Add(mIco);
-                mainSlot.Add(new Label($"Lv.{mainLevel}") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0 } });
+                mainSlot.Add(new Label($"Lv.{mainLevel}") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, marginTop = -4 } });
             }
             else
             {
@@ -121,23 +209,24 @@ namespace KhiVanChiTu.Remake
 
             var nextSlot = new VisualElement();
             nextSlot.AddToClassList("fifa-main-slot");
-            SetBorderAndRadius(nextSlot, new Color(0.14f, 0.60f, 0.46f), 2f, 12f);
             if (mainLevel > 0 && mainLevel < 10)
             {
+                ApplySwordTierBorderGlow(nextSlot, mainLevel + 1, false, 12f);
                 nextSlot.Add(new Label("MỤC TIÊU") { style = { fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.48f, 0.36f), flexShrink = 0 } });
-                var nIco = new VisualElement { style = { width = 34, height = 34, minWidth = 34, minHeight = 34, flexShrink = 0, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(mainLevel + 1)) } };
+                var nIco = new VisualElement { style = { width = 56, height = 56, minWidth = 56, minHeight = 56, flexShrink = 0, marginTop = -2, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(mainLevel + 1)) } };
                 nIco.AddToClassList("icon-fixed");
                 nextSlot.Add(nIco);
-                nextSlot.Add(new Label($"Lv.{mainLevel + 1}") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.48f, 0.36f), flexShrink = 0 } });
+                nextSlot.Add(new Label($"Lv.{mainLevel + 1}") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.48f, 0.36f), flexShrink = 0, marginTop = -4 } });
             }
             else
             {
+                SetBorderAndRadius(nextSlot, new Color(0.14f, 0.60f, 0.46f), 2f, 12f);
                 nextSlot.Add(new Label("MAX\nLv.10") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, unityTextAlign = TextAnchor.MiddleCenter } });
             }
             mainStageRow.Add(nextSlot);
             hero.Add(mainStageRow);
 
-            // 5 FODDER SLOTS (FIFA ONLINE STYLE)
+            // 5 FODDER SLOTS (FIFA ONLINE STYLE — SNUG 40x40 FIT)
             var fodderRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.Center, marginTop = 7 } };
             for (int slotIdx = 0; slotIdx < 5; slotIdx++)
             {
@@ -163,11 +252,10 @@ namespace KhiVanChiTu.Remake
                     int bIdx = _fifaFodderBagIndices[slotIdx];
                     int flv = save.swordInventoryLevels[bIdx];
                     int contribPct = Mathf.RoundToInt(engine.GetSingleFodderMergeContribution(Mathf.Clamp(mainLevel, 1, 9), flv) * 100f);
-                    var fIco = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 26, height = 26, minWidth = 26, minHeight = 26, flexShrink = 0, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(flv)) } };
+                    var fIco = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 38, height = 38, minWidth = 38, minHeight = 38, flexShrink = 0, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(flv)) } };
                     fIco.AddToClassList("icon-fixed");
                     fBtn.Add(fIco);
-                    fBtn.Add(new Label($"Lv.{flv}") { pickingMode = PickingMode.Ignore, style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0 } });
-                    fBtn.Add(new Label($"+{contribPct}%") { pickingMode = PickingMode.Ignore, style = { fontSize = 8, color = new Color(0.11f, 0.52f, 0.38f), unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0 } });
+                    fBtn.Add(new Label($"Lv.{flv} (+{contribPct}%)") { pickingMode = PickingMode.Ignore, style = { fontSize = 8, color = new Color(0.11f, 0.52f, 0.38f), unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, marginTop = -1 } });
                 }
                 fodderRow.Add(fBtn);
             }
@@ -251,47 +339,91 @@ namespace KhiVanChiTu.Remake
             });
             swLeft.Add(styleCard);
 
-            // EQUIPPED SWORDS GRID (TAP TO SELECT AS MAIN)
+            // EQUIPPED SWORDS GRID (SNUG 46x46 FIT + UNEQUIP SWORD BUTTON)
+            _selectedEquippedSwordIdx = Mathf.Clamp(_selectedEquippedSwordIdx, 0, Mathf.Max(0, save.equippedSwordLevels.Count - 1));
             var eqCard = new VisualElement();
             eqCard.AddToClassList("card-light");
             eqCard.style.marginBottom = 8;
-            eqCard.Add(new Label($"Phi Kiếm Đang Xuất Trận ({save.equippedSwordLevels.Count}/{CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex)}) — Chạm để đặt làm Kiếm Chính")
+
+            var eqHead = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginBottom = 6 } };
+            eqHead.Add(new Label($"Phi Kiếm Xuất Trận ({save.equippedSwordLevels.Count}/{CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex)})")
             {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, whiteSpace = WhiteSpace.Normal, marginBottom = 6 }
+                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, whiteSpace = WhiteSpace.Normal }
             });
-            var eqGrid = new VisualElement();
-            eqGrid.AddToClassList("grid-wrap");
-            for (int i = 0; i < save.equippedSwordLevels.Count; i++)
+            var unequipSwBtn = new Button(() =>
             {
-                int idx = i;
-                int lv = save.equippedSwordLevels[i];
-                bool isMain = _fifaMainFromEquipped && _fifaMainIndex == i;
-                var tile = new Button(() =>
+                int targetIdx = _fifaMainFromEquipped && _fifaMainIndex >= 0 && _fifaMainIndex < save.equippedSwordLevels.Count
+                    ? _fifaMainIndex
+                    : _selectedEquippedSwordIdx;
+                if (engine.TryUnequipSword(targetIdx))
                 {
-                    if (lv >= 10)
-                    {
-                        BootOverlayController.Instance?.ShowToast("Kiếm Cấp 10 đã đạt đỉnh phong!");
-                        return;
-                    }
-                    _fifaMainFromEquipped = true;
-                    _fifaMainIndex = idx;
+                    _fifaFodderBagIndices.Clear();
                     Refresh();
-                })
-                {
-                    style = { width = 62, height = 74, marginRight = 5, marginBottom = 5 }
-                };
-                tile.AddToClassList("grid-tile");
-                if (isMain) tile.AddToClassList("grid-tile-selected");
-                if (isMain)
-                    tile.Add(new Label("CHÍNH") { pickingMode = PickingMode.Ignore, style = { fontSize = 7, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.75f, 0.44f, 0.04f), flexShrink = 0 } });
-                var eqIco = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 30, height = 30, minWidth = 30, minHeight = 30, flexShrink = 0, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(lv)) } };
-                eqIco.AddToClassList("icon-fixed");
-                tile.Add(eqIco);
-                tile.Add(new Label($"Lv.{lv}") { pickingMode = PickingMode.Ignore, style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 10, flexShrink = 0 } });
-                tile.Add(new Label(CultivationTable.FormatNumber(CultivationTable.CalculateSwordDamage(lv))) { pickingMode = PickingMode.Ignore, style = { fontSize = 8, color = new Color(0.16f, 0.56f, 0.44f), flexShrink = 0 } });
-                eqGrid.Add(tile);
+                }
+            })
+            {
+                name = "btn-sword-unequip",
+                text = "Tháo Kiếm Chọn"
+            };
+            unequipSwBtn.AddToClassList("btn-compact");
+            unequipSwBtn.SetEnabled(save.equippedSwordLevels.Count > 0);
+            unequipSwBtn.style.fontSize = 9;
+            unequipSwBtn.style.paddingLeft = 7;
+            unequipSwBtn.style.paddingRight = 7;
+            eqHead.Add(unequipSwBtn);
+            eqCard.Add(eqHead);
+
+            if (save.equippedSwordLevels.Count == 0)
+            {
+                eqCard.Add(new Label("Chưa có phi kiếm xuất trận. Chọn chế độ 'Xuất Trận' ở Túi Phôi Kiếm bên dưới để lắp kiếm!") { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, color = new Color(0.45f, 0.50f, 0.47f) } });
             }
-            eqCard.Add(eqGrid);
+            else
+            {
+                var eqGrid = new VisualElement();
+                eqGrid.AddToClassList("grid-wrap");
+                for (int i = 0; i < save.equippedSwordLevels.Count; i++)
+                {
+                    int idx = i;
+                    int lv = save.equippedSwordLevels[i];
+                    bool isSelEq = _selectedEquippedSwordIdx == i;
+                    bool isMain = _fifaMainFromEquipped && _fifaMainIndex == i;
+                    var tile = new Button(() =>
+                    {
+                        _selectedEquippedSwordIdx = idx;
+                        if (lv < 10)
+                        {
+                            _fifaMainFromEquipped = true;
+                            _fifaMainIndex = idx;
+                        }
+                        Refresh();
+                    })
+                    {
+                        style = { width = 66, height = 78, marginRight = 6, marginBottom = 6, paddingTop = 2, paddingBottom = 2, paddingLeft = 2, paddingRight = 2 }
+                    };
+                    tile.AddToClassList("grid-tile");
+                    ApplySwordTierBorderGlow(tile, lv, isMain || isSelEq, 10f);
+
+                    var eqIco = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 52, height = 52, minWidth = 52, minHeight = 52, flexShrink = 0, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(lv)) } };
+                    eqIco.AddToClassList("icon-fixed");
+                    tile.Add(eqIco);
+
+                    if (isMain)
+                    {
+                        tile.Add(new Label("CHÍNH")
+                        {
+                            pickingMode = PickingMode.Ignore,
+                            style = { position = Position.Absolute, left = 3, top = 2, fontSize = 7, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.75f, 0.44f, 0.04f) }
+                        });
+                    }
+                    tile.Add(new Label($"Lv.{lv} · {CultivationTable.FormatNumber(CultivationTable.CalculateSwordDamage(lv))}")
+                    {
+                        pickingMode = PickingMode.Ignore,
+                        style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 8, color = new Color(0.14f, 0.42f, 0.34f), flexShrink = 0, marginTop = -1 }
+                    });
+                    eqGrid.Add(tile);
+                }
+                eqCard.Add(eqGrid);
+            }
             swRight.Add(eqCard);
 
             // SWORD BAG GRID (TAP TO ADD FODDER / PICK MAIN / EQUIP)
@@ -369,23 +501,23 @@ namespace KhiVanChiTu.Remake
                         }
                     })
                     {
-                        style = { width = 58, height = 72, marginRight = 4, marginBottom = 4 }
+                        style = { width = 62, height = 74, marginRight = 5, marginBottom = 5, paddingTop = 2, paddingBottom = 2, paddingLeft = 2, paddingRight = 2 }
                     };
                     tile.AddToClassList("grid-tile");
-                    if (isMain) tile.AddToClassList("grid-tile-selected");
-                    else if (isFodder)
+                    ApplySwordTierBorderGlow(tile, lv, isMain, 10f);
+                    if (isFodder)
                     {
                         tile.style.backgroundColor = new Color(0.86f, 0.96f, 0.91f);
-                        SetBorderAndRadius(tile, new Color(0.14f, 0.58f, 0.44f), 2f, 10f);
+                        SetBorderAndRadius(tile, new Color(0.14f, 0.58f, 0.44f), 2.2f, 10f);
                     }
 
                     string tagText = isMain ? "CHÍNH" : isFodder ? $"PHÔI {fodderPos + 1}" : $"+{contribPct}%";
                     Color tagColor = isMain ? new Color(0.75f, 0.44f, 0.04f) : isFodder ? new Color(0.10f, 0.48f, 0.36f) : new Color(0.36f, 0.48f, 0.44f);
                     tile.Add(new Label(tagText) { pickingMode = PickingMode.Ignore, style = { fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold, color = tagColor, flexShrink = 0 } });
-                    var bIco = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 28, height = 28, minWidth = 28, minHeight = 28, flexShrink = 0, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(lv)) } };
+                    var bIco = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 48, height = 48, minWidth = 48, minHeight = 48, flexShrink = 0, marginTop = -2, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(lv)) } };
                     bIco.AddToClassList("icon-fixed");
                     tile.Add(bIco);
-                    tile.Add(new Label($"Lv.{lv}") { pickingMode = PickingMode.Ignore, style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0 } });
+                    tile.Add(new Label($"Lv.{lv}") { pickingMode = PickingMode.Ignore, style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, marginTop = -2 } });
                     bagGrid.Add(tile);
                 }
                 bagCard.Add(bagGrid);
@@ -1215,40 +1347,89 @@ namespace KhiVanChiTu.Remake
                 int slotIdx = (int)slot;
                 var eq = engine.GetEquippedItem(slot);
                 int enh = save.equipSlotEnhanceLevels[slotIdx];
-                var tile = new VisualElement { style = { paddingTop = 4, paddingBottom = 4, paddingLeft = 4, paddingRight = 4, marginBottom = 5, backgroundColor = new Color(0.99f, 0.98f, 0.94f), alignItems = Align.Center } };
-                Color bc = eq != null ? new Color(0.86f, 0.62f, 0.14f) : new Color(0.75f, 0.78f, 0.76f);
-                SetBorderAndRadius(tile, bc, 1.5f, 8f);
+                bool isSlotSel = _selectedEquippedGearSlot == slotIdx;
 
-                var topSlot = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center } };
-                var frame = new VisualElement { style = { width = 28, height = 28, alignItems = Align.Center, justifyContent = Justify.Center } };
-                if (eq != null) CodexArtLoader.ApplyIconOrPlaceholder(frame, CultivationTable.GetRarityFrameCodexKey(eq.rarity), "");
-                var sIcon = new VisualElement { style = { width = 22, height = 22 } };
+                var tile = new VisualElement { style = { paddingTop = 4, paddingBottom = 4, paddingLeft = 4, paddingRight = 4, marginBottom = 6, alignItems = Align.Center } };
+                if (eq != null)
+                    ApplyEquipmentQualityGlow(tile, eq.rarity, eq.tier, enh, isSlotSel, 10f);
+                else
+                {
+                    tile.style.backgroundColor = new Color(0.98f, 0.97f, 0.93f, 0.92f);
+                    SetBorderAndRadius(tile, isSlotSel ? new Color(0.92f, 0.56f, 0.08f) : new Color(0.76f, 0.78f, 0.76f), isSlotSel ? 2.2f : 1.5f, 10f);
+                }
+
+                var iconBtn = new Button(() =>
+                {
+                    _selectedEquippedGearSlot = slotIdx;
+                    _selectedGearUid = "";
+                    Refresh();
+                })
+                {
+                    style =
+                    {
+                        width = 48, height = 48, minWidth = 48, minHeight = 48,
+                        marginTop = 0, marginBottom = 0, marginLeft = 0, marginRight = 0,
+                        paddingTop = 2, paddingBottom = 2, paddingLeft = 2, paddingRight = 2,
+                        alignItems = Align.Center, justifyContent = Justify.Center,
+                        backgroundColor = Color.clear,
+                        borderTopWidth = 0, borderBottomWidth = 0, borderLeftWidth = 0, borderRightWidth = 0
+                    }
+                };
+                if (eq != null) CodexArtLoader.ApplyIconOrPlaceholder(iconBtn, CultivationTable.GetRarityFrameCodexKey(eq.rarity), "");
+                var sIcon = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 38, height = 38, minWidth = 38, minHeight = 38, flexShrink = 0 } };
+                sIcon.AddToClassList("icon-fixed");
                 var (cKey, rKey) = CultivationTable.GetEquipSlotIcons(slot);
                 CodexArtLoader.ApplyIconOrPlaceholder(sIcon, cKey, "", rKey);
-                frame.Add(sIcon);
-                topSlot.Add(frame);
-                topSlot.Add(new Label($" +{enh}") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold } });
-                tile.Add(topSlot);
+                if (eq == null) sIcon.style.opacity = 0.36f;
+                iconBtn.Add(sIcon);
 
-                tile.Add(new Label(eq != null ? $"{GetShortEquipSlot(slot)}·T{eq.tier}" : GetShortEquipSlot(slot)) { style = { fontSize = 9, marginTop = 2 } });
+                if (enh > 0)
+                {
+                    iconBtn.Add(new Label($"+{enh}")
+                    {
+                        pickingMode = PickingMode.Ignore,
+                        style =
+                        {
+                            position = Position.Absolute, right = 1, top = 0, fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold,
+                            color = new Color(0.78f, 0.42f, 0.04f), backgroundColor = new Color(1f, 0.97f, 0.86f, 0.92f),
+                            paddingLeft = 3, paddingRight = 3, borderTopLeftRadius = 4, borderTopRightRadius = 4, borderBottomLeftRadius = 4, borderBottomRightRadius = 4
+                        }
+                    });
+                }
+                tile.Add(iconBtn);
 
-                var eBtn = new Button(() => { engine.TryEnhanceEquipSlot(slotIdx); Refresh(); }) { text = $"+Cường ({CultivationTable.GetEquipSlotEnhanceCostOre(enh)} Q)" };
+                tile.Add(new Label(eq != null ? $"{CultivationTable.GetRarityName(eq.rarity)}·T{eq.tier}" : $"{GetShortEquipSlot(slot)} (Trống)")
+                {
+                    style = { fontSize = 8, unityFontStyleAndWeight = eq != null ? FontStyle.Bold : FontStyle.Normal, marginTop = 1, color = eq != null ? new Color(0.14f, 0.26f, 0.22f) : new Color(0.50f, 0.54f, 0.52f) }
+                });
+
+                var slotActRow = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.Center, marginTop = 2 } };
+                var eBtn = new Button(() => { engine.TryEnhanceEquipSlot(slotIdx); Refresh(); }) { text = $"+Cường ({CultivationTable.GetEquipSlotEnhanceCostOre(enh)}Q)" };
                 eBtn.AddToClassList("btn-compact");
                 eBtn.SetEnabled(unlocked);
-                eBtn.style.fontSize = 8; eBtn.style.paddingTop = 2; eBtn.style.paddingBottom = 2; eBtn.style.marginTop = 2;
-                tile.Add(eBtn);
+                eBtn.style.fontSize = 8; eBtn.style.paddingTop = 2; eBtn.style.paddingBottom = 2; eBtn.style.paddingLeft = 4; eBtn.style.paddingRight = 4;
+                slotActRow.Add(eBtn);
+
+                if (eq != null)
+                {
+                    var uBtn = new Button(() => { engine.TryUnequipGear(slot); Refresh(); }) { name = $"btn-unequip-slot-{slotIdx}", text = "Tháo" };
+                    uBtn.AddToClassList("btn-compact");
+                    uBtn.style.fontSize = 8; uBtn.style.paddingTop = 2; uBtn.style.paddingBottom = 2; uBtn.style.paddingLeft = 5; uBtn.style.paddingRight = 5; uBtn.style.marginLeft = 3;
+                    slotActRow.Add(uBtn);
+                }
+                tile.Add(slotActRow);
                 return tile;
             }
 
             var paperRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, justifyContent = Justify.SpaceBetween } };
-            var leftCol = new VisualElement { style = { width = 94 } };
+            var leftCol = new VisualElement { style = { width = 104 } };
             leftCol.Add(BuildSlotTile(RemakeEquipSlot.Crown));
             leftCol.Add(BuildSlotTile(RemakeEquipSlot.Robe));
             leftCol.Add(BuildSlotTile(RemakeEquipSlot.Amulet));
 
             var centerCol = new VisualElement { style = { flexGrow = 1, alignItems = Align.Center, justifyContent = Justify.Center, paddingLeft = 4, paddingRight = 4 } };
-            var portrait = new VisualElement { style = { width = 66, height = 66, marginBottom = 4, backgroundColor = new Color(0.99f, 0.96f, 0.88f) } };
-            SetBorderAndRadius(portrait, new Color(0.86f, 0.62f, 0.14f), 2f, 33f);
+            var portrait = new VisualElement { style = { width = 64, height = 64, marginBottom = 4, backgroundColor = new Color(0.99f, 0.96f, 0.88f) } };
+            SetBorderAndRadius(portrait, new Color(0.86f, 0.62f, 0.14f), 2f, 32f);
             CodexArtLoader.ApplyIconOrPlaceholder(portrait, "", "[Tu Sĩ]", "CharacterPortrait");
             centerCol.Add(portrait);
 
@@ -1262,7 +1443,7 @@ namespace KhiVanChiTu.Remake
                 style = { fontSize = 9, whiteSpace = WhiteSpace.Normal, unityTextAlign = TextAnchor.MiddleCenter, marginTop = 4 }
             });
 
-            var rightCol = new VisualElement { style = { width = 94 } };
+            var rightCol = new VisualElement { style = { width = 104 } };
             rightCol.Add(BuildSlotTile(RemakeEquipSlot.Bracer));
             rightCol.Add(BuildSlotTile(RemakeEquipSlot.Ring));
             rightCol.Add(BuildSlotTile(RemakeEquipSlot.Boots));
@@ -1285,11 +1466,48 @@ namespace KhiVanChiTu.Remake
             });
             eqLeft.Add(filterCard);
 
-            // RESOLVE SELECTED BAG ITEM & LIVE COMPARISON CARD
+            // RESOLVE EQUIPPED SLOT INSPECTOR OR SELECTED BAG ITEM COMPARISON CARD
+            if (_selectedEquippedGearSlot >= 0 && _selectedEquippedGearSlot < 6 && string.IsNullOrEmpty(_selectedGearUid))
+            {
+                var eqSlot = (RemakeEquipSlot)_selectedEquippedGearSlot;
+                var eqItem = engine.GetEquippedItem(eqSlot);
+                if (eqItem != null)
+                {
+                    var eqInspect = new VisualElement();
+                    eqInspect.AddToClassList("card-light");
+                    eqInspect.style.marginBottom = 8;
+                    ApplyEquipmentQualityGlow(eqInspect, eqItem.rarity, eqItem.tier, save.equipSlotEnhanceLevels[_selectedEquippedGearSlot], false, 10f);
+                    string setTxt = eqItem.setId != RemakeEquipSet.None ? $" · {CultivationTable.GetEquipSetName(eqItem.setId)}" : "";
+                    eqInspect.Add(new Label($"Đang Mặc: {CultivationTable.GetRarityName(eqItem.rarity)} {CultivationTable.GetEquipSlotName(eqSlot)} Bậc {eqItem.tier}{setTxt}")
+                    {
+                        style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, whiteSpace = WhiteSpace.Normal }
+                    });
+                    for (int s = 0; s < eqItem.substats.Count; s++)
+                    {
+                        var st = eqItem.substats[s];
+                        eqInspect.Add(new Label($"• {CultivationTable.GetEquipStatLabel(st.statType, st.value)}") { style = { fontSize = 10, color = new Color(0.11f, 0.48f, 0.36f), marginTop = 2 } });
+                    }
+                    var uRow = new VisualElement { style = { flexDirection = FlexDirection.Row, marginTop = 7 } };
+                    var unequipMainBtn = new Button(() =>
+                    {
+                        if (engine.TryUnequipGear(eqSlot))
+                        {
+                            _selectedEquippedGearSlot = -1;
+                            Refresh();
+                        }
+                    })
+                    { name = "btn-unequip-inspected-gear", text = "Tháo Trang Bị Về Túi" };
+                    unequipMainBtn.AddToClassList("btn-secondary");
+                    uRow.Add(unequipMainBtn);
+                    eqInspect.Add(uRow);
+                    eqRight.Add(eqInspect);
+                }
+            }
+
             RemakeEquipmentItem selectedItem = null;
             for (int i = 0; i < save.equipmentBag.Count; i++)
                 if (save.equipmentBag[i].uid == _selectedGearUid) { selectedItem = save.equipmentBag[i]; break; }
-            if (selectedItem == null && save.equipmentBag.Count > 0)
+            if (selectedItem == null && _selectedEquippedGearSlot < 0 && save.equipmentBag.Count > 0)
             {
                 selectedItem = save.equipmentBag[0];
                 _selectedGearUid = selectedItem.uid;
@@ -1387,12 +1605,12 @@ namespace KhiVanChiTu.Remake
                     float score = CultivationTable.CalculateEquipItemScore(item, save.realmIndex);
                     float diff = score - CultivationTable.CalculateEquipItemScore(engine.GetEquippedItem(item.slot), save.realmIndex);
 
-                    var tile = new Button(() => { _selectedGearUid = item.uid; Refresh(); })
+                    var tile = new Button(() => { _selectedEquippedGearSlot = -1; _selectedGearUid = item.uid; Refresh(); })
                     {
-                        style = { width = 62, height = 74, marginRight = 5, marginBottom = 5 }
+                        style = { width = 66, height = 78, marginRight = 6, marginBottom = 6, paddingTop = 2, paddingBottom = 2, paddingLeft = 2, paddingRight = 2 }
                     };
                     tile.AddToClassList("grid-tile");
-                    if (isSel) tile.AddToClassList("grid-tile-selected");
+                    ApplyEquipmentQualityGlow(tile, item.rarity, item.tier, 0, isSel, 10f);
 
                     if (item.isLocked)
                     {
@@ -1410,17 +1628,17 @@ namespace KhiVanChiTu.Remake
                     arrow.AddToClassList(diff >= 0 ? "stat-up" : "stat-down");
                     tile.Add(arrow);
 
-                    var iconWrap = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 34, height = 34, minWidth = 34, minHeight = 34, flexShrink = 0, marginTop = 6, alignItems = Align.Center, justifyContent = Justify.Center } };
+                    var iconWrap = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 46, height = 46, minWidth = 46, minHeight = 46, flexShrink = 0, marginTop = 4, alignItems = Align.Center, justifyContent = Justify.Center } };
                     iconWrap.AddToClassList("icon-fixed");
                     CodexArtLoader.ApplyIconOrPlaceholder(iconWrap, CultivationTable.GetRarityFrameCodexKey(item.rarity), "");
-                    var innerIcon = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 24, height = 24, minWidth = 24, minHeight = 24, flexShrink = 0 } };
+                    var innerIcon = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 38, height = 38, minWidth = 38, minHeight = 38, flexShrink = 0 } };
                     innerIcon.AddToClassList("icon-fixed");
                     var (ck, rk) = CultivationTable.GetEquipSlotIcons(item.slot);
                     CodexArtLoader.ApplyIconOrPlaceholder(innerIcon, ck, "", rk);
                     iconWrap.Add(innerIcon);
                     tile.Add(iconWrap);
 
-                    tile.Add(new Label($"T{item.tier}·{GetShortEquipSlot(item.slot)}") { pickingMode = PickingMode.Ignore, style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, marginTop = 2, flexShrink = 0 } });
+                    tile.Add(new Label($"T{item.tier}·{GetShortEquipSlot(item.slot)}") { pickingMode = PickingMode.Ignore, style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, marginTop = 0, flexShrink = 0 } });
                     bagGrid.Add(tile);
                 }
                 bagCard.Add(bagGrid);
@@ -1690,7 +1908,7 @@ namespace KhiVanChiTu.Remake
         }
 
         // =========================================================
-        // 7. BAN DO VUC-AI (ALREADY GRID!)
+        // 7. BAN DO VUC-AI (PROGRESSIVE REALM + STAGE UNLOCKS)
         // =========================================================
         public static void BuildStages(VisualElement body)
         {
@@ -1703,7 +1921,11 @@ namespace KhiVanChiTu.Remake
             var preview = new VisualElement();
             preview.AddToClassList("card-light");
             preview.style.marginBottom = 8;
-            preview.Add(new Label($"Ải Đang Treo: {ActStageDatabaseSO.GetDifficultyLabel(curStage.difficulty)} · {curStage.stageName}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12 } });
+            preview.Add(new Label($"Ải Đang Treo: {ActStageDatabaseSO.GetDifficultyLabel(curStage.difficulty)} · {curStage.stageName}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal } });
+            preview.Add(new Label($"Cơ chế treo máy: Vượt Ải 1–9 không tử vong sẽ tự động sang ải kế tiếp (khi đủ Cảnh Giới). Tử vong sẽ hồi sinh 5s & đánh lại đúng ải hiện tại. Tại Boss X-10 luôn đánh đi đánh lại dù thắng hay thua!")
+            {
+                style = { fontSize = 10, color = new Color(0.18f, 0.44f, 0.36f), whiteSpace = WhiteSpace.Normal, marginTop = 2 }
+            });
             preview.Add(new Label($"Thấu Thị Rơi Đồ: Tu Vi {CultivationTable.FormatNumber(curStage.tuViPerKill)} · LT {CultivationTable.FormatNumber(curStage.linhThachPerKill)} · Kiếm Lv.{curStage.swordDropMinLevel}-{curStage.swordDropMaxLevel} ({curStage.swordDropRate * 100f:0.0}%) · {ActStageDatabaseSO.GetHerbName(curStage.herbTier)}")
             {
                 style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 3 }
@@ -1737,11 +1959,16 @@ namespace KhiVanChiTu.Remake
             for (int d = 0; d < 4; d++)
             {
                 int capD = d;
+                var firstInDiff = engine.GetStageSpec((RemakeDifficulty)d, 0, 1);
+                bool diffRealmOk = engine.IsStageRealmUnlocked(firstInDiff);
+                string dLabel = diffRealmOk
+                    ? ActStageDatabaseSO.GetDifficultyLabel((RemakeDifficulty)d)
+                    : $"{ActStageDatabaseSO.GetDifficultyLabel((RemakeDifficulty)d)} ({CultivationTable.RealmNames[firstInDiff.requiredRealmIndex]})";
                 var b = new Button(() => { _uiStageTabDiff = capD; body.Clear(); BuildStages(body); })
-                { text = ActStageDatabaseSO.GetDifficultyLabel((RemakeDifficulty)d) };
+                { text = dLabel };
                 b.AddToClassList("btn-compact");
                 if (d == _uiStageTabDiff) b.AddToClassList("selected");
-                b.style.flexGrow = 1; b.style.marginRight = d < 3 ? 4 : 0; b.style.fontSize = 10;
+                b.style.flexGrow = 1; b.style.marginRight = d < 3 ? 4 : 0; b.style.fontSize = 9;
                 diffRow.Add(b);
             }
             body.Add(diffRow);
@@ -1750,11 +1977,17 @@ namespace KhiVanChiTu.Remake
             for (int a = 0; a < 3; a++)
             {
                 int capA = a;
+                var firstInAct = engine.GetStageSpec((RemakeDifficulty)_uiStageTabDiff, a, 1);
+                bool actRealmOk = engine.IsStageRealmUnlocked(firstInAct);
+                string baseActName = a == 0 ? "Vực 1: Đồng Cỏ" : a == 1 ? "Vực 2: Hoang Mạc" : "Vực 3: Tiên Sơn";
+                string aLabel = actRealmOk
+                    ? baseActName
+                    : $"{baseActName}\n({CultivationTable.GetRealmShortName(firstInAct.requiredRealmIndex, firstInAct.requiredSubStage)})";
                 var b = new Button(() => { _uiStageTabAct = capA; body.Clear(); BuildStages(body); })
-                { text = a == 0 ? "Vực 1: Đồng Cỏ" : a == 1 ? "Vực 2: Hoang Mạc" : "Vực 3: Tiên Sơn" };
+                { text = aLabel };
                 b.AddToClassList("btn-compact");
                 if (a == _uiStageTabAct) b.AddToClassList("selected");
-                b.style.flexGrow = 1; b.style.marginRight = a < 2 ? 4 : 0; b.style.fontSize = 10;
+                b.style.flexGrow = 1; b.style.marginRight = a < 2 ? 4 : 0; b.style.fontSize = 9;
                 actRow.Add(b);
             }
             body.Add(actRow);
@@ -1765,8 +1998,17 @@ namespace KhiVanChiTu.Remake
             {
                 int stageNum = s;
                 var spec = engine.GetStageSpec((RemakeDifficulty)_uiStageTabDiff, _uiStageTabAct, s);
-                bool unlocked = spec.LinearIndex <= save.highestUnlockedLinearStage;
+                bool progOk = spec.LinearIndex <= save.highestUnlockedLinearStage;
+                bool realmOk = engine.IsStageRealmUnlocked(spec);
+                bool unlocked = progOk && realmOk;
                 bool active = save.activeDifficulty == _uiStageTabDiff && save.activeAct == _uiStageTabAct && save.activeStage == s;
+
+                string reqShort = CultivationTable.GetRealmShortName(spec.requiredRealmIndex, spec.requiredSubStage);
+                string btnText;
+                if (spec.isBossStage)
+                    btnText = unlocked ? $"Boss {spec.stageCode}\nHP {CultivationTable.FormatNumber(spec.enemyHp)}" : $"Boss {spec.stageCode}\nCần {reqShort}";
+                else
+                    btnText = unlocked ? $"Ải {spec.stageCode}\nHP {CultivationTable.FormatNumber(spec.enemyHp)}" : (!realmOk ? $"Ải {spec.stageCode}\nCần {reqShort}" : $"Ải {spec.stageCode}\nChưa Mở");
 
                 var btn = new Button(() =>
                 {
@@ -1776,22 +2018,22 @@ namespace KhiVanChiTu.Remake
                         BuildStages(body);
                     }
                 })
-                { text = spec.isBossStage ? $"Boss {spec.stageCode}\nThủ Lĩnh" : $"Ải {spec.stageCode}" };
+                { text = btnText };
                 btn.AddToClassList("btn-secondary");
                 if (active) btn.AddToClassList("selected");
                 btn.SetEnabled(unlocked);
-                btn.style.width = 86;
-                btn.style.height = 46;
+                btn.style.width = 92;
+                btn.style.height = 50;
                 btn.style.marginRight = 5;
                 btn.style.marginBottom = 5;
-                btn.style.fontSize = 10;
+                btn.style.fontSize = 9;
                 stageGrid.Add(btn);
             }
             body.Add(stageGrid);
         }
 
         // =========================================================
-        // 8. DOT PHA — PILL GRID + 15-SECOND TRIBULATION SECLUSION
+        // 8. DOT PHA — PHASE GATES (SO->TRUNG->DINH PHONG->DAI CANH GIOI)
         // =========================================================
         public static void BuildBreakthrough(VisualElement body, Action onTribulationStarted = null)
         {
@@ -1805,6 +2047,7 @@ namespace KhiVanChiTu.Remake
             }
 
             double reqTuVi = engine.GetRequiredTuViForCurrent();
+            bool atGate = CultivationTable.RequiresBreakthroughAt(save.subStage);
             bool isMajor = save.subStage >= 10;
             int nextSub = isMajor ? 1 : save.subStage + 1;
             int nextRealm = isMajor ? Mathf.Min(8, save.realmIndex + 1) : save.realmIndex;
@@ -1821,7 +2064,10 @@ namespace KhiVanChiTu.Remake
             var info = new VisualElement { style = { flexGrow = 1, marginLeft = 10, flexShrink = 1 } };
             info.Add(new Label($"{CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)} → {CultivationTable.GetRealmDisplayName(nextRealm, nextSub)}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal } });
             info.Add(new Label($"Tu Vi: {CultivationTable.FormatNumber(save.tuVi)} / {CultivationTable.FormatNumber(reqTuVi)} ({Mathf.RoundToInt(Mathf.Clamp01((float)(save.tuVi / Math.Max(1, reqTuVi))) * 100)}%)") { style = { fontSize = 11, marginTop = 3 } });
-            info.Add(new Label($"Nghi thức Độ Kiếp: Bế quan đón 9 đạo Thiên Lôi trong 15 giây!") { style = { fontSize = 10, color = new Color(0.68f, 0.34f, 0.08f), whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+            string gateNote = atGate
+                ? $"Bình cảnh: {CultivationTable.GetBreakthroughGateTitle(save.realmIndex, save.subStage)} — Bế quan đón 9 đạo Thiên Lôi (15s)!"
+                : "Các tầng thường tự động thăng cấp khi đủ 100% Tu Vi! Chỉ cần Đột Phá tại mốc Sơ Kỳ (T3) → Trung Kỳ (T6) → Đỉnh Phong (T10).";
+            info.Add(new Label(gateNote) { style = { fontSize = 10, color = atGate ? new Color(0.68f, 0.34f, 0.08f) : new Color(0.14f, 0.50f, 0.38f), whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
             topRow.Add(info);
             hero.Add(topRow);
 
@@ -1901,9 +2147,11 @@ namespace KhiVanChiTu.Remake
             var ctaCard = new VisualElement();
             ctaCard.AddToClassList("card-light");
             ctaCard.style.alignItems = Align.Center;
-            ctaCard.Add(new Label($"Tổng xác suất Độ Kiếp: {Mathf.RoundToInt(finalChance * 100)}%")
+            ctaCard.Add(new Label(atGate
+                ? $"Tổng xác suất Độ Kiếp: {Mathf.RoundToInt(finalChance * 100)}%"
+                : "Chưa chạm bình cảnh — Tầng hiện tại sẽ tự động thăng cấp khi đủ Tu Vi!")
             {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, color = new Color(0.11f, 0.48f, 0.36f), marginBottom = 6 }
+                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, color = new Color(0.11f, 0.48f, 0.36f), marginBottom = 6, whiteSpace = WhiteSpace.Normal, unityTextAlign = TextAnchor.MiddleCenter }
             });
 
             var startBtn = new Button(() =>
@@ -1913,7 +2161,11 @@ namespace KhiVanChiTu.Remake
             })
             {
                 name = "btn-start-tribulation",
-                text = engine.IsInTribulation ? "Đang Bế Quan Đón Thiên Kiếp..." : "Bế Quan Đón Thiên Kiếp (15s)"
+                text = engine.IsInTribulation
+                    ? "Đang Bế Quan Đón Thiên Kiếp..."
+                    : !atGate
+                        ? "Tự Lên Cấp Khi Đủ Tu Vi"
+                        : "Bế Quan Đón Thiên Kiếp (15s)"
             };
             startBtn.AddToClassList("btn-primary");
             startBtn.SetEnabled(engine.IsBreakthroughReady && !engine.IsInTribulation);
@@ -1922,55 +2174,276 @@ namespace KhiVanChiTu.Remake
         }
 
         // =========================================================
-        // 9. NHAT KY TIEN LO — 2-COLUMN GRID
+        // 9. NHAT KY TIEN LO — VISUAL JOURNEY STEPPER + SPOTLIGHT + ILLUSTRATED CARDS
         // =========================================================
+        private static readonly (string codex, string reused, string tag, string shortRealm)[] DiaryChapterArt =
+        {
+            ("Monsters/act1_boss_guardian", "RouteMilestones", "NGÀY 1 · ~4H", "Trúc Cơ"),
+            ("Monsters/act2_boss_overlord", "RouteMilestones", "NGÀY 1 · ~24H", "Kim Đan"),
+            ("Monsters/act3_boss_archon", "RouteMilestones", "NGÀY 3 · ~72H", "Nguyên Anh"),
+            ("Formations/formation_thunder", "RouteFormation", "NGÀY 7 · ~168H", "Hóa Thần"),
+            ("Stages/stage_sword_forge", "RouteMerge", "NGÀY 13 · ~312H", "Luyện Hư"),
+            ("Stages/stage_alchemy_room", "RouteAlchemy", "NGÀY 20 · ~492H", "Hợp Thể"),
+            ("Stages/stage_tribulation_altar", "RouteAchievements", "NGÀY 30 · 720H", "Đại Thừa"),
+            ("HUD/nav_breakthrough", "RouteProgression", "CHÍ TÔN", "Độ Kiếp")
+        };
+
+        private static VisualElement BuildDiaryRewardChip(string codexKey, string reusedKey, string amountText, Color accentText)
+        {
+            var chip = new VisualElement();
+            chip.AddToClassList("reward-chip");
+            var ico = new VisualElement { style = { width = 16, height = 16, minWidth = 16, minHeight = 16, marginRight = 4, flexShrink = 0 } };
+            ico.AddToClassList("icon-fixed");
+            CodexArtLoader.ApplyIconOrPlaceholder(ico, codexKey, "", reusedKey);
+            chip.Add(ico);
+            chip.Add(new Label(amountText) { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = accentText, marginTop = 0, marginBottom = 0, marginLeft = 0, marginRight = 0, paddingTop = 0, paddingBottom = 0 } });
+            return chip;
+        }
+
+        private static VisualElement BuildDiaryRewardRow(PioneerMilestoneSpec m)
+        {
+            var row = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, alignItems = Align.Center, marginTop = 4 } };
+            row.Add(BuildDiaryRewardChip("", "SpiritStone", CultivationTable.FormatNumber(m.rewardLinhThach), new Color(0.11f, 0.50f, 0.38f)));
+            row.Add(BuildDiaryRewardChip("DaoVan/daovan_core_node", "RouteTalents", $"+{m.rewardDaoPoints} ĐV", new Color(0.68f, 0.42f, 0.04f)));
+            if (m.rewardForgeTalismans > 0)
+                row.Add(BuildDiaryRewardChip("Equipment/mat_forge_talisman", "RouteMerge", $"+{m.rewardForgeTalismans} Phù", new Color(0.18f, 0.44f, 0.68f)));
+            if (m.rewardSkillScrolls > 0)
+                row.Add(BuildDiaryRewardChip("Equipment/mat_skill_scroll", "RouteAchievements", $"+{m.rewardSkillScrolls} Quyển", new Color(0.46f, 0.28f, 0.68f)));
+            if (m.rewardCalmIncense > 0)
+                row.Add(BuildDiaryRewardChip("Pills/item_calm_incense", "RouteAlchemy", $"+{m.rewardCalmIncense} Hương", new Color(0.72f, 0.30f, 0.16f)));
+            return row;
+        }
+
+        private static float ComputeMilestoneProgress01(PioneerMilestoneSpec m, RemakeSaveData save)
+        {
+            float realmFrac = Mathf.Clamp01((save.realmIndex + (save.subStage - 1) / 10f) / Mathf.Max(1f, m.reqRealmIndex));
+            float stageFrac = Mathf.Clamp01((save.highestUnlockedLinearStage + 1f) / Mathf.Max(1f, m.reqLinearStage + 1f));
+            return Mathf.Max(realmFrac, stageFrac);
+        }
+
         public static void BuildPioneerDiary(VisualElement body)
         {
             var save = SaveService.Current;
             var engine = GameplayEngine.Instance;
+            var all = RemakeCatalogs.PioneerMilestones;
 
-            var top = new VisualElement();
-            top.AddToClassList("card-light");
-            top.style.marginBottom = 8;
-            top.Add(new Label("Lộ Trình Chuẩn Thương Mại: 30 Ngày 24/7 (720 Giờ) → Đại Thừa") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal } });
-            top.Add(new Label($"Cảnh giới: {CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)} · Tiến độ ải: {save.highestUnlockedLinearStage + 1}/120") { style = { fontSize = 11, marginTop = 2 } });
-            body.Add(top);
+            void Refresh()
+            {
+                body.Clear();
+                BuildPioneerDiary(body);
+            }
+
+            int claimedCount = 0;
+            int readyCount = 0;
+            PioneerMilestoneSpec spotlight = null;
+            for (int i = 0; i < all.Count; i++)
+            {
+                bool isClaimed = (save.claimedPioneerMilestonesMask & (1 << all[i].index)) != 0;
+                bool isReady = engine.IsPioneerMilestoneReady(all[i]);
+                if (isClaimed) claimedCount++;
+                if (isReady) readyCount++;
+                if (spotlight == null && !isClaimed) spotlight = all[i];
+            }
+            if (spotlight == null) spotlight = all[all.Count - 1];
+
+            // 1. HERO BANNER + VISUAL 8-NODE JOURNEY STEPPER
+            var hero = new VisualElement();
+            hero.AddToClassList("diary-hero-banner");
+
+            var heroTop = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center } };
+            var emblem = new VisualElement { style = { width = 56, height = 56, minWidth = 56, minHeight = 56, marginRight = 10, flexShrink = 0 } };
+            SetBorderAndRadius(emblem, new Color(0.84f, 0.62f, 0.18f), 2f, 14f);
+            CodexArtLoader.ApplyIconOrPlaceholder(emblem, "Stages/stage_tribulation_altar", "", "RouteMilestones");
+            heroTop.Add(emblem);
+
+            var heroText = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
+            heroText.Add(new Label("Hành Trình Chứng Đạo — 30 Ngày Vấn Đỉnh Đại Thừa")
+            {
+                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 14, color = new Color(0.11f, 0.36f, 0.28f), whiteSpace = WhiteSpace.Normal, marginTop = 0, marginBottom = 2 }
+            });
+            heroText.Add(new Label($"Hiện tại: {CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)}  ·  Ải mở: {save.highestUnlockedLinearStage + 1}/120  ·  Hoàn thành: {claimedCount}/{all.Count} mốc")
+            {
+                style = { fontSize = 11, color = new Color(0.30f, 0.40f, 0.36f), whiteSpace = WhiteSpace.Normal }
+            });
+
+            var overallTrack = new VisualElement { style = { width = Length.Percent(100), height = 8, marginTop = 6 } };
+            overallTrack.AddToClassList("bar-track");
+            overallTrack.Add(new VisualElement
+            {
+                style = { width = Length.Percent(Mathf.Clamp01((float)claimedCount / all.Count) * 100f), height = Length.Percent(100), backgroundColor = new Color(0.16f, 0.66f, 0.48f) }
+            });
+            heroText.Add(overallTrack);
+            heroTop.Add(heroText);
+            hero.Add(heroTop);
+
+            // Visual 8-Node Journey Stepper
+            var stepper = new VisualElement();
+            stepper.AddToClassList("diary-stepper-track");
+            for (int i = 0; i < all.Count; i++)
+            {
+                var m = all[i];
+                bool isClaimed = (save.claimedPioneerMilestonesMask & (1 << m.index)) != 0;
+                bool isReady = engine.IsPioneerMilestoneReady(m);
+                bool isCurrent = m.index == spotlight.index && !isClaimed;
+                var art = DiaryChapterArt[Mathf.Clamp(i, 0, DiaryChapterArt.Length - 1)];
+
+                var node = new VisualElement();
+                node.AddToClassList("diary-step-node");
+
+                var dot = new VisualElement();
+                dot.AddToClassList("diary-step-dot");
+                if (isClaimed) dot.AddToClassList("done");
+                else if (isReady) dot.AddToClassList("ready");
+                else if (isCurrent) dot.AddToClassList("active");
+
+                string sym = isClaimed ? "✓" : isReady ? "!" : $"{i + 1}";
+                Color symColor = (isClaimed || isReady) ? Color.white : isCurrent ? new Color(0.72f, 0.44f, 0.04f) : new Color(0.45f, 0.50f, 0.48f);
+                dot.Add(new Label(sym) { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = symColor, marginTop = 0, marginBottom = 0, paddingTop = 0, paddingBottom = 0 } });
+                node.Add(dot);
+
+                node.Add(new Label(art.shortRealm)
+                {
+                    style =
+                    {
+                        fontSize = 8,
+                        marginTop = 3,
+                        unityFontStyleAndWeight = (isCurrent || isReady) ? FontStyle.Bold : FontStyle.Normal,
+                        color = isClaimed ? new Color(0.12f, 0.52f, 0.38f) : isReady ? new Color(0.76f, 0.46f, 0.04f) : new Color(0.40f, 0.47f, 0.44f),
+                        unityTextAlign = TextAnchor.MiddleCenter
+                    }
+                });
+                stepper.Add(node);
+            }
+            hero.Add(stepper);
+            body.Add(hero);
+
+            // 2. FEATURED "MỐC TIẾP THEO" SPOTLIGHT CARD
+            {
+                var m = spotlight;
+                var art = DiaryChapterArt[Mathf.Clamp(m.index, 0, DiaryChapterArt.Length - 1)];
+                bool claimed = (save.claimedPioneerMilestonesMask & (1 << m.index)) != 0;
+                bool ready = engine.IsPioneerMilestoneReady(m);
+                float prog01 = claimed || ready ? 1f : ComputeMilestoneProgress01(m, save);
+
+                var spot = new VisualElement();
+                spot.AddToClassList("diary-spotlight");
+
+                var spotHeader = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginBottom = 6 } };
+                spotHeader.Add(new Label(ready ? $"MỐC SẴN SÀNG NHẬN THƯỞNG ({readyCount} mốc)" : "MỤC TIÊU TIẾP THEO TRÊN TIÊN LỘ")
+                {
+                    style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.42f, 0.02f) }
+                });
+                var tagLbl = new Label(art.tag);
+                tagLbl.AddToClassList("diary-status-badge");
+                tagLbl.AddToClassList(ready ? "ready" : "active");
+                spotHeader.Add(tagLbl);
+                spot.Add(spotHeader);
+
+                var spotBody = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center } };
+                var thumb = new VisualElement { style = { width = 68, height = 68, minWidth = 68, minHeight = 68, marginRight = 12, flexShrink = 0 } };
+                SetBorderAndRadius(thumb, new Color(0.84f, 0.58f, 0.14f), 2f, 14f);
+                CodexArtLoader.ApplyIconOrPlaceholder(thumb, art.codex, "", art.reused);
+                spotBody.Add(thumb);
+
+                var sInfo = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
+                sInfo.Add(new Label(m.title) { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, color = new Color(0.11f, 0.20f, 0.18f), whiteSpace = WhiteSpace.Normal } });
+                sInfo.Add(new Label($"Mục tiêu: {m.targetHint}") { style = { fontSize = 11, color = new Color(0.14f, 0.50f, 0.38f), unityFontStyleAndWeight = FontStyle.Bold, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
+
+                var pRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, marginTop = 5 } };
+                var pTrack = new VisualElement { style = { flexGrow = 1, height = 8, marginRight = 8 } };
+                pTrack.AddToClassList("bar-track");
+                pTrack.Add(new VisualElement { style = { width = Length.Percent(prog01 * 100f), height = Length.Percent(100), backgroundColor = ready ? new Color(0.88f, 0.60f, 0.10f) : new Color(0.18f, 0.66f, 0.50f) } });
+                pRow.Add(pTrack);
+                pRow.Add(new Label($"{Mathf.RoundToInt(prog01 * 100)}%") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.45f, 0.34f, 0.10f) } });
+                sInfo.Add(pRow);
+
+                sInfo.Add(BuildDiaryRewardRow(m));
+                spotBody.Add(sInfo);
+                spot.Add(spotBody);
+
+                if (ready)
+                {
+                    var claimNow = new Button(() => { engine.TryClaimPioneerMilestone(m.index); Refresh(); })
+                    { text = "Nhận Phần Thưởng Mốc Này!" };
+                    claimNow.AddToClassList("btn-primary");
+                    claimNow.style.marginTop = 8;
+                    claimNow.style.alignSelf = Align.FlexEnd;
+                    spot.Add(claimNow);
+                }
+                body.Add(spot);
+            }
+
+            // 3. ILLUSTRATED CHAPTER CARDS (1-COL FULL WIDTH ON MOBILE / 2-COL WIDE ON PC)
+            body.Add(new Label("Toàn Bộ 8 Chương Tiên Lộ")
+            {
+                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, color = new Color(0.14f, 0.44f, 0.35f), marginBottom = 6 }
+            });
 
             var grid = new VisualElement();
             grid.AddToClassList("grid-wrap");
             grid.style.justifyContent = Justify.SpaceBetween;
 
-            foreach (var m in RemakeCatalogs.PioneerMilestones)
+            for (int i = 0; i < all.Count; i++)
             {
-                var capM = m;
-                bool claimed = (save.claimedPioneerMilestonesMask & (1 << m.index)) != 0;
-                bool ready = engine.IsPioneerMilestoneReady(m);
+                var capM = all[i];
+                var art = DiaryChapterArt[Mathf.Clamp(i, 0, DiaryChapterArt.Length - 1)];
+                bool claimed = (save.claimedPioneerMilestonesMask & (1 << capM.index)) != 0;
+                bool ready = engine.IsPioneerMilestoneReady(capM);
+                bool isNext = !claimed && !ready && capM.index == spotlight.index;
+                float prog01 = claimed || ready ? 1f : ComputeMilestoneProgress01(capM, save);
 
-                var card = new VisualElement
+                var card = new VisualElement();
+                card.AddToClassList("diary-card");
+                if (ready) card.AddToClassList("ready");
+                else if (claimed) card.AddToClassList("claimed");
+
+                var topRow = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginBottom = 6 } };
+                topRow.Add(new Label($"CHƯƠNG {i + 1} · {art.tag}")
                 {
-                    style =
-                    {
-                        width = Length.Percent(48.5f),
-                        marginLeft = 0, marginRight = 0, marginTop = 0, marginBottom = 6,
-                        paddingTop = 7, paddingBottom = 7, paddingLeft = 7, paddingRight = 7,
-                        justifyContent = Justify.SpaceBetween,
-                        overflow = Overflow.Hidden
-                    }
-                };
-                card.AddToClassList("grid-tile");
-                card.style.alignItems = Align.Stretch;
-                if (ready) card.AddToClassList("grid-tile-selected");
+                    style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.56f, 0.42f, 0.14f) }
+                });
+                var badge = new Label(claimed ? "Đã Hoàn Thành" : ready ? "Có Thể Nhận!" : isNext ? "Đang Chinh Phục" : "Chưa Mở");
+                badge.AddToClassList("diary-status-badge");
+                badge.AddToClassList(claimed ? "done" : ready ? "ready" : isNext ? "active" : "locked");
+                topRow.Add(badge);
+                card.Add(topRow);
 
-                card.Add(new Label(m.title) { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 10, whiteSpace = WhiteSpace.Normal } });
-                card.Add(new Label($"Đạt: {m.targetHint}") { style = { fontSize = 9, color = new Color(0.18f, 0.50f, 0.40f), whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
-                card.Add(new Label($"Quà: {CultivationTable.FormatNumber(m.rewardLinhThach)} LT · +{m.rewardDaoPoints} ĐV · +{m.rewardForgeTalismans} Phù") { style = { fontSize = 9, whiteSpace = WhiteSpace.Normal, marginTop = 2, marginBottom = 5 } });
+                var mainRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center } };
+                var cThumb = new VisualElement { style = { width = 50, height = 50, minWidth = 50, minHeight = 50, marginRight = 10, flexShrink = 0 } };
+                SetBorderAndRadius(cThumb, claimed ? new Color(0.18f, 0.62f, 0.46f) : ready ? new Color(0.86f, 0.60f, 0.12f) : new Color(0.76f, 0.72f, 0.62f), 1.5f, 11f);
+                CodexArtLoader.ApplyIconOrPlaceholder(cThumb, art.codex, "", art.reused);
+                mainRow.Add(cThumb);
 
-                var btn = new Button(() => { engine.TryClaimPioneerMilestone(capM.index); body.Clear(); BuildPioneerDiary(body); })
-                { text = claimed ? "Đã Nhận" : ready ? "Nhận Quà" : "Chưa Đạt" };
+                var cInfo = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
+                int colonIdx = capM.title.IndexOf(':');
+                string cleanTitle = colonIdx >= 0 && colonIdx + 1 < capM.title.Length ? capM.title.Substring(colonIdx + 1).Trim() : capM.title;
+                cInfo.Add(new Label(cleanTitle) { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, color = new Color(0.12f, 0.21f, 0.19f), whiteSpace = WhiteSpace.Normal } });
+                cInfo.Add(new Label(capM.targetHint) { style = { fontSize = 10, color = new Color(0.18f, 0.48f, 0.39f), whiteSpace = WhiteSpace.Normal, marginTop = 1 } });
+
+                var miniTrack = new VisualElement { style = { width = Length.Percent(100), height = 5, marginTop = 4 } };
+                miniTrack.AddToClassList("bar-track");
+                miniTrack.Add(new VisualElement { style = { width = Length.Percent(prog01 * 100f), height = Length.Percent(100), backgroundColor = claimed ? new Color(0.16f, 0.64f, 0.48f) : ready ? new Color(0.88f, 0.60f, 0.10f) : new Color(0.34f, 0.64f, 0.80f) } });
+                cInfo.Add(miniTrack);
+                mainRow.Add(cInfo);
+                card.Add(mainRow);
+
+                var footRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginTop = 6 } };
+                var rewWrap = BuildDiaryRewardRow(capM);
+                rewWrap.style.flexGrow = 1;
+                rewWrap.style.marginTop = 0;
+                footRow.Add(rewWrap);
+
+                var btn = new Button(() => { engine.TryClaimPioneerMilestone(capM.index); Refresh(); })
+                { text = claimed ? "Đã Nhận" : ready ? "Nhận Quà" : $"{Mathf.RoundToInt(prog01 * 100)}%" };
                 btn.AddToClassList(ready ? "btn-primary" : "btn-compact");
-                btn.style.fontSize = 10; btn.style.paddingTop = 3; btn.style.paddingBottom = 3; btn.style.minWidth = 0;
+                btn.style.fontSize = 10;
+                btn.style.paddingTop = 4; btn.style.paddingBottom = 4;
+                btn.style.paddingLeft = 10; btn.style.paddingRight = 10;
+                btn.style.minWidth = 76;
                 btn.SetEnabled(ready);
-                card.Add(btn);
+                footRow.Add(btn);
+                card.Add(footRow);
+
                 grid.Add(card);
             }
             body.Add(grid);
@@ -2247,7 +2720,7 @@ namespace KhiVanChiTu.Remake
             var tMeta = new VisualElement { style = { flexGrow = 1, marginLeft = 10, flexShrink = 1 } };
             tMeta.Add(new Label($"Vạn Yêu Tháp · Tầng {save.demonTowerHighestFloor}/100") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13 } });
             tMeta.Add(new Label(towerOpen
-                ? $"Thử thách Tầng {nextFloor} (45s) · Thưởng +{CultivationTable.FormatNumber(tSpec.rewardLt)} LT & Đá Tẩy Luyện"
+                ? $"Thử thách Tầng {nextFloor} ({GameplayEngine.DemonTowerTimeLimit:0}s) · Thưởng +{CultivationTable.FormatNumber(tSpec.rewardLt)} LT & Đá Tẩy Luyện"
                 : $"Mở khóa tại {CultivationTable.GetFeatureUnlockRequirementText(RemakeFeatureId.ImmortalTower)}")
             {
                 style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 2, color = towerOpen ? new Color(0.20f, 0.28f, 0.24f) : new Color(0.78f, 0.25f, 0.14f) }

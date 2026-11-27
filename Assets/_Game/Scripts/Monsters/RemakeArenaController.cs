@@ -17,21 +17,36 @@ namespace KhiVanChiTu.Remake
         [SerializeField] private MonsterDefinitionSO act1BossMonster;
 
         public Vector3 PlayerWorldPosition => playerTransform != null ? playerTransform.position : Vector3.zero;
+        // The Cultivator's rig faces local -Z.
+        public Vector3 PlayerFacingDirection => playerTransform != null ? -playerTransform.forward : Vector3.back;
 
         private readonly Dictionary<string, Queue<RemakeMonsterActor>> _monsterPools = new Dictionary<string, Queue<RemakeMonsterActor>>();
         private readonly List<RemakeMonsterActor> _activeMonsters = new List<RemakeMonsterActor>();
         private readonly List<RemakeFlyingSwordActor> _activeSwords = new List<RemakeFlyingSwordActor>();
 
         private Animator _playerAnimator;
+        private bool _hasPlayerCastParam;
+        private bool _hasPlayerTribParam;
+        private bool _hasPlayerRespawnParam;
+        private float _swordCommandAnimCooldown;
+        private static readonly int HashCastSkill = Animator.StringToHash("CastSkill");
+        private static readonly int HashInTribulation = Animator.StringToHash("InTribulation");
+        private static readonly int HashIsRespawning = Animator.StringToHash("IsRespawning");
         private GameObject _playerShadowDisc;
         private LineRenderer _playerRealmRing;
         private Material _playerRealmRingMat;
+        private Renderer[] _playerMeshRenderers;
+        private Vector3 _playerBaseScale = Vector3.one * 1.25f;
+        private float _respawnAnimTimer;
+        private bool _playerDissolved;
         private float _spawnCooldown;
         private float _waveCheckTimer = 0.25f;
         private int _currentWaveIndex;
         private int _totalWaves = 3;
         private int[] _waveCounts = { 3, 3, 4 };
         private bool _finalWaveIsBoss;
+        private Vector3 _baseGroundRingScale = Vector3.one;
+        private float _formationPulseTimer;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStaticState()
@@ -47,11 +62,16 @@ namespace KhiVanChiTu.Remake
                 return;
             }
             Instance = this;
+            if (groundFormationRing != null)
+                _baseGroundRingScale = groundFormationRing.localScale;
 
             if (playerTransform != null)
             {
-                playerTransform.localScale = Vector3.one * 1.25f;
+                _playerBaseScale = Vector3.one * 1.25f;
+                playerTransform.localScale = _playerBaseScale;
                 _playerAnimator = playerTransform.GetComponentInChildren<Animator>();
+                _playerMeshRenderers = playerTransform.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+                CachePlayerAnimatorParams();
                 CreatePlayerShadowDisc();
                 CreatePlayerRealmAura();
                 SyncPlayerRealmAura();
@@ -68,6 +88,7 @@ namespace KhiVanChiTu.Remake
                 GameplayEngine.Instance.OnSkillCast += HandleSkillCast;
                 GameplayEngine.Instance.OnTribulationStateChanged += HandleTribulationStateChanged;
                 GameplayEngine.Instance.OnTribulationStrike += HandleTribulationStrike;
+                GameplayEngine.Instance.OnRespawnStateChanged += HandleRespawnStateChanged;
             }
             if (GraphicsSettingsService.Instance != null)
                 GraphicsSettingsService.Instance.OnGraphicsChanged += HandleGraphicsChanged;
@@ -81,6 +102,7 @@ namespace KhiVanChiTu.Remake
                 GameplayEngine.Instance.OnSkillCast -= HandleSkillCast;
                 GameplayEngine.Instance.OnTribulationStateChanged -= HandleTribulationStateChanged;
                 GameplayEngine.Instance.OnTribulationStrike -= HandleTribulationStrike;
+                GameplayEngine.Instance.OnRespawnStateChanged -= HandleRespawnStateChanged;
             }
             if (GraphicsSettingsService.Instance != null)
                 GraphicsSettingsService.Instance.OnGraphicsChanged -= HandleGraphicsChanged;
@@ -99,37 +121,75 @@ namespace KhiVanChiTu.Remake
             SpawnNextWaveIfNeeded();
         }
 
+        public void TriggerFormationResonance(float duration = 5.5f)
+        {
+            _formationPulseTimer = Mathf.Max(_formationPulseTimer, duration);
+        }
+
         private void Update()
         {
             if (SceneFlowController.Instance != null && !SceneFlowController.Instance.IsInGame) return;
 
-            _spawnCooldown -= Time.deltaTime;
-            _waveCheckTimer += Time.deltaTime;
-            if (_waveCheckTimer >= 0.25f)
-            {
-                _waveCheckTimer = 0f;
-                SpawnNextWaveIfNeeded();
-            }
+            var engine = GameplayEngine.Instance;
+            bool respawning = engine != null && engine.IsRespawning;
+            bool inTrib = engine != null && engine.IsInTribulation;
 
-            // Keep ground formation ring & realm aura rotating (faster during 15s Tribulation Seclusion!)
-            bool inTrib = GameplayEngine.Instance != null && GameplayEngine.Instance.IsInTribulation;
-            if (groundFormationRing != null)
-                groundFormationRing.Rotate(0f, 0f, (inTrib ? 92f : 18f) * Time.deltaTime, Space.Self);
-            if (_playerRealmRing != null)
-                _playerRealmRing.transform.Rotate(0f, (inTrib ? -135f : -24f) * Time.deltaTime, 0f, Space.Self);
-
-            // Face closest active enemy cleanly
-            if (playerTransform != null && _activeMonsters.Count > 0)
+            if (respawning && playerTransform != null)
             {
-                RemakeMonsterActor nearest = FindNearestActive();
-                if (nearest != null)
+                // Play collapse animation (0..0.72s), then dissolve into ascending Spirit Motes (tan bien)!
+                _respawnAnimTimer += Time.deltaTime;
+                if (!_playerDissolved && _respawnAnimTimer >= 0.72f)
                 {
-                    Vector3 look = nearest.transform.position - playerTransform.position;
-                    look.y = 0f;
-                    if (look.sqrMagnitude > 0.01f)
-                        playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, Quaternion.LookRotation(look), 7f * Time.deltaTime);
+                    _playerDissolved = true;
+                    RemakeVfxPool.Instance?.SpawnDeathDissolve(PlayerWorldPosition + Vector3.up * 0.35f);
+                }
+                if (_respawnAnimTimer >= 0.68f)
+                {
+                    float vanishT = Mathf.Clamp01((_respawnAnimTimer - 0.68f) / 0.38f);
+                    float s = Mathf.Lerp(1f, 0.02f, vanishT * vanishT);
+                    playerTransform.localScale = _playerBaseScale * s;
+                    if (vanishT >= 0.99f)
+                        SetPlayerVisualVisible(false);
                 }
             }
+
+            if (!respawning && !inTrib)
+            {
+                _spawnCooldown -= Time.deltaTime;
+                _waveCheckTimer += Time.deltaTime;
+                if (_waveCheckTimer >= 0.25f)
+                {
+                    _waveCheckTimer = 0f;
+                    SpawnNextWaveIfNeeded();
+                }
+
+                if (_swordCommandAnimCooldown > 0f)
+                    _swordCommandAnimCooldown -= Time.deltaTime;
+                else if (_activeMonsters.Count > 0)
+                {
+                    _swordCommandAnimCooldown = 8.0f;
+                    TriggerPlayerCastAnim();
+                }
+            }
+
+            if (_formationPulseTimer > 0f)
+                _formationPulseTimer = Mathf.Max(0f, _formationPulseTimer - Time.deltaTime);
+
+            // Ground formation ring & realm aura: calm steady rotation, amplified & lingering when Formation active or skill cast!
+            bool hasActiveForm = SaveService.Current != null && SaveService.Current.activeMainFormation >= 0;
+            if (groundFormationRing != null)
+            {
+                float ringSpd = inTrib ? 92f : (_formationPulseTimer > 0f ? 32f : hasActiveForm ? 20f : 11f);
+                groundFormationRing.Rotate(0f, 0f, ringSpd * Time.deltaTime, Space.Self);
+                float pulseBoost = _formationPulseTimer > 0f
+                    ? 1.14f + 0.06f * Mathf.Sin(Time.time * 3.6f)
+                    : hasActiveForm
+                        ? 1.05f + 0.03f * Mathf.Sin(Time.time * 2.0f)
+                        : 1.0f;
+                groundFormationRing.localScale = _baseGroundRingScale * pulseBoost;
+            }
+            if (_playerRealmRing != null)
+                _playerRealmRing.transform.Rotate(0f, (inTrib ? -135f : -18f) * Time.deltaTime, 0f, Space.Self);
         }
 
         public bool HasAliveTarget()
@@ -183,7 +243,7 @@ namespace KhiVanChiTu.Remake
             if (flyingSwordPrefab == null || swordsRoot == null) return;
             var save = SaveService.Current;
             int maxSlots = CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex);
-            int targetCount = Mathf.Clamp(save.equippedSwordLevels.Count, 1, maxSlots);
+            int targetCount = Mathf.Clamp(save.equippedSwordLevels.Count, 0, maxSlots);
 
             while (_activeSwords.Count < targetCount)
             {
@@ -237,7 +297,7 @@ namespace KhiVanChiTu.Remake
             // Strict Wave-Based Spawning: NEVER trickle-spawn replacements while current wave still has alive monsters!
             if (_activeMonsters.Count > 0 || _spawnCooldown > 0f) return;
             var engine = GameplayEngine.Instance;
-            if (engine == null || engine.IsInTribulation) return;
+            if (engine == null || engine.IsInTribulation || engine.IsRespawning) return;
 
             var stage = engine.GetCurrentStageSpec();
             GameplayEngine.GetWavePlan(engine.ActiveArenaMode, stage.isBossStage, engine.ActiveChallengeFloor,
@@ -375,18 +435,69 @@ namespace KhiVanChiTu.Remake
             ReturnMonsterToPool(deadActor);
             GameplayEngine.Instance?.ReportWaveState(_currentWaveIndex, _totalWaves, _activeMonsters.Count, null);
             if (_activeMonsters.Count == 0)
-                _spawnCooldown = 0.75f; // Clean breather between waves before next wave spawns
+            {
+                bool wasBoss = deadActor != null && deadActor.Definition != null && deadActor.Definition.isBoss;
+                _spawnCooldown = wasBoss ? 2.2f : 1.05f; // Celebratory breather after Boss before repeat, calm wave pause otherwise
+            }
+        }
+
+        private void SetPlayerVisualVisible(bool visible)
+        {
+            if (_playerMeshRenderers != null)
+            {
+                for (int i = 0; i < _playerMeshRenderers.Length; i++)
+                    if (_playerMeshRenderers[i] != null) _playerMeshRenderers[i].enabled = visible;
+            }
+            if (_playerRealmRing != null) _playerRealmRing.enabled = visible;
+            if (_playerShadowDisc != null)
+            {
+                bool useFake = GraphicsSettingsService.Instance != null && GraphicsSettingsService.Instance.UseFakeBlobShadows;
+                _playerShadowDisc.SetActive(visible && useFake);
+            }
+        }
+
+        private void HandleRespawnStateChanged(bool respawning)
+        {
+            SetPlayerAnimBool(_hasPlayerRespawnParam, HashIsRespawning, respawning);
+            if (respawning)
+            {
+                _respawnAnimTimer = 0f;
+                _playerDissolved = false;
+                SetPlayerVisualVisible(true);
+                if (playerTransform != null) playerTransform.localScale = _playerBaseScale;
+                for (int i = _activeMonsters.Count - 1; i >= 0; i--)
+                    ReturnMonsterToPool(_activeMonsters[i]);
+                _activeMonsters.Clear();
+                _currentWaveIndex = 0;
+                _spawnCooldown = 0f;
+                GameplayEngine.Instance?.ReportWaveState(1, _totalWaves, 0, null);
+            }
+            else
+            {
+                _respawnAnimTimer = 0f;
+                _playerDissolved = false;
+                SetPlayerVisualVisible(true);
+                if (playerTransform != null) playerTransform.localScale = _playerBaseScale;
+                RemakeVfxPool.Instance?.SpawnDeathDissolve(PlayerWorldPosition + Vector3.up * 0.45f);
+                _currentWaveIndex = 0;
+                _spawnCooldown = 0.45f;
+                SpawnNextWaveIfNeeded();
+            }
         }
 
         private void HandleLoiPhatCast(Vector3 targetPos, double damage, bool isCrit)
         {
+            TriggerPlayerCastAnim();
+            _swordCommandAnimCooldown = 6.5f;
             RemakeVfxPool.Instance?.SpawnLoiPhatLightning(targetPos);
             MeadowEnvironmentController.Instance?.AddCameraTrauma(0.35f);
+            TriggerFormationResonance(2.5f);
             DamageEnemiesInRadius(targetPos, 4.0f, damage, 1.2f, 0.65, Vector3.zero, false);
         }
 
         private void HandleTribulationStateChanged(bool entering)
         {
+            SetPlayerAnimBool(_hasPlayerTribParam, HashInTribulation, entering);
             MeadowEnvironmentController.Instance?.SetTribulationStormMode(entering);
             RemakeVfxPool.Instance?.SetTribulationSeclusionVisual(entering, PlayerWorldPosition);
 
@@ -429,7 +540,10 @@ namespace KhiVanChiTu.Remake
         private void HandleSkillCast(int slot, Vector3 targetPos, double damage, bool isCrit)
         {
             if (slot == 0) return; // Already handled by OnLoiPhatCast
+            TriggerPlayerCastAnim();
+            _swordCommandAnimCooldown = 6.5f;
             MeadowEnvironmentController.Instance?.AddCameraTrauma(slot == 3 ? 0.50f : 0.30f);
+            TriggerFormationResonance(slot == 1 ? 5.0f : 3.0f);
 
             switch (slot)
             {
@@ -562,14 +676,24 @@ namespace KhiVanChiTu.Remake
         {
             if (playerTransform == null) return;
             Shader unlit = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Sprites/Default");
-            _playerShadowDisc = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            _playerShadowDisc = RemakeRenderPrimitive.Create(PrimitiveType.Cylinder);
             _playerShadowDisc.name = "PlayerBlobShadow";
-            Destroy(_playerShadowDisc.GetComponent<Collider>());
             _playerShadowDisc.transform.SetParent(playerTransform, false);
             _playerShadowDisc.transform.localPosition = new Vector3(0f, 0.02f, 0f);
             _playerShadowDisc.transform.localScale = new Vector3(1.1f, 0.01f, 1.1f);
             var mr = _playerShadowDisc.GetComponent<MeshRenderer>();
-            mr.sharedMaterial = new Material(unlit) { color = new Color(0.08f, 0.16f, 0.08f, 0.48f) };
+            var shMat = new Material(unlit) { color = new Color(0.06f, 0.14f, 0.08f, 0.28f) };
+            if (shMat.HasProperty("_BaseColor")) shMat.SetColor("_BaseColor", new Color(0.06f, 0.14f, 0.08f, 0.28f));
+            if (shMat.HasProperty("_Surface"))
+            {
+                shMat.SetFloat("_Surface", 1f);
+                shMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                shMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                shMat.SetInt("_ZWrite", 0);
+                shMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                shMat.renderQueue = 2550;
+            }
+            mr.sharedMaterial = shMat;
             mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             mr.receiveShadows = false;
         }
@@ -597,6 +721,32 @@ namespace KhiVanChiTu.Remake
                 lr.SetPosition(i, new Vector3(Mathf.Cos(a) * 1.18f, 0f, Mathf.Sin(a) * 1.18f));
             }
             _playerRealmRing = lr;
+        }
+
+        private void CachePlayerAnimatorParams()
+        {
+            _hasPlayerCastParam = false;
+            _hasPlayerTribParam = false;
+            _hasPlayerRespawnParam = false;
+            if (_playerAnimator == null || _playerAnimator.runtimeAnimatorController == null) return;
+            foreach (AnimatorControllerParameter p in _playerAnimator.parameters)
+            {
+                if (p.nameHash == HashCastSkill) _hasPlayerCastParam = true;
+                else if (p.nameHash == HashInTribulation) _hasPlayerTribParam = true;
+                else if (p.nameHash == HashIsRespawning) _hasPlayerRespawnParam = true;
+            }
+        }
+
+        private void TriggerPlayerCastAnim()
+        {
+            if (_hasPlayerCastParam && _playerAnimator != null)
+                _playerAnimator.SetTrigger(HashCastSkill);
+        }
+
+        private void SetPlayerAnimBool(bool hasParam, int hash, bool val)
+        {
+            if (hasParam && _playerAnimator != null)
+                _playerAnimator.SetBool(hash, val);
         }
 
         public void SyncPlayerRealmAura()

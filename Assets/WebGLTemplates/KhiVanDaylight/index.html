@@ -276,14 +276,72 @@
           if (document.visibilityState === "visible") setTimeout(unlockAudio, 120);
         });
 
-        // Handle Safari iOS / Android WebGL Context Lost gracefully
+        // Restoring a WebGL context does not rebuild Unity's GPU resources.
+        var graphicsRecovery = null;
+        var reloadAfterGraphicsRestore = function () {
+          if (!graphicsRecovery || !graphicsRecovery.restored || graphicsRecovery.reloading || document.hidden) return;
+          graphicsRecovery.reloading = true;
+          graphicsRecovery.saved.then(function (saved) {
+            if (!saved || document.hidden) {
+              graphicsRecovery.reloading = false;
+              graphicsRecovery.message.textContent = saved
+                ? "Đồ họa đã sẵn sàng. Đang chờ mở lại trang..."
+                : "Chưa xác nhận được bản lưu mới nhất. Bạn có thể tải lại để tiếp tục từ bản lưu trước.";
+              return;
+            }
+            var key = "khivan-graphics-reload-at:" + location.pathname;
+            try {
+              var lastReload = Number(sessionStorage.getItem(key) || 0);
+              if (Date.now() - lastReload < 30000) {
+                graphicsRecovery.message.textContent = "Đồ họa bị gián đoạn nhiều lần. Hãy tải lại trang để tiếp tục.";
+                return;
+              }
+              sessionStorage.setItem(key, String(Date.now()));
+            } catch (_) {
+              return;
+            }
+            graphicsRecovery.message.textContent = "Đã lưu tiến trình. Đang mở lại trò chơi...";
+            location.reload();
+          });
+        };
         canvas.addEventListener("webglcontextlost", function (e) {
           e.preventDefault();
-          unityShowBanner("Trình duyệt vừa tạm ngắt đồ họa WebGL khi chuyển ứng dụng. Đang khôi phục hoặc hãy tải lại trang!", "error");
+          if (graphicsRecovery) return;
+          var box = document.createElement("div");
+          box.style.cssText = "padding:8px 14px;border-radius:10px;background:#d94136;color:#fff;font-size:13px;";
+          var message = document.createElement("div");
+          message.textContent = "Đồ họa bị gián đoạn. Đang lưu tiến trình và chờ khôi phục...";
+          var reload = document.createElement("button");
+          reload.type = "button";
+          reload.textContent = "Tải lại trò chơi";
+          reload.style.cssText = "margin-top:6px;pointer-events:auto;";
+          reload.onclick = function () {
+            reload.disabled = true;
+            graphicsRecovery.saved.then(function () { location.reload(); });
+          };
+          box.appendChild(message);
+          box.appendChild(reload);
+          warningBanner.appendChild(box);
+          warningBanner.style.display = "block";
+          var checkpoint = window.KhiVanSaveBeforeGraphicsReload
+            ? window.KhiVanSaveBeforeGraphicsReload()
+            : Promise.resolve(false);
+          graphicsRecovery = {
+            message: message,
+            restored: false,
+            reloading: false,
+            saved: Promise.race([
+              checkpoint.catch(function () { return false; }),
+              new Promise(function (resolve) { setTimeout(function () { resolve(false); }, 3000); })
+            ])
+          };
         }, false);
         canvas.addEventListener("webglcontextrestored", function () {
-          unityShowBanner("Đã khôi phục đồ họa WebGL thành công!", "warning");
+          if (!graphicsRecovery) return;
+          graphicsRecovery.restored = true;
+          reloadAfterGraphicsRestore();
         }, false);
+        document.addEventListener("visibilitychange", reloadAfterGraphicsRestore);
 
         // Keep canvas flush with Safari dynamic address bar / Android viewport resize
         if (window.visualViewport) {

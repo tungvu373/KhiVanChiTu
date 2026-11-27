@@ -139,6 +139,7 @@ namespace KhiVanChiTu.Remake
             _btnResetSave?.RegisterCallback<ClickEvent>(_ =>
             {
                 RemakeAudioService.Instance?.PlayClick();
+                if (SaveService.IsActiveSaveFromNewerVersion) return;
                 if (SaveService.IsTestAllProfileActive)
                 {
                     SaveService.SeedOrSelectTestAllAccount(true);
@@ -164,7 +165,9 @@ namespace KhiVanChiTu.Remake
         private void RefreshUi()
         {
             var save = SaveService.Current;
+            bool readOnly = SaveService.IsActiveSaveFromNewerVersion;
             bool hasChar = save.hasCreatedCharacter;
+            bool showSaveBox = hasChar || readOnly;
             bool isTest = SaveService.IsTestAllProfileActive;
 
             _btnAccountMain?.EnableInClassList("selected", !isTest);
@@ -172,13 +175,18 @@ namespace KhiVanChiTu.Remake
             if (_btnResetSave != null)
                 _btnResetSave.text = isTest ? "Đặt Lại Tài Khoản Test" : "Tạo Lại Nhân Vật Mới";
 
-            if (_existingSaveBox != null) _existingSaveBox.style.display = hasChar ? DisplayStyle.Flex : DisplayStyle.None;
-            if (_createCharBox != null) _createCharBox.style.display = hasChar ? DisplayStyle.None : DisplayStyle.Flex;
+            if (_existingSaveBox != null) _existingSaveBox.style.display = showSaveBox ? DisplayStyle.Flex : DisplayStyle.None;
+            if (_createCharBox != null) _createCharBox.style.display = showSaveBox ? DisplayStyle.None : DisplayStyle.Flex;
             if (_btnPlayContinue != null) _btnPlayContinue.style.display = hasChar ? DisplayStyle.Flex : DisplayStyle.None;
-            if (_btnStartNew != null) _btnStartNew.style.display = hasChar ? DisplayStyle.None : DisplayStyle.Flex;
+            if (_btnStartNew != null) _btnStartNew.style.display = showSaveBox ? DisplayStyle.None : DisplayStyle.Flex;
             if (_btnResetSave != null) _btnResetSave.style.display = hasChar ? DisplayStyle.Flex : DisplayStyle.None;
 
-            if (hasChar)
+            if (readOnly)
+            {
+                if (_saveDaoNameLabel != null) _saveDaoNameLabel.text = "Bản lưu thuộc phiên bản mới hơn";
+                if (_saveRealmLabel != null) _saveRealmLabel.text = "Hãy cập nhật trò chơi để tiếp tục tu hành.";
+            }
+            else if (hasChar)
             {
                 if (_saveDaoNameLabel != null) _saveDaoNameLabel.text = $"Đạo Hữu: {save.daoName}";
                 if (_saveRealmLabel != null)

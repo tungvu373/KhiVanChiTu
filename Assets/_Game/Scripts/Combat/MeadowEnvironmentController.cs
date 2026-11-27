@@ -25,7 +25,13 @@ namespace KhiVanChiTu.Remake
         [SerializeField] private Renderer skyDomeRenderer;
         [SerializeField] private Camera arenaCamera;
 
-        private Vector3 _baseCamLocalPos;
+        public static bool IsRearCombatView { get; private set; }
+
+        private Vector3 _overviewPosition;
+        private Quaternion _overviewRotation;
+        private float _overviewFov;
+        private float _rearFov;
+        private float _cameraViewBlend;
         private int _lastScreenW;
         private int _lastScreenH;
         private float _trauma;
@@ -42,6 +48,7 @@ namespace KhiVanChiTu.Remake
         private static void ResetStaticState()
         {
             Instance = null;
+            IsRearCombatView = false;
         }
 
         private void Awake()
@@ -53,7 +60,12 @@ namespace KhiVanChiTu.Remake
             }
             Instance = this;
             if (arenaCamera == null) arenaCamera = Camera.main;
-            if (arenaCamera != null) _baseCamLocalPos = arenaCamera.transform.localPosition;
+            if (arenaCamera != null)
+            {
+                _overviewPosition = arenaCamera.transform.position;
+                _overviewRotation = arenaCamera.transform.rotation;
+            }
+            _cameraViewBlend = IsRearCombatView ? 1f : 0f;
         }
 
         private void OnDestroy()
@@ -77,23 +89,7 @@ namespace KhiVanChiTu.Remake
             if (Screen.width != _lastScreenW || Screen.height != _lastScreenH)
                 UpdateResponsiveCameraFov();
             float dt = Time.deltaTime;
-            if (arenaCamera != null)
-            {
-                if (_trauma > 0f)
-                {
-                    _trauma = Mathf.Max(0f, _trauma - dt * 1.55f);
-                    float shake = _trauma * _trauma;
-                    float t = Time.unscaledTime * 34f;
-                    arenaCamera.transform.localPosition = _baseCamLocalPos + new Vector3(
-                        Mathf.Sin(t * 1.7f) * 0.24f * shake,
-                        Mathf.Cos(t * 2.3f) * 0.18f * shake,
-                        0f);
-                }
-                else if (arenaCamera.transform.localPosition != _baseCamLocalPos)
-                {
-                    arenaCamera.transform.localPosition = _baseCamLocalPos;
-                }
-            }
+            UpdateCameraPose(dt);
 
             // Zero-cost RenderSettings storm darkening & sharp lightning sky flash during 15s Tribulation
             float targetStorm = _stormActive ? 1f : 0f;
@@ -132,6 +128,63 @@ namespace KhiVanChiTu.Remake
             }
         }
 
+        public bool TryToggleCombatCamera()
+        {
+            if (arenaCamera == null || RemakeArenaController.Instance == null ||
+                SceneFlowController.Instance?.IsTransitioning == true)
+                return false;
+
+            IsRearCombatView = !IsRearCombatView;
+            return true;
+        }
+
+        private void UpdateCameraPose(float dt)
+        {
+            if (arenaCamera == null) return;
+
+            _cameraViewBlend = Mathf.MoveTowards(_cameraViewBlend, IsRearCombatView ? 1f : 0f, Time.unscaledDeltaTime * 3.5f);
+            float blend = Mathf.SmoothStep(0f, 1f, _cameraViewBlend);
+            Vector3 position = _overviewPosition;
+            Quaternion rotation = _overviewRotation;
+            var arena = RemakeArenaController.Instance;
+
+            if (blend > 0f && arena != null)
+            {
+                Vector3 player = arena.PlayerWorldPosition;
+                Vector3 forward = Vector3.ProjectOnPlane(arena.PlayerFacingDirection, Vector3.up).normalized;
+                Vector3 rearPosition = player - forward * 6.8f + Vector3.up * 3.5f;
+                Vector3 focus = player + forward * 2f + Vector3.up;
+                position = rearPosition;
+                if (blend < 1f)
+                {
+                    Vector3 overviewLook = _overviewRotation * Vector3.forward;
+                    float focusDistance = Vector3.Dot(player + Vector3.up - _overviewPosition, overviewLook);
+                    Vector3 overviewFocus = _overviewPosition + overviewLook * focusDistance;
+                    focus = Vector3.Lerp(overviewFocus, focus, blend);
+                    // Arc around the character instead of looking straight down at the midpoint.
+                    Vector3 side = Vector3.Cross(Vector3.up, forward);
+                    position = Vector3.Lerp(_overviewPosition, rearPosition, blend) + side * (12f * blend * (1f - blend));
+                }
+                rotation = Quaternion.LookRotation(focus - position);
+            }
+
+            if (_trauma > 0f)
+            {
+                _trauma = Mathf.Max(0f, _trauma - dt * 1.55f);
+                float shake = _trauma * _trauma;
+                float t = Time.unscaledTime * 34f;
+                position += new Vector3(Mathf.Sin(t * 1.7f) * 0.24f * shake,
+                    Mathf.Cos(t * 2.3f) * 0.18f * shake, 0f);
+            }
+
+            if (arenaCamera.transform.position != position || arenaCamera.transform.rotation != rotation)
+                arenaCamera.transform.SetPositionAndRotation(position, rotation);
+
+            float fov = Mathf.Lerp(_overviewFov, _rearFov, blend);
+            if (!Mathf.Approximately(arenaCamera.fieldOfView, fov))
+                arenaCamera.fieldOfView = fov;
+        }
+
         public void AddCameraTrauma(float amount)
         {
             _trauma = Mathf.Clamp01(_trauma + amount);
@@ -155,7 +208,8 @@ namespace KhiVanChiTu.Remake
             if (arenaCamera == null || _lastScreenH <= 0) return;
             float aspect = _lastScreenW / (float)_lastScreenH;
             // Landscape PC/Laptop gets slightly tighter FOV so cultivator & 8 swords fill frame cleanly; Portrait gets wider FOV for side clearance
-            arenaCamera.fieldOfView = aspect > 1.25f ? 44f : aspect < 0.75f ? 52f : 48f;
+            _overviewFov = aspect > 1.25f ? 44f : aspect < 0.75f ? 52f : 48f;
+            _rearFov = aspect > 1.25f ? 51f : aspect < 0.75f ? 63f : 57f;
         }
 
         public static void ApplyDaylightLighting(WorldThemePreset theme = WorldThemePreset.Act1Meadow)

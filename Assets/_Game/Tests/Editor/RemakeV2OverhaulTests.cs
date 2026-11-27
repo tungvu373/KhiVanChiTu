@@ -50,7 +50,7 @@ namespace KhiVanChiTu.Remake.Tests
             File.WriteAllText(SaveService.GetSaveFilePath(), JsonUtility.ToJson(legacy));
 
             var loaded = SaveService.Load();
-            Assert.That(loaded.schemaVersion, Is.EqualTo(3));
+            Assert.That(loaded.schemaVersion, Is.EqualTo(SaveService.CurrentSchemaVersion));
             Assert.That(loaded.daoName, Is.EqualTo("CoTuSi"));
             Assert.That(loaded.linhThach, Is.EqualTo(7777));
             Assert.IsTrue(loaded.autoChallengeBoss);
@@ -82,7 +82,8 @@ namespace KhiVanChiTu.Remake.Tests
                 save.swordPityByLevel[1] = 0.25f;
 
                 int merged = engine.TryQuickMergeSwords(3);
-                Assert.GreaterOrEqual(merged, 2, "Quick merge should fuse available Lv.1-2 pairs cleanly");
+                Assert.GreaterOrEqual(merged, 1, "The first Lv.1 pair has a guaranteed success.");
+                Assert.That(save.equippedSwordLevels[0], Is.GreaterThanOrEqualTo(2));
 
                 // Gear Lock & Auto-Equip Best
                 var weak = new RemakeEquipmentItem { uid = "weak-robe", slot = RemakeEquipSlot.Robe, rarity = RemakeRarity.Pham, tier = 1 };
@@ -285,7 +286,7 @@ namespace KhiVanChiTu.Remake.Tests
                 var save = SaveService.Current;
                 save.hasCreatedCharacter = true;
                 save.realmIndex = 0;
-                save.subStage = 1;
+                save.subStage = 3; // So Ky -> Trung Ky gate!
                 save.tuVi = engine.GetRequiredTuViForCurrent();
 
                 int strikeEvents = 0;
@@ -293,6 +294,7 @@ namespace KhiVanChiTu.Remake.Tests
                 engine.OnTribulationStrike += (_, __) => strikeEvents++;
                 engine.OnBreakthroughResolved += (_, __) => resolvedCalled = true;
 
+                Assert.IsTrue(engine.IsBreakthroughReady);
                 Assert.IsTrue(engine.TryStartTribulation(null));
                 Assert.IsTrue(engine.IsInTribulation);
                 Assert.That(engine.TribulationTimeRemaining, Is.EqualTo(GameplayEngine.TribulationDuration).Within(0.01f));
@@ -308,12 +310,154 @@ namespace KhiVanChiTu.Remake.Tests
                 Assert.IsFalse(engine.IsInTribulation);
                 Assert.That(strikeEvents, Is.EqualTo(GameplayEngine.TribulationStrikesTotal));
                 Assert.IsTrue(resolvedCalled);
-                Assert.That(save.subStage, Is.EqualTo(2));
+                Assert.That(save.subStage, Is.EqualTo(4));
             }
             finally
             {
                 UnityEngine.Object.DestroyImmediate(go);
             }
+        }
+
+        [Test]
+        public void PhaseGateBreakthrough_AutoLevelsNonGateFloorsAndBlocksOnlyAt3_6_10()
+        {
+            var go = new GameObject("TestEngineV4_PhaseGates");
+            try
+            {
+                var engine = go.AddComponent<GameplayEngine>();
+                var save = SaveService.Current;
+                save.hasCreatedCharacter = true;
+                save.realmIndex = 0;
+                save.subStage = 1;
+                save.tuVi = 0;
+
+                Assert.IsFalse(CultivationTable.RequiresBreakthroughAt(1));
+                Assert.IsFalse(CultivationTable.RequiresBreakthroughAt(2));
+                Assert.IsTrue(CultivationTable.RequiresBreakthroughAt(3));  // So Ky -> Trung Ky
+                Assert.IsFalse(CultivationTable.RequiresBreakthroughAt(4));
+                Assert.IsFalse(CultivationTable.RequiresBreakthroughAt(5));
+                Assert.IsTrue(CultivationTable.RequiresBreakthroughAt(6));  // Trung Ky -> Dinh Phong
+                Assert.IsFalse(CultivationTable.RequiresBreakthroughAt(7));
+                Assert.IsFalse(CultivationTable.RequiresBreakthroughAt(9));
+                Assert.IsTrue(CultivationTable.RequiresBreakthroughAt(10)); // Dinh Phong -> Dai Canh Gioi
+
+                // Feed enough TuVi via monster kills to auto-advance T1 -> T2 -> T3 and cap at T3 gate
+                save.tuVi = CultivationTable.GetRequiredTuVi(0, 1) + CultivationTable.GetRequiredTuVi(0, 2) + CultivationTable.GetRequiredTuVi(0, 3) + 500;
+                engine.OnMonsterKilled(null, false, null);
+
+                Assert.That(save.subStage, Is.EqualTo(3), "Should auto-advance T1->T2->T3 and stop at So Ky gate (T3)");
+                Assert.IsTrue(engine.IsBreakthroughReady, "Breakthrough should be ready at T3 100%");
+                Assert.IsTrue(engine.TryAttemptBreakthrough(null), "Gate T3->T4 should resolve cleanly");
+                Assert.That(save.subStage, Is.EqualTo(4));
+
+                // Non-gate floor T4 cannot invoke breakthrough manually
+                save.tuVi = CultivationTable.GetRequiredTuVi(0, 4);
+                Assert.IsFalse(engine.IsBreakthroughReady, "T4 is not a breakthrough gate");
+                Assert.IsFalse(engine.TryStartTribulation(null));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void StageAutoAdvance_DeathRespawnCountdown_BossRepeat_And_RealmLocksWork()
+        {
+            var go = new GameObject("TestEngineV4_StageLoop");
+            try
+            {
+                var engine = go.AddComponent<GameplayEngine>();
+                var save = SaveService.Current;
+                save.hasCreatedCharacter = true;
+                save.realmIndex = 0;
+                save.subStage = 1; // Luyen Khi T1: unlocks 1-1, 1-2, 1-3 (1-4 requires T2!)
+                save.activeDifficulty = 0;
+                save.activeAct = 0;
+                save.activeStage = 1;
+                save.highestUnlockedLinearStage = 0;
+                save.stageWaveKills = 0;
+
+                // 1. Clearing 10 kills on 1-1 without dying auto-advances to 1-2!
+                for (int i = 0; i < 10; i++)
+                    engine.OnMonsterKilled(null, false, null);
+                Assert.That(save.activeStage, Is.EqualTo(2), "Clearing 1-1 without death must auto-advance to 1-2");
+                Assert.GreaterOrEqual(save.highestUnlockedLinearStage, 1);
+
+                // 2. Realm Lock blocks Act 2 (requires Truc Co T1) even if linear stage is unlocked
+                save.highestUnlockedLinearStage = 25;
+                Assert.IsFalse(engine.TrySelectStage(RemakeDifficulty.PhamGioi, 1, 1), "Act 2 must require Truc Co Sơ Kỳ");
+                save.realmIndex = 1;
+                save.subStage = 1;
+                Assert.IsTrue(engine.TrySelectStage(RemakeDifficulty.PhamGioi, 1, 1), "Truc Co T1 unlocks Act 2-1");
+
+                // 3. Death triggers 5s Respawn Countdown and stays on exact same stage (NEVER drops back!)
+                save.activeDifficulty = 0;
+                save.activeAct = 0;
+                save.activeStage = 5;
+                bool enteredRespawn = false;
+                bool exitedRespawn = false;
+                engine.OnRespawnStateChanged += r => { if (r) enteredRespawn = true; else exitedRespawn = true; };
+
+                engine.OnPlayerDamaged(9999999);
+                Assert.IsTrue(engine.IsRespawning);
+                Assert.IsTrue(enteredRespawn);
+                Assert.That(engine.RespawnTimeRemaining, Is.EqualTo(GameplayEngine.RespawnDuration).Within(0.01f));
+                Assert.That(save.activeStage, Is.EqualTo(5), "Death must stay on stage 5, never retreat");
+
+                // Player takes no further damage while respawning
+                engine.OnPlayerDamaged(9999999);
+                Assert.IsTrue(engine.IsRespawning);
+
+                engine.AdvanceRespawnTimer(GameplayEngine.RespawnDuration + 0.1f);
+                Assert.IsFalse(engine.IsRespawning);
+                Assert.IsTrue(exitedRespawn);
+                Assert.That(engine.PlayerCurrentHp, Is.EqualTo(engine.PlayerMaxHp).Within(1.0));
+                Assert.That(save.activeStage, Is.EqualTo(5));
+
+                // 4. Boss X-10 repeats continuously whether WIN or LOSE!
+                save.activeAct = 0;
+                save.activeStage = 10;
+                engine.SetActiveBoss(true, "Cổ Mộc Yêu Vương", 2000, 2000);
+                engine.OnMonsterKilled(null, true, null); // WIN Boss 1-10
+                Assert.That(save.activeStage, Is.EqualTo(10), "Winning Boss 1-10 must keep activeStage = 10 for continuous repeat");
+                Assert.IsTrue(save.bossAct1Cleared);
+
+                engine.SetActiveBoss(true, "Cổ Mộc Yêu Vương", 2000, 2000);
+                engine.OnPlayerDamaged(9999999); // LOSE Boss 1-10
+                Assert.IsTrue(engine.IsRespawning);
+                Assert.That(save.activeStage, Is.EqualTo(10), "Losing Boss 1-10 must stay on Boss 1-10 after respawn");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void BalanceAlgorithm_BossTankinessAndMonotonicPlayerCurveHoldAcross120Stages()
+        {
+            double prevDps = 0;
+            for (int r = 0; r <= 8; r++)
+            {
+                double dps = CultivationTable.EstimateExpectedPlayerDps(r, 1);
+                Assert.Greater(dps, prevDps, $"Expected player DPS must scale up at realm {r}");
+                prevDps = dps;
+            }
+
+            // Boss tankiness >= 7.5x normal X-9 (30x+ X-1), and synchronized to 60s Boss timer across all 120 stages!
+            var s1_1 = ActStageDatabaseSO.BuildFallbackSpec(RemakeDifficulty.PhamGioi, 0, 1);
+            var s1_9 = ActStageDatabaseSO.BuildFallbackSpec(RemakeDifficulty.PhamGioi, 0, 9);
+            var b1_10 = ActStageDatabaseSO.BuildFallbackSpec(RemakeDifficulty.PhamGioi, 0, 10);
+            Assert.Greater(b1_10.enemyHp, s1_9.enemyHp * 7.5, "Boss 1-10 must be dramatically tankier than normal 1-9");
+            Assert.Greater(b1_10.enemyHp, s1_1.enemyHp * 30.0, "Boss 1-10 must be 30x+ stronger than stage 1-1");
+            double act1BossTtk = b1_10.enemyHp / CultivationTable.EstimateExpectedPlayerDps(b1_10.requiredRealmIndex, b1_10.requiredSubStage + 1);
+            Assert.That(act1BossTtk, Is.InRange(28.0, 56.0), "Boss 1-10 TTK at recommended power must be tanky yet beatable within 60s");
+
+            var b120 = ActStageDatabaseSO.BuildFallbackSpec(RemakeDifficulty.TienKiep, 2, 10);
+            double endgameDps = CultivationTable.EstimateExpectedPlayerDps(b120.requiredRealmIndex, b120.requiredSubStage + 1);
+            double boss120Ttk = b120.enemyHp / endgameDps;
+            Assert.That(boss120Ttk, Is.InRange(28.0, 62.0), "Boss 120 HP must stay mathematically synchronized with endgame player DPS");
         }
 
         [Test]
@@ -476,6 +620,112 @@ namespace KhiVanChiTu.Remake.Tests
             Assert.That(SceneFlowController.GetWorldSceneForSecretRealm(RemakeSecretRealmKind.SwordTomb), Is.EqualTo(SceneFlowController.WorldSecretSwordScene));
             Assert.That(SceneFlowController.GetWorldSceneForSecretRealm(RemakeSecretRealmKind.HerbGarden), Is.EqualTo(SceneFlowController.WorldSecretHerbScene));
             Assert.That(SceneFlowController.GetWorldSceneForSecretRealm(RemakeSecretRealmKind.OreCavern), Is.EqualTo(SceneFlowController.WorldSecretOreScene));
+        }
+
+        [Test]
+        public void StarterSave_HasZeroEquipment_And_UnequipSwordAndGearWork()
+        {
+            var fresh = RemakeSaveData.CreateDefault(false);
+            Assert.That(fresh.equippedGear.Count, Is.EqualTo(0), "New game starter save must have ZERO equipped gear");
+            Assert.That(fresh.equipmentBag.Count, Is.EqualTo(0), "New game starter save must have ZERO equipment in bag");
+            Assert.That(fresh.equippedSwordLevels.Count, Is.EqualTo(1), "Starter save begins with 1 Lv.1 sword");
+
+            var go = new GameObject("TestEngineV7_Unequip");
+            try
+            {
+                var engine = go.AddComponent<GameplayEngine>();
+                var save = SaveService.Current;
+                save.hasCreatedCharacter = true;
+                save.realmIndex = 1;
+                save.subStage = 1;
+                save.equippedSwordLevels.Clear();
+                save.swordInventoryLevels.Clear();
+                save.equippedGear.Clear();
+                save.equipmentBag.Clear();
+
+                save.equippedSwordLevels.Add(4);
+                Assert.Greater(engine.GetTotalSwordAttackPower(), 0);
+                Assert.IsTrue(engine.TryUnequipSword(0));
+                Assert.That(save.equippedSwordLevels.Count, Is.EqualTo(0));
+                Assert.That(save.swordInventoryLevels.Count, Is.EqualTo(1));
+                Assert.That(save.swordInventoryLevels[0], Is.EqualTo(4));
+                Assert.That(engine.GetTotalSwordAttackPower(), Is.EqualTo(0), "Zero equipped swords should deal 0 sword attack power");
+
+                var crown = new RemakeEquipmentItem
+                {
+                    uid = "test_crown_thien_01",
+                    slot = RemakeEquipSlot.Crown,
+                    rarity = RemakeRarity.Thien,
+                    tier = 3
+                };
+                save.equipmentBag.Add(crown);
+
+                Assert.IsTrue(engine.TryEquipGear(crown.uid));
+                Assert.IsNotNull(engine.GetEquippedItem(RemakeEquipSlot.Crown));
+                Assert.That(save.equipmentBag.Count, Is.EqualTo(0));
+
+                Assert.IsTrue(engine.TryUnequipGear(RemakeEquipSlot.Crown));
+                Assert.IsNull(engine.GetEquippedItem(RemakeEquipSlot.Crown));
+                Assert.That(save.equipmentBag.Count, Is.EqualTo(1));
+                Assert.That(save.equipmentBag[0].uid, Is.EqualTo(crown.uid));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void Tribulation_DrainsHpProgressivelyPerStrike_BeforeAnnouncingOutcome()
+        {
+            var go = new GameObject("TestEngineV7_TribHpDrain");
+            try
+            {
+                var engine = go.AddComponent<GameplayEngine>();
+                var save = SaveService.Current;
+                save.hasCreatedCharacter = true;
+                save.realmIndex = 0;
+                save.subStage = 3; // Guaranteed So Ky -> Trung Ky gate
+                save.tuVi = engine.GetRequiredTuViForCurrent();
+
+                bool outcomeAnnounced = false;
+                double lastStrikeHp = double.MaxValue;
+                int strikesObserved = 0;
+
+                engine.OnBreakthroughResolved += (_, __) => outcomeAnnounced = true;
+                engine.OnTribulationStrike += (idx, total) =>
+                {
+                    Assert.IsFalse(outcomeAnnounced, "Outcome must NOT be announced before all lightning strikes complete");
+                    Assert.Less(engine.PlayerCurrentHp, lastStrikeHp, $"HP must decrease on lightning strike {idx}/{total}");
+                    lastStrikeHp = engine.PlayerCurrentHp;
+                    strikesObserved = idx;
+                };
+
+                Assert.IsTrue(engine.TryStartTribulation(null));
+                double fullHp = engine.PlayerMaxHp;
+                Assert.That(engine.PlayerCurrentHp, Is.EqualTo(fullHp).Within(1.0));
+
+                // Advance to 13.8s (after all 9 strikes have landed, BEFORE 15.0s completion!)
+                for (int s = 0; s < 28; s++)
+                    engine.AdvanceTribulation(0.49f);
+
+                Assert.IsTrue(engine.IsInTribulation, "Still in seclusion right after 9th strike before 15s ends");
+                Assert.That(strikesObserved, Is.EqualTo(GameplayEngine.TribulationStrikesTotal));
+                Assert.IsFalse(outcomeAnnounced, "Outcome still pending right after 9th strike");
+                Assert.LessOrEqual(engine.PlayerCurrentHp, fullHp * 0.10, "HP must be drained nearly empty (<10%) after 9th strike");
+                Assert.GreaterOrEqual(engine.PlayerCurrentHp, 1.0);
+
+                // Finish remaining 1.5s -> announces success & refills HP!
+                engine.AdvanceTribulation(2.0f);
+                Assert.IsFalse(engine.IsInTribulation);
+                Assert.IsTrue(outcomeAnnounced);
+                Assert.That(save.subStage, Is.EqualTo(4));
+                Assert.That(engine.PlayerCurrentHp, Is.EqualTo(engine.PlayerMaxHp).Within(1.0));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+            }
         }
     }
 }

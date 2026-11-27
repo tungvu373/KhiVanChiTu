@@ -114,7 +114,16 @@ namespace KhiVanChiTu.Remake
                 }
 
                 if (cam != null && slot.orbRenderer != null)
+                {
                     slot.orbRenderer.transform.rotation = cam.transform.rotation;
+                    if (slot.hasBeam && slot.beamRenderer != null && slot.beamRenderer.gameObject.activeSelf)
+                    {
+                        Vector3 lookFlat = cam.transform.position - slot.root.transform.position;
+                        lookFlat.y = 0f;
+                        if (lookFlat.sqrMagnitude > 0.001f)
+                            slot.beamRenderer.transform.rotation = Quaternion.LookRotation(-lookFlat.normalized, Vector3.up);
+                    }
+                }
             }
         }
 
@@ -214,18 +223,16 @@ namespace KhiVanChiTu.Remake
                 var root = new GameObject($"LootOrb_{i}");
                 root.transform.SetParent(transform, false);
 
-                var orbGo = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                var orbGo = RemakeRenderPrimitive.Create(PrimitiveType.Quad);
                 orbGo.name = "OrbGlow";
-                Destroy(orbGo.GetComponent<Collider>());
                 orbGo.transform.SetParent(root.transform, false);
                 var orbMr = orbGo.GetComponent<MeshRenderer>();
                 orbMr.sharedMaterial = _unlitOrbMat;
                 orbMr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 orbMr.receiveShadows = false;
 
-                var beamGo = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                var beamGo = RemakeRenderPrimitive.Create(PrimitiveType.Quad);
                 beamGo.name = "LootBeam";
-                Destroy(beamGo.GetComponent<Collider>());
                 beamGo.transform.SetParent(root.transform, false);
                 beamGo.transform.localPosition = new Vector3(0f, 2.2f, 0f);
                 beamGo.transform.localScale = new Vector3(0.55f, 4.6f, 1f);

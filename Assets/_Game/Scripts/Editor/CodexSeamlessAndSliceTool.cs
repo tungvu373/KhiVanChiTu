@@ -16,8 +16,11 @@ namespace KhiVanChiTu.Remake.Editor
             BakeAll(true);
         }
 
+        private static bool _forceRebake;
+
         public static void BakeAll(bool refreshAndLog)
         {
+            _forceRebake = refreshAndLog;
             if (!AssetDatabase.IsValidFolder("Assets/_Game/Resources"))
                 AssetDatabase.CreateFolder("Assets/_Game", "Resources");
             if (!AssetDatabase.IsValidFolder(BakedRoot))
@@ -65,10 +68,20 @@ namespace KhiVanChiTu.Remake.Editor
             return tex;
         }
 
+        private static bool IsBakedFileUpToDate(string srcAssetPath, string destAssetPath)
+        {
+            if (_forceRebake) return false;
+            string fullSrc = Path.GetFullPath(srcAssetPath);
+            string fullDst = Path.GetFullPath(destAssetPath);
+            if (!File.Exists(fullSrc) || !File.Exists(fullDst)) return false;
+            return File.GetLastWriteTimeUtc(fullDst) >= File.GetLastWriteTimeUtc(fullSrc);
+        }
+
         private static void BakeSeamlessTile(string relSrc, string destFile, float borderFrac, int maxSize)
         {
             string srcPath = $"{CodexRoot}/{relSrc}";
             string destPath = $"{BakedRoot}/{destFile}";
+            if (IsBakedFileUpToDate(srcPath, destPath)) return;
             var src = LoadReadableCopyFromDisk(srcPath);
             if (src == null) return;
 
@@ -140,6 +153,7 @@ namespace KhiVanChiTu.Remake.Editor
         {
             string srcPath = $"{CodexRoot}/{relSrc}";
             string destPath = $"{BakedRoot}/{destFile}";
+            if (IsBakedFileUpToDate(srcPath, destPath)) return;
             var src = LoadReadableCopyFromDisk(srcPath);
             if (src == null) return;
 
@@ -198,6 +212,7 @@ namespace KhiVanChiTu.Remake.Editor
         {
             string srcPath = $"{CodexRoot}/{relSrc}";
             string destPath = $"{BakedRoot}/{destFile}";
+            if (IsBakedFileUpToDate(srcPath, destPath)) return;
             var src = LoadReadableCopyFromDisk(srcPath);
             if (src == null) return;
 
@@ -250,6 +265,7 @@ namespace KhiVanChiTu.Remake.Editor
         {
             string srcPath = $"{CodexRoot}/{relSrc}";
             string destPath = $"{BakedRoot}/{destFile}";
+            if (IsBakedFileUpToDate(srcPath, destPath)) return;
             var src = LoadReadableCopyFromDisk(srcPath);
             if (src == null) return;
 

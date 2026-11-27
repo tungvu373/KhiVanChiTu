@@ -38,12 +38,12 @@ namespace KhiVanChiTu.Remake.Editor
             var volumeProfile = CreateOrUpdateDaylightVolumeProfile();
 
             var flyingSwordPrefab = CreateFlyingSwordPrefab();
-            CloneCleanPlayerPrefab(PrefabsRoot + "/Player/RemakePlayer.prefab");
+            WebGlPrefabOptimizerTool.BuildXianxiaPlayerPrefab(PrefabsRoot + "/Player/RemakePlayer.prefab");
             var act1Monsters = CreateAct1Monsters();
             CloneCleanModelPrefab("Assets/Prefabs/Enemy1.prefab", PrefabsRoot + "/Monsters/Monster_Act2_Bear.prefab");
             CloneCleanModelPrefab("Assets/Prefabs/Enemy2.prefab", PrefabsRoot + "/Monsters/Monster_Act3_ThunderSpirit.prefab");
 
-            // Optimize meshes (589K->6K tris), downscale textures (2K->256/512px) and detach FBX refs for WebGL
+            // Optimize Mixamo prefabs cleanly (preserving UVs & weights) and apply Sunlit Xianxia textures
             WebGlPrefabOptimizerTool.OptimizeAllGamePrefabs();
 
             var act2Monsters = CreateAct2Monsters(act1Monsters);
@@ -703,22 +703,41 @@ namespace KhiVanChiTu.Remake.Editor
 
         private static RemakeFlyingSwordActor CreateFlyingSwordPrefab()
         {
+            TribulationVfxPrefabBuilder.BuildPrefab();
+            WebGlPrefabOptimizerTool.BuildXianxia3DSwordAssets(out Mesh[] tierMeshes, out Material[] tierMats);
+
             string path = PrefabsRoot + "/Player/RemakeFlyingSword.prefab";
             var temp = new GameObject("RemakeFlyingSword");
             try
             {
                 var trail = temp.AddComponent<TrailRenderer>();
                 trail.time = 0.16f;
-                trail.minVertexDistance = 0.08f;
+                trail.minVertexDistance = 0.045f;
+                trail.numCornerVertices = 5;
+                trail.numCapVertices = 4;
+                trail.shadowCastingMode = ShadowCastingMode.Off;
+                trail.receiveShadows = false;
 
-                var visual = new GameObject("Visual");
+                var visual = new GameObject("Visual3D");
                 visual.transform.SetParent(temp.transform, false);
-                visual.transform.localScale = new Vector3(0.11f, 0.11f, 0.11f);
-                visual.transform.localRotation = Quaternion.Euler(90f, 0f, -45f);
-                var sr = visual.AddComponent<SpriteRenderer>();
-                sr.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/GameIcons/Art/Sword01.png");
+                visual.transform.localPosition = Vector3.zero;
+                visual.transform.localRotation = Quaternion.identity;
+                visual.transform.localScale = Vector3.one * 0.70f;
+
+                var mf = visual.AddComponent<MeshFilter>();
+                if (tierMeshes != null && tierMeshes.Length > 0) mf.sharedMesh = tierMeshes[0];
+
+                var mr = visual.AddComponent<MeshRenderer>();
+                if (tierMats != null && tierMats.Length > 0) mr.sharedMaterial = tierMats[0];
+                mr.shadowCastingMode = ShadowCastingMode.Off;
+                mr.receiveShadows = false;
 
                 var actor = temp.AddComponent<RemakeFlyingSwordActor>();
+                SetSerializedObjectField(actor, "swordMeshFilter", mf);
+                SetSerializedObjectField(actor, "swordMeshRenderer", mr);
+                SetSerializedObjectArray(actor, "tierMeshes", tierMeshes);
+                SetSerializedObjectArray(actor, "tierMaterials", tierMats);
+
                 var prefabGo = PrefabUtility.SaveAsPrefabAsset(temp, path);
                 return prefabGo.GetComponent<RemakeFlyingSwordActor>();
             }
@@ -730,9 +749,18 @@ namespace KhiVanChiTu.Remake.Editor
 
         private static MonsterDefinitionSO[] CreateAct1Monsters()
         {
-            var wolfPrefab = CloneCleanModelPrefab("Assets/Prefabs/sói.prefab", PrefabsRoot + "/Monsters/Monster_Act1_Wolf.prefab");
-            var birdPrefab = CloneCleanModelPrefab("Assets/Prefabs/chim.prefab", PrefabsRoot + "/Monsters/Monster_Act1_Bird.prefab");
-            var turtlePrefab = CloneCleanModelPrefab("Assets/Prefabs/rùa.prefab", PrefabsRoot + "/Monsters/Monster_Act1_Turtle.prefab");
+            var wolfPrefab = WebGlPrefabOptimizerTool.BuildXianxiaMonsterPrefab(
+                PrefabsRoot + "/Optimized/Models/Monster_Wolf_Xianxia.fbx",
+                PrefabsRoot + "/Monsters/Monster_Act1_Wolf.prefab",
+                "Act1_Wolf", "Tex_Act1_Wolf.png", new Color(0.10f, 0.14f, 0.13f));
+            var birdPrefab = WebGlPrefabOptimizerTool.BuildXianxiaMonsterPrefab(
+                PrefabsRoot + "/Optimized/Models/Monster_Bird_Xianxia.fbx",
+                PrefabsRoot + "/Monsters/Monster_Act1_Bird.prefab",
+                "Act1_Bird", "Tex_Act1_Bird.png", new Color(0.15f, 0.11f, 0.05f));
+            var turtlePrefab = WebGlPrefabOptimizerTool.BuildXianxiaMonsterPrefab(
+                PrefabsRoot + "/Optimized/Models/Monster_Turtle_Xianxia.fbx",
+                PrefabsRoot + "/Monsters/Monster_Act1_Turtle.prefab",
+                "Act1_Turtle", "Tex_Act1_Turtle.png", new Color(0.09f, 0.14f, 0.11f));
             var bossPrefab = CloneCleanModelPrefab("Assets/Prefabs/Boss.prefab", PrefabsRoot + "/Bosses/Boss_Act1_Guardian.prefab");
 
             var wolfDef = CreateOrUpdateMonsterSO(DataRoot + "/Monsters/Act1_Wolf.asset", d =>
@@ -811,19 +839,19 @@ namespace KhiVanChiTu.Remake.Editor
 
         private static MonsterDefinitionSO[] CreateAct2Monsters(MonsterDefinitionSO[] act1Monsters)
         {
-            var scorpionPrefab = WebGlPrefabOptimizerTool.CreateTintedPrefabVariant(
+            var scorpionPrefab = WebGlPrefabOptimizerTool.CreateXianxiaTexturedVariant(
                 PrefabsRoot + "/Monsters/Monster_Act1_Wolf.prefab",
                 PrefabsRoot + "/Monsters/Monster_Act2_Scorpion.prefab",
-                "Act2_Scorpion", new Color(0.95f, 0.58f, 0.34f, 1f)) ?? act1Monsters[0].prefab;
+                "Act2_Scorpion", "Tex_Act2_Scorpion.png", new Color(0.14f, 0.10f, 0.06f)) ?? act1Monsters[0].prefab;
             var bearPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsRoot + "/Monsters/Monster_Act2_Bear.prefab") ?? act1Monsters[1].prefab;
-            var sandTurtlePrefab = WebGlPrefabOptimizerTool.CreateTintedPrefabVariant(
+            var sandTurtlePrefab = WebGlPrefabOptimizerTool.CreateXianxiaTexturedVariant(
                 PrefabsRoot + "/Monsters/Monster_Act1_Turtle.prefab",
                 PrefabsRoot + "/Monsters/Monster_Act2_SandTurtle.prefab",
-                "Act2_SandTurtle", new Color(1.0f, 0.86f, 0.48f, 1f)) ?? act1Monsters[2].prefab;
-            var bossPrefab = WebGlPrefabOptimizerTool.CreateTintedPrefabVariant(
+                "Act2_SandTurtle", "Tex_Act2_SandTurtle.png", new Color(0.14f, 0.11f, 0.06f)) ?? act1Monsters[2].prefab;
+            var bossPrefab = WebGlPrefabOptimizerTool.CreateXianxiaBossVariant(
                 PrefabsRoot + "/Bosses/Boss_Act1_Guardian.prefab",
                 PrefabsRoot + "/Bosses/Boss_Act2_Overlord.prefab",
-                "Act2_BossOverlord", new Color(1.0f, 0.45f, 0.25f, 1f)) ?? act1Monsters[3].prefab;
+                "Act2_BossOverlord", "Tex_Boss2_Body.png", "Tex_Boss2_Armor.png", new Color(0.15f, 0.10f, 0.06f)) ?? act1Monsters[3].prefab;
 
             var m1 = CreateOrUpdateMonsterSO(DataRoot + "/Monsters/Act2_Scorpion.asset", d =>
             {
@@ -863,18 +891,18 @@ namespace KhiVanChiTu.Remake.Editor
         private static MonsterDefinitionSO[] CreateAct3Monsters(MonsterDefinitionSO[] act1Monsters)
         {
             var spiritPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsRoot + "/Monsters/Monster_Act3_ThunderSpirit.prefab") ?? act1Monsters[0].prefab;
-            var cranePrefab = WebGlPrefabOptimizerTool.CreateTintedPrefabVariant(
+            var cranePrefab = WebGlPrefabOptimizerTool.CreateXianxiaTexturedVariant(
                 PrefabsRoot + "/Monsters/Monster_Act1_Bird.prefab",
                 PrefabsRoot + "/Monsters/Monster_Act3_JadeCrane.prefab",
-                "Act3_JadeCrane", new Color(0.75f, 0.98f, 0.95f, 1f)) ?? act1Monsters[1].prefab;
-            var jadeTurtlePrefab = WebGlPrefabOptimizerTool.CreateTintedPrefabVariant(
+                "Act3_JadeCrane", "Tex_Act3_JadeCrane.png", new Color(0.12f, 0.16f, 0.16f)) ?? act1Monsters[1].prefab;
+            var jadeTurtlePrefab = WebGlPrefabOptimizerTool.CreateXianxiaTexturedVariant(
                 PrefabsRoot + "/Monsters/Monster_Act1_Turtle.prefab",
                 PrefabsRoot + "/Monsters/Monster_Act3_JadeTurtle.prefab",
-                "Act3_JadeTurtle", new Color(0.55f, 0.96f, 0.80f, 1f)) ?? act1Monsters[2].prefab;
-            var bossPrefab = WebGlPrefabOptimizerTool.CreateTintedPrefabVariant(
+                "Act3_JadeTurtle", "Tex_Act3_JadeTurtle.png", new Color(0.11f, 0.15f, 0.16f)) ?? act1Monsters[2].prefab;
+            var bossPrefab = WebGlPrefabOptimizerTool.CreateXianxiaBossVariant(
                 PrefabsRoot + "/Bosses/Boss_Act1_Guardian.prefab",
                 PrefabsRoot + "/Bosses/Boss_Act3_Archon.prefab",
-                "Act3_BossArchon", new Color(0.62f, 0.92f, 1.0f, 1f)) ?? act1Monsters[3].prefab;
+                "Act3_BossArchon", "Tex_Boss3_Body.png", "Tex_Boss3_Armor.png", new Color(0.12f, 0.16f, 0.18f)) ?? act1Monsters[3].prefab;
 
             var m1 = CreateOrUpdateMonsterSO(DataRoot + "/Monsters/Act3_ThunderSpirit.asset", d =>
             {
@@ -1624,28 +1652,75 @@ namespace KhiVanChiTu.Remake.Editor
 
         private static void CreateAmbientMotes(Transform parent, int actIndex)
         {
+            Texture2D moteTex = GenerateOrLoadTexture(DefaultArtRoot + "/tex_soft_ambient_mote.png", 64, 64, true, (x, y, w, h) =>
+            {
+                float dx = (x - (w - 1) * 0.5f) / ((w - 1) * 0.5f);
+                float dy = (y - (h - 1) * 0.5f) / ((h - 1) * 0.5f);
+                float r2 = dx * dx + dy * dy;
+                if (r2 >= 0.95f) return Color.clear;
+                float a = Mathf.Exp(-r2 * 4.8f) * Mathf.Clamp01((0.95f - r2) / 0.25f);
+                return new Color(1f, 1f, 1f, a);
+            });
+
+            string matPath = DefaultArtRoot + $"/Mat_AmbientMote_Act{actIndex}.mat";
+            Shader pShader = Shader.Find("Universal Render Pipeline/Particles/Unlit") ?? Shader.Find("Sprites/Default");
+            Material moteMat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+            if (moteMat == null)
+            {
+                moteMat = new Material(pShader);
+                AssetDatabase.CreateAsset(moteMat, matPath);
+            }
+            else if (pShader != null && moteMat.shader != pShader)
+            {
+                moteMat.shader = pShader;
+            }
+            moteMat.mainTexture = moteTex;
+            moteMat.color = Color.white;
+            if (moteMat.HasProperty("_BaseMap")) moteMat.SetTexture("_BaseMap", moteTex);
+            if (moteMat.HasProperty("_BaseColor")) moteMat.SetColor("_BaseColor", Color.white);
+            if (moteMat.HasProperty("_Surface"))
+            {
+                moteMat.SetFloat("_Surface", 1f);
+                moteMat.SetFloat("_Blend", 2f); // Soft Additive Xianxia Firefly Glow (zero square quads!)
+                moteMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                moteMat.SetFloat("_DstBlend", (float)BlendMode.One);
+                moteMat.SetFloat("_ZWrite", 0f);
+                moteMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                moteMat.renderQueue = (int)RenderQueue.Transparent;
+            }
+            EditorUtility.SetDirty(moteMat);
+
             var go = new GameObject("AmbientMotes");
             go.transform.SetParent(parent, false);
-            go.transform.position = new Vector3(0f, 1.6f, 0f);
+            go.transform.position = new Vector3(0f, 1.4f, 0f);
             var ps = go.AddComponent<ParticleSystem>();
             var main = ps.main;
             main.loop = true;
             main.playOnAwake = true;
-            main.maxParticles = 18;
-            main.startLifetime = 4.2f;
-            main.startSpeed = new ParticleSystem.MinMaxCurve(0.25f, 0.65f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.16f);
-            main.startColor = actIndex == 1 ? new Color(1f, 0.88f, 0.50f, 0.55f)
-                : actIndex == 2 ? new Color(0.68f, 0.98f, 0.92f, 0.60f)
-                : new Color(0.98f, 0.96f, 0.62f, 0.58f);
+            main.maxParticles = 20;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(3.6f, 5.2f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.18f, 0.48f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.10f, 0.22f);
+            Color baseTint = actIndex == 1 ? new Color(1f, 0.88f, 0.52f, 0.65f)
+                : actIndex == 2 ? new Color(0.68f, 0.98f, 0.92f, 0.70f)
+                : new Color(0.95f, 1.0f, 0.72f, 0.68f);
+            main.startColor = baseTint;
+
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+            var grad = new Gradient();
+            grad.SetKeys(
+                new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.85f, 0.25f), new GradientAlphaKey(0.85f, 0.75f), new GradientAlphaKey(0f, 1f) });
+            col.color = grad;
+
             var em = ps.emission;
             em.rateOverTime = 4f;
             var sh = ps.shape;
             sh.shapeType = ParticleSystemShapeType.Box;
-            sh.scale = new Vector3(10f, 1.5f, 14f);
+            sh.scale = new Vector3(10f, 1.6f, 14f);
             var pr = ps.GetComponent<ParticleSystemRenderer>();
-            Shader pShader = Shader.Find("Universal Render Pipeline/Particles/Unlit") ?? Shader.Find("Sprites/Default");
-            pr.sharedMaterial = new Material(pShader) { color = main.startColor.color };
+            pr.sharedMaterial = moteMat;
             pr.shadowCastingMode = ShadowCastingMode.Off;
             pr.receiveShadows = false;
         }

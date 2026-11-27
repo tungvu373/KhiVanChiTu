@@ -268,6 +268,30 @@
     -unity-text-align: middle-center;
 }
 
+.hud-camera-button {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    padding: 7px;
+}
+
+.hud-camera-icon {
+    width: 27px;
+    height: 27px;
+}
+
+.hud-mini-camera-button {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    padding: 5px;
+}
+
+.hud-mini-camera-icon {
+    width: 22px;
+    height: 22px;
+}
+
 .badge-dot {
     position: absolute;
     right: 2px;
@@ -278,6 +302,11 @@
     background-color: #D83B2D;
     border-width: 1.5px;
     border-color: #FFFFFF;
+}
+
+.badge-dot.hud-quest-reward-dot {
+    right: 5px;
+    top: 5px;
 }
 
 /* =========================================================
@@ -647,8 +676,8 @@
 }
 
 .fifa-main-slot {
-    width: 72px;
-    height: 78px;
+    width: 78px;
+    height: 84px;
     background-color: rgba(255, 246, 216, 0.98);
     border-width: 2.5px;
     border-color: #D98D14;
@@ -657,19 +686,41 @@
     justify-content: center;
     padding: 3px;
     margin: 0;
+    overflow: visible;
 }
 
 .fifa-fodder-slot {
-    width: 56px;
-    height: 68px;
+    width: 60px;
+    height: 72px;
     background-color: rgba(242, 248, 244, 0.95);
     border-width: 1.5px;
     border-color: #469982;
-    border-radius: 9px;
+    border-radius: 10px;
     align-items: center;
     justify-content: center;
     margin: 0 4px 4px 0;
     padding: 3px;
+    overflow: visible;
+}
+
+.rarity-halo-outer {
+    position: absolute;
+    left: -3px;
+    right: -3px;
+    top: -3px;
+    bottom: -3px;
+    border-radius: 12px;
+    border-width: 2.5px;
+}
+
+.rarity-halo-inner {
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    border-radius: 8px;
+    border-width: 1px;
 }
 
 .fifa-fodder-slot-empty {
@@ -842,4 +893,290 @@
 
 .desktop-wide .pc-hotkey-badge {
     display: flex;
+}
+
+/* =========================================================
+   CLEAN TOP HUD HEADER (ZERO OVERLAP PORTRAIT + LANDSCAPE)
+   ========================================================= */
+.hud-header-stack {
+    width: 100%;
+    flex-direction: column;
+    position: relative;
+}
+
+.hud-avatar-host {
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-avatar-portrait {
+    width: 38px;
+    height: 38px;
+    border-radius: 19px;
+    background-color: #FFFDF8;
+}
+
+.desktop-wide .hud-avatar-host {
+    width: 60px;
+    height: 60px;
+}
+
+.desktop-wide .hud-avatar-portrait {
+    width: 42px;
+    height: 42px;
+    border-radius: 21px;
+}
+
+.hud-hero-card {
+    margin-left: 5px;
+    padding: 4px 8px;
+    min-width: 118px;
+    max-width: 158px;
+    justify-content: center;
+}
+
+.desktop-wide .hud-hero-card {
+    min-width: 146px;
+    max-width: 196px;
+    padding: 5px 10px;
+}
+
+.hud-hero-name {
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hud-hero-realm {
+    font-size: 10px;
+    margin: 1px 0 0 0;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hud-top-right-wrap {
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.hud-currency-pill {
+    margin-right: 4px;
+    padding: 3px 9px;
+    min-height: 24px;
+}
+
+.hud-fps-pill {
+    margin-right: 4px;
+    padding: 2px 8px;
+    min-height: 20px;
+}
+
+.hud-stage-center-wrap {
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.hud-stage-pill {
+    padding: 4px 12px;
+    border-color: rgba(200, 155, 60, 0.85);
+}
+
+.desktop-wide .hud-stage-center-wrap {
+    position: absolute;
+    left: 255px;
+    right: 235px;
+    top: 3px;
+    width: auto;
+    margin-top: 0;
+}
+
+.hud-breakthrough-wrap {
+    position: absolute;
+    left: 2px;
+    top: 60px;
+    margin: 0;
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+}
+
+.desktop-wide .hud-breakthrough-wrap {
+    position: relative;
+    left: 0;
+    top: 0;
+    margin-top: 0;
+    margin-left: 8px;
+    width: 56px;
+    flex-direction: column;
+}
+
+/* =========================================================
+   RESPAWN COUNTDOWN BANNER (LIGHT CRIMSON XIANXIA)
+   ========================================================= */
+.respawn-hud-panel {
+    background-color: rgba(255, 245, 242, 0.97);
+    border-width: 2px;
+    border-color: #C94A38;
+    border-radius: 14px;
+    padding: 8px 14px;
+    width: 296px;
+    max-width: 92%;
+    align-self: center;
+    margin-top: 5px;
+}
+
+.bar-fill-respawn {
+    height: 100%;
+    background-color: #D9483B;
+}
+
+/* =========================================================
+   WIDER MODAL SHEET & REDESIGNED NHAT KY TIEN LO (PIONEER DIARY)
+   ========================================================= */
+.drawer-sheet-wide {
+    width: 98%;
+    max-width: 530px;
+    max-height: 90%;
+    padding: 15px 16px;
+}
+
+.desktop-wide .drawer-sheet-wide {
+    width: 95%;
+    max-width: 1060px;
+    max-height: 90%;
+    padding: 18px 24px;
+}
+
+.diary-hero-banner {
+    background-color: rgba(255, 252, 242, 0.97);
+    border-width: 2px;
+    border-color: #D29A2B;
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+}
+
+.diary-stepper-track {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 6px 4px 2px 4px;
+}
+
+.diary-step-node {
+    align-items: center;
+    flex-grow: 1;
+}
+
+.diary-step-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    border-width: 2px;
+    border-color: #C4B89B;
+    background-color: #F4EFE2;
+    align-items: center;
+    justify-content: center;
+}
+
+.diary-step-dot.done {
+    background-color: #1F8A6B;
+    border-color: #14634C;
+}
+
+.diary-step-dot.ready {
+    background-color: #E5A11A;
+    border-color: #9E6304;
+}
+
+.diary-step-dot.active {
+    background-color: #FFF7DF;
+    border-color: #D98E14;
+    border-width: 2.5px;
+}
+
+.diary-spotlight {
+    background-color: rgba(255, 248, 224, 0.98);
+    border-width: 2px;
+    border-color: #DA981A;
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+}
+
+.diary-card {
+    width: 100%;
+    background-color: rgba(253, 250, 242, 0.97);
+    border-width: 1.5px;
+    border-color: rgba(196, 165, 102, 0.72);
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.desktop-wide .diary-card {
+    width: 49%;
+}
+
+.diary-card.ready {
+    background-color: rgba(255, 249, 228, 0.99);
+    border-width: 2px;
+    border-color: #DF9918;
+}
+
+.diary-card.claimed {
+    background-color: rgba(240, 249, 244, 0.92);
+    border-color: rgba(45, 148, 114, 0.60);
+}
+
+.diary-status-badge {
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 9px;
+    -unity-font-style: bold;
+    flex-shrink: 0;
+}
+
+.diary-status-badge.done {
+    background-color: #D4F1E5;
+    color: #11624A;
+}
+
+.diary-status-badge.ready {
+    background-color: #FBE4A4;
+    color: #7D4902;
+}
+
+.diary-status-badge.active {
+    background-color: #DFF0FA;
+    color: #165985;
+}
+
+.diary-status-badge.locked {
+    background-color: #E8E6DC;
+    color: #6A7570;
+}
+
+.reward-chip {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(247, 243, 232, 0.95);
+    border-width: 1px;
+    border-color: rgba(198, 162, 88, 0.55);
+    border-radius: 8px;
+    padding: 2px 6px;
+    margin-right: 5px;
+    margin-bottom: 4px;
 }

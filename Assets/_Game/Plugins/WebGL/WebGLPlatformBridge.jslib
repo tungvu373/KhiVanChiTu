@@ -1,45 +1,77 @@
 mergeInto(LibraryManager.library, {
-  WebGLBridge_SyncIndexedDb: function () {
-    try {
-      if (typeof FS !== "undefined" && typeof FS.syncfs === "function") {
-        FS.syncfs(false, function (err) {
-          if (err && typeof console !== "undefined") {
-            console.warn("[KhiVan] IndexedDB syncfs warning:", err);
-          }
-        });
+  $KhiVanSaveSync__deps: ["$FS"],
+  $KhiVanSaveSync: {
+    running: false,
+    pending: false,
+    requests: 0,
+    waiters: [],
+    flush: function () {
+      KhiVanSaveSync.requests++;
+      KhiVanSaveSync.pending = true;
+      if (!KhiVanSaveSync.running) KhiVanSaveSync.write();
+    },
+    write: function () {
+      KhiVanSaveSync.running = true;
+      KhiVanSaveSync.pending = false;
+      var complete = function (error) {
+        KhiVanSaveSync.running = false;
+        if (error) {
+          console.warn("[KhiVan] IndexedDB save failed:", error);
+        } else if (KhiVanSaveSync.pending) {
+          KhiVanSaveSync.write();
+          return;
+        }
+        KhiVanSaveSync.pending = false;
+        var waiters = KhiVanSaveSync.waiters;
+        KhiVanSaveSync.waiters = [];
+        for (var i = 0; i < waiters.length; i++) waiters[i](!error);
+      };
+      try {
+        FS.syncfs(false, complete);
+      } catch (error) {
+        complete(error);
       }
-    } catch (e) {
-      if (typeof console !== "undefined") console.warn("[KhiVan] SyncIndexedDb error:", e);
-    }
+    },
   },
 
+  WebGLBridge_SyncIndexedDb__deps: ["$KhiVanSaveSync"],
+  WebGLBridge_SyncIndexedDb: function () {
+    KhiVanSaveSync.flush();
+  },
+
+  WebGLBridge_InstallLifecycleHooks__deps: ["$KhiVanSaveSync"],
   WebGLBridge_InstallLifecycleHooks: function (gameObjectNamePtr) {
-    try {
-      var targetName = UTF8ToString(gameObjectNamePtr);
-      window.__khivanLifecycleTarget = targetName;
-      if (!window.__khivanLifecycleInstalled) {
-        window.__khivanLifecycleInstalled = true;
-        var flushAndNotify = function (reason) {
-          try {
-            if (typeof FS !== "undefined" && typeof FS.syncfs === "function") {
-              FS.syncfs(false, function () {});
-            }
-            if (window.unityInstance && window.__khivanLifecycleTarget) {
-              window.unityInstance.SendMessage(window.__khivanLifecycleTarget, "OnWebLifecycleSignal", reason);
-            }
-          } catch (e) {}
-        };
-        document.addEventListener("visibilitychange", function () {
-          flushAndNotify(document.visibilityState === "hidden" ? "hidden" : "visible");
-        });
-        window.addEventListener("pagehide", function () {
-          flushAndNotify("pagehide");
-        });
-        window.addEventListener("beforeunload", function () {
-          flushAndNotify("beforeunload");
-        });
-      }
-    } catch (e) {}
+    window.__khivanLifecycleTarget = UTF8ToString(gameObjectNamePtr);
+    if (window.__khivanLifecycleInstalled) return;
+    window.__khivanLifecycleInstalled = true;
+
+    var notify = function (reason) {
+      if (window.unityInstance)
+        window.unityInstance.SendMessage(window.__khivanLifecycleTarget, "OnWebLifecycleSignal", reason);
+    };
+    window.KhiVanSaveBeforeGraphicsReload = function () {
+      return new Promise(function (resolve) {
+        var previousRequests = KhiVanSaveSync.requests;
+        try {
+          notify("graphics-lost");
+        } catch (error) {
+          console.warn("[KhiVan] Could not request a graphics recovery checkpoint:", error);
+        }
+        if (KhiVanSaveSync.requests === previousRequests) {
+          resolve(false);
+        } else if (KhiVanSaveSync.running) {
+          KhiVanSaveSync.waiters.push(resolve);
+        } else {
+          resolve(false);
+        }
+      });
+    };
+    document.addEventListener("visibilitychange", function () {
+      notify(document.visibilityState === "hidden" ? "hidden" : "visible");
+    });
+    window.addEventListener("pagehide", function () {
+      notify("pagehide");
+    });
   },
 
   WebGLBridge_IsTouchBrowser: function () {

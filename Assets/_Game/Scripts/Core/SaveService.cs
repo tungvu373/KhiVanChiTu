@@ -11,8 +11,13 @@ namespace KhiVanChiTu.Remake
     {
         public const string BaseSaveFileName = "KhiVanChiTu_RemakeSave.json";
         public const string TestAllProfileId = "test_all";
+        public const int CurrentSchemaVersion = 4;
         private static string _profileOverride;
         private static RemakeSaveData _cached;
+        private static string _loadedSavePath;
+        private static bool _primaryIsKnownGood;
+
+        public static bool IsActiveSaveFromNewerVersion { get; private set; }
 
         public static bool IsTestAllProfileActive => string.Equals(_profileOverride, TestAllProfileId, StringComparison.Ordinal);
 
@@ -24,14 +29,22 @@ namespace KhiVanChiTu.Remake
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStaticState()
         {
-            _cached = null;
             _profileOverride = null;
+            ClearLoadedSave();
         }
 
         public static void SetProfileOverride(string profileId)
         {
             _profileOverride = string.IsNullOrEmpty(profileId) ? null : profileId;
+            ClearLoadedSave();
+        }
+
+        private static void ClearLoadedSave()
+        {
             _cached = null;
+            _loadedSavePath = null;
+            _primaryIsKnownGood = false;
+            IsActiveSaveFromNewerVersion = false;
         }
 
         public static string ResolveProfileId()
@@ -69,17 +82,20 @@ namespace KhiVanChiTu.Remake
         public static RemakeSaveData Load()
         {
             string path = GetSaveFilePath();
-            RemakeSaveData loaded = TryReadJson(path) ?? TryReadJson(path + ".bak");
+            RemakeSaveData primary = TryReadJson(path);
+            RemakeSaveData loaded = primary ?? TryReadJson(path + ".bak");
             bool isTouch = PlatformWebBridge.IsTouchPlatform();
 
-            if (loaded == null)
-            {
+            _loadedSavePath = path;
+            _primaryIsKnownGood = primary != null;
+            IsActiveSaveFromNewerVersion = loaded != null && loaded.schemaVersion > CurrentSchemaVersion;
+            if (IsActiveSaveFromNewerVersion)
+                Debug.LogWarning("[SaveService] Save data requires a newer game version.");
+
+            if (loaded == null || IsActiveSaveFromNewerVersion)
                 loaded = RemakeSaveData.CreateDefault(isTouch);
-            }
             else
-            {
                 Migrate(loaded, isTouch);
-            }
 
             _cached = loaded;
             return loaded;
@@ -87,37 +103,69 @@ namespace KhiVanChiTu.Remake
 
         public static void Save(RemakeSaveData data = null)
         {
-            RemakeSaveData target = data ?? Current;
-            target.lastSavedUtcTicks = DateTime.UtcNow.Ticks;
-            if (target.lastTickUtcTicks <= 0)
-                target.lastTickUtcTicks = target.lastSavedUtcTicks;
-
             string path = GetSaveFilePath();
-            string dir = Path.GetDirectoryName(path);
-            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
+            if (_loadedSavePath != path)
+                Load();
+            if (IsActiveSaveFromNewerVersion) return;
 
-            string json = JsonUtility.ToJson(target, true);
+            RemakeSaveData target = data ?? Current;
+            long savedAt = DateTime.UtcNow.Ticks;
+            long previousSavedAt = target.lastSavedUtcTicks;
+            long previousTick = target.lastTickUtcTicks;
+            target.lastSavedUtcTicks = savedAt;
+            if (target.lastTickUtcTicks <= 0)
+                target.lastTickUtcTicks = savedAt;
+
             string tmpPath = path + ".tmp";
             string bakPath = path + ".bak";
 
             try
             {
-                File.WriteAllText(tmpPath, json);
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                using (var stream = new FileStream(tmpPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    using (var writer = new StreamWriter(stream, new System.Text.UTF8Encoding(false), 4096, true))
+                        writer.Write(JsonUtility.ToJson(target));
+#if UNITY_WEBGL && !UNITY_EDITOR
+                    stream.Flush();
+#else
+                    stream.Flush(true);
+#endif
+                }
+
                 if (File.Exists(path))
                 {
-                    if (File.Exists(bakPath)) File.Delete(bakPath);
-                    File.Move(path, bakPath);
+#if UNITY_WEBGL && !UNITY_EDITOR
+                    // MEMFS changes are flushed to IndexedDB as one transaction after the rename.
+                    if (_primaryIsKnownGood)
+                    {
+                        File.Delete(bakPath);
+                        File.Move(path, bakPath);
+                    }
+                    else
+                    {
+                        File.Delete(path);
+                    }
+                    File.Move(tmpPath, path);
+#else
+                    File.Replace(tmpPath, path, _primaryIsKnownGood ? bakPath : null);
+#endif
                 }
-                File.Move(tmpPath, path);
+                else
+                {
+                    File.Move(tmpPath, path);
+                }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is NotSupportedException)
             {
-                Debug.LogWarning($"[SaveService] Atomic save fallback used ({ex.Message})");
-                File.WriteAllText(path, json);
+                target.lastSavedUtcTicks = previousSavedAt;
+                target.lastTickUtcTicks = previousTick;
+                Debug.LogWarning($"[SaveService] Could not write save: {ex.Message}");
+                return;
             }
 
             _cached = target;
+            _primaryIsKnownGood = true;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
             WebGLBridge_SyncIndexedDb();
@@ -126,6 +174,8 @@ namespace KhiVanChiTu.Remake
 
         public static void ResetCurrentSave(bool keepGraphics = true)
         {
+            _ = Current;
+            if (IsActiveSaveFromNewerVersion) return;
             RemakeGraphicsSettingsData oldGfx = keepGraphics && _cached != null ? _cached.graphics : null;
             RemakeSaveData fresh = RemakeSaveData.CreateDefault(PlatformWebBridge.IsTouchPlatform());
             if (oldGfx != null) fresh.graphics = oldGfx;
@@ -136,10 +186,9 @@ namespace KhiVanChiTu.Remake
         public static RemakeSaveData SeedOrSelectTestAllAccount(bool forceReset = false)
         {
             RemakeGraphicsSettingsData oldGfx = _cached != null ? _cached.graphics : null;
-            _profileOverride = TestAllProfileId;
-            _cached = null;
+            SetProfileOverride(TestAllProfileId);
             RemakeSaveData existing = Load();
-            if (forceReset || !existing.hasCreatedCharacter)
+            if (!IsActiveSaveFromNewerVersion && (forceReset || !existing.hasCreatedCharacter))
             {
                 RemakeSaveData full = RemakeSaveData.CreateFullTestSave(PlatformWebBridge.IsTouchPlatform(), oldGfx ?? existing.graphics);
                 _cached = full;
@@ -160,7 +209,7 @@ namespace KhiVanChiTu.Remake
                     deleted = true;
                 }
             }
-            _cached = null;
+            ClearLoadedSave();
             return deleted;
         }
 
@@ -171,8 +220,13 @@ namespace KhiVanChiTu.Remake
                 if (!File.Exists(filePath)) return null;
                 string raw = File.ReadAllText(filePath);
                 if (string.IsNullOrWhiteSpace(raw)) return null;
-                var parsed = JsonUtility.FromJson<RemakeSaveData>(raw);
-                if (parsed == null || parsed.schemaVersion <= 0) return null;
+                // Use a sentinel so a JSON object without a schema cannot appear to be a valid v1 save.
+                var parsed = new RemakeSaveData { schemaVersion = 0 };
+                JsonUtility.FromJsonOverwrite(raw, parsed);
+                if (parsed.schemaVersion <= 0) return null;
+                if (parsed.schemaVersion <= CurrentSchemaVersion &&
+                    (parsed.hasCreatedCharacter ? string.IsNullOrWhiteSpace(parsed.daoName) : parsed.createdUtcTicks <= 0))
+                    return null;
                 return parsed;
             }
             catch (Exception ex)
@@ -232,7 +286,7 @@ namespace KhiVanChiTu.Remake
                 data.autoChallengeBoss = true;
                 data.secretRealmDailyRemaining = 3;
             }
-            data.schemaVersion = 3;
+            data.schemaVersion = CurrentSchemaVersion;
         }
     }
 }

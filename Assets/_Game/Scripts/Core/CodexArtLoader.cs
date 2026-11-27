@@ -63,6 +63,8 @@ namespace KhiVanChiTu.Remake
         public static Texture2D LoadReusedSwordTexture(int swordLevel)
         {
             int lv = Mathf.Clamp(swordLevel, 1, 10);
+            Texture2D codex3d = LoadCodexTexture($"Swords/sword_3d_icon_{lv:00}");
+            if (codex3d != null) return codex3d;
             Sprite s = LoadReusedSprite($"Sword{lv:00}");
             return s != null ? s.texture : null;
         }

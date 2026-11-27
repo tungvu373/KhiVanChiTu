@@ -17,6 +17,8 @@ namespace KhiVanChiTu.Remake
             public string stageName;
             public int killsToClearWave = 10;
             public bool isBossStage;
+            public int requiredRealmIndex;
+            public int requiredSubStage = 1;
             public double recommendedPower;
             public double enemyHp;
             public double enemyDamage;
@@ -32,6 +34,7 @@ namespace KhiVanChiTu.Remake
             public MonsterDefinitionSO bossMonster;
 
             public int LinearIndex => (int)difficulty * 30 + actIndex * 10 + (stageNumber - 1);
+            public int RequiredLinearCultivation => requiredRealmIndex * 10 + Mathf.Clamp(requiredSubStage, 1, 10);
             public bool IsActImplementedInM1 => difficulty == RemakeDifficulty.PhamGioi && actIndex == 0;
         }
 
@@ -106,10 +109,10 @@ namespace KhiVanChiTu.Remake
             int linear = d * 30 + a * 10 + (s - 1);
 
             bool isBoss = s == 10;
-            double hp = Math.Round(42.0 * Math.Pow(1.42, linear) * (isBoss ? 5.5 : 1.0));
-            double dmg = Math.Round(4.0 * Math.Pow(1.26, linear) * (isBoss ? 1.85 : 1.0));
-            double tuVi = Math.Round(8.0 * Math.Pow(1.36, linear) * (isBoss ? 8.0 : 1.0));
-            double linhThach = Math.Round(6.0 * Math.Pow(1.30, linear) * (isBoss ? 10.0 : 1.0));
+            CultivationTable.GetStageRequiredRealm(linear, out int reqRealm, out int reqSub);
+            CultivationTable.ComputeBalancedStageStats(
+                linear, isBoss,
+                out double hp, out double dmg, out double tuVi, out double linhThach, out double recPower);
 
             return new StageSpec
             {
@@ -120,7 +123,9 @@ namespace KhiVanChiTu.Remake
                 stageName = isBoss ? $"Thủ Lĩnh {GetActLabel(a)} ({a + 1}-10)" : $"{GetActLabel(a)} · Ải {a + 1}-{s}",
                 killsToClearWave = isBoss ? 1 : 10,
                 isBossStage = isBoss,
-                recommendedPower = Math.Round(hp * 0.65),
+                requiredRealmIndex = reqRealm,
+                requiredSubStage = reqSub,
+                recommendedPower = recPower,
                 enemyHp = hp,
                 enemyDamage = dmg,
                 tuViPerKill = tuVi,

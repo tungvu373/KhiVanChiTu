@@ -21,6 +21,7 @@ namespace KhiVanChiTu.Remake
         public event Action<string, double, double> OnBossStatusUpdated; // name, hp, maxHp (null when none)
         public event Action<bool> OnTribulationStateChanged;
         public event Action<int, int> OnTribulationStrike; // (strikeIndex 1..9, total)
+        public event Action<bool> OnRespawnStateChanged;
         public event Action OnAlchemyBrewResolved;
         public event Action<int, int, string> OnWaveStarted;
 
@@ -30,6 +31,7 @@ namespace KhiVanChiTu.Remake
         private bool _batchStageDirty;
         private bool _batchQuestDirty;
         private bool _batchPendingArenaReset;
+        private bool _batchPendingCheckpoint;
 
         private bool _statCacheDirty = true;
         private float _cachedSwordDmgMult = 1f;
@@ -72,6 +74,9 @@ namespace KhiVanChiTu.Remake
             _batchStageDirty = false;
             _batchQuestDirty = false;
 
+            bool checkpoint = _batchPendingCheckpoint;
+            _batchPendingCheckpoint = false;
+            if (checkpoint) SaveCombatCheckpoint();
             if (resetArena) SyncArenaOrReturnToCampaignScene();
             if (stats) OnStatsChanged?.Invoke();
             if (stage) OnStageChanged?.Invoke();
@@ -98,7 +103,17 @@ namespace KhiVanChiTu.Remake
         public float PlayerMaxMp { get; private set; } = 120f;
         public float LoiPhatCooldownRemaining => _skillCooldowns[0];
         public float LoiPhatCooldownTotal => SkillBaseCooldowns[0];
-        public bool IsBreakthroughReady => SaveService.Current.tuVi >= GetRequiredTuViForCurrent() && !IsInTribulation;
+        public bool IsBreakthroughReady =>
+            CultivationTable.RequiresBreakthroughAt(SaveService.Current.subStage) &&
+            SaveService.Current.tuVi >= GetRequiredTuViForCurrent() &&
+            !IsInTribulation && !IsRespawning;
+
+        // Player Death Respawn Countdown (5.0s: zero monster spawns, zero attacks, stays on same stage/Boss)
+        public bool IsRespawning { get; private set; }
+        public float RespawnTimeRemaining { get; private set; }
+        public const float RespawnDuration = 5.0f;
+        public string RespawnReasonText { get; private set; }
+        public float RespawnProgress01 => IsRespawning ? Mathf.Clamp01(1f - RespawnTimeRemaining / RespawnDuration) : 0f;
 
         // Alchemy Brew Countdown (3.5s)
         public bool IsBrewingPill { get; private set; }
@@ -113,10 +128,13 @@ namespace KhiVanChiTu.Remake
         public const float TribulationDuration = 15.0f;
         public int TribulationStrikesDone { get; private set; }
         public const int TribulationStrikesTotal = 9;
+        private const float TribulationStrikeInterval = (TribulationDuration - 2f) / TribulationStrikesTotal;
+        private static readonly float[] TribulationHpRatios = { 0.88f, 0.76f, 0.63f, 0.50f, 0.37f, 0.25f, 0.15f, 0.085f, 0.04f };
         public float TribulationTargetChance { get; private set; }
         public string TribulationTargetLabel { get; private set; }
         private RemakePillQuality? _tribulationSelectedPill;
         private bool _tribulationPillConsumed;
+        private bool? _tribulationPreRolledOutcome;
         private float _tribulationNextStrikeTime;
 
         public bool HasActiveBoss { get; private set; }
@@ -124,7 +142,8 @@ namespace KhiVanChiTu.Remake
         public double ActiveBossHp { get; private set; }
         public double ActiveBossMaxHp { get; private set; }
         public float ActiveBossTimeRemaining { get; private set; }
-        public const float BossTimeLimit = 30.0f;
+        public const float BossTimeLimit = 60.0f;
+        public const float DemonTowerTimeLimit = 55f;
 
         // V2 Arena Modes (Campaign / Demon Tower 100F / Secret Realm)
         public RemakeArenaMode ActiveArenaMode { get; private set; } = RemakeArenaMode.Campaign;
@@ -198,15 +217,18 @@ namespace KhiVanChiTu.Remake
         public bool IsTuViDoubleBuffActive => SaveService.Current.tuViDoubleBuffEndUtcTicks > DateTime.UtcNow.Ticks;
         public float TuViDoubleBuffRemainingSec => (float)Math.Max(0, (SaveService.Current.tuViDoubleBuffEndUtcTicks - DateTime.UtcNow.Ticks) / 10_000_000.0);
 
-        private static readonly float[] SkillBaseCooldowns = { 8.0f, 14.0f, 18.0f, 22.0f };
+        private static readonly float[] SkillBaseCooldowns = { 15.0f, 24.0f, 34.0f, 45.0f };
         private static readonly float[] SkillMpCosts = { 30f, 40f, 55f, 65f };
         private readonly float[] _skillCooldowns = new float[4];
 
         private double _killsWindowCount;
         private float _killsWindowTimer;
         private float _autosaveTimer;
+        private bool _combatProgressDirty;
         private float _regenTimer;
         private float _kyNgoSpawnTimer = 95f;
+        private float _realmLockToastCooldown;
+        private bool _gateCapToastSentForStage;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStaticState()
@@ -226,6 +248,7 @@ namespace KhiVanChiTu.Remake
                 stageDatabase = Resources.Load<ActStageDatabaseSO>("ActStageDatabase");
             _kyNgoSpawnTimer = SaveService.IsTestAllProfileActive ? 6f : 95f;
             RecomputePlayerVitals(true);
+            RestorePendingActions();
         }
 
         public void ReloadFromActiveProfile()
@@ -233,20 +256,74 @@ namespace KhiVanChiTu.Remake
             ActiveArenaMode = RemakeArenaMode.Campaign;
             HasKyNgoAvailable = false;
             KyNgoTimeRemaining = 0f;
-            IsBrewingPill = false;
-            BrewTimeRemaining = 0f;
-            IsInTribulation = false;
-            TribulationTimeRemaining = 0f;
-            TribulationStrikesDone = 0;
-            _tribulationSelectedPill = null;
-            _tribulationPillConsumed = false;
+            _autosaveTimer = 0f;
+            _combatProgressDirty = false;
+            IsRespawning = false;
+            RespawnTimeRemaining = 0f;
+            RespawnReasonText = null;
+            _realmLockToastCooldown = 0f;
+            _gateCapToastSentForStage = false;
             _kyNgoSpawnTimer = SaveService.IsTestAllProfileActive ? 6f : 95f;
             Array.Clear(_skillCooldowns, 0, _skillCooldowns.Length);
             SetActiveBoss(false, "", 0, 0);
             RecomputePlayerVitals(true);
+            RestorePendingActions();
             OnStatsChanged?.Invoke();
             OnStageChanged?.Invoke();
             OnQuestOrTutorialChanged?.Invoke();
+        }
+
+        private void RestorePendingActions()
+        {
+            var save = SaveService.Current;
+            BrewTimeRemaining = Mathf.Clamp(save.pendingBrewSeconds, 0f, BrewDuration);
+            IsBrewingPill = BrewTimeRemaining > 0f;
+            BrewingTargetRealm = Mathf.Clamp(save.pendingBrewTargetRealm, 0, 7);
+
+            TribulationTimeRemaining = Mathf.Clamp(save.pendingTribulationSeconds, 0f, TribulationDuration);
+            IsInTribulation = TribulationTimeRemaining > 0f;
+            TribulationStrikesDone = 0;
+            _tribulationSelectedPill = null;
+            _tribulationPillConsumed = false;
+            _tribulationPreRolledOutcome = null;
+            _tribulationNextStrikeTime = TribulationDuration - 0.5f;
+            if (!IsInTribulation) return;
+
+            int pill = save.pendingTribulationPillQuality;
+            if (pill >= (int)RemakePillQuality.HaPham && pill <= (int)RemakePillQuality.CucPham)
+            {
+                _tribulationSelectedPill = (RemakePillQuality)pill;
+                _tribulationPillConsumed = true;
+            }
+
+            TribulationTargetChance = Mathf.Clamp01(save.pendingTribulationChance);
+            TribulationTargetLabel = GetTribulationTargetLabel(save);
+            _tribulationPreRolledOutcome = save.pendingTribulationSuccess;
+            while (TribulationStrikesDone < TribulationStrikesTotal && TribulationTimeRemaining <= _tribulationNextStrikeTime)
+            {
+                TribulationStrikesDone++;
+                _tribulationNextStrikeTime -= TribulationStrikeInterval;
+            }
+            if (TribulationStrikesDone > 0)
+                ApplyTribulationStrikeHpDrain(TribulationStrikesDone, TribulationStrikesTotal);
+        }
+
+        public void NotifyArenaReady()
+        {
+            if (IsInTribulation) OnTribulationStateChanged?.Invoke(true);
+        }
+
+        private void SaveCombatCheckpoint()
+        {
+            if (_aoeBatchDepth > 0)
+            {
+                _batchPendingCheckpoint = true;
+                return;
+            }
+            _autosaveTimer = 0f;
+            _combatProgressDirty = false;
+            BackgroundCatchupService.MarkActiveTimestamp();
+            SaveService.Save();
         }
 
         private void Update()
@@ -256,11 +333,34 @@ namespace KhiVanChiTu.Remake
             if (SceneFlowController.Instance == null || !SceneFlowController.Instance.IsInGame) return;
 
             float dt = Time.deltaTime;
+            if (_realmLockToastCooldown > 0f) _realmLockToastCooldown = Mathf.Max(0f, _realmLockToastCooldown - dt);
             EnsureStatCache();
             for (int i = 0; i < 4; i++)
             {
                 if (_skillCooldowns[i] > 0f)
                     _skillCooldowns[i] = Mathf.Max(0f, _skillCooldowns[i] - dt * _cachedCdRate);
+            }
+
+            // Alchemy Brew 3.5s Countdown (runs even while respawning / seclusion / modal closed)
+            if (IsBrewingPill)
+                AdvanceBrewTimer(dt);
+
+            _autosaveTimer += Time.unscaledDeltaTime;
+            if (_autosaveTimer >= 15f || (_combatProgressDirty && _autosaveTimer >= 3f))
+                SaveCombatCheckpoint();
+
+            // Player Respawn Countdown: zero monster spawns, zero attacks, zero skills until revived!
+            if (IsRespawning)
+            {
+                AdvanceRespawnTimer(dt);
+                return;
+            }
+
+            // 15-Second Breakthrough Seclusion & Tribulation Lightning Strikes
+            if (IsInTribulation)
+            {
+                AdvanceTribulation(dt);
+                return;
             }
 
             PlayerCurrentMp = Mathf.Min(PlayerMaxMp, PlayerCurrentMp + _cachedMpRegen * dt);
@@ -285,24 +385,6 @@ namespace KhiVanChiTu.Remake
                 _killsWindowCount = 0;
             }
 
-            _autosaveTimer += dt;
-            if (_autosaveTimer >= 15f)
-            {
-                _autosaveTimer = 0f;
-                SaveService.Save();
-            }
-
-            // Alchemy Brew 3.5s Countdown (runs even if modal is closed)
-            if (IsBrewingPill)
-                AdvanceBrewTimer(dt);
-
-            // 15-Second Breakthrough Seclusion & Tribulation Lightning Strikes
-            if (IsInTribulation)
-            {
-                AdvanceTribulation(dt);
-                return;
-            }
-
             if (RemakeArenaController.Instance != null && RemakeArenaController.Instance.HasAliveTarget())
             {
                 for (int slot = 0; slot < 4; slot++)
@@ -316,12 +398,12 @@ namespace KhiVanChiTu.Remake
                 }
             }
 
-            // V2 Boss 30s timeout -> safe retreat to X-9 hold
+            // Boss 60s timeout -> Respawn countdown & repeat Boss X-10 cleanly (no retreat!)
             if (ActiveArenaMode == RemakeArenaMode.Campaign && HasActiveBoss)
             {
                 ActiveBossTimeRemaining -= dt;
                 if (ActiveBossTimeRemaining <= 0f)
-                    RetreatFromFailedBoss("Hết 30 giây khiêu chiến Thủ Lĩnh! Treo máy an toàn tại ải trước.");
+                    BeginPlayerRespawn("Hết 60 giây khiêu chiến Thủ Lĩnh! Hồi sinh để tái chiến Thủ Lĩnh.");
             }
             else if (ActiveArenaMode != RemakeArenaMode.Campaign)
             {
@@ -605,9 +687,8 @@ namespace KhiVanChiTu.Remake
             double total = 0;
             for (int i = 0; i < save.equippedSwordLevels.Count && i < maxSlots; i++)
                 total += CultivationTable.CalculateSwordDamage(save.equippedSwordLevels[i]);
-            if (total <= 0) total = CultivationTable.CalculateSwordDamage(1);
             total += GetEquipmentStatSum(RemakeEquipStatType.FlatSwordAtk);
-            _cachedTotalSwordAtk = Math.Round(total * _cachedSwordDmgMult);
+            _cachedTotalSwordAtk = total <= 0 ? 0.0 : Math.Max(1.0, Math.Round(total * _cachedSwordDmgMult));
 
             // Drop, Leech, CD & MP Regen multipliers
             _cachedBodyLeechPct = bodyLeechLv * 0.008f;
@@ -634,6 +715,56 @@ namespace KhiVanChiTu.Remake
         // =========================================================
         // COMBAT KILLS, LOOT DROPS & 120-STAGE PROGRESSION
         // =========================================================
+        public bool IsStageRealmUnlocked(ActStageDatabaseSO.StageSpec spec)
+        {
+            if (spec == null) return false;
+            var save = SaveService.Current;
+            return CultivationTable.IsStageRealmMet(spec.requiredRealmIndex, spec.requiredSubStage, save.realmIndex, save.subStage);
+        }
+
+        public bool IsStageFullyUnlocked(ActStageDatabaseSO.StageSpec spec)
+        {
+            if (spec == null) return false;
+            return spec.LinearIndex <= SaveService.Current.highestUnlockedLinearStage && IsStageRealmUnlocked(spec);
+        }
+
+        private bool AddTuViWithAutoLevel(double gain)
+        {
+            if (gain <= 0) return false;
+            var save = SaveService.Current;
+            save.tuVi += gain;
+            bool leveledUp = false;
+
+            while (save.subStage < 10 && !CultivationTable.RequiresBreakthroughAt(save.subStage))
+            {
+                double req = GetRequiredTuViForCurrent();
+                if (save.tuVi < req) break;
+                save.tuVi -= req;
+                save.subStage++;
+                _gateCapToastSentForStage = false;
+                leveledUp = true;
+
+                if (save.mainQuestIndex == 2) save.mainQuestProgress = save.subStage;
+                RecomputePlayerVitals(true);
+                RemakeAudioService.Instance?.PlayMerge();
+                RemakeVfxPool.Instance?.SpawnBreakthroughFlash(
+                    RemakeArenaController.Instance != null ? RemakeArenaController.Instance.PlayerWorldPosition : Vector3.zero, true);
+                OnToastMessage?.Invoke($"Tu vi tinh tiến! Tự động lên {CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)}!");
+            }
+
+            double cap = GetRequiredTuViForCurrent();
+            if (save.tuVi >= cap)
+            {
+                save.tuVi = cap;
+                if (CultivationTable.RequiresBreakthroughAt(save.subStage) && !_gateCapToastSentForStage)
+                {
+                    _gateCapToastSentForStage = true;
+                    OnToastMessage?.Invoke($"Tu Vi viên mãn! Đã chạm bình cảnh {CultivationTable.GetBreakthroughGateTitle(save.realmIndex, save.subStage)} — bấm Đột Phá!");
+                }
+            }
+            return leveledUp;
+        }
+
         public void OnMonsterKilled(MonsterDefinitionSO monster, bool wasBoss) => OnMonsterKilled(monster, wasBoss, null);
 
         public void OnMonsterKilled(MonsterDefinitionSO monster, bool wasBoss, Vector3? deathPos)
@@ -641,6 +772,7 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             _killsWindowCount++;
             save.totalKills++;
+            _combatProgressDirty = true;
 
             if (ActiveArenaMode != RemakeArenaMode.Campaign)
             {
@@ -653,11 +785,7 @@ namespace KhiVanChiTu.Remake
             double tuViGain = Math.Round(stage.tuViPerKill * (monster != null ? monster.tuViMultiplier : 1f) * GetTuViMultiplier());
             double linhThachGain = Math.Round(stage.linhThachPerKill * (monster != null ? monster.linhThachMultiplier : 1f) * GetLinhThachMultiplier());
 
-            if (save.realmIndex == 0 && save.subStage <= 3)
-                tuViGain = Math.Max(tuViGain, 12);
-
-            double cap = GetRequiredTuViForCurrent();
-            save.tuVi = Math.Min(cap, save.tuVi + tuViGain);
+            AddTuViWithAutoLevel(tuViGain);
             save.linhThach += linhThachGain;
 
             // Lifesteal sustain on hit/kill
@@ -665,6 +793,7 @@ namespace KhiVanChiTu.Remake
             if (heal > 0) PlayerCurrentHp = Math.Min(PlayerMaxHp, PlayerCurrentHp + heal);
 
             // Herb drops
+            bool stageCleared = false;
             bool droppedHerb = false;
             float herbChance = stage.herbDropRate * _cachedHerbMult;
             if (UnityEngine.Random.value <= herbChance)
@@ -728,7 +857,9 @@ namespace KhiVanChiTu.Remake
             if (deathPos.HasValue)
                 RemakeLootOrbPool.Instance?.SpawnMonsterDrops(deathPos.Value, wasBoss, droppedHerb, dropSword, droppedEquipRarity);
 
-            // Stage clear & 120-stage unlock progression + Auto-challenge X-10 when autoChallengeBoss is ON
+            // Stage clear & 120-stage progression:
+            // - X-1..X-9 clear without dying -> auto-advance to X+1 if Realm gate met!
+            // - Boss X-10 win -> unlock next linear stage, stay on Boss X-10 & repeat Boss continuously!
             if (wasBoss)
             {
                 if (stage.actIndex == 0 && stage.stageNumber == 10) save.bossAct1Cleared = true;
@@ -738,34 +869,51 @@ namespace KhiVanChiTu.Remake
                 {
                     save.highestUnlockedLinearStage = nextLinear;
                     var nextSpec = GetStageSpec((RemakeDifficulty)(nextLinear / 30), (nextLinear % 30) / 10, nextLinear % 10 + 1);
-                    OnToastMessage?.Invoke($"Đã mở khóa {nextSpec.stageName}!");
-                    save.autoChallengeBoss = true;
+                    string reqTxt = IsStageRealmUnlocked(nextSpec)
+                        ? "Có thể chuyển Vực mới trong Bản Đồ!"
+                        : $"Cần {CultivationTable.GetRealmDisplayName(nextSpec.requiredRealmIndex, nextSpec.requiredSubStage)} để tiến vào.";
+                    OnToastMessage?.Invoke($"Hạ Thủ Lĩnh {stage.stageCode}! Mở {nextSpec.stageCode} ({reqTxt}) — Tiếp tục cày Thủ Lĩnh!");
+                }
+                else
+                {
+                    OnToastMessage?.Invoke($"Hạ gục Thủ Lĩnh {stage.stageCode}! Chuẩn bị tái chiến Thủ Lĩnh...");
                 }
 
                 if (save.mainQuestIndex == 5 && stage.actIndex == 0 && stage.stageNumber == 10) save.mainQuestProgress = 1;
                 if (save.mainQuestIndex == 9 && stage.actIndex == 1 && stage.stageNumber == 10) save.mainQuestProgress = 1;
                 if (save.mainQuestIndex == 11 && stage.actIndex == 2 && stage.stageNumber == 10) save.mainQuestProgress = 1;
             }
-            else
+            else if (!stage.isBossStage)
             {
                 save.stageWaveKills++;
                 if (save.stageWaveKills >= stage.killsToClearWave)
                 {
                     save.stageWaveKills = 0;
+                    stageCleared = true;
                     int nextLinear = Mathf.Min(119, stage.LinearIndex + 1);
                     if (nextLinear > save.highestUnlockedLinearStage)
-                    {
                         save.highestUnlockedLinearStage = nextLinear;
-                        if (nextLinear % 10 == 9)
-                            OnToastMessage?.Invoke($"Đã mở Ải Thủ Lĩnh {stage.actIndex + 1}-10!");
-                    }
 
-                    // V2 Flow: Crossing X-9 auto-challenges Boss X-10 (deferred safely if inside AoE damage loop!)
-                    if (stage.stageNumber == 9 && save.autoChallengeBoss && nextLinear <= save.highestUnlockedLinearStage)
+                    if (stage.stageNumber < 10)
                     {
-                        save.activeStage = 10;
-                        if (_aoeBatchDepth > 0) _batchPendingArenaReset = true;
-                        else RemakeArenaController.Instance?.ResetForStageChange();
+                        var nextSpec = GetStageSpec(stage.difficulty, stage.actIndex, stage.stageNumber + 1);
+                        bool realmOk = IsStageRealmUnlocked(nextSpec);
+                        bool bossAllowed = (stage.stageNumber < 9) || save.autoChallengeBoss;
+
+                        if (realmOk && bossAllowed)
+                        {
+                            save.activeStage = stage.stageNumber + 1;
+                            OnToastMessage?.Invoke(stage.stageNumber == 9
+                                ? $"Vượt Ải {stage.stageCode}! Tự động tiến vào Thủ Lĩnh {nextSpec.stageCode}!"
+                                : $"Vượt Ải {stage.stageCode}! Tự động tiến sang Ải {nextSpec.stageCode}!");
+                            if (_aoeBatchDepth > 0) _batchPendingArenaReset = true;
+                            else RemakeArenaController.Instance?.ResetForStageChange();
+                        }
+                        else if (!realmOk && _realmLockToastCooldown <= 0f)
+                        {
+                            _realmLockToastCooldown = 40f;
+                            OnToastMessage?.Invoke($"Vượt Ải {stage.stageCode}! Cần đạt {CultivationTable.GetRealmDisplayName(nextSpec.requiredRealmIndex, nextSpec.requiredSubStage)} để mở Ải {nextSpec.stageCode}.");
+                        }
                     }
                 }
             }
@@ -787,6 +935,8 @@ namespace KhiVanChiTu.Remake
 
             if (wasBoss) SetActiveBoss(false, "", 0, 0);
 
+            if (wasBoss || stageCleared || dropSword || droppedEquipRarity.HasValue)
+                SaveCombatCheckpoint();
             EmitKillEvents(true, true, true);
         }
 
@@ -801,85 +951,102 @@ namespace KhiVanChiTu.Remake
             OnBossStatusUpdated?.Invoke(active ? bossName : null, ActiveBossHp, ActiveBossMaxHp);
         }
 
-        private void RetreatFromFailedBoss(string reasonToast)
+        public void BeginPlayerRespawn(string reasonToast)
         {
+            if (IsRespawning) return;
             var save = SaveService.Current;
-            PlayerCurrentHp = PlayerMaxHp;
+            save.stageWaveKills = 0; // Restart current stage from Wave 1 (never drop stage!)
+            PlayerCurrentHp = 0;
             SetActiveBoss(false, "", 0, 0);
-            if (save.activeStage == 10)
-            {
-                save.activeStage = 9;
-                save.stageWaveKills = 0;
-                save.autoChallengeBoss = false; // Safe hold at X-9 until manual challenge / toggle
-            }
-            else if (save.activeStage > 1)
-            {
-                save.activeStage = Mathf.Max(1, save.activeStage - 1);
-                save.stageWaveKills = 0;
-            }
+            IsRespawning = true;
+            RespawnTimeRemaining = RespawnDuration;
+            RespawnReasonText = string.IsNullOrEmpty(reasonToast)
+                ? $"Trọng thương tại Ải {GetCurrentStageSpec().stageCode}! Đang hồi sinh..."
+                : reasonToast;
+
             SaveService.Save();
-            RemakeArenaController.Instance?.ResetForStageChange();
+            OnRespawnStateChanged?.Invoke(true);
             OnStageChanged?.Invoke();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke(reasonToast);
+            OnToastMessage?.Invoke(RespawnReasonText);
+        }
+
+        public void AdvanceRespawnTimer(float dt)
+        {
+            if (!IsRespawning) return;
+            RespawnTimeRemaining = Mathf.Max(0f, RespawnTimeRemaining - Mathf.Max(0f, dt));
+            if (RespawnTimeRemaining <= 0f)
+            {
+                IsRespawning = false;
+                RespawnTimeRemaining = 0f;
+                RespawnReasonText = null;
+                PlayerCurrentHp = PlayerMaxHp;
+                PlayerCurrentMp = PlayerMaxMp;
+                OnRespawnStateChanged?.Invoke(false);
+                OnStageChanged?.Invoke();
+                OnStatsChanged?.Invoke();
+                OnToastMessage?.Invoke($"Đã hồi sinh! Tiếp tục chiến đấu tại Ải {GetCurrentStageSpec().stageCode}.");
+            }
         }
 
         public void OnPlayerDamaged(double dmg)
         {
-            if (IsInTribulation) return;
+            if (IsInTribulation || IsRespawning) return;
             double mitigated = Math.Max(1, dmg * (1.0 - GetDamageReduction()));
             PlayerCurrentHp = Math.Max(0, PlayerCurrentHp - mitigated);
             if (PlayerCurrentHp <= 0)
             {
-                PlayerCurrentHp = PlayerMaxHp;
                 if (ActiveArenaMode != RemakeArenaMode.Campaign)
                 {
+                    PlayerCurrentHp = PlayerMaxHp;
                     ActiveArenaMode = RemakeArenaMode.Campaign;
                     SetActiveBoss(false, "", 0, 0);
                     SyncArenaOrReturnToCampaignScene();
                     OnStageChanged?.Invoke();
                     OnToastMessage?.Invoke("Thất bại trong thử thách! Quay về Đấu Trường chính.");
                 }
-                else if (HasActiveBoss)
+                else if (HasActiveBoss || GetCurrentStageSpec().isBossStage)
                 {
-                    RetreatFromFailedBoss("Thất thủ trước Thủ Lĩnh! Khóa treo an toàn tại ải trước.");
+                    BeginPlayerRespawn($"Thất thủ trước Thủ Lĩnh {GetCurrentStageSpec().stageCode}! Hồi sinh sau {RespawnDuration:0}s để tái chiến.");
                 }
                 else
                 {
-                    var save = SaveService.Current;
-                    if (save.activeStage > 1)
-                    {
-                        save.activeStage = Mathf.Max(1, save.activeStage - 1);
-                        save.stageWaveKills = 0;
-                        OnToastMessage?.Invoke("Thất thủ! Lùi về ải trước để tu dưỡng.");
-                        RemakeArenaController.Instance?.ResetForStageChange();
-                        OnStageChanged?.Invoke();
-                    }
+                    BeginPlayerRespawn($"Trọng thương tại Ải {GetCurrentStageSpec().stageCode}! Hồi sinh sau {RespawnDuration:0}s và chạy lại ải này.");
                 }
             }
             OnStatsChanged?.Invoke();
-
         }
 
-
-
         // =========================================================
-
-        // STAGE SELECTION
-
+        // STAGE SELECTION (ENFORCES BOTH STAGE PROGRESSION & REALM)
         // =========================================================
-
         public bool TrySelectStage(RemakeDifficulty diff, int act, int stageNumber)
         {
+            if (IsInTribulation || SceneFlowController.Instance?.IsTransitioning == true) return false;
             var spec = GetStageSpec(diff, act, stageNumber);
             if (spec.LinearIndex > SaveService.Current.highestUnlockedLinearStage)
             {
                 OnToastMessage?.Invoke($"Cần vượt qua ải trước để mở {ActStageDatabaseSO.GetDifficultyLabel(diff)} {spec.stageCode}!");
                 return false;
             }
+            if (!IsStageRealmUnlocked(spec))
+            {
+                OnToastMessage?.Invoke($"Cần đạt {CultivationTable.GetRealmDisplayName(spec.requiredRealmIndex, spec.requiredSubStage)} để tiến vào {ActStageDatabaseSO.GetDifficultyLabel(diff)} {spec.stageCode}!");
+                return false;
+            }
+
+            if (IsRespawning)
+            {
+                IsRespawning = false;
+                RespawnTimeRemaining = 0f;
+                RespawnReasonText = null;
+                PlayerCurrentHp = PlayerMaxHp;
+                PlayerCurrentMp = PlayerMaxMp;
+                OnRespawnStateChanged?.Invoke(false);
+            }
 
             var save = SaveService.Current;
-            bool worldChanged = save.activeAct != act;
+            ActiveArenaMode = RemakeArenaMode.Campaign;
             save.activeDifficulty = (int)diff;
             save.activeAct = act;
             save.activeStage = stageNumber;
@@ -889,10 +1056,7 @@ namespace KhiVanChiTu.Remake
             SetActiveBoss(false, "", 0, 0);
             SaveService.Save();
 
-            if (worldChanged && SceneFlowController.Instance != null && SceneFlowController.Instance.IsInGame)
-                SceneFlowController.Instance.SwitchWorldAct(act);
-            else
-                RemakeArenaController.Instance?.ResetForStageChange();
+            SyncArenaOrReturnToCampaignScene();
 
             OnStageChanged?.Invoke();
             OnQuestOrTutorialChanged?.Invoke();
@@ -1199,6 +1363,22 @@ namespace KhiVanChiTu.Remake
             return true;
         }
 
+        public bool TryUnequipSword(int equippedIndex)
+        {
+            var save = SaveService.Current;
+            if (equippedIndex < 0 || equippedIndex >= save.equippedSwordLevels.Count) return false;
+            int lv = save.equippedSwordLevels[equippedIndex];
+            save.equippedSwordLevels.RemoveAt(equippedIndex);
+            save.swordInventoryLevels.Add(lv);
+
+            InvalidateStatCache();
+            RemakeArenaController.Instance?.SyncPlayerSwordsVisual();
+            SaveService.Save();
+            OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke($"Đã tháo Phi Kiếm Cấp {lv} về Túi Phôi Kiếm!");
+            return true;
+        }
+
         // =========================================================
         // LUYEN DAN M2 (8 PILLS + 8 RANKS + BREW SLIDER + EXCESS SINKS)
         // =========================================================
@@ -1263,6 +1443,8 @@ namespace KhiVanChiTu.Remake
             IsBrewingPill = true;
             BrewingTargetRealm = targetRealm;
             BrewTimeRemaining = BrewDuration;
+            save.pendingBrewSeconds = BrewTimeRemaining;
+            save.pendingBrewTargetRealm = BrewingTargetRealm;
 
             string pillName = CultivationTable.GetPillNameForRealmBreakthrough(targetRealm);
             int pct = Mathf.RoundToInt(GetAlchemyBrewSuccessChance(targetRealm) * 100f);
@@ -1277,12 +1459,11 @@ namespace KhiVanChiTu.Remake
         {
             if (!IsBrewingPill) return;
             BrewTimeRemaining = Mathf.Max(0f, BrewTimeRemaining - Mathf.Max(0f, dt));
+            SaveService.Current.pendingBrewSeconds = BrewTimeRemaining;
             if (BrewTimeRemaining <= 0f)
             {
-                int realm = BrewingTargetRealm;
                 IsBrewingPill = false;
-                BrewTimeRemaining = 0f;
-                ResolveBrewPillOutcome(realm);
+                ResolveBrewPillOutcome(BrewingTargetRealm);
             }
         }
 
@@ -1396,8 +1577,7 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             double perPillTuVi = Math.Round(CultivationTable.GetRequiredTuVi(Mathf.Clamp(realmTarget, 0, 7), 4) * (0.06 + (int)quality * 0.06));
             double gainTuVi = perPillTuVi * actual;
-            double cap = GetRequiredTuViForCurrent();
-            save.tuVi = Math.Min(cap, save.tuVi + gainTuVi);
+            AddTuViWithAutoLevel(gainTuVi);
             int dustGain = (1 + (int)quality) * actual;
             save.herbDust += dustGain;
             GrantAlchemistXp(6 * actual);
@@ -1622,6 +1802,32 @@ namespace KhiVanChiTu.Remake
             return true;
         }
 
+        public bool TryUnequipGear(RemakeEquipSlot slot)
+        {
+            var save = SaveService.Current;
+            for (int i = 0; i < save.equippedGear.Count; i++)
+            {
+                if (save.equippedGear[i] != null && save.equippedGear[i].slot == slot)
+                {
+                    if (save.equipmentBag.Count >= 40)
+                    {
+                        OnToastMessage?.Invoke("Kho Trang Bị đã đầy (40/40)! Hãy phân rã bớt trước khi tháo.");
+                        return false;
+                    }
+                    var item = save.equippedGear[i];
+                    save.equippedGear.RemoveAt(i);
+                    save.equipmentBag.Add(item);
+                    RecomputePlayerVitals(false);
+                    RemakeAudioService.Instance?.PlayClick();
+                    SaveService.Save();
+                    OnStatsChanged?.Invoke();
+                    OnToastMessage?.Invoke($"Đã tháo {CultivationTable.GetRarityName(item.rarity)} {CultivationTable.GetEquipSlotName(slot)} về Kho!");
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public bool TryEnhanceEquipSlot(int slotIdx)
         {
             var save = SaveService.Current;
@@ -1807,6 +2013,7 @@ namespace KhiVanChiTu.Remake
                 save.mainQuestProgress = 1;
 
             RecomputePlayerVitals(false);
+            RemakeArenaController.Instance?.TriggerFormationResonance(5.5f);
             RemakeAudioService.Instance?.PlayMerge();
             SaveService.Save();
             OnStatsChanged?.Invoke();
@@ -1858,6 +2065,16 @@ namespace KhiVanChiTu.Remake
                 OnToastMessage?.Invoke($"Đang bế quan đón Thiên Kiếp ({TribulationTimeRemaining:0.0}s)!");
                 return false;
             }
+            if (IsRespawning)
+            {
+                OnToastMessage?.Invoke("Đang hồi sinh, vui lòng chờ hoàn tất trước khi Đột Phá!");
+                return false;
+            }
+            if (!CultivationTable.RequiresBreakthroughAt(save.subStage))
+            {
+                OnToastMessage?.Invoke("Tầng thường tự động thăng cấp khi đủ 100% Tu Vi! Chỉ cần Đột Phá ở mốc Sơ Kỳ (T3) → Trung Kỳ (T6) → Đỉnh Phong (T10).");
+                return false;
+            }
             double req = GetRequiredTuViForCurrent();
             if (save.tuVi < req)
             {
@@ -1884,20 +2101,21 @@ namespace KhiVanChiTu.Remake
             if (ActiveArenaMode != RemakeArenaMode.Campaign)
                 ExitChallengeToCampaign();
 
-            int nextSub = save.subStage < 10 ? save.subStage + 1 : 1;
-            int nextRealm = save.subStage < 10 ? save.realmIndex : Mathf.Min(8, save.realmIndex + 1);
-
             IsInTribulation = true;
             TribulationTimeRemaining = TribulationDuration;
             TribulationStrikesDone = 0;
             TribulationTargetChance = isMajor ? ComputeBreakthroughChance(effectivePill) : 1.0f;
-            TribulationTargetLabel = CultivationTable.GetRealmDisplayName(nextRealm, nextSub);
+            TribulationTargetLabel = GetTribulationTargetLabel(save);
             _tribulationSelectedPill = effectivePill;
             _tribulationPillConsumed = pillConsumed;
+            _tribulationPreRolledOutcome = !isMajor || (UnityEngine.Random.value <= TribulationTargetChance);
             _tribulationNextStrikeTime = TribulationDuration - 0.5f;
+            save.pendingTribulationSeconds = TribulationTimeRemaining;
+            save.pendingTribulationChance = TribulationTargetChance;
+            save.pendingTribulationSuccess = _tribulationPreRolledOutcome.Value;
+            save.pendingTribulationPillQuality = effectivePill.HasValue ? (int)effectivePill.Value : -1;
 
-            PlayerCurrentHp = PlayerMaxHp;
-            PlayerCurrentMp = PlayerMaxMp;
+            RecomputePlayerVitals(true);
             SetActiveBoss(false, "", 0, 0);
             SaveService.Save();
 
@@ -1907,16 +2125,47 @@ namespace KhiVanChiTu.Remake
             return true;
         }
 
+        private static string GetTribulationTargetLabel(RemakeSaveData save)
+        {
+            int nextSub = save.subStage < 10 ? save.subStage + 1 : 1;
+            int nextRealm = save.subStage < 10 ? save.realmIndex : Mathf.Min(8, save.realmIndex + 1);
+            return CultivationTable.GetRealmDisplayName(nextRealm, nextSub);
+        }
+
+        private void ApplyTribulationStrikeHpDrain(int strikeIndex, int totalStrikes)
+        {
+            if (PlayerMaxHp <= 0) return;
+            // Progressive 9-turn Heavenly Lightning HP drain: drops step-by-step down to ~4% HP on Strike 9 before final verdict!
+            int idx = Mathf.Clamp(strikeIndex - 1, 0, TribulationHpRatios.Length - 1);
+            float targetRatio = strikeIndex >= totalStrikes
+                ? (_tribulationPreRolledOutcome == false ? 0.025f : 0.045f)
+                : TribulationHpRatios[idx];
+
+            double targetHp = Math.Max(1.0, Math.Round(PlayerMaxHp * targetRatio));
+            double dmgTaken = Math.Max(0.0, PlayerCurrentHp - targetHp);
+            PlayerCurrentHp = Math.Min(PlayerCurrentHp, targetHp);
+
+            if (dmgTaken >= 1.0 && RemakeArenaController.Instance != null)
+            {
+                Vector3 hitPos = RemakeArenaController.Instance.PlayerWorldPosition + Vector3.up * 1.45f;
+                RemakeVfxPool.Instance?.RequestDamagePopup(hitPos, dmgTaken, strikeIndex >= 7);
+            }
+            OnStatsChanged?.Invoke();
+        }
+
         public void AdvanceTribulation(float dt)
         {
             if (!IsInTribulation) return;
             TribulationTimeRemaining = Mathf.Max(0f, TribulationTimeRemaining - Mathf.Max(0f, dt));
 
-            float strikeStep = (TribulationDuration - 1.0f) / TribulationStrikesTotal;
+            if (TribulationTimeRemaining > 0f)
+                SaveService.Current.pendingTribulationSeconds = TribulationTimeRemaining;
+
             while (TribulationStrikesDone < TribulationStrikesTotal && TribulationTimeRemaining <= _tribulationNextStrikeTime)
             {
                 TribulationStrikesDone++;
-                _tribulationNextStrikeTime -= strikeStep;
+                _tribulationNextStrikeTime -= TribulationStrikeInterval;
+                ApplyTribulationStrikeHpDrain(TribulationStrikesDone, TribulationStrikesTotal);
                 OnTribulationStrike?.Invoke(TribulationStrikesDone, TribulationStrikesTotal);
             }
 
@@ -1925,28 +2174,40 @@ namespace KhiVanChiTu.Remake
                 while (TribulationStrikesDone < TribulationStrikesTotal)
                 {
                     TribulationStrikesDone++;
+                    ApplyTribulationStrikeHpDrain(TribulationStrikesDone, TribulationStrikesTotal);
                     OnTribulationStrike?.Invoke(TribulationStrikesDone, TribulationStrikesTotal);
                 }
                 var pill = _tribulationSelectedPill;
                 bool consumed = _tribulationPillConsumed;
+                bool? preRolled = _tribulationPreRolledOutcome;
                 IsInTribulation = false;
                 TribulationTimeRemaining = 0f;
                 _tribulationSelectedPill = null;
                 _tribulationPillConsumed = false;
+                _tribulationPreRolledOutcome = null;
 
-                ResolveBreakthroughInternal(pill, consumed);
+                var save = SaveService.Current;
+                save.pendingTribulationSeconds = 0f;
+                save.pendingTribulationPillQuality = -1;
+                ResolveBreakthroughInternal(pill, consumed, preRolled);
                 OnTribulationStateChanged?.Invoke(false);
             }
         }
 
         public bool TryAttemptBreakthrough(RemakePillQuality? selectedPillQuality)
         {
-            return ResolveBreakthroughInternal(selectedPillQuality, false);
+            if (IsInTribulation) return false;
+            return ResolveBreakthroughInternal(selectedPillQuality, false, null);
         }
 
-        private bool ResolveBreakthroughInternal(RemakePillQuality? selectedPillQuality, bool pillAlreadyConsumed)
+        private bool ResolveBreakthroughInternal(RemakePillQuality? selectedPillQuality, bool pillAlreadyConsumed, bool? preRolledSuccess = null)
         {
             var save = SaveService.Current;
+            if (!CultivationTable.RequiresBreakthroughAt(save.subStage))
+            {
+                OnToastMessage?.Invoke("Tầng thường sẽ tự động tăng cấp khi đủ 100% Tu Vi!");
+                return false;
+            }
             double req = GetRequiredTuViForCurrent();
             if (save.tuVi < req)
             {
@@ -1960,7 +2221,8 @@ namespace KhiVanChiTu.Remake
             {
                 save.tuVi = 0;
                 save.subStage++;
-                if (save.subStage == 4 || save.subStage == 7 || save.subStage == 10)
+                _gateCapToastSentForStage = false;
+                if (save.subStage == 4 || save.subStage == 7)
                     save.daoPoints++;
                 if (save.mainQuestIndex == 2) save.mainQuestProgress = save.subStage;
 
@@ -1970,7 +2232,7 @@ namespace KhiVanChiTu.Remake
                 SaveService.Save();
                 OnStatsChanged?.Invoke();
                 OnQuestOrTutorialChanged?.Invoke();
-                string msg = $"Đột phá thành công lên {CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)}!";
+                string msg = $"Đột phá thành công lên {CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)}! (+1 Điểm Đạo Vận)";
                 OnBreakthroughResolved?.Invoke(true, msg);
                 OnToastMessage?.Invoke(msg);
                 return true;
@@ -1988,13 +2250,14 @@ namespace KhiVanChiTu.Remake
             }
 
             float finalChance = ComputeBreakthroughChance(pillUsed == RemakePillQuality.PheDan ? null : pillUsed);
-            bool success = UnityEngine.Random.value <= finalChance;
+            bool success = preRolledSuccess ?? (UnityEngine.Random.value <= finalChance);
 
             if (success)
             {
                 save.realmIndex++;
                 save.subStage = 1;
                 save.tuVi = 0;
+                _gateCapToastSentForStage = false;
                 save.consecutiveBreakthroughFails = 0;
                 save.mindCalmResetUtcTicks = 0;
                 save.hoPhapBonusSteps = 0;
@@ -2018,8 +2281,10 @@ namespace KhiVanChiTu.Remake
             {
                 float penaltyPct = CultivationTable.GetFailurePenaltyPercent(save.consecutiveBreakthroughFails, pillUsed);
                 save.tuVi = Math.Max(0, save.tuVi - req * penaltyPct);
+                _gateCapToastSentForStage = false;
                 save.consecutiveBreakthroughFails++;
                 save.mindCalmResetUtcTicks = DateTime.UtcNow.AddHours(24).Ticks;
+                PlayerCurrentHp = Math.Max(1.0, Math.Round(PlayerMaxHp * 0.06));
 
                 RemakeVfxPool.Instance?.SpawnBreakthroughFlash(RemakeArenaController.Instance != null ? RemakeArenaController.Instance.PlayerWorldPosition : Vector3.zero, false);
                 string msg = $"Độ kiếp thất bại (-{Mathf.RoundToInt(penaltyPct * 100)}% Tu Vi Tầng 10)! Cần Đan phẩm cao hơn hoặc Tĩnh Tâm.";
@@ -2086,9 +2351,10 @@ namespace KhiVanChiTu.Remake
         public bool CanChallengeActBossNow()
         {
             var save = SaveService.Current;
-            if (ActiveArenaMode != RemakeArenaMode.Campaign || save.activeStage != 9) return false;
-            int bossLinear = save.activeDifficulty * 30 + save.activeAct * 10 + 9;
-            return bossLinear <= save.highestUnlockedLinearStage;
+            if (IsInTribulation || SceneFlowController.Instance?.IsTransitioning == true ||
+                ActiveArenaMode != RemakeArenaMode.Campaign || save.activeStage != 9) return false;
+            var bossSpec = GetStageSpec((RemakeDifficulty)save.activeDifficulty, save.activeAct, 10);
+            return bossSpec.LinearIndex <= save.highestUnlockedLinearStage && IsStageRealmUnlocked(bossSpec);
         }
 
         public bool TryChallengeCurrentActBoss()
@@ -2158,6 +2424,7 @@ namespace KhiVanChiTu.Remake
 
         public bool TryStartDemonTowerFloor(int floor)
         {
+            if (IsInTribulation || SceneFlowController.Instance?.IsTransitioning == true) return false;
             var save = SaveService.Current;
             if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.ImmortalTower, save.realmIndex, save.subStage))
             {
@@ -2172,7 +2439,7 @@ namespace KhiVanChiTu.Remake
             for (int i = 0; i < counts.Length; i++) totalEnemies += counts[i];
             ActiveArenaMode = RemakeArenaMode.DemonTower;
             ActiveChallengeFloor = nextFloor;
-            ChallengeModeTimeRemaining = 55f;
+            ChallengeModeTimeRemaining = DemonTowerTimeLimit;
             ChallengeKillsRemaining = totalEnemies;
             CurrentWaveIndex = 1;
             TotalWavesInStage = totalWaves;
@@ -2216,6 +2483,7 @@ namespace KhiVanChiTu.Remake
 
         public bool TryEnterSecretRealm(RemakeSecretRealmKind kind, int tier)
         {
+            if (IsInTribulation || SceneFlowController.Instance?.IsTransitioning == true) return false;
             var save = SaveService.Current;
             if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.SecretRealm, save.realmIndex, save.subStage))
             {
@@ -2516,8 +2784,7 @@ namespace KhiVanChiTu.Remake
 
             double totalTuVi = Math.Round(kills * stage.tuViPerKill * GetTuViMultiplier());
             double totalLt = Math.Round(kills * stage.linhThachPerKill * GetLinhThachMultiplier());
-            double cap = GetRequiredTuViForCurrent();
-            save.tuVi = Math.Min(cap, save.tuVi + totalTuVi);
+            AddTuViWithAutoLevel(totalTuVi);
             save.linhThach += totalLt;
 
             int herbs = Mathf.FloorToInt((float)(kills * stage.herbDropRate));

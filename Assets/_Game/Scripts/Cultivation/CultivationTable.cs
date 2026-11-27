@@ -29,19 +29,24 @@ namespace KhiVanChiTu.Remake
             720f    // 8: Do Kiep (Endgame)
         };
 
-        // Tu Vi mục tiêu quy chuẩn của cả Đại Cảnh Giới (khớp nhịp tăng theo Stage 1..120)
+        // Tu Vi mục tiêu quy chuẩn của cả Đại Cảnh Giới (khớp nhịp 720h / 30 ngày ở nhịp chiến đấu chậm rãi mới)
         private static readonly double[] BaseRealmTotalTuVi =
         {
-            6800,           // Luyen Khi (~4h o ai 1-1 -> 1-10)
-            62000,          // Truc Co (~20h o ai 2-1 -> 2-10)
-            420000,         // Kim Dan (~48h)
-            3200000,        // Nguyen Anh (~96h)
-            24000000,       // Hoa Than (~144h)
-            165000000,      // Luyen Hu (~180h)
-            1150000000,     // Hop The -> Dai Thua (~228h, tich luy 720h)
-            8500000000,     // Dai Thua
-            60000000000     // Do Kiep
+            36000,          // 0: Luyen Khi (~4h o ai 1-1 -> 1-10, ~650 kills/h)
+            420000,         // 1: Truc Co (~20h o ai 2-1 -> 2-10)
+            3200000,        // 2: Kim Dan (~48h)
+            22000000,       // 3: Nguyen Anh (~96h)
+            135000000,      // 4: Hoa Than (~144h)
+            720000000,      // 5: Luyen Hu (~180h)
+            3600000000,     // 6: Hop The -> len Dai Thua (~228h, tich luy 720h)
+            22000000000,    // 7: Dai Thua
+            120000000000    // 8: Do Kiep
         };
+
+        public static double GetRealmTotalTuVi(int realmIndex)
+        {
+            return BaseRealmTotalTuVi[Mathf.Clamp(realmIndex, 0, BaseRealmTotalTuVi.Length - 1)];
+        }
 
         // Ty le phan bo 10 tang trong 1 Dai Canh Gioi (Tang 10 = 19% -> tong = 100%)
         private static readonly double[] SubStageWeights =
@@ -85,7 +90,7 @@ namespace KhiVanChiTu.Remake
         {
             string rName = RealmNames[Mathf.Clamp(realmIndex, 0, RealmNames.Length - 1)];
             int s = Mathf.Clamp(subStage, 1, 10);
-            string phase = s <= 3 ? "Sơ Kỳ" : s <= 6 ? "Trung Kỳ" : s <= 9 ? "Hậu Kỳ" : "Đỉnh Phong";
+            string phase = s <= 3 ? "Sơ Kỳ" : s <= 6 ? "Trung Kỳ" : s < 10 ? "Đỉnh Phong" : "Đỉnh Phong Viên Mãn";
             return $"{rName} Tầng {s} ({phase})";
         }
 
@@ -93,6 +98,28 @@ namespace KhiVanChiTu.Remake
         {
             string rName = RealmNames[Mathf.Clamp(realmIndex, 0, RealmNames.Length - 1)];
             return $"{rName} · T{Mathf.Clamp(subStage, 1, 10)}";
+        }
+
+        /// <summary>
+        /// Chi yeu cau Dot Pha tai cac moc binh canh: So Ky (T3->T4), Trung Ky (T6->T7), Dinh Phong (T10->Dai Canh Gioi).
+        /// Cac tang thuong (1->2, 2->3, 4->5, 5->6, 7->8, 8->9, 9->10) tu dong tang cap khi du 100% Tu Vi.
+        /// </summary>
+        public static bool RequiresBreakthroughAt(int subStage)
+        {
+            return subStage == 3 || subStage == 6 || subStage >= 10;
+        }
+
+        public static string GetBreakthroughGateTitle(int realmIndex, int subStage)
+        {
+            string rName = RealmNames[Mathf.Clamp(realmIndex, 0, RealmNames.Length - 1)];
+            if (subStage == 3) return $"{rName}: Sơ Kỳ → Trung Kỳ";
+            if (subStage == 6) return $"{rName}: Trung Kỳ → Đỉnh Phong";
+            if (subStage >= 10)
+            {
+                string nextR = RealmNames[Mathf.Clamp(realmIndex + 1, 0, RealmNames.Length - 1)];
+                return $"Độ Kiếp {rName} → {nextR}";
+            }
+            return $"{rName} Tầng {subStage}";
         }
 
         public static double GetRequiredTuVi(int realmIndex, int subStage)
@@ -142,12 +169,157 @@ namespace KhiVanChiTu.Remake
         public static double CalculateSwordDamage(int level)
         {
             int lv = Mathf.Clamp(level, 1, 10);
-            return Math.Round(12.0 * Math.Pow(2.05, lv - 1));
+            return Math.Round(16.0 * Math.Pow(2.25, lv - 1));
         }
 
+        /// <summary>Toc do bay Phi Kiem (u/s) — nhip cham rai ro rang, tang dan theo cap kiem.</summary>
         public static float CalculateSwordSpeed(int level)
         {
-            return 7.5f + Mathf.Clamp(level, 1, 10) * 1.15f;
+            return 3.8f + Mathf.Clamp(level, 1, 10) * 0.42f;
+        }
+
+        /// <summary>Thoi gian nghi giua 2 nhat lao kiem (giay) — giam dan khi kiem cap cao hon.</summary>
+        public static float CalculateSwordAttackCooldown(int level)
+        {
+            int lv = Mathf.Clamp(level, 1, 10);
+            return Mathf.Clamp(1.18f - (lv - 1) * 0.045f, 0.72f, 1.18f);
+        }
+
+        /// <summary>Toc do xoay quy dao ho than (do/giay).</summary>
+        public static float CalculateSwordOrbitSpeed(int level)
+        {
+            int lv = Mathf.Clamp(level, 1, 10);
+            return 56f + lv * 3.5f;
+        }
+
+        // =========================================================
+        // THUAT TOAN CAN BANG QUAI - BOSS - PLAYER & MO KHOA THEO TU VI
+        // =========================================================
+        private static readonly int[] Act1SubGates = { 1, 1, 1, 2, 3, 4, 5, 6, 7, 7 };
+        private static readonly int[] Act23SubGates = { 1, 1, 2, 3, 4, 5, 6, 7, 8, 8 };
+
+        public static void GetStageRequiredRealm(int linearIndex, out int reqRealm, out int reqSubStage)
+        {
+            int lin = Mathf.Clamp(linearIndex, 0, 119);
+            if (lin < 10)
+            {
+                reqRealm = 0;
+                reqSubStage = Act1SubGates[lin];
+                return;
+            }
+            if (lin < 20)
+            {
+                reqRealm = 1;
+                reqSubStage = Act23SubGates[lin - 10];
+                return;
+            }
+            if (lin < 30)
+            {
+                reqRealm = 2;
+                reqSubStage = Act23SubGates[lin - 20];
+                return;
+            }
+            int linearCult = 30 + Mathf.FloorToInt((lin - 30) * (57f / 89f));
+            reqRealm = Mathf.Clamp(linearCult / 10, 3, 8);
+            reqSubStage = Mathf.Clamp((linearCult % 10) + 1, 1, 10);
+        }
+
+        public static bool IsStageRealmMet(int reqRealm, int reqSubStage, int playerRealm, int playerSubStage)
+        {
+            int reqLin = reqRealm * 10 + Mathf.Clamp(reqSubStage, 1, 10);
+            int curLin = playerRealm * 10 + Mathf.Clamp(playerSubStage, 1, 10);
+            return curLin >= reqLin;
+        }
+
+        public static double EstimateExpectedPlayerDps(int realmIndex, int subStage)
+        {
+            double prog = Mathf.Clamp(realmIndex, 0, 8) + (Mathf.Clamp(subStage, 1, 10) - 1) / 10.0;
+            int slots = GetMaxSwordSlotsForRealm(realmIndex);
+            double expectedLv = Math.Min(10.0, 1.0 + prog * 1.02);
+            double swordDmg = 16.0 * Math.Pow(2.25, expectedLv - 1.0);
+            double swordSpeed = 3.8 + expectedLv * 0.42;
+            double swordCd = Math.Max(0.72, 1.18 - (expectedLv - 1.0) * 0.045);
+            double cycleSec = (3.6 / swordSpeed) + 0.38 + swordCd;
+
+            double critChance = Math.Min(0.48, 0.08 + prog * 0.045);
+            double critDmg = 2.0 + prog * 0.14;
+            double critMult = 1.0 + critChance * (critDmg - 1.0);
+
+            double metaDmgMult = 1.0 + prog * 0.38
+                + (realmIndex >= 1 ? 0.25 : 0.0)
+                + (realmIndex >= 2 ? 0.35 : 0.0)
+                + (Math.Pow(1.16, prog) - 1.0);
+
+            double skillMult = (realmIndex == 0 && subStage < 4) ? 1.00
+                : realmIndex == 0 ? 1.22
+                : realmIndex == 1 ? 1.38
+                : realmIndex <= 3 ? 1.55
+                : 1.72;
+
+            return (slots * swordDmg / cycleSec) * critMult * metaDmgMult * skillMult;
+        }
+
+        public static double EstimateExpectedPlayerHp(int realmIndex, int subStage)
+        {
+            int r = Mathf.Clamp(realmIndex, 0, 8);
+            int s = Mathf.Clamp(subStage, 1, 10);
+            double prog = r + (s - 1) / 10.0;
+            double baseHp = 220.0 * Math.Pow(2.3, r) + s * 28.0 * Math.Pow(1.8, r);
+            double bodyDao = Math.Min(10.0, prog * 1.15) * 140.0 * Math.Pow(1.6, r);
+            double pctMult = 1.0 + prog * 0.18 + (r >= 1 ? 0.15 : 0.0) + (r >= 4 ? 0.25 : 0.0);
+            double dr = Math.Min(0.48, prog * 0.055);
+            return ((baseHp + bodyDao) * pctMult) / Math.Max(0.45, 1.0 - dr);
+        }
+
+        public static void ComputeBalancedStageStats(
+            int linearIndex,
+            bool isBoss,
+            out double enemyHp,
+            out double enemyDamage,
+            out double tuViPerKill,
+            out double linhThachPerKill,
+            out double recommendedPower)
+        {
+            int lin = Mathf.Clamp(linearIndex, 0, 119);
+            int diffIdx = lin / 30;
+            int stageNum = (lin % 10) + 1;
+            GetStageRequiredRealm(lin, out int reqR, out int reqS);
+
+            // Target effective stage progress smoothly rises within an act even across stages sharing a gate
+            int evalRealm = reqR;
+            int evalSub = Mathf.Clamp(reqS + (isBoss ? 1 : 0), 1, 10);
+            double expectedDps = EstimateExpectedPlayerDps(evalRealm, evalSub);
+            double expectedEhp = EstimateExpectedPlayerHp(evalRealm, evalSub);
+
+            // Within-act intra-stage pacing multiplier (1-1 = 0.92x -> 1-9 = 1.24x -> 1-10 = 1.28x)
+            double stageFactor = 0.92 + (stageNum - 1) * 0.040;
+            // Target TTK for normal monster: ~4.0s early -> ~6.2s late (deliberate, weighty pace)
+            double targetNormalTtk = 4.3 + diffIdx * 0.30 + (stageNum - 1) * 0.05;
+            double normalBaseHp = Math.Max(28.0, Math.Round(expectedDps * targetNormalTtk * stageFactor));
+
+            // Boss tankiness multiplier: 7.0x -> 8.2x normal 10th-stage base (~8.2x-10x X-9, ~33x-45x X-1)
+            // Delivers ~38-52s dramatic tanky Boss duel at recommended Realm (beatable inside 60s limit, punishing if under-geared!)
+            double bossTankMult = 7.0 + diffIdx * 0.40;
+            enemyHp = isBoss ? Math.Round(normalBaseHp * bossTankMult) : normalBaseHp;
+
+            // Monster hit damage: ~3.4% on-curve EHP per slow hit (~2.1s), Boss hits 2.15x harder (~9.2% EHP per 2.4s slam)
+            double normalHit = Math.Max(7.0, Math.Round(expectedEhp * 0.034 * stageFactor));
+            enemyDamage = isBoss ? Math.Round(normalHit * 2.15) : normalHit;
+
+            // Tu Vi per kill anchored directly to 720-hour / 30-day ExpectedRealmHours24x7 at ~650 kills/hr
+            double expectedTuViMult = 1.0 + reqR * 0.22;
+            double realmTotal = GetRealmTotalTuVi(reqR);
+            double realmHours = ExpectedRealmHours24x7[Mathf.Clamp(reqR, 0, ExpectedRealmHours24x7.Length - 1)];
+            double baseKillTuVi = realmTotal / (realmHours * 650.0 * expectedTuViMult);
+            double subSlope = 0.80 + (stageNum - 1) * 0.072;
+            double normalTuVi = Math.Max(11.0, Math.Round(baseKillTuVi * subSlope));
+            tuViPerKill = isBoss ? Math.Round(normalTuVi * 11.0) : normalTuVi;
+
+            // Linh Thach per kill scales cleanly with stage progression & difficulty
+            double normalLt = Math.Max(9.0, Math.Round(normalTuVi * (0.85 + diffIdx * 0.22)));
+            linhThachPerKill = isBoss ? Math.Round(normalLt * 12.0) : normalLt;
+
+            recommendedPower = Math.Round(expectedDps * (isBoss ? 1.15 : 0.90) * 10.0);
         }
 
         public static float GetSwordMergeEffectiveChance(int fromLevel, float pityBonus)
@@ -379,10 +551,16 @@ namespace KhiVanChiTu.Remake
         public static (double hp, double dmg, double rewardLt, int enemyCount) GetDemonTowerFloorSpec(int floor)
         {
             int f = Mathf.Clamp(floor, 1, 100);
-            double hp = Math.Round(1800.0 * Math.Pow(1.19, f - 1));
-            double dmg = Math.Round(38.0 * Math.Pow(1.14, f - 1));
-            double rewardLt = Math.Round(350.0 * Math.Pow(1.15, f - 1));
-            int count = (f % 5 == 0) ? 1 : 4; // Floor 5,10,15... is Elite Guardian Boss
+            double prog = 1.4 + (f - 1) * (7.4 / 99.0);
+            int r = Mathf.Clamp((int)Math.Floor(prog), 1, 8);
+            int s = Mathf.Clamp(1 + (int)Math.Floor((prog - r) * 10.0), 1, 10);
+            double dps = EstimateExpectedPlayerDps(r, s);
+            double ehp = EstimateExpectedPlayerHp(r, s);
+            bool isBossFloor = (f % 5 == 0);
+            double hp = Math.Round(dps * (isBossFloor ? 24.0 : 5.2));
+            double dmg = Math.Round(ehp * (isBossFloor ? 0.085 : 0.036));
+            double rewardLt = Math.Round(350.0 * Math.Pow(1.13, f - 1));
+            int count = isBossFloor ? 1 : 4; // Floor 5,10,15... is Elite Guardian Boss
             return (hp, dmg, rewardLt, count);
         }
 
@@ -395,8 +573,11 @@ namespace KhiVanChiTu.Remake
                 RemakeSecretRealmKind.HerbGarden => "Bách Thảo Viên",
                 _ => "Tinh Thiết Động"
             };
-            double hp = Math.Round(4500.0 * Math.Pow(4.2, t - 1));
-            double dmg = Math.Round(72.0 * Math.Pow(2.9, t - 1));
+            int r = Mathf.Clamp(1 + t, 2, 6); // T1=Kim Dan .. T5=Hop The
+            double dps = EstimateExpectedPlayerDps(r, 4);
+            double ehp = EstimateExpectedPlayerHp(r, 4);
+            double hp = Math.Round(dps * 4.8);
+            double dmg = Math.Round(ehp * 0.032);
             return ($"{baseName} · Tầng {t}", hp, dmg, 5);
         }
 

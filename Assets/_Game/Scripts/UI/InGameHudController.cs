@@ -42,11 +42,18 @@ namespace KhiVanChiTu.Remake
         private Label _tribulationStrikeLabel;
         private float _tribulationPulseTimer;
 
+        // Player Respawn Countdown Banner
+        private VisualElement _respawnPanel;
+        private Label _respawnTimerLabel;
+        private Label _respawnReasonLabel;
+        private VisualElement _respawnProgressFill;
+
         // Mini-Mode
         private Label _miniRealmStage;
         private VisualElement _miniTuViFill;
         private Label _miniFpsLabel;
         private Button _btnMiniBreakthrough;
+        private Button _btnMiniCameraView;
 
         // Stage & Boss
         private Label _hudStageLabel;
@@ -68,6 +75,7 @@ namespace KhiVanChiTu.Remake
         private VisualElement _fpsPill;
         private Label _hudFpsLabel;
         private Button _btnAfkDim;
+        private Button _btnCameraView;
 
         // Quest & 4 Combat Skills
         private Label _questTitleLabel;
@@ -88,9 +96,15 @@ namespace KhiVanChiTu.Remake
         private VisualElement _badgeClusterBagua;
         private VisualElement _badgeSwordPath;
         private VisualElement _badgeDaoVan;
+        private VisualElement _badgeMainQuest;
+        private VisualElement _badgePioneerDiary;
+        private VisualElement _badgeUtilityCluster;
+        private bool _mainQuestRewardReady;
+        private bool _pioneerRewardReady;
 
         // Lazy Modal
         private VisualElement _modalBackdrop;
+        private VisualElement _modalSheet;
         private Label _modalTitle;
         private VisualElement _modalBody;
 
@@ -225,10 +239,16 @@ namespace KhiVanChiTu.Remake
             _tribulationProgressFill = root.Q("tribulation-progress-fill");
             _tribulationStrikeLabel = root.Q<Label>("tribulation-strike-label");
 
+            _respawnPanel = root.Q("respawn-hud-panel");
+            _respawnTimerLabel = root.Q<Label>("respawn-timer-label");
+            _respawnReasonLabel = root.Q<Label>("respawn-reason-label");
+            _respawnProgressFill = root.Q("respawn-progress-fill");
+
             _miniRealmStage = root.Q<Label>("mini-realm-stage");
             _miniTuViFill = root.Q("mini-tuvi-fill");
             _miniFpsLabel = root.Q<Label>("mini-fps-label");
             _btnMiniBreakthrough = root.Q<Button>("btn-mini-breakthrough");
+            _btnMiniCameraView = root.Q<Button>("btn-mini-camera-view");
 
             _hudStageLabel = root.Q<Label>("hud-stage-label");
             _btnChallengeBoss = root.Q<Button>("btn-challenge-boss");
@@ -248,6 +268,7 @@ namespace KhiVanChiTu.Remake
             _fpsPill = root.Q("pill-fps");
             _hudFpsLabel = root.Q<Label>("hud-fps-label");
             _btnAfkDim = root.Q<Button>("btn-afk-dim");
+            _btnCameraView = root.Q<Button>("btn-camera-view");
 
             _questTitleLabel = root.Q<Label>("quest-title-label");
             _btnQuestTracker = root.Q<Button>("btn-quest-tracker");
@@ -269,8 +290,12 @@ namespace KhiVanChiTu.Remake
             _badgeClusterBagua = root.Q("badge-cluster-bagua");
             _badgeSwordPath = root.Q("badge-swordpath");
             _badgeDaoVan = root.Q("badge-daovan");
+            _badgeMainQuest = root.Q("badge-main-quest");
+            _badgePioneerDiary = root.Q("badge-pioneer-diary");
+            _badgeUtilityCluster = root.Q("badge-cluster-utility");
 
             _modalBackdrop = root.Q("modal-backdrop");
+            _modalSheet = root.Q("modal-sheet");
             _modalTitle = root.Q<Label>("modal-title");
             _modalBody = root.Q("modal-body");
 
@@ -299,6 +324,8 @@ namespace KhiVanChiTu.Remake
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-skill-2"), "", "[Vạn Kiếm]", "SkillSword");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-skill-3"), "", "[Ấn Chưởng]", "SkillPalm");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-diary"), "", "[Tiên Lộ]", "RouteMilestones");
+            CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-camera-view"), "HUD/nav_combat_camera", "");
+            CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-mini-camera-view"), "HUD/nav_combat_camera", "");
 
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-cluster-bagua"), "HUD/hud_toggle_bagua", "[A4: Bát Quái]");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-swordpath"), "", "[Kiếm Lộ]", "RouteMerge");
@@ -334,6 +361,9 @@ namespace KhiVanChiTu.Remake
             root.Q<Button>("btn-stage-pill")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Stages));
             root.Q<Button>("btn-breakthrough")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Breakthrough));
             _btnMiniBreakthrough?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Breakthrough));
+            _btnCameraView?.RegisterCallback<ClickEvent>(_ => ToggleCombatCamera());
+            _btnMiniCameraView?.RegisterCallback<ClickEvent>(_ => ToggleCombatCamera());
+            RefreshCameraButtons();
             root.Q<Button>("btn-chat-bubble")?.RegisterCallback<ClickEvent>(_ =>
             {
                 RemakeOnlineService.Instance?.SyncAllOnlineData();
@@ -391,6 +421,7 @@ namespace KhiVanChiTu.Remake
                 GameplayEngine.Instance.OnAlchemyBrewResolved += HandleAlchemyBrewResolved;
                 GameplayEngine.Instance.OnTribulationStateChanged += HandleTribulationStateChanged;
                 GameplayEngine.Instance.OnTribulationStrike += HandleTribulationStrike;
+                GameplayEngine.Instance.OnRespawnStateChanged += HandleRespawnStateChanged;
             }
             if (FpsMonitorService.Instance != null)
                 FpsMonitorService.Instance.OnFpsUpdated += RefreshFpsHud;
@@ -415,6 +446,7 @@ namespace KhiVanChiTu.Remake
                 GameplayEngine.Instance.OnAlchemyBrewResolved -= HandleAlchemyBrewResolved;
                 GameplayEngine.Instance.OnTribulationStateChanged -= HandleTribulationStateChanged;
                 GameplayEngine.Instance.OnTribulationStrike -= HandleTribulationStrike;
+                GameplayEngine.Instance.OnRespawnStateChanged -= HandleRespawnStateChanged;
             }
             if (FpsMonitorService.Instance != null)
                 FpsMonitorService.Instance.OnFpsUpdated -= RefreshFpsHud;
@@ -481,6 +513,11 @@ namespace KhiVanChiTu.Remake
             _tribulationPulseTimer = 0.25f;
         }
 
+        private void HandleRespawnStateChanged(bool respawning)
+        {
+            _hudDirty = true;
+        }
+
         private void ToggleLeftHud()
         {
             RemakeAudioService.Instance?.PlayClick();
@@ -499,11 +536,50 @@ namespace KhiVanChiTu.Remake
 
         private void RefreshLeftHudCollapsedBadge()
         {
-            if (_badgeLeftHudCollapsed == null) return;
-            var save = SaveService.Current;
-            bool questDone = save != null && save.mainQuestIndex < RemakeCatalogs.MainQuests.Count &&
-                             save.mainQuestProgress >= RemakeCatalogs.MainQuests[save.mainQuestIndex].targetCount;
-            _badgeLeftHudCollapsed.style.display = (!_leftHudExpanded && questDone) ? DisplayStyle.Flex : DisplayStyle.None;
+            SetBadgeVisible(_badgeLeftHudCollapsed, !_leftHudExpanded && _mainQuestRewardReady);
+        }
+
+        private static void SetBadgeVisible(VisualElement badge, bool visible)
+        {
+            if (badge != null)
+                badge.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        private void RefreshPioneerRewardBadges(GameplayEngine engine)
+        {
+            _pioneerRewardReady = false;
+            foreach (var milestone in RemakeCatalogs.PioneerMilestones)
+            {
+                if (!engine.IsPioneerMilestoneReady(milestone)) continue;
+                _pioneerRewardReady = true;
+                break;
+            }
+
+            SetBadgeVisible(_badgePioneerDiary, _pioneerRewardReady);
+            SetBadgeVisible(_badgeUtilityCluster, _pioneerRewardReady && !_utilityExpanded);
+        }
+
+        private void ToggleCombatCamera()
+        {
+            var environment = MeadowEnvironmentController.Instance;
+            if (environment == null || !environment.TryToggleCombatCamera()) return;
+            RemakeAudioService.Instance?.PlayClick();
+            RefreshCameraButtons();
+        }
+
+        private void RefreshCameraButtons()
+        {
+            bool rear = MeadowEnvironmentController.IsRearCombatView;
+            string tooltip = rear ? "Góc nhìn từ trên cao" : "Góc nhìn sau lưng";
+            ApplyCameraButtonState(_btnCameraView, rear, tooltip);
+            ApplyCameraButtonState(_btnMiniCameraView, rear, tooltip);
+        }
+
+        private static void ApplyCameraButtonState(Button button, bool rear, string tooltip)
+        {
+            if (button == null) return;
+            button.EnableInClassList("active", rear);
+            button.tooltip = tooltip;
         }
 
         private void ToggleCultivationCluster()
@@ -528,12 +604,15 @@ namespace KhiVanChiTu.Remake
                 _clusterCultivationDrawer.style.display = _cultivationExpanded ? DisplayStyle.Flex : DisplayStyle.None;
             if (_clusterUtilityDrawer != null)
                 _clusterUtilityDrawer.style.display = _utilityExpanded ? DisplayStyle.Flex : DisplayStyle.None;
+            SetBadgeVisible(_badgeUtilityCluster, _pioneerRewardReady && !_utilityExpanded);
         }
 
         private void OpenDrawer(DrawerKind kind)
         {
             RemakeAudioService.Instance?.PlayClick();
             _activeDrawer = kind;
+            bool useWide = kind == DrawerKind.Diary || kind == DrawerKind.Stages;
+            _modalSheet?.EnableInClassList("drawer-sheet-wide", useWide);
             if (_modalBackdrop != null) _modalBackdrop.style.display = DisplayStyle.Flex;
             RefreshActiveDrawerIfOpen();
         }
@@ -542,6 +621,7 @@ namespace KhiVanChiTu.Remake
         {
             RemakeAudioService.Instance?.PlayClick();
             _activeDrawer = DrawerKind.None;
+            _modalSheet?.EnableInClassList("drawer-sheet-wide", false);
             if (_modalBackdrop != null) _modalBackdrop.style.display = DisplayStyle.None;
         }
 
@@ -667,6 +747,7 @@ namespace KhiVanChiTu.Remake
 
             // Main Quest 1-Line Tracker & Collapsible Left HUD (NO modal rebuild on combat kills!)
             RefreshQuestTracker();
+            RefreshPioneerRewardBadges(engine);
             ApplyLeftHudVisibility();
             RefreshFpsHud();
             HandleBossStatus(engine.HasActiveBoss ? engine.ActiveBossName : null, engine.ActiveBossHp, engine.ActiveBossMaxHp);
@@ -676,14 +757,18 @@ namespace KhiVanChiTu.Remake
         {
             if (_questTitleLabel == null || _btnQuestTracker == null) return;
             var save = SaveService.Current;
-            if (save.mainQuestIndex >= RemakeCatalogs.MainQuests.Count)
+            if (save.mainQuestIndex < 0 || save.mainQuestIndex >= RemakeCatalogs.MainQuests.Count)
             {
+                _mainQuestRewardReady = false;
+                SetBadgeVisible(_badgeMainQuest, false);
                 _questTitleLabel.text = "Hoàn thành Chính Tuyến Mốc 1! Tiếp tục treo máy Vực 1";
                 SetTrackerNeutralBorder();
                 return;
             }
             var q = RemakeCatalogs.MainQuests[save.mainQuestIndex];
             bool done = save.mainQuestProgress >= q.targetCount;
+            _mainQuestRewardReady = done;
+            SetBadgeVisible(_badgeMainQuest, done);
             _questTitleLabel.text = done
                 ? $"[Nhận thưởng] {q.title}"
                 : $"{q.title} ({save.mainQuestProgress}/{q.targetCount})";
@@ -714,7 +799,8 @@ namespace KhiVanChiTu.Remake
             if (_fpsPill != null) _fpsPill.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
             if (_hudFpsLabel != null)
             {
-                _hudFpsLabel.text = fpsSvc.DisplayText;
+                bool isDesktop = uiDocument != null && uiDocument.rootVisualElement != null && uiDocument.rootVisualElement.ClassListContains("desktop-wide");
+                _hudFpsLabel.text = isDesktop ? fpsSvc.DisplayText : $"{Mathf.RoundToInt(fpsSvc.CurrentFps)} FPS";
                 _hudFpsLabel.EnableInClassList("fps-good", fpsSvc.StatusTier == 0);
                 _hudFpsLabel.EnableInClassList("fps-warn", fpsSvc.StatusTier == 1);
                 _hudFpsLabel.EnableInClassList("fps-low", fpsSvc.StatusTier == 2);
@@ -828,6 +914,24 @@ namespace KhiVanChiTu.Remake
                     {
                         _tribulationPanel.style.scale = new Scale(Vector3.one);
                     }
+                }
+            }
+
+            // 5-Second Player Death Respawn Countdown Banner (halts monster spawns & attacks)
+            if (_respawnPanel != null)
+            {
+                bool respawning = engine.IsRespawning;
+                _respawnPanel.style.display = respawning ? DisplayStyle.Flex : DisplayStyle.None;
+                if (respawning)
+                {
+                    if (_respawnTimerLabel != null)
+                        _respawnTimerLabel.text = $"{engine.RespawnTimeRemaining:0.0}s";
+                    if (_respawnReasonLabel != null)
+                        _respawnReasonLabel.text = string.IsNullOrEmpty(engine.RespawnReasonText)
+                            ? "Yêu thú đã tạm rút · Tái chiến sau khi hồi sinh"
+                            : engine.RespawnReasonText;
+                    if (_respawnProgressFill != null)
+                        _respawnProgressFill.style.width = Length.Percent(engine.RespawnProgress01 * 100f);
                 }
             }
 

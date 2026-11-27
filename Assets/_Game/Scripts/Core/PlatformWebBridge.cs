@@ -11,6 +11,7 @@ namespace KhiVanChiTu.Remake
         public event Action<string> OnLifecycleSignal;
 
         private Action<string> _pendingTextCallback;
+        private bool _webSuspended;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
@@ -80,27 +81,41 @@ namespace KhiVanChiTu.Remake
             cb?.Invoke(submittedValue ?? "");
         }
 
-        // Called from JS visibilitychange / pagehide / beforeunload
+        // Called from WebGL visibility and graphics lifecycle hooks.
         public void OnWebLifecycleSignal(string reason)
         {
-            if (reason == "hidden" || reason == "pagehide" || reason == "beforeunload")
+            if (reason == "hidden" || reason == "pagehide")
             {
-                BackgroundCatchupService.MarkActiveTimestamp();
-                SaveService.Save();
+                if (_webSuspended) return;
+                _webSuspended = true;
+                SaveActiveCheckpoint();
             }
             else if (reason == "visible")
             {
+                _webSuspended = false;
                 BackgroundCatchupService.TryCatchupFromElapsed();
+            }
+            else if (reason == "graphics-lost")
+            {
+                SaveActiveCheckpoint();
             }
             OnLifecycleSignal?.Invoke(reason);
         }
+
+        private static void SaveActiveCheckpoint()
+        {
+            BackgroundCatchupService.MarkActiveTimestamp();
+            SaveService.Save();
+        }
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+        private void OnApplicationQuit() => SaveActiveCheckpoint();
 
         private void OnApplicationPause(bool pauseStatus)
         {
             if (pauseStatus)
             {
-                BackgroundCatchupService.MarkActiveTimestamp();
-                SaveService.Save();
+                SaveActiveCheckpoint();
             }
             else
             {
@@ -112,13 +127,13 @@ namespace KhiVanChiTu.Remake
         {
             if (!hasFocus)
             {
-                BackgroundCatchupService.MarkActiveTimestamp();
-                SaveService.Save();
+                SaveActiveCheckpoint();
             }
             else
             {
                 BackgroundCatchupService.TryCatchupFromElapsed();
             }
         }
+#endif
     }
 }

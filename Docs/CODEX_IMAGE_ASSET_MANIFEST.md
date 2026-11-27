@@ -138,6 +138,7 @@ Các ảnh dưới đây đã kiểm tra trực tiếp: **nền trong suốt s�
 | G4 | `HUD/nav_skills.png` *(✅ Đã render)* | 256×256 | Trong suốt | Hình **Kỹ Năng Chiến Đấu**: quyển bí kíp phát ánh sáng kiếm khí lam vàng. *(Ưu tiên Mốc 1)* |
 | G5 | `HUD/nav_map_stage.png` *(✅ Đã render)* | 256×256 | Trong suốt | Hình **Bản Đồ Ải & Sổ Tay Rơi Đồ**: la bàn tiên giới đồng vàng – ngọc xanh. *(Ưu tiên Mốc 1)* |
 | G6 | `HUD/nav_breakthrough.png` *(✅ Đã render)* | 256×256 | Trong suốt | Hình **Đột Phá Cảnh Giới**: tia lôi quang vàng lam đánh xuống đài sen sáng rực. *(Ưu tiên Mốc 1)* |
+| G7 | `HUD/nav_combat_camera.png` | Tối đa 256×256 sau import | Trong suốt | Camera vàng ngọc dùng để đổi giữa góc nhìn toàn cảnh và góc nhìn sau lưng. |
 
 ---
 

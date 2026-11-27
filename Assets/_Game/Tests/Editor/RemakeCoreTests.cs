@@ -72,7 +72,7 @@ namespace KhiVanChiTu.Remake.Tests
             var prev = ActStageDatabaseSO.BuildFallbackSpec(RemakeDifficulty.PhamGioi, 0, 1);
             var boss = ActStageDatabaseSO.BuildFallbackSpec(RemakeDifficulty.PhamGioi, 0, 10);
             Assert.IsTrue(boss.isBossStage);
-            Assert.Greater(boss.enemyHp, prev.enemyHp * 10);
+            Assert.Greater(boss.enemyHp, prev.enemyHp * 15);
             Assert.Greater(boss.tuViPerKill, prev.tuViPerKill * 10);
             Assert.That(ActStageDatabaseSO.BuildFallbackSpec(RemakeDifficulty.TienKiep, 2, 10).LinearIndex, Is.EqualTo(119));
         }

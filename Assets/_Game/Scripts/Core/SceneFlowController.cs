@@ -63,7 +63,11 @@ namespace KhiVanChiTu.Remake
 
         public void EnterWorldAct1()
         {
-            if (!IsTransitioning) StartCoroutine(TransitionToGameplayRoutine(GetWorldSceneForAct(SaveService.Current.activeAct)));
+            if (IsTransitioning) return;
+            var save = SaveService.Current;
+            if (SaveService.IsActiveSaveFromNewerVersion) return;
+            GameplayEngine.Instance?.ReloadFromActiveProfile();
+            StartCoroutine(TransitionToGameplayRoutine(GetWorldSceneForAct(save.activeAct)));
         }
 
         public void SwitchWorldAct(int actIndex)
@@ -125,7 +129,6 @@ namespace KhiVanChiTu.Remake
             {
                 yield return SceneManager.UnloadSceneAsync(MainMenuScene);
                 yield return Resources.UnloadUnusedAssets();
-                GC.Collect();
             }
 
             OnLoadingOverlayChanged?.Invoke(true, 0.35f, "Đang mở Đồng Cỏ Thanh Vân...");
@@ -149,6 +152,7 @@ namespace KhiVanChiTu.Remake
             BackgroundCatchupService.MarkActiveTimestamp();
             RemakeAudioService.Instance?.PlayGameMusic();
             GraphicsSettingsService.Instance?.ApplyFromSave();
+            GameplayEngine.Instance?.NotifyArenaReady();
 
             OnLoadingOverlayChanged?.Invoke(false, 1f, string.Empty);
             IsTransitioning = false;
@@ -165,7 +169,6 @@ namespace KhiVanChiTu.Remake
             {
                 yield return SceneManager.UnloadSceneAsync(ActiveWorldSceneName);
                 yield return Resources.UnloadUnusedAssets();
-                GC.Collect();
             }
 
             OnLoadingOverlayChanged?.Invoke(true, 0.45f, $"Đang dựng {title}...");
@@ -176,6 +179,7 @@ namespace KhiVanChiTu.Remake
 
             IsInGame = true;
             GraphicsSettingsService.Instance?.ApplyFromSave();
+            GameplayEngine.Instance?.NotifyArenaReady();
             OnLoadingOverlayChanged?.Invoke(false, 1f, string.Empty);
             IsTransitioning = false;
         }
@@ -194,7 +198,6 @@ namespace KhiVanChiTu.Remake
             ActiveWorldSceneName = null;
 
             yield return Resources.UnloadUnusedAssets();
-            GC.Collect();
 
             yield return LoadSceneAdditiveAsync(MainMenuScene, p =>
                 OnLoadingOverlayChanged?.Invoke(true, 0.55f + p * 0.45f, "Đang trở về Sơn Môn..."));

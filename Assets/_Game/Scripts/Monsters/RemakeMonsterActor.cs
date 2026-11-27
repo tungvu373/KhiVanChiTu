@@ -61,9 +61,10 @@ namespace KhiVanChiTu.Remake
             if (_isDying)
             {
                 _deathTimer -= dt;
-                float u = 1f - Mathf.Clamp01(_deathTimer / 0.28f);
-                transform.localScale = Vector3.Lerp(_baseScale, _baseScale * 0.22f, u * u);
-                transform.position = _deathStartPos - Vector3.up * (0.45f * u);
+                float progress = 1f - Mathf.Clamp01(_deathTimer / 0.58f);
+                float fadeU = Mathf.Clamp01((progress - 0.60f) / 0.40f);
+                transform.localScale = Vector3.Lerp(_baseScale, _baseScale * 0.24f, fadeU * fadeU);
+                transform.position = _deathStartPos - Vector3.up * (0.35f * fadeU);
                 if (_deathTimer <= 0f)
                 {
                     _isDying = false;
@@ -109,6 +110,12 @@ namespace KhiVanChiTu.Remake
             }
 
             if (_playerTarget == null) return;
+            var engine = GameplayEngine.Instance;
+            if (engine != null && (engine.IsRespawning || engine.IsInTribulation))
+            {
+                SetMovingParam(false);
+                return;
+            }
 
             Vector3 targetGround = new Vector3(_playerTarget.position.x, _definitionHover, _playerTarget.position.z);
             Vector3 currentPos = transform.position;
@@ -119,22 +126,22 @@ namespace KhiVanChiTu.Remake
             if (flatOffset.sqrMagnitude > 0.001f)
             {
                 Quaternion look = Quaternion.LookRotation(flatOffset.normalized);
-                transform.rotation = Quaternion.Slerp(transform.rotation, look, 8f * dt);
+                transform.rotation = Quaternion.Slerp(transform.rotation, look, 6.5f * dt);
             }
 
             if (_lungeTimer > 0f)
             {
                 _lungeTimer -= dt;
-                float lu = Mathf.Sin((_lungeTimer / 0.18f) * Mathf.PI) * 0.25f;
+                float lu = Mathf.Sin((_lungeTimer / 0.22f) * Mathf.PI) * 0.22f;
                 Vector3 fwd = flatOffset.sqrMagnitude > 0.001f ? flatOffset.normalized : transform.forward;
-                transform.position = new Vector3(currentPos.x, _definitionHover, currentPos.z) + fwd * (lu * dt * 8f);
+                transform.position = new Vector3(currentPos.x, _definitionHover, currentPos.z) + fwd * (lu * dt * 6.5f);
             }
 
             if (dist > range)
             {
-                float speed = Definition != null ? Definition.moveSpeed : 2.2f;
+                float speed = (Definition != null ? Definition.moveSpeed : 2.2f) * 0.62f;
                 Vector3 next = Vector3.MoveTowards(currentPos, targetGround, speed * dt);
-                next.y = _definitionHover + (Definition != null && Definition.hoverHeight > 0.05f ? Mathf.Sin(Time.time * 3.5f) * 0.18f : 0f);
+                next.y = _definitionHover + (Definition != null && Definition.hoverHeight > 0.05f ? Mathf.Sin(Time.time * 2.4f) * 0.16f : 0f);
                 transform.position = next;
                 SetMovingParam(true);
             }
@@ -144,10 +151,11 @@ namespace KhiVanChiTu.Remake
                 _attackTimer -= dt;
                 if (_attackTimer <= 0f)
                 {
-                    _attackTimer = Definition != null ? Definition.attackInterval : 1.35f;
-                    _lungeTimer = 0.18f;
+                    float baseInterval = Definition != null ? Definition.attackInterval : 1.35f;
+                    _attackTimer = baseInterval * 1.60f;
+                    _lungeTimer = 0.22f;
                     if (_hasAttackParam && _animator != null) _animator.SetTrigger(_hashAttack);
-                    GameplayEngine.Instance?.OnPlayerDamaged(_attackDamage);
+                    engine?.OnPlayerDamaged(_attackDamage);
                 }
             }
         }
@@ -182,7 +190,7 @@ namespace KhiVanChiTu.Remake
             _flashTimer = 0f;
             _scalePunchTimer = 0f;
             _lungeTimer = 0f;
-            _attackTimer = 0.7f;
+            _attackTimer = 1.25f;
             _displayedHpRatio = 1f;
             _trailHpRatio = 1f;
             ApplyHitFlashTint(false);
@@ -199,6 +207,13 @@ namespace KhiVanChiTu.Remake
             UpdateWorldHpBar();
 
             gameObject.SetActive(true);
+            if (_animator != null && _animator.runtimeAnimatorController != null)
+            {
+                if (_hasAttackParam) _animator.ResetTrigger(_hashAttack);
+                if (_hasDieParam) _animator.ResetTrigger(_hashDie);
+                _animator.Rebind();
+                _animator.Update(0f);
+            }
             SetMovingParam(true);
         }
 
@@ -252,7 +267,7 @@ namespace KhiVanChiTu.Remake
         {
             IsAlive = false;
             _isDying = true;
-            _deathTimer = 0.28f;
+            _deathTimer = 0.58f;
             _deathStartPos = transform.position;
             if (_hpBarRoot != null) _hpBarRoot.gameObject.SetActive(false);
             if (_bossAuraRing != null) _bossAuraRing.SetActive(false);
@@ -318,14 +333,26 @@ namespace KhiVanChiTu.Remake
             Shader unlit = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Sprites/Default");
 
             // Lightweight fake shadow disc (visible when 3D shadows = Off for iPhone Safari performance)
-            _shadowDisc = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            _shadowDisc = RemakeRenderPrimitive.Create(PrimitiveType.Cylinder);
             _shadowDisc.name = "BlobShadow";
-            Destroy(_shadowDisc.GetComponent<Collider>());
             _shadowDisc.transform.SetParent(transform, false);
             _shadowDisc.transform.localPosition = new Vector3(0f, -_definitionHover + 0.02f, 0f);
             _shadowDisc.transform.localScale = new Vector3(1.1f, 0.01f, 1.1f);
-            var shadowMat = new Material(unlit) { color = new Color(0.08f, 0.16f, 0.08f, 0.45f) };
-            _shadowDisc.GetComponent<Renderer>().sharedMaterial = shadowMat;
+            var shadowMat = new Material(unlit) { color = new Color(0.06f, 0.14f, 0.08f, 0.28f) };
+            if (shadowMat.HasProperty("_BaseColor")) shadowMat.SetColor("_BaseColor", new Color(0.06f, 0.14f, 0.08f, 0.28f));
+            if (shadowMat.HasProperty("_Surface"))
+            {
+                shadowMat.SetFloat("_Surface", 1f);
+                shadowMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                shadowMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                shadowMat.SetInt("_ZWrite", 0);
+                shadowMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                shadowMat.renderQueue = 2550;
+            }
+            var shadowMr = _shadowDisc.GetComponent<Renderer>();
+            shadowMr.sharedMaterial = shadowMat;
+            shadowMr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            shadowMr.receiveShadows = false;
 
             // Crimson-sunlit Boss aura ring (matches user reference visual focal point)
             _bossAuraRing = new GameObject("BossAuraRing");
@@ -353,9 +380,8 @@ namespace KhiVanChiTu.Remake
             barGo.transform.SetParent(transform, false);
             _hpBarRoot = barGo.transform;
 
-            var bgQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            var bgQuad = RemakeRenderPrimitive.Create(PrimitiveType.Quad);
             bgQuad.name = "HpBg";
-            Destroy(bgQuad.GetComponent<Collider>());
             bgQuad.transform.SetParent(_hpBarRoot, false);
             bgQuad.transform.localScale = new Vector3(1.24f, 0.12f, 1f);
             var bgMr = bgQuad.GetComponent<MeshRenderer>();
@@ -367,9 +393,8 @@ namespace KhiVanChiTu.Remake
             trailHolder.transform.SetParent(_hpBarRoot, false);
             trailHolder.transform.localScale = new Vector3(1.18f, 0.075f, 1f);
             trailHolder.transform.localPosition = new Vector3(0f, 0f, -0.005f);
-            var trailQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            var trailQuad = RemakeRenderPrimitive.Create(PrimitiveType.Quad);
             trailQuad.name = "HpTrail";
-            Destroy(trailQuad.GetComponent<Collider>());
             trailQuad.transform.SetParent(trailHolder.transform, false);
             var trMr = trailQuad.GetComponent<MeshRenderer>();
             trMr.sharedMaterial = new Material(unlit) { color = new Color(1f, 0.94f, 0.80f, 0.95f) };
@@ -382,9 +407,8 @@ namespace KhiVanChiTu.Remake
             fillHolder.transform.localScale = new Vector3(1.18f, 0.075f, 1f);
             fillHolder.transform.localPosition = new Vector3(0f, 0f, -0.01f);
 
-            var fillQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            var fillQuad = RemakeRenderPrimitive.Create(PrimitiveType.Quad);
             fillQuad.name = "HpFill";
-            Destroy(fillQuad.GetComponent<Collider>());
             fillQuad.transform.SetParent(fillHolder.transform, false);
             var flMr = fillQuad.GetComponent<MeshRenderer>();
             flMr.sharedMaterial = new Material(unlit) { color = new Color(0.90f, 0.25f, 0.20f, 1f) };

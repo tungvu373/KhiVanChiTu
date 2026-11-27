@@ -9,13 +9,15 @@ using UnityEngine.Rendering;
 namespace KhiVanChiTu.Remake.Editor
 {
     /// <summary>
-    /// Non-destructively decimates ultra-high-poly Meshy meshes, downscales 2K/4K unit textures to 512/256px,
-    /// and isolates Avatar/Clips into Assets/_Game/Prefabs/Optimized so WebGL data.gz drops ~80%
+    /// Builds Sunlit Xianxia (Tiên Hiệp Thanh Vân Sáng) 3D character & monster prefabs,
+    /// binds baked UV-clean diffuse textures + subtle sunlit emission, builds clean 4-state
+    /// AnimatorControllers, and isolates Meshes/Avatars/Clips into Assets/_Game/Prefabs/Optimized
     /// while leaving Assets/Import and Assets/Prefabs completely untouched for PCContent.
     /// </summary>
     public static class WebGlPrefabOptimizerTool
     {
         private const string OptRoot = "Assets/_Game/Prefabs/Optimized";
+        private const string ModelDir = OptRoot + "/Models";
         private const string MeshDir = OptRoot + "/Meshes";
         private const string TexDir = OptRoot + "/Textures";
         private const string MatDir = OptRoot + "/Materials";
@@ -27,31 +29,755 @@ namespace KhiVanChiTu.Remake.Editor
         {
             EnsureFolders();
 
-            string[] targets =
-            {
-                "Assets/_Game/Prefabs/Player/RemakePlayer.prefab",
-                "Assets/_Game/Prefabs/Monsters/Monster_Act1_Wolf.prefab",
-                "Assets/_Game/Prefabs/Monsters/Monster_Act1_Bird.prefab",
-                "Assets/_Game/Prefabs/Monsters/Monster_Act1_Turtle.prefab",
+            // Optimize Mixamo rigged units WITHOUT voxel-decimating their UVs/weights, and bind Sunlit Xianxia textures!
+            OptimizeMixamoBossPrefab(
                 "Assets/_Game/Prefabs/Bosses/Boss_Act1_Guardian.prefab",
-                "Assets/_Game/Prefabs/Monsters/Monster_Act2_Bear.prefab",
-                "Assets/_Game/Prefabs/Monsters/Monster_Act3_ThunderSpirit.prefab"
-            };
+                "Boss_Act1_Guardian",
+                "Tex_Boss1_Body.png",
+                "Tex_Boss1_Armor.png",
+                new Color(0.09f, 0.15f, 0.10f));
 
-            foreach (string prefabPath in targets)
-            {
-                if (!File.Exists(Path.GetFullPath(prefabPath))) continue;
-                bool isPlayer = prefabPath.Contains("RemakePlayer");
-                OptimizeSinglePrefab(prefabPath, isPlayer ? 6500 : 4200, isPlayer ? 512 : 256);
-            }
+            OptimizeMixamoSingleTexPrefab(
+                "Assets/_Game/Prefabs/Monsters/Monster_Act2_Bear.prefab",
+                "Monster_Act2_Bear",
+                "Tex_Act2_Bear.png",
+                new Color(0.13f, 0.10f, 0.06f));
+
+            OptimizeMixamoSingleTexPrefab(
+                "Assets/_Game/Prefabs/Monsters/Monster_Act3_ThunderSpirit.prefab",
+                "Monster_Act3_ThunderSpirit",
+                "Tex_Act3_ThunderSpirit.png",
+                new Color(0.11f, 0.15f, 0.18f));
+
             OptimizeHolotnaEnvironmentPrefabs();
             AssetDatabase.SaveAssets();
+        }
+
+        public static GameObject BuildXianxiaPlayerPrefab(string destPrefabPath)
+        {
+            EnsureFolders();
+            string fbxPath = $"{ModelDir}/RemakePlayer_Xianxia.fbx";
+            ConfigureXianxiaModelImporter(fbxPath);
+
+            GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath);
+            if (modelAsset == null)
+                throw new InvalidOperationException($"Missing animated player FBX: {fbxPath}");
+
+            Texture2D tex = ConfigureAndLoadXianxiaTexture("Tex_Player_ThanhVan.png", 1024);
+            Material mat = CreateOrUpdateXianxiaMaterial(
+                $"{MatDir}/Mat_Player_ThanhVan.mat",
+                tex,
+                Color.white,
+                new Color(0.16f, 0.19f, 0.21f),
+                0.18f);
+
+            AnimationClip idleClip = ExtractAndConfigureClip(fbxPath, "Idle", "Player_Idle", true);
+            AnimationClip castClip = ExtractAndConfigureClip(fbxPath, "CastSkill", "Player_CastSkill", false);
+            AnimationClip tribClip = ExtractAndConfigureClip(fbxPath, "Tribulation", "Player_Tribulation", true);
+            AnimationClip respawnClip = ExtractAndConfigureClip(fbxPath, "Respawn", "Player_Respawn", false);
+            AnimatorController ctrl = BuildPlayerAnimatorController($"{AnimDir}/RemakePlayer_Xianxia_Ctrl.controller", idleClip, castClip, tribClip, respawnClip);
+
+            GameObject inst = (GameObject)PrefabUtility.InstantiatePrefab(modelAsset);
+            try
+            {
+                PrefabUtility.UnpackPrefabInstance(inst, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                inst.name = "RemakePlayer";
+                inst.transform.position = Vector3.zero;
+                inst.transform.rotation = Quaternion.identity;
+                inst.transform.localScale = Vector3.one;
+
+                CloneAndBindSkinnedMeshesAndMaterials(inst, "RemakePlayer_Xianxia", new[] { mat });
+
+                var anim = inst.GetComponentInChildren<Animator>(true) ?? inst.AddComponent<Animator>();
+                anim.avatar = CloneAvatarFromFbx(fbxPath, "RemakePlayer_Xianxia");
+                anim.runtimeAnimatorController = ctrl;
+                anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                anim.applyRootMotion = false;
+
+                var saved = PrefabUtility.SaveAsPrefabAsset(inst, destPrefabPath);
+                AssetDatabase.SaveAssets();
+                return saved;
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(inst);
+            }
+        }
+
+        public static void BuildXianxia3DSwordAssets(out Mesh[] meshes, out Material[] mats)
+        {
+            EnsureFolders();
+            string swordModelFolder = $"{ModelDir}/Swords";
+            if (!AssetDatabase.IsValidFolder(swordModelFolder))
+                AssetDatabase.CreateFolder(ModelDir, "Swords");
+
+            meshes = new Mesh[10];
+            mats = new Material[10];
+            Shader litShader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Universal Render Pipeline/Simple Lit") ?? Shader.Find("Standard");
+
+            for (int i = 1; i <= 10; i++)
+            {
+                string fbxPath = $"{swordModelFolder}/Sword_{i:D2}_Xianxia.fbx";
+                AssetDatabase.ImportAsset(fbxPath, ImportAssetOptions.ForceSynchronousImport);
+                if (AssetImporter.GetAtPath(fbxPath) is ModelImporter mi)
+                {
+                    bool dirty = false;
+                    if (mi.importAnimation) { mi.importAnimation = false; dirty = true; }
+                    if (mi.animationType != ModelImporterAnimationType.None) { mi.animationType = ModelImporterAnimationType.None; dirty = true; }
+                    if (mi.materialImportMode != ModelImporterMaterialImportMode.None) { mi.materialImportMode = ModelImporterMaterialImportMode.None; dirty = true; }
+                    if (mi.isReadable) { mi.isReadable = false; dirty = true; }
+                    if (dirty) mi.SaveAndReimport();
+                }
+
+                Mesh srcMesh = null;
+                foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(fbxPath))
+                {
+                    if (sub is Mesh m) { srcMesh = m; break; }
+                }
+                if (srcMesh != null)
+                {
+                    Mesh cleanSwordMesh = ForceCreateCleanMeshAsset(srcMesh, $"Sword_{i:D2}_Xianxia_Mesh");
+                    NormalizeSwordMeshToTargetLength(cleanSwordMesh, 1.36f);
+                    meshes[i - 1] = cleanSwordMesh;
+                }
+
+                Texture2D diffTex = ConfigureAndLoadXianxiaTexture($"Tex_Sword_{i:D2}.png", 512);
+                Texture2D emitTex = ConfigureAndLoadXianxiaTexture($"Tex_Sword_{i:D2}_Emit.png", 512);
+
+                string matPath = $"{MatDir}/Mat_Sword_{i:D2}_Xianxia.mat";
+                Material mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+                if (mat == null)
+                {
+                    mat = new Material(litShader);
+                    AssetDatabase.CreateAsset(mat, matPath);
+                }
+                else if (mat.shader != litShader && litShader != null)
+                {
+                    mat.shader = litShader;
+                }
+
+                mat.mainTexture = diffTex;
+                mat.color = Color.white;
+                if (mat.HasProperty("_BaseMap")) mat.SetTexture("_BaseMap", diffTex);
+                if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", Color.white);
+                if (mat.HasProperty("_Metallic")) mat.SetFloat("_Metallic", 0.36f);
+                if (mat.HasProperty("_Smoothness")) mat.SetFloat("_Smoothness", 0.64f);
+                if (mat.HasProperty("_Cull")) mat.SetFloat("_Cull", 0f);
+                if (emitTex != null && mat.HasProperty("_EmissionMap"))
+                {
+                    mat.EnableKeyword("_EMISSION");
+                    mat.SetTexture("_EmissionMap", emitTex);
+                    float glowBoost = Mathf.Lerp(0.95f, 1.45f, (i - 1) / 9f);
+                    mat.SetColor("_EmissionColor", Color.white * glowBoost);
+                }
+                mat.enableInstancing = true;
+                EditorUtility.SetDirty(mat);
+                mats[i - 1] = mat;
+            }
+            AssetDatabase.SaveAssets();
+        }
+
+        private static void NormalizeSwordMeshToTargetLength(Mesh mesh, float targetLengthMeters)
+        {
+            if (mesh == null) return;
+            mesh.RecalculateBounds();
+            Vector3 sz = mesh.bounds.size;
+            float maxDim = Mathf.Max(sz.x, Mathf.Max(sz.y, sz.z));
+            if (maxDim < 0.00001f) return;
+
+            // Blender FBX raw Mesh sub-assets import at 0.01x (centimeters) while root Transform holds 100x.
+            // Scale vertices directly so the standalone Mesh asset is 1.36m tip-to-pommel along +Z!
+            float scale = targetLengthMeters / maxDim;
+            bool needAxisSwap = sz.y > sz.z * 1.5f; // Ensure blade length aligns along Unity +Z (Vector3.forward)!
+            if (Mathf.Abs(scale - 1f) < 0.03f && !needAxisSwap) return;
+
+            Vector3[] verts = mesh.vertices;
+            for (int v = 0; v < verts.Length; v++)
+            {
+                Vector3 p = verts[v] * scale;
+                if (needAxisSwap)
+                    p = new Vector3(p.x, p.z, p.y);
+                verts[v] = p;
+            }
+            mesh.vertices = verts;
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            EditorUtility.SetDirty(mesh);
+        }
+
+        public static GameObject BuildXianxiaMonsterPrefab(
+            string fbxPath,
+            string destPrefabPath,
+            string unitKey,
+            string texFileName,
+            Color emissionLift)
+        {
+            EnsureFolders();
+            ConfigureXianxiaModelImporter(fbxPath);
+
+            GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath);
+            if (modelAsset == null)
+                throw new InvalidOperationException($"Missing animated monster FBX: {fbxPath}");
+
+            Texture2D tex = ConfigureAndLoadXianxiaTexture(texFileName, 512);
+            Material mat = CreateOrUpdateXianxiaMaterial(
+                $"{MatDir}/Mat_{unitKey}_Xianxia.mat",
+                tex,
+                Color.white,
+                emissionLift,
+                0.15f);
+
+            AnimationClip idleClip = ExtractAndConfigureClip(fbxPath, "Idle", $"{unitKey}_Idle", true);
+            AnimationClip moveClip = ExtractAndConfigureClip(fbxPath, "Move", $"{unitKey}_Move", true);
+            AnimationClip atkClip = ExtractAndConfigureClip(fbxPath, "Attack", $"{unitKey}_Attack", false);
+            AnimationClip dieClip = ExtractAndConfigureClip(fbxPath, "Die", $"{unitKey}_Die", false);
+            AnimatorController ctrl = BuildMonsterAnimatorController($"{AnimDir}/{unitKey}_Xianxia_Ctrl.controller", idleClip, moveClip, atkClip, dieClip);
+
+            GameObject inst = (GameObject)PrefabUtility.InstantiatePrefab(modelAsset);
+            try
+            {
+                PrefabUtility.UnpackPrefabInstance(inst, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                inst.name = Path.GetFileNameWithoutExtension(destPrefabPath);
+                inst.transform.position = Vector3.zero;
+                inst.transform.rotation = Quaternion.identity;
+                inst.transform.localScale = Vector3.one;
+
+                CloneAndBindSkinnedMeshesAndMaterials(inst, unitKey, new[] { mat });
+
+                var anim = inst.GetComponentInChildren<Animator>(true) ?? inst.AddComponent<Animator>();
+                anim.avatar = CloneAvatarFromFbx(fbxPath, unitKey);
+                anim.runtimeAnimatorController = ctrl;
+                anim.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+                anim.applyRootMotion = false;
+
+                if (inst.GetComponent<RemakeMonsterActor>() == null)
+                    inst.AddComponent<RemakeMonsterActor>();
+
+                var saved = PrefabUtility.SaveAsPrefabAsset(inst, destPrefabPath);
+                AssetDatabase.SaveAssets();
+                return saved;
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(inst);
+            }
+        }
+
+        public static GameObject CreateXianxiaTexturedVariant(
+            string srcOptPrefabPath,
+            string destPrefabPath,
+            string variantKey,
+            string texFileName,
+            Color emissionLift)
+        {
+            EnsureFolders();
+            GameObject src = AssetDatabase.LoadAssetAtPath<GameObject>(srcOptPrefabPath);
+            if (src == null) return null;
+
+            Texture2D tex = ConfigureAndLoadXianxiaTexture(texFileName, 512);
+            Material mat = CreateOrUpdateXianxiaMaterial(
+                $"{MatDir}/Mat_{variantKey}_Xianxia.mat",
+                tex,
+                Color.white,
+                emissionLift,
+                0.15f);
+
+            GameObject inst = (GameObject)PrefabUtility.InstantiatePrefab(src);
+            try
+            {
+                PrefabUtility.UnpackPrefabInstance(inst, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                foreach (var smr in inst.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    var mats = smr.sharedMaterials;
+                    for (int i = 0; i < mats.Length; i++) mats[i] = mat;
+                    smr.sharedMaterials = mats;
+                }
+                foreach (var mr in inst.GetComponentsInChildren<MeshRenderer>(true))
+                {
+                    var mats = mr.sharedMaterials;
+                    for (int i = 0; i < mats.Length; i++) mats[i] = mat;
+                    mr.sharedMaterials = mats;
+                }
+                var srcAnim = src.GetComponentInChildren<Animator>(true);
+                var dstAnim = inst.GetComponentInChildren<Animator>(true);
+                if (srcAnim != null && dstAnim != null)
+                {
+                    dstAnim.runtimeAnimatorController = srcAnim.runtimeAnimatorController;
+                    dstAnim.avatar = srcAnim.avatar;
+                }
+                return PrefabUtility.SaveAsPrefabAsset(inst, destPrefabPath);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(inst);
+            }
+        }
+
+        public static GameObject CreateXianxiaBossVariant(
+            string srcBossPrefabPath,
+            string destPrefabPath,
+            string variantKey,
+            string bodyTexFileName,
+            string armorTexFileName,
+            Color emissionLift)
+        {
+            EnsureFolders();
+            GameObject src = AssetDatabase.LoadAssetAtPath<GameObject>(srcBossPrefabPath);
+            if (src == null) return null;
+
+            Texture2D bodyTex = ConfigureAndLoadXianxiaTexture(bodyTexFileName, 512);
+            Texture2D armorTex = ConfigureAndLoadXianxiaTexture(armorTexFileName, 512);
+            Material bodyMat = CreateOrUpdateXianxiaMaterial($"{MatDir}/Mat_{variantKey}_Body.mat", bodyTex, Color.white, emissionLift, 0.16f);
+            Material armorMat = CreateOrUpdateXianxiaMaterial($"{MatDir}/Mat_{variantKey}_Armor.mat", armorTex, Color.white, emissionLift * 1.15f, 0.28f);
+
+            GameObject inst = (GameObject)PrefabUtility.InstantiatePrefab(src);
+            try
+            {
+                PrefabUtility.UnpackPrefabInstance(inst, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                foreach (var smr in inst.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    var mats = smr.sharedMaterials;
+                    if (mats.Length >= 2)
+                    {
+                        mats[0] = bodyMat;
+                        mats[1] = armorMat;
+                    }
+                    else if (mats.Length == 1)
+                    {
+                        mats[0] = armorMat;
+                    }
+                    smr.sharedMaterials = mats;
+                }
+                var srcAnim = src.GetComponentInChildren<Animator>(true);
+                var dstAnim = inst.GetComponentInChildren<Animator>(true);
+                if (srcAnim != null && dstAnim != null)
+                {
+                    dstAnim.runtimeAnimatorController = srcAnim.runtimeAnimatorController;
+                    dstAnim.avatar = srcAnim.avatar;
+                }
+                return PrefabUtility.SaveAsPrefabAsset(inst, destPrefabPath);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(inst);
+            }
+        }
+
+        private static void OptimizeMixamoSingleTexPrefab(string prefabPath, string unitKey, string texFileName, Color emissionLift)
+        {
+            if (!File.Exists(Path.GetFullPath(prefabPath))) return;
+            Texture2D tex = ConfigureAndLoadXianxiaTexture(texFileName, 512);
+            Material mat = CreateOrUpdateXianxiaMaterial($"{MatDir}/Mat_{unitKey}_Xianxia.mat", tex, Color.white, emissionLift, 0.16f);
+            OptimizeMixamoPrefabInternal(prefabPath, unitKey, new[] { mat });
+        }
+
+        private static void OptimizeMixamoBossPrefab(string prefabPath, string unitKey, string bodyTexFile, string armorTexFile, Color emissionLift)
+        {
+            if (!File.Exists(Path.GetFullPath(prefabPath))) return;
+            Texture2D bodyTex = ConfigureAndLoadXianxiaTexture(bodyTexFile, 512);
+            Texture2D armorTex = ConfigureAndLoadXianxiaTexture(armorTexFile, 512);
+            Material bodyMat = CreateOrUpdateXianxiaMaterial($"{MatDir}/Mat_{unitKey}_Body.mat", bodyTex, Color.white, emissionLift, 0.16f);
+            Material armorMat = CreateOrUpdateXianxiaMaterial($"{MatDir}/Mat_{unitKey}_Armor.mat", armorTex, Color.white, emissionLift * 1.15f, 0.28f);
+            OptimizeMixamoPrefabInternal(prefabPath, unitKey, new[] { bodyMat, armorMat });
+        }
+
+        private static void OptimizeMixamoPrefabInternal(string prefabPath, string unitKey, Material[] targetMats)
+        {
+            var root = PrefabUtility.LoadPrefabContents(prefabPath);
+            try
+            {
+                int meshIndex = 0;
+                foreach (var smr in root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    if (smr.sharedMesh != null)
+                    {
+                        smr.sharedMesh = ForceCreateCleanMeshAsset(smr.sharedMesh, $"{unitKey}_clean_smr{meshIndex}");
+                    }
+                    var mats = smr.sharedMaterials;
+                    for (int m = 0; m < mats.Length; m++)
+                        mats[m] = targetMats[Mathf.Min(m, targetMats.Length - 1)];
+                    smr.sharedMaterials = mats;
+                    meshIndex++;
+                }
+
+                var anim = root.GetComponentInChildren<Animator>(true);
+                if (anim != null)
+                {
+                    if (anim.avatar != null && !AssetDatabase.GetAssetPath(anim.avatar).StartsWith(OptRoot))
+                    {
+                        string avPath = $"{AvatarDir}/{unitKey}_Avatar.asset";
+                        Avatar clonedAv = AssetDatabase.LoadAssetAtPath<Avatar>(avPath);
+                        if (clonedAv == null)
+                        {
+                            clonedAv = UnityEngine.Object.Instantiate(anim.avatar);
+                            clonedAv.name = $"{unitKey}_Avatar";
+                            AssetDatabase.CreateAsset(clonedAv, avPath);
+                        }
+                        anim.avatar = clonedAv;
+                    }
+
+                    if (anim.runtimeAnimatorController is AnimatorController srcCtrl &&
+                        !AssetDatabase.GetAssetPath(srcCtrl).StartsWith(OptRoot))
+                    {
+                        var clonedCtrl = CloneAnimatorControllerLight(srcCtrl, unitKey);
+                        if (clonedCtrl != null)
+                            anim.runtimeAnimatorController = clonedCtrl;
+                    }
+                }
+
+                PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        private static void ConfigureXianxiaModelImporter(string fbxPath)
+        {
+            var imp = AssetImporter.GetAtPath(fbxPath) as ModelImporter;
+            if (imp == null) return;
+            bool dirty = false;
+            if (imp.animationType != ModelImporterAnimationType.Generic)
+            {
+                imp.animationType = ModelImporterAnimationType.Generic;
+                dirty = true;
+            }
+            if (!imp.importAnimation)
+            {
+                imp.importAnimation = true;
+                dirty = true;
+            }
+            if (imp.materialImportMode != ModelImporterMaterialImportMode.None)
+            {
+                imp.materialImportMode = ModelImporterMaterialImportMode.None;
+                dirty = true;
+            }
+            if (dirty)
+                imp.SaveAndReimport();
+        }
+
+        private static Texture2D ConfigureAndLoadXianxiaTexture(string texFileName, int maxSize)
+        {
+            string path = $"{TexDir}/{texFileName}";
+            if (!File.Exists(Path.GetFullPath(path)))
+                throw new InvalidOperationException($"Missing baked Xianxia texture: {path}");
+
+            var imp = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (imp != null)
+            {
+                bool dirty = false;
+                if (imp.textureType != TextureImporterType.Default) { imp.textureType = TextureImporterType.Default; dirty = true; }
+                if (!imp.sRGBTexture) { imp.sRGBTexture = true; dirty = true; }
+                if (imp.maxTextureSize != maxSize) { imp.maxTextureSize = maxSize; dirty = true; }
+                if (!imp.mipmapEnabled) { imp.mipmapEnabled = true; dirty = true; }
+                if (imp.textureCompression != TextureImporterCompression.Compressed) { imp.textureCompression = TextureImporterCompression.Compressed; dirty = true; }
+                if (dirty) imp.SaveAndReimport();
+            }
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        }
+
+        private static Material CreateOrUpdateXianxiaMaterial(string matPath, Texture2D tex, Color baseTint, Color emissionLift, float smoothness)
+        {
+            Shader lit = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+            Material mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+            if (mat == null)
+            {
+                mat = new Material(lit);
+                AssetDatabase.CreateAsset(mat, matPath);
+            }
+            else if (mat.shader != lit)
+            {
+                mat.shader = lit;
+            }
+
+            mat.mainTexture = tex;
+            if (mat.HasProperty("_BaseMap")) mat.SetTexture("_BaseMap", tex);
+            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", baseTint);
+            mat.color = baseTint;
+            if (mat.HasProperty("_Smoothness")) mat.SetFloat("_Smoothness", smoothness);
+            if (mat.HasProperty("_Metallic")) mat.SetFloat("_Metallic", 0.0f);
+
+            mat.EnableKeyword("_EMISSION");
+            if (mat.HasProperty("_EmissionMap")) mat.SetTexture("_EmissionMap", tex);
+            if (mat.HasProperty("_EmissionColor")) mat.SetColor("_EmissionColor", emissionLift);
+            mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+            mat.enableInstancing = true;
+
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
+        private static void CloneAndBindSkinnedMeshesAndMaterials(GameObject inst, string unitKey, Material[] mats)
+        {
+            int idx = 0;
+            foreach (var smr in inst.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                if (smr.sharedMesh != null)
+                {
+                    smr.sharedMesh = ForceCreateCleanMeshAsset(smr.sharedMesh, $"{unitKey}_mesh{idx}");
+                }
+                var arr = new Material[Mathf.Max(1, smr.sharedMaterials.Length)];
+                for (int i = 0; i < arr.Length; i++)
+                    arr[i] = mats[Mathf.Min(i, mats.Length - 1)];
+                smr.sharedMaterials = arr;
+                smr.updateWhenOffscreen = true;
+                idx++;
+            }
+        }
+
+        private static Mesh ForceCreateCleanMeshAsset(Mesh srcMesh, string assetName)
+        {
+            string destPath = $"{MeshDir}/{assetName}.asset";
+            var cloned = UnityEngine.Object.Instantiate(srcMesh);
+            cloned.name = assetName;
+
+            var existing = AssetDatabase.LoadAssetAtPath<Mesh>(destPath);
+            if (existing != null)
+            {
+                EditorUtility.CopySerialized(cloned, existing);
+                UnityEngine.Object.DestroyImmediate(cloned);
+                EditorUtility.SetDirty(existing);
+                return existing;
+            }
+            AssetDatabase.CreateAsset(cloned, destPath);
+            return cloned;
+        }
+
+        private static Avatar CloneAvatarFromFbx(string fbxPath, string unitKey)
+        {
+            Avatar srcAv = null;
+            foreach (var o in AssetDatabase.LoadAllAssetsAtPath(fbxPath))
+            {
+                if (o is Avatar av) { srcAv = av; break; }
+            }
+            if (srcAv == null) return null;
+
+            string destPath = $"{AvatarDir}/{unitKey}_Avatar.asset";
+            var cloned = UnityEngine.Object.Instantiate(srcAv);
+            cloned.name = $"{unitKey}_Avatar";
+
+            var existing = AssetDatabase.LoadAssetAtPath<Avatar>(destPath);
+            if (existing != null)
+            {
+                EditorUtility.CopySerialized(cloned, existing);
+                UnityEngine.Object.DestroyImmediate(cloned);
+                EditorUtility.SetDirty(existing);
+                return existing;
+            }
+            AssetDatabase.CreateAsset(cloned, destPath);
+            return cloned;
+        }
+
+        private static AnimationClip ExtractAndConfigureClip(string fbxPath, string clipSuffix, string outClipName, bool loopTime)
+        {
+            AnimationClip found = null;
+            foreach (var o in AssetDatabase.LoadAllAssetsAtPath(fbxPath))
+            {
+                if (o is AnimationClip c && !c.name.StartsWith("__preview__", StringComparison.Ordinal))
+                {
+                    if (string.Equals(c.name, clipSuffix, StringComparison.OrdinalIgnoreCase) ||
+                        c.name.EndsWith("|" + clipSuffix, StringComparison.OrdinalIgnoreCase))
+                    {
+                        found = c;
+                        break;
+                    }
+                }
+            }
+            if (found == null)
+                throw new InvalidOperationException($"AnimationClip '{clipSuffix}' not found in {fbxPath}");
+
+            var cloned = UnityEngine.Object.Instantiate(found);
+            cloned.name = outClipName;
+            AnimationClipSettings settings = AnimationUtility.GetAnimationClipSettings(cloned);
+            settings.loopTime = loopTime;
+            AnimationUtility.SetAnimationClipSettings(cloned, settings);
+
+            string destPath = $"{AnimDir}/{outClipName}.anim";
+            var existing = AssetDatabase.LoadAssetAtPath<AnimationClip>(destPath);
+            if (existing != null)
+            {
+                EditorUtility.CopySerialized(cloned, existing);
+                UnityEngine.Object.DestroyImmediate(cloned);
+                EditorUtility.SetDirty(existing);
+                return existing;
+            }
+            AssetDatabase.CreateAsset(cloned, destPath);
+            return cloned;
+        }
+
+        private static AnimatorController BuildPlayerAnimatorController(
+            string ctrlPath,
+            AnimationClip idleClip,
+            AnimationClip castClip,
+            AnimationClip tribClip,
+            AnimationClip respawnClip)
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<AnimatorController>(ctrlPath);
+            if (existing != null && existing.layers.Length > 0 && existing.layers[0].stateMachine.states.Length == 4)
+            {
+                foreach (var st in existing.layers[0].stateMachine.states)
+                {
+                    if (st.state.name == "Idle") st.state.motion = idleClip;
+                    else if (st.state.name == "CastSkill") st.state.motion = castClip;
+                    else if (st.state.name == "Tribulation") st.state.motion = tribClip;
+                    else if (st.state.name == "Respawn") st.state.motion = respawnClip;
+                }
+                EditorUtility.SetDirty(existing);
+                return existing;
+            }
+            if (File.Exists(Path.GetFullPath(ctrlPath)))
+                AssetDatabase.DeleteAsset(ctrlPath);
+
+            var ctrl = AnimatorController.CreateAnimatorControllerAtPath(ctrlPath);
+            ctrl.AddParameter("CastSkill", AnimatorControllerParameterType.Trigger);
+            ctrl.AddParameter("InTribulation", AnimatorControllerParameterType.Bool);
+            ctrl.AddParameter("IsRespawning", AnimatorControllerParameterType.Bool);
+
+            var sm = ctrl.layers[0].stateMachine;
+            var stIdle = sm.AddState("Idle", new Vector3(260, 120, 0));
+            stIdle.motion = idleClip;
+            sm.defaultState = stIdle;
+
+            var stCast = sm.AddState("CastSkill", new Vector3(520, 20, 0));
+            stCast.motion = castClip;
+
+            var stTrib = sm.AddState("Tribulation", new Vector3(520, 140, 0));
+            stTrib.motion = tribClip;
+
+            var stRespawn = sm.AddState("Respawn", new Vector3(520, 250, 0));
+            stRespawn.motion = respawnClip;
+
+            var tAnyCast = sm.AddAnyStateTransition(stCast);
+            tAnyCast.hasExitTime = false;
+            tAnyCast.duration = 0.12f;
+            tAnyCast.canTransitionToSelf = false;
+            tAnyCast.AddCondition(AnimatorConditionMode.If, 0, "CastSkill");
+            tAnyCast.AddCondition(AnimatorConditionMode.IfNot, 0, "InTribulation");
+            tAnyCast.AddCondition(AnimatorConditionMode.IfNot, 0, "IsRespawning");
+
+            var tCastBack = stCast.AddTransition(stIdle);
+            tCastBack.hasExitTime = true;
+            tCastBack.exitTime = 0.90f;
+            tCastBack.duration = 0.16f;
+
+            var tToTrib = stIdle.AddTransition(stTrib);
+            tToTrib.hasExitTime = false;
+            tToTrib.duration = 0.22f;
+            tToTrib.AddCondition(AnimatorConditionMode.If, 0, "InTribulation");
+
+            var tCastToTrib = stCast.AddTransition(stTrib);
+            tCastToTrib.hasExitTime = false;
+            tCastToTrib.duration = 0.18f;
+            tCastToTrib.AddCondition(AnimatorConditionMode.If, 0, "InTribulation");
+
+            var tFromTrib = stTrib.AddTransition(stIdle);
+            tFromTrib.hasExitTime = false;
+            tFromTrib.duration = 0.24f;
+            tFromTrib.AddCondition(AnimatorConditionMode.IfNot, 0, "InTribulation");
+
+            var tToResp = stIdle.AddTransition(stRespawn);
+            tToResp.hasExitTime = false;
+            tToResp.duration = 0.18f;
+            tToResp.AddCondition(AnimatorConditionMode.If, 0, "IsRespawning");
+
+            var tCastToResp = stCast.AddTransition(stRespawn);
+            tCastToResp.hasExitTime = false;
+            tCastToResp.duration = 0.15f;
+            tCastToResp.AddCondition(AnimatorConditionMode.If, 0, "IsRespawning");
+
+            var tFromResp = stRespawn.AddTransition(stIdle);
+            tFromResp.hasExitTime = false;
+            tFromResp.duration = 0.24f;
+            tFromResp.AddCondition(AnimatorConditionMode.IfNot, 0, "IsRespawning");
+
+            EditorUtility.SetDirty(ctrl);
+            return ctrl;
+        }
+
+        private static AnimatorController BuildMonsterAnimatorController(
+            string ctrlPath,
+            AnimationClip idleClip,
+            AnimationClip moveClip,
+            AnimationClip attackClip,
+            AnimationClip dieClip)
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<AnimatorController>(ctrlPath);
+            if (existing != null && existing.layers.Length > 0 && existing.layers[0].stateMachine.states.Length == 4)
+            {
+                foreach (var st in existing.layers[0].stateMachine.states)
+                {
+                    if (st.state.name == "Idle") st.state.motion = idleClip;
+                    else if (st.state.name == "Move") st.state.motion = moveClip;
+                    else if (st.state.name == "Attack") st.state.motion = attackClip;
+                    else if (st.state.name == "Die") st.state.motion = dieClip;
+                }
+                EditorUtility.SetDirty(existing);
+                return existing;
+            }
+            if (File.Exists(Path.GetFullPath(ctrlPath)))
+                AssetDatabase.DeleteAsset(ctrlPath);
+
+            var ctrl = AnimatorController.CreateAnimatorControllerAtPath(ctrlPath);
+            ctrl.AddParameter("IsMoving", AnimatorControllerParameterType.Bool);
+            ctrl.AddParameter("Attack", AnimatorControllerParameterType.Trigger);
+            ctrl.AddParameter("Die", AnimatorControllerParameterType.Trigger);
+
+            var sm = ctrl.layers[0].stateMachine;
+            var stIdle = sm.AddState("Idle", new Vector3(260, 120, 0));
+            stIdle.motion = idleClip;
+            sm.defaultState = stIdle;
+
+            var stMove = sm.AddState("Move", new Vector3(520, 120, 0));
+            stMove.motion = moveClip;
+
+            var stAtk = sm.AddState("Attack", new Vector3(390, 10, 0));
+            stAtk.motion = attackClip;
+
+            var stDie = sm.AddState("Die", new Vector3(390, 240, 0));
+            stDie.motion = dieClip;
+
+            var tIdleToMove = stIdle.AddTransition(stMove);
+            tIdleToMove.hasExitTime = false;
+            tIdleToMove.duration = 0.12f;
+            tIdleToMove.AddCondition(AnimatorConditionMode.If, 0, "IsMoving");
+
+            var tMoveToIdle = stMove.AddTransition(stIdle);
+            tMoveToIdle.hasExitTime = false;
+            tMoveToIdle.duration = 0.14f;
+            tMoveToIdle.AddCondition(AnimatorConditionMode.IfNot, 0, "IsMoving");
+
+            var tAnyAtk = sm.AddAnyStateTransition(stAtk);
+            tAnyAtk.hasExitTime = false;
+            tAnyAtk.duration = 0.08f;
+            tAnyAtk.canTransitionToSelf = false;
+            tAnyAtk.AddCondition(AnimatorConditionMode.If, 0, "Attack");
+
+            var tAtkToMove = stAtk.AddTransition(stMove);
+            tAtkToMove.hasExitTime = true;
+            tAtkToMove.exitTime = 0.88f;
+            tAtkToMove.duration = 0.12f;
+            tAtkToMove.AddCondition(AnimatorConditionMode.If, 0, "IsMoving");
+
+            var tAtkToIdle = stAtk.AddTransition(stIdle);
+            tAtkToIdle.hasExitTime = true;
+            tAtkToIdle.exitTime = 0.88f;
+            tAtkToIdle.duration = 0.12f;
+            tAtkToIdle.AddCondition(AnimatorConditionMode.IfNot, 0, "IsMoving");
+
+            var tAnyDie = sm.AddAnyStateTransition(stDie);
+            tAnyDie.hasExitTime = false;
+            tAnyDie.duration = 0.08f;
+            tAnyDie.canTransitionToSelf = false;
+            tAnyDie.AddCondition(AnimatorConditionMode.If, 0, "Die");
+
+            EditorUtility.SetDirty(ctrl);
+            return ctrl;
         }
 
         public static void OptimizeHolotnaEnvironmentPrefabs()
         {
             EnsureFolders();
-            // Build strictly shadow-free, collider-free, GPU-instanced 256px-diffuse prefabs from Holotna/Mountain
             BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Tree01A.prefab", "Env_Act1_Tree", new Color(0.95f, 1.04f, 0.92f));
             BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Bush01.prefab", "Env_Act1_Bush", new Color(0.96f, 1.08f, 0.92f));
             BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Rock01.prefab", "Env_Act1_Rock", new Color(0.90f, 0.96f, 0.88f));
@@ -105,7 +831,7 @@ namespace KhiVanChiTu.Remake.Editor
                 {
                     if (mf.sharedMesh == null) continue;
                     string baseMeshKey = SanitizeFileName(mf.sharedMesh.name);
-                    Mesh optMesh = GetOrCreateOptimizedMesh(mf.sharedMesh, $"EnvMesh_{baseMeshKey}", 2400);
+                    Mesh optMesh = GetOrCreateOptimizedEnvMesh(mf.sharedMesh, $"EnvMesh_{baseMeshKey}");
                     if (optMesh != null) mf.sharedMesh = optMesh;
 
                     var mr = mf.GetComponent<MeshRenderer>();
@@ -180,161 +906,19 @@ namespace KhiVanChiTu.Remake.Editor
             }
         }
 
-        public static GameObject CreateTintedPrefabVariant(string srcOptPrefabPath, string destPrefabPath, string matVariantPrefix, Color tint)
+        private static Mesh GetOrCreateOptimizedEnvMesh(Mesh srcMesh, string key)
         {
-            GameObject src = AssetDatabase.LoadAssetAtPath<GameObject>(srcOptPrefabPath);
-            if (src == null) return null;
-            GameObject inst = (GameObject)PrefabUtility.InstantiatePrefab(src);
-            try
-            {
-                PrefabUtility.UnpackPrefabInstance(inst, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
-                int idx = 0;
-                foreach (var smr in inst.GetComponentsInChildren<SkinnedMeshRenderer>(true))
-                {
-                    var mats = smr.sharedMaterials;
-                    for (int m = 0; m < mats.Length; m++)
-                        mats[m] = CreateTintedVariantMaterial(mats[m], $"{MatDir}/{matVariantPrefix}_s{idx}_{m}.mat", tint) ?? mats[m];
-                    smr.sharedMaterials = mats;
-                    idx++;
-                }
-                foreach (var mr in inst.GetComponentsInChildren<MeshRenderer>(true))
-                {
-                    var mats = mr.sharedMaterials;
-                    for (int m = 0; m < mats.Length; m++)
-                        mats[m] = CreateTintedVariantMaterial(mats[m], $"{MatDir}/{matVariantPrefix}_m{idx}_{m}.mat", tint) ?? mats[m];
-                    mr.sharedMaterials = mats;
-                    idx++;
-                }
-                return PrefabUtility.SaveAsPrefabAsset(inst, destPrefabPath);
-            }
-            finally
-            {
-                UnityEngine.Object.DestroyImmediate(inst);
-            }
-        }
+            string srcPath = AssetDatabase.GetAssetPath(srcMesh);
+            if (srcPath.StartsWith(OptRoot)) return srcMesh;
 
-        public static Material CreateTintedVariantMaterial(Material srcMat, string destAssetPath, Color tint)
-        {
-            if (srcMat == null) return null;
-            var existing = AssetDatabase.LoadAssetAtPath<Material>(destAssetPath);
-            if (existing == null)
-            {
-                existing = new Material(srcMat);
-                AssetDatabase.CreateAsset(existing, destAssetPath);
-            }
-            else
-            {
-                existing.shader = srcMat.shader;
-                existing.mainTexture = srcMat.mainTexture;
-            }
-            if (existing.HasProperty("_BaseMap") && srcMat.HasProperty("_BaseMap"))
-                existing.SetTexture("_BaseMap", srcMat.GetTexture("_BaseMap"));
-            if (existing.HasProperty("_BaseColor"))
-                existing.SetColor("_BaseColor", tint);
-            existing.color = tint;
-            existing.enableInstancing = true;
-            EditorUtility.SetDirty(existing);
-            return existing;
-        }
+            string destPath = $"{MeshDir}/{key}.asset";
+            var existing = AssetDatabase.LoadAssetAtPath<Mesh>(destPath);
+            if (existing != null) return existing;
 
-        private static void OptimizeSinglePrefab(string prefabPath, int targetTris, int maxTexSize)
-        {
-            string unitKey = Path.GetFileNameWithoutExtension(prefabPath);
-            var root = PrefabUtility.LoadPrefabContents(prefabPath);
-            bool modified = false;
-
-            try
-            {
-                int meshIndex = 0;
-                foreach (var smr in root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
-                {
-                    if (smr.sharedMesh != null)
-                    {
-                        Mesh optMesh = GetOrCreateOptimizedMesh(smr.sharedMesh, $"{unitKey}_smr{meshIndex}", targetTris);
-                        if (optMesh != null && optMesh != smr.sharedMesh)
-                        {
-                            smr.sharedMesh = optMesh;
-                            modified = true;
-                        }
-                    }
-                    Material[] mats = smr.sharedMaterials;
-                    for (int m = 0; m < mats.Length; m++)
-                    {
-                        Material optMat = GetOrCreateLightweightMaterial(mats[m], $"{unitKey}_mat{meshIndex}_{m}", maxTexSize);
-                        if (optMat != null && optMat != mats[m])
-                        {
-                            mats[m] = optMat;
-                            modified = true;
-                        }
-                    }
-                    smr.sharedMaterials = mats;
-                    meshIndex++;
-                }
-
-                foreach (var mf in root.GetComponentsInChildren<MeshFilter>(true))
-                {
-                    if (mf.sharedMesh == null) continue;
-                    Mesh optMesh = GetOrCreateOptimizedMesh(mf.sharedMesh, $"{unitKey}_mf{meshIndex}", targetTris);
-                    if (optMesh != null && optMesh != mf.sharedMesh)
-                    {
-                        mf.sharedMesh = optMesh;
-                        modified = true;
-                    }
-                    var mr = mf.GetComponent<MeshRenderer>();
-                    if (mr != null)
-                    {
-                        Material[] mats = mr.sharedMaterials;
-                        for (int m = 0; m < mats.Length; m++)
-                        {
-                            Material optMat = GetOrCreateLightweightMaterial(mats[m], $"{unitKey}_mfmat{meshIndex}_{m}", maxTexSize);
-                            if (optMat != null && optMat != mats[m])
-                            {
-                                mats[m] = optMat;
-                                modified = true;
-                            }
-                        }
-                        mr.sharedMaterials = mats;
-                    }
-                    meshIndex++;
-                }
-
-                // Clone Avatar & AnimatorController into _Game so Build scenes do not drag giant source FBXs
-                var anim = root.GetComponentInChildren<Animator>(true);
-                if (anim != null)
-                {
-                    if (anim.avatar != null && !AssetDatabase.GetAssetPath(anim.avatar).StartsWith(OptRoot))
-                    {
-                        string avPath = $"{AvatarDir}/{unitKey}_Avatar.asset";
-                        Avatar clonedAv = AssetDatabase.LoadAssetAtPath<Avatar>(avPath);
-                        if (clonedAv == null)
-                        {
-                            clonedAv = UnityEngine.Object.Instantiate(anim.avatar);
-                            clonedAv.name = $"{unitKey}_Avatar";
-                            AssetDatabase.CreateAsset(clonedAv, avPath);
-                        }
-                        anim.avatar = clonedAv;
-                        modified = true;
-                    }
-
-                    if (anim.runtimeAnimatorController is AnimatorController srcCtrl &&
-                        !AssetDatabase.GetAssetPath(srcCtrl).StartsWith(OptRoot))
-                    {
-                        var clonedCtrl = CloneAnimatorControllerLight(srcCtrl, unitKey);
-                        if (clonedCtrl != null)
-                        {
-                            anim.runtimeAnimatorController = clonedCtrl;
-                            modified = true;
-                        }
-                    }
-                }
-
-                if (modified)
-                    PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
-            }
-            finally
-            {
-                PrefabUtility.UnloadPrefabContents(root);
-            }
+            var cloned = UnityEngine.Object.Instantiate(srcMesh);
+            cloned.name = key;
+            AssetDatabase.CreateAsset(cloned, destPath);
+            return cloned;
         }
 
         private static AnimatorController CloneAnimatorControllerLight(AnimatorController srcCtrl, string unitKey)
@@ -349,12 +933,9 @@ namespace KhiVanChiTu.Remake.Editor
             var cloned = AssetDatabase.LoadAssetAtPath<AnimatorController>(ctrlPath);
             if (cloned == null) return srcCtrl;
 
-            // Duplicate referenced AnimationClips from Import/*.fbx cleanly into AnimDir so FBX isn't packed
             var clipCache = new Dictionary<AnimationClip, AnimationClip>();
             foreach (var layer in cloned.layers)
-            {
                 RemapStateMachineClips(layer.stateMachine, unitKey, clipCache);
-            }
             EditorUtility.SetDirty(cloned);
             return cloned;
         }
@@ -365,9 +946,7 @@ namespace KhiVanChiTu.Remake.Editor
             foreach (var child in sm.states)
             {
                 if (child.state?.motion is AnimationClip clip)
-                {
                     child.state.motion = CloneClipAsset(clip, unitKey, cache);
-                }
             }
             foreach (var sub in sm.stateMachines)
                 RemapStateMachineClips(sub.stateMachine, unitKey, cache);
@@ -398,46 +977,6 @@ namespace KhiVanChiTu.Remake.Editor
             return existing;
         }
 
-        private static Material GetOrCreateLightweightMaterial(Material srcMat, string key, int maxTexSize)
-        {
-            if (srcMat == null) return null;
-            string srcPath = AssetDatabase.GetAssetPath(srcMat);
-            if (srcPath.StartsWith(OptRoot)) return srcMat;
-
-            string matPath = $"{MatDir}/{key}.mat";
-            var existing = AssetDatabase.LoadAssetAtPath<Material>(matPath);
-            if (existing != null) return existing;
-
-            Shader lit = Shader.Find("Universal Render Pipeline/Lit") ?? srcMat.shader;
-            var mat = new Material(lit);
-            Color baseCol = srcMat.HasProperty("_BaseColor") ? srcMat.GetColor("_BaseColor")
-                : srcMat.HasProperty("_Color") ? srcMat.GetColor("_Color") : Color.white;
-            if (key.StartsWith("RemakePlayer", StringComparison.OrdinalIgnoreCase))
-            {
-                baseCol = new Color(Mathf.Min(1f, baseCol.r * 1.25f + 0.14f), Mathf.Min(1f, baseCol.g * 1.25f + 0.14f), Mathf.Min(1f, baseCol.b * 1.25f + 0.14f), 1f);
-                mat.EnableKeyword("_EMISSION");
-                mat.SetColor("_EmissionColor", new Color(0.11f, 0.14f, 0.15f));
-            }
-            mat.SetColor("_BaseColor", baseCol);
-            mat.SetFloat("_Smoothness", 0.14f);
-            mat.SetFloat("_Metallic", 0.0f);
-            mat.enableInstancing = true;
-
-            Texture srcTex = srcMat.HasProperty("_BaseMap") ? srcMat.GetTexture("_BaseMap") : srcMat.mainTexture;
-            if (srcTex is Texture2D tex2d)
-            {
-                Texture2D lightTex = GetOrCreateDownscaledTexture(tex2d, $"{key}_diff", maxTexSize);
-                if (lightTex != null)
-                {
-                    mat.mainTexture = lightTex;
-                    mat.SetTexture("_BaseMap", lightTex);
-                }
-            }
-
-            AssetDatabase.CreateAsset(mat, matPath);
-            return mat;
-        }
-
         private static Texture2D GetOrCreateDownscaledTexture(Texture2D srcTex, string key, int maxSize)
         {
             string srcPath = AssetDatabase.GetAssetPath(srcTex);
@@ -459,7 +998,6 @@ namespace KhiVanChiTu.Remake.Editor
 
                 int tw = Mathf.Min(maxSize, tmp.width);
                 int th = Mathf.Min(maxSize, tmp.height);
-                // Maintain aspect ratio
                 float scale = Mathf.Min(maxSize / (float)Mathf.Max(1, tmp.width), maxSize / (float)Mathf.Max(1, tmp.height));
                 if (scale < 1f)
                 {
@@ -509,163 +1047,6 @@ namespace KhiVanChiTu.Remake.Editor
             return dst;
         }
 
-        private static Mesh GetOrCreateOptimizedMesh(Mesh srcMesh, string key, int targetMaxTris)
-        {
-            string srcPath = AssetDatabase.GetAssetPath(srcMesh);
-            if (srcPath.StartsWith(OptRoot)) return srcMesh;
-
-            string destPath = $"{MeshDir}/{key}.asset";
-            var existing = AssetDatabase.LoadAssetAtPath<Mesh>(destPath);
-            if (existing != null) return existing;
-
-            int srcTris = srcMesh.triangles.Length / 3;
-            ModelImporter modImp = !string.IsNullOrEmpty(srcPath) ? AssetImporter.GetAtPath(srcPath) as ModelImporter : null;
-            bool toggledReadable = false;
-
-            try
-            {
-                if (!srcMesh.isReadable && modImp != null)
-                {
-                    modImp.isReadable = true;
-                    modImp.SaveAndReimport();
-                    toggledReadable = true;
-                }
-
-                Mesh result = srcTris <= targetMaxTris + 2500
-                    ? CloneMeshDirect(srcMesh, key)
-                    : DecimateMeshVoxelCluster(srcMesh, key, targetMaxTris);
-
-                AssetDatabase.CreateAsset(result, destPath);
-                Debug.Log($"[WebGlOptimize] {key}: {srcTris} tris -> {result.triangles.Length / 3} tris");
-                return result;
-            }
-            finally
-            {
-                if (toggledReadable && modImp != null)
-                {
-                    modImp.isReadable = false;
-                    modImp.SaveAndReimport();
-                }
-            }
-        }
-
-        private static Mesh CloneMeshDirect(Mesh src, string key)
-        {
-            var m = UnityEngine.Object.Instantiate(src);
-            m.name = key;
-            return m;
-        }
-
-        private static Mesh DecimateMeshVoxelCluster(Mesh src, string key, int targetMaxTris)
-        {
-            Vector3[] verts = src.vertices;
-            Vector3[] norms = src.normals;
-            Vector2[] uvs = src.uv;
-            BoneWeight[] weights = src.boneWeights;
-            Bounds b = src.bounds;
-            Vector3 size = b.size;
-            float maxDim = Mathf.Max(0.001f, Mathf.Max(size.x, Mathf.Max(size.y, size.z)));
-
-            int gridRes = 42;
-            Mesh bestMesh = null;
-
-            for (int iter = 0; iter < 5; iter++)
-            {
-                float cellSize = maxDim / gridRes;
-                var cellToNewIdx = new Dictionary<long, int>(verts.Length / 4);
-                var oldToNew = new int[verts.Length];
-                var sumPos = new List<Vector3>(verts.Length / 4);
-                var sumNorm = new List<Vector3>(verts.Length / 4);
-                var sumUv = new List<Vector2>(verts.Length / 4);
-                var counts = new List<int>(verts.Length / 4);
-                var outWeights = new List<BoneWeight>(verts.Length / 4);
-
-                bool hasNorm = norms != null && norms.Length == verts.Length;
-                bool hasUv = uvs != null && uvs.Length == verts.Length;
-                bool hasBw = weights != null && weights.Length == verts.Length;
-
-                for (int i = 0; i < verts.Length; i++)
-                {
-                    Vector3 rel = (verts[i] - b.min) / cellSize;
-                    int gx = Mathf.Clamp(Mathf.FloorToInt(rel.x), 0, 2000);
-                    int gy = Mathf.Clamp(Mathf.FloorToInt(rel.y), 0, 2000);
-                    int gz = Mathf.Clamp(Mathf.FloorToInt(rel.z), 0, 2000);
-                    long cellKey = ((long)gx << 40) | ((long)gy << 20) | (long)gz;
-
-                    if (!cellToNewIdx.TryGetValue(cellKey, out int newIdx))
-                    {
-                        newIdx = sumPos.Count;
-                        cellToNewIdx[cellKey] = newIdx;
-                        sumPos.Add(verts[i]);
-                        sumNorm.Add(hasNorm ? norms[i] : Vector3.up);
-                        sumUv.Add(hasUv ? uvs[i] : Vector2.zero);
-                        counts.Add(1);
-                        if (hasBw) outWeights.Add(weights[i]);
-                    }
-                    else
-                    {
-                        sumPos[newIdx] += verts[i];
-                        if (hasNorm) sumNorm[newIdx] += norms[i];
-                        if (hasUv) sumUv[newIdx] += uvs[i];
-                        counts[newIdx]++;
-                    }
-                    oldToNew[i] = newIdx;
-                }
-
-                int vCount = sumPos.Count;
-                for (int i = 0; i < vCount; i++)
-                {
-                    float inv = 1f / counts[i];
-                    sumPos[i] *= inv;
-                    sumNorm[i] = sumNorm[i].sqrMagnitude > 0.0001f ? sumNorm[i].normalized : Vector3.up;
-                    sumUv[i] *= inv;
-                }
-
-                var candidate = new Mesh { name = key };
-                if (vCount > 65000) candidate.indexFormat = IndexFormat.UInt32;
-                candidate.SetVertices(sumPos);
-                if (hasNorm) candidate.SetNormals(sumNorm);
-                if (hasUv) candidate.SetUVs(0, sumUv);
-                if (hasBw && outWeights.Count == vCount)
-                {
-                    candidate.boneWeights = outWeights.ToArray();
-                    candidate.bindposes = src.bindposes;
-                }
-
-                candidate.subMeshCount = src.subMeshCount;
-                int totalTris = 0;
-                for (int sm = 0; sm < src.subMeshCount; sm++)
-                {
-                    int[] srcTris = src.GetTriangles(sm);
-                    var dstTris = new List<int>(srcTris.Length / 2);
-                    for (int t = 0; t + 2 < srcTris.Length; t += 3)
-                    {
-                        int a = oldToNew[srcTris[t]];
-                        int c = oldToNew[srcTris[t + 1]];
-                        int d = oldToNew[srcTris[t + 2]];
-                        if (a != c && c != d && a != d)
-                        {
-                            dstTris.Add(a);
-                            dstTris.Add(c);
-                            dstTris.Add(d);
-                        }
-                    }
-                    totalTris += dstTris.Count / 3;
-                    candidate.SetTriangles(dstTris, sm);
-                }
-
-                candidate.RecalculateBounds();
-                if (bestMesh != null) UnityEngine.Object.DestroyImmediate(bestMesh);
-                bestMesh = candidate;
-
-                if (totalTris <= targetMaxTris * 1.2f && totalTris >= 1800) break;
-                if (totalTris > targetMaxTris) gridRes = Mathf.Max(14, Mathf.RoundToInt(gridRes * 0.72f));
-                else gridRes = Mathf.RoundToInt(gridRes * 1.35f);
-            }
-
-            return bestMesh;
-        }
-
         private static string SanitizeFileName(string name)
         {
             foreach (char c in Path.GetInvalidFileNameChars())
@@ -675,7 +1056,7 @@ namespace KhiVanChiTu.Remake.Editor
 
         private static void EnsureFolders()
         {
-            foreach (string folder in new[] { OptRoot, MeshDir, TexDir, MatDir, AvatarDir, AnimDir, EnvDir })
+            foreach (string folder in new[] { OptRoot, ModelDir, MeshDir, TexDir, MatDir, AvatarDir, AnimDir, EnvDir })
             {
                 string[] parts = folder.Split('/');
                 string cur = parts[0];

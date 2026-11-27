@@ -20,80 +20,88 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 27
-    enemyHp: 42
-    enemyDamage: 4
-    tuViPerKill: 8
-    linhThachPerKill: 6
-    swordDropRate: 0.015
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 1
-    herbDropRate: 0.212
-    herbTier: 1
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
-    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
-    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
-    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
-  - difficulty: 0
-    actIndex: 0
-    stageNumber: 2
-    stageCode: 1-2
-    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-2"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 39
-    enemyHp: 60
-    enemyDamage: 5
-    tuViPerKill: 11
-    linhThachPerKill: 8
-    swordDropRate: 0.0165
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 1
-    herbDropRate: 0.224
-    herbTier: 1
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
-    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
-    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
-    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
-  - difficulty: 0
-    actIndex: 0
-    stageNumber: 3
-    stageCode: 1-3
-    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-3"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 55
-    enemyHp: 85
-    enemyDamage: 6
-    tuViPerKill: 15
-    linhThachPerKill: 10
-    swordDropRate: 0.018
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 1
-    herbDropRate: 0.236
-    herbTier: 1
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
-    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
-    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
-    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
-  - difficulty: 0
-    actIndex: 0
-    stageNumber: 4
-    stageCode: 1-4
-    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-4"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 78
-    enemyHp: 120
+    requiredRealmIndex: 0
+    requiredSubStage: 1
+    recommendedPower: 64
+    enemyHp: 28
     enemyDamage: 8
-    tuViPerKill: 20
-    linhThachPerKill: 13
+    tuViPerKill: 11
+    linhThachPerKill: 9
+    swordDropRate: 0.015
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.212
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 2
+    stageCode: 1-2
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 0
+    requiredSubStage: 1
+    recommendedPower: 64
+    enemyHp: 30
+    enemyDamage: 8
+    tuViPerKill: 12
+    linhThachPerKill: 10
+    swordDropRate: 0.0165
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.224
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 3
+    stageCode: 1-3
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 0
+    requiredSubStage: 1
+    recommendedPower: 64
+    enemyHp: 32
+    enemyDamage: 8
+    tuViPerKill: 13
+    linhThachPerKill: 11
+    swordDropRate: 0.018
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.236
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 4
+    stageCode: 1-4
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 0
+    requiredSubStage: 2
+    recommendedPower: 75
+    enemyHp: 38
+    enemyDamage: 11
+    tuViPerKill: 14
+    linhThachPerKill: 12
     swordDropRate: 0.0195
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -112,38 +120,17 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-5"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 111
-    enemyHp: 171
-    enemyDamage: 10
-    tuViPerKill: 27
-    linhThachPerKill: 17
-    swordDropRate: 0.021
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 1
-    herbDropRate: 0.26
-    herbTier: 1
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
-    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
-    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
-    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
-  - difficulty: 0
-    actIndex: 0
-    stageNumber: 6
-    stageCode: 1-6
-    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-6"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 157
-    enemyHp: 242
+    requiredRealmIndex: 0
+    requiredSubStage: 3
+    recommendedPower: 86
+    enemyHp: 46
     enemyDamage: 13
-    tuViPerKill: 37
-    linhThachPerKill: 22
-    swordDropRate: 0.022499999
+    tuViPerKill: 15
+    linhThachPerKill: 13
+    swordDropRate: 0.021
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
-    herbDropRate: 0.272
+    herbDropRate: 0.26
     herbTier: 1
     maxEquipmentRarity: 0
     enemyPool:
@@ -153,16 +140,43 @@ MonoBehaviour:
     bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
   - difficulty: 0
     actIndex: 0
-    stageNumber: 7
-    stageCode: 1-7
-    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-7"
+    stageNumber: 6
+    stageCode: 1-6
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-6"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 224
-    enemyHp: 344
+    requiredRealmIndex: 0
+    requiredSubStage: 4
+    recommendedPower: 121
+    enemyHp: 68
     enemyDamage: 16
-    tuViPerKill: 51
-    linhThachPerKill: 29
+    tuViPerKill: 16
+    linhThachPerKill: 14
+    swordDropRate: 0.022499999
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 1
+    herbDropRate: 0.272
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 24cdc5a6495bada49b5f7cef53dca610, type: 2}
+    - {fileID: 11400000, guid: b47e107006935be49a6e609dc987a38f, type: 2}
+    - {fileID: 11400000, guid: 92417075c496f844f89a80dcca2bb728, type: 2}
+    bossMonster: {fileID: 11400000, guid: 141ed314cbce21e46bb984fcf2f32b71, type: 2}
+  - difficulty: 0
+    actIndex: 0
+    stageNumber: 7
+    stageCode: 1-7
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 0
+    requiredSubStage: 5
+    recommendedPower: 139
+    enemyHp: 82
+    enemyDamage: 18
+    tuViPerKill: 17
+    linhThachPerKill: 14
     swordDropRate: 0.024
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -181,11 +195,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-8"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 318
-    enemyHp: 489
-    enemyDamage: 20
-    tuViPerKill: 69
-    linhThachPerKill: 38
+    requiredRealmIndex: 0
+    requiredSubStage: 6
+    recommendedPower: 159
+    enemyHp: 99
+    enemyDamage: 21
+    tuViPerKill: 18
+    linhThachPerKill: 15
     swordDropRate: 0.0255
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -204,11 +220,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-9"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 451
-    enemyHp: 694
+    requiredRealmIndex: 0
+    requiredSubStage: 7
+    recommendedPower: 182
+    enemyHp: 118
     enemyDamage: 25
-    tuViPerKill: 94
-    linhThachPerKill: 49
+    tuViPerKill: 19
+    linhThachPerKill: 16
     swordDropRate: 0.026999999
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -227,11 +245,13 @@ MonoBehaviour:
     stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n (1-10)"
     killsToClearWave: 1
     isBossStage: 1
-    recommendedPower: 3525
-    enemyHp: 5423
-    enemyDamage: 59
-    tuViPerKill: 1019
-    linhThachPerKill: 636
+    requiredRealmIndex: 0
+    requiredSubStage: 7
+    recommendedPower: 266
+    enemyHp: 987
+    enemyDamage: 60
+    tuViPerKill: 220
+    linhThachPerKill: 204
     swordDropRate: 0.0285
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -250,471 +270,513 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 910
-    enemyHp: 1400
-    enemyDamage: 40
-    tuViPerKill: 173
+    requiredRealmIndex: 1
+    requiredSubStage: 1
+    recommendedPower: 812
+    enemyHp: 357
+    enemyDamage: 36
+    tuViPerKill: 21
+    linhThachPerKill: 18
+    swordDropRate: 0.015
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.212
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 2
+    stageCode: 2-2
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 1
+    requiredSubStage: 1
+    recommendedPower: 812
+    enemyHp: 377
+    enemyDamage: 37
+    tuViPerKill: 23
+    linhThachPerKill: 20
+    swordDropRate: 0.0165
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.224
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 3
+    stageCode: 2-3
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 1
+    requiredSubStage: 2
+    recommendedPower: 920
+    enemyHp: 450
+    enemyDamage: 43
+    tuViPerKill: 25
+    linhThachPerKill: 21
+    swordDropRate: 0.018
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.236
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 4
+    stageCode: 2-4
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 1
+    requiredSubStage: 3
+    recommendedPower: 1041
+    enemyHp: 535
+    enemyDamage: 50
+    tuViPerKill: 27
+    linhThachPerKill: 23
+    swordDropRate: 0.0195
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.248
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 5
+    stageCode: 2-5
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 1
+    requiredSubStage: 4
+    recommendedPower: 1177
+    enemyHp: 635
+    enemyDamage: 57
+    tuViPerKill: 29
+    linhThachPerKill: 25
+    swordDropRate: 0.021
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.26
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 6
+    stageCode: 2-6
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 1
+    requiredSubStage: 5
+    recommendedPower: 1330
+    enemyHp: 753
+    enemyDamage: 65
+    tuViPerKill: 31
+    linhThachPerKill: 26
+    swordDropRate: 0.022499999
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.272
+    herbTier: 1
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 7
+    stageCode: 2-7
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 1
+    requiredSubStage: 6
+    recommendedPower: 1502
+    enemyHp: 891
+    enemyDamage: 73
+    tuViPerKill: 33
+    linhThachPerKill: 28
+    swordDropRate: 0.024
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.284
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 8
+    stageCode: 2-8
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 1
+    requiredSubStage: 7
+    recommendedPower: 1695
+    enemyHp: 1051
+    enemyDamage: 82
+    tuViPerKill: 35
+    linhThachPerKill: 30
+    swordDropRate: 0.0255
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.296
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 9
+    stageCode: 2-9
+    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 1
+    requiredSubStage: 8
+    recommendedPower: 1913
+    enemyHp: 1239
+    enemyDamage: 91
+    tuViPerKill: 36
+    linhThachPerKill: 31
+    swordDropRate: 0.026999999
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.308
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 1
+    stageNumber: 10
+    stageCode: 2-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng (2-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    requiredRealmIndex: 1
+    requiredSubStage: 8
+    recommendedPower: 2756
+    enemyHp: 10199
+    enemyDamage: 217
+    tuViPerKill: 418
+    linhThachPerKill: 384
+    swordDropRate: 0.0285
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 1
+    herbTier: 1
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
+    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
+    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
+    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 1
+    stageCode: 3-1
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-1"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 2
+    requiredSubStage: 1
+    recommendedPower: 5298
+    enemyHp: 2329
+    enemyDamage: 110
+    tuViPerKill: 57
+    linhThachPerKill: 48
+    swordDropRate: 0.015
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.212
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 2
+    stageCode: 3-2
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-2"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 2
+    requiredSubStage: 1
+    recommendedPower: 5298
+    enemyHp: 2458
+    enemyDamage: 115
+    tuViPerKill: 62
+    linhThachPerKill: 53
+    swordDropRate: 0.0165
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.224
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 3
+    stageCode: 3-3
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-3"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 2
+    requiredSubStage: 2
+    recommendedPower: 5947
+    enemyHp: 2907
+    enemyDamage: 130
+    tuViPerKill: 67
+    linhThachPerKill: 57
+    swordDropRate: 0.018
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.236
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 4
+    stageCode: 3-4
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-4"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 2
+    requiredSubStage: 3
+    recommendedPower: 6673
+    enemyHp: 3431
+    enemyDamage: 146
+    tuViPerKill: 72
+    linhThachPerKill: 61
+    swordDropRate: 0.0195
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.248
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 5
+    stageCode: 3-5
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-5"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 2
+    requiredSubStage: 4
+    recommendedPower: 7486
+    enemyHp: 4042
+    enemyDamage: 163
+    tuViPerKill: 77
+    linhThachPerKill: 65
+    swordDropRate: 0.021
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.26
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 6
+    stageCode: 3-6
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-6"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 2
+    requiredSubStage: 5
+    recommendedPower: 8396
+    enemyHp: 4754
+    enemyDamage: 181
+    tuViPerKill: 83
+    linhThachPerKill: 71
+    swordDropRate: 0.022499999
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.272
+    herbTier: 2
+    maxEquipmentRarity: 0
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 7
+    stageCode: 3-7
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-7"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 2
+    requiredSubStage: 6
+    recommendedPower: 9413
+    enemyHp: 5581
+    enemyDamage: 200
+    tuViPerKill: 88
+    linhThachPerKill: 75
+    swordDropRate: 0.024
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.284
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 8
+    stageCode: 3-8
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-8"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 2
+    requiredSubStage: 7
+    recommendedPower: 10551
+    enemyHp: 6542
+    enemyDamage: 221
+    tuViPerKill: 93
+    linhThachPerKill: 79
+    swordDropRate: 0.0255
+    swordDropMinLevel: 1
+    swordDropMaxLevel: 2
+    herbDropRate: 0.296
+    herbTier: 2
+    maxEquipmentRarity: 1
+    enemyPool:
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 0
+    actIndex: 2
+    stageNumber: 9
+    stageCode: 3-9
+    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-9"
+    killsToClearWave: 10
+    isBossStage: 0
+    requiredRealmIndex: 2
+    requiredSubStage: 8
+    recommendedPower: 11824
+    enemyHp: 7657
+    enemyDamage: 243
+    tuViPerKill: 98
     linhThachPerKill: 83
-    swordDropRate: 0.015
+    swordDropRate: 0.026999999
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
-    herbDropRate: 0.212
-    herbTier: 1
-    maxEquipmentRarity: 0
+    herbDropRate: 0.308
+    herbTier: 2
+    maxEquipmentRarity: 1
     enemyPool:
-    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
-    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
-    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
-    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
   - difficulty: 0
-    actIndex: 1
-    stageNumber: 2
-    stageCode: 2-2
-    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-2"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 1292
-    enemyHp: 1988
-    enemyDamage: 51
-    tuViPerKill: 236
-    linhThachPerKill: 108
-    swordDropRate: 0.0165
+    actIndex: 2
+    stageNumber: 10
+    stageCode: 3-10
+    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc (3-10)"
+    killsToClearWave: 1
+    isBossStage: 1
+    requiredRealmIndex: 2
+    requiredSubStage: 8
+    recommendedPower: 16927
+    enemyHp: 62643
+    enemyDamage: 574
+    tuViPerKill: 1133
+    linhThachPerKill: 1056
+    swordDropRate: 0.0285
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
-    herbDropRate: 0.224
-    herbTier: 1
-    maxEquipmentRarity: 0
+    herbDropRate: 1
+    herbTier: 2
+    maxEquipmentRarity: 1
     enemyPool:
-    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
-    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
-    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
-    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
-  - difficulty: 0
-    actIndex: 1
-    stageNumber: 3
-    stageCode: 2-3
-    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-3"
+    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
+    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
+    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
+    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
+  - difficulty: 1
+    actIndex: 0
+    stageNumber: 1
+    stageCode: 1-1
+    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1835
-    enemyHp: 2823
-    enemyDamage: 64
-    tuViPerKill: 320
-    linhThachPerKill: 140
-    swordDropRate: 0.018
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.236
-    herbTier: 1
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
-    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
-    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
-    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
-  - difficulty: 0
-    actIndex: 1
-    stageNumber: 4
-    stageCode: 2-4
-    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-4"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 2606
-    enemyHp: 4009
-    enemyDamage: 81
-    tuViPerKill: 436
+    requiredRealmIndex: 3
+    requiredSubStage: 1
+    recommendedPower: 22156
+    enemyHp: 10418
+    enemyDamage: 305
+    tuViPerKill: 170
     linhThachPerKill: 182
-    swordDropRate: 0.0195
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.248
-    herbTier: 1
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
-    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
-    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
-    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
-  - difficulty: 0
-    actIndex: 1
-    stageNumber: 5
-    stageCode: 2-5
-    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-5"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 3700
-    enemyHp: 5692
-    enemyDamage: 102
-    tuViPerKill: 592
-    linhThachPerKill: 236
-    swordDropRate: 0.021
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.26
-    herbTier: 1
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
-    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
-    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
-    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
-  - difficulty: 0
-    actIndex: 1
-    stageNumber: 6
-    stageCode: 2-6
-    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-6"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 5254
-    enemyHp: 8083
-    enemyDamage: 128
-    tuViPerKill: 806
-    linhThachPerKill: 307
-    swordDropRate: 0.022499999
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.272
-    herbTier: 1
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
-    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
-    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
-    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
-  - difficulty: 0
-    actIndex: 1
-    stageNumber: 7
-    stageCode: 2-7
-    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-7"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 7461
-    enemyHp: 11478
-    enemyDamage: 161
-    tuViPerKill: 1096
-    linhThachPerKill: 399
-    swordDropRate: 0.024
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.284
-    herbTier: 1
-    maxEquipmentRarity: 1
-    enemyPool:
-    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
-    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
-    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
-    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
-  - difficulty: 0
-    actIndex: 1
-    stageNumber: 8
-    stageCode: 2-8
-    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-8"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 10594
-    enemyHp: 16299
-    enemyDamage: 203
-    tuViPerKill: 1490
-    linhThachPerKill: 519
-    swordDropRate: 0.0255
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.296
-    herbTier: 1
-    maxEquipmentRarity: 1
-    enemyPool:
-    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
-    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
-    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
-    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
-  - difficulty: 0
-    actIndex: 1
-    stageNumber: 9
-    stageCode: 2-9
-    stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-9"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 15044
-    enemyHp: 23144
-    enemyDamage: 256
-    tuViPerKill: 2027
-    linhThachPerKill: 675
-    swordDropRate: 0.026999999
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.308
-    herbTier: 1
-    maxEquipmentRarity: 1
-    enemyPool:
-    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
-    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
-    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
-    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
-  - difficulty: 0
-    actIndex: 1
-    stageNumber: 10
-    stageCode: 2-10
-    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng (2-10)"
-    killsToClearWave: 1
-    isBossStage: 1
-    recommendedPower: 117491
-    enemyHp: 180755
-    enemyDamage: 597
-    tuViPerKill: 22051
-    linhThachPerKill: 8772
-    swordDropRate: 0.0285
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 1
-    herbTier: 1
-    maxEquipmentRarity: 1
-    enemyPool:
-    - {fileID: 11400000, guid: ad42fa3ac7006984e987b0c354409216, type: 2}
-    - {fileID: 11400000, guid: 1df6d376b477d5f43bf6a2fe9cd9708a, type: 2}
-    - {fileID: 11400000, guid: 534ec5f6aca6b1d47a690f8e10e10de7, type: 2}
-    bossMonster: {fileID: 11400000, guid: ad1e31629fe028340b997f583eb93afa, type: 2}
-  - difficulty: 0
-    actIndex: 2
-    stageNumber: 1
-    stageCode: 3-1
-    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-1"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 30334
-    enemyHp: 46668
-    enemyDamage: 407
-    tuViPerKill: 3749
-    linhThachPerKill: 1140
-    swordDropRate: 0.015
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.212
-    herbTier: 2
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
-    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
-    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
-    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
-  - difficulty: 0
-    actIndex: 2
-    stageNumber: 2
-    stageCode: 3-2
-    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-2"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 43074
-    enemyHp: 66268
-    enemyDamage: 513
-    tuViPerKill: 5098
-    linhThachPerKill: 1482
-    swordDropRate: 0.0165
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.224
-    herbTier: 2
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
-    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
-    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
-    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
-  - difficulty: 0
-    actIndex: 2
-    stageNumber: 3
-    stageCode: 3-3
-    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-3"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 61166
-    enemyHp: 94101
-    enemyDamage: 646
-    tuViPerKill: 6933
-    linhThachPerKill: 1927
-    swordDropRate: 0.018
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.236
-    herbTier: 2
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
-    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
-    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
-    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
-  - difficulty: 0
-    actIndex: 2
-    stageNumber: 4
-    stageCode: 3-4
-    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-4"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 86855
-    enemyHp: 133623
-    enemyDamage: 814
-    tuViPerKill: 9429
-    linhThachPerKill: 2505
-    swordDropRate: 0.0195
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.248
-    herbTier: 2
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
-    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
-    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
-    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
-  - difficulty: 0
-    actIndex: 2
-    stageNumber: 5
-    stageCode: 3-5
-    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-5"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 123334
-    enemyHp: 189745
-    enemyDamage: 1026
-    tuViPerKill: 12824
-    linhThachPerKill: 3257
-    swordDropRate: 0.021
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.26
-    herbTier: 2
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
-    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
-    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
-    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
-  - difficulty: 0
-    actIndex: 2
-    stageNumber: 6
-    stageCode: 3-6
-    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-6"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 175134
-    enemyHp: 269437
-    enemyDamage: 1292
-    tuViPerKill: 17441
-    linhThachPerKill: 4234
-    swordDropRate: 0.022499999
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.272
-    herbTier: 2
-    maxEquipmentRarity: 0
-    enemyPool:
-    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
-    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
-    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
-    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
-  - difficulty: 0
-    actIndex: 2
-    stageNumber: 7
-    stageCode: 3-7
-    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-7"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 248691
-    enemyHp: 382601
-    enemyDamage: 1628
-    tuViPerKill: 23719
-    linhThachPerKill: 5504
-    swordDropRate: 0.024
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.284
-    herbTier: 2
-    maxEquipmentRarity: 1
-    enemyPool:
-    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
-    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
-    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
-    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
-  - difficulty: 0
-    actIndex: 2
-    stageNumber: 8
-    stageCode: 3-8
-    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-8"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 353141
-    enemyHp: 543294
-    enemyDamage: 2051
-    tuViPerKill: 32258
-    linhThachPerKill: 7155
-    swordDropRate: 0.0255
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.296
-    herbTier: 2
-    maxEquipmentRarity: 1
-    enemyPool:
-    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
-    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
-    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
-    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
-  - difficulty: 0
-    actIndex: 2
-    stageNumber: 9
-    stageCode: 3-9
-    stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-9"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 501460
-    enemyHp: 771477
-    enemyDamage: 2585
-    tuViPerKill: 43871
-    linhThachPerKill: 9302
-    swordDropRate: 0.026999999
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 0.308
-    herbTier: 2
-    maxEquipmentRarity: 1
-    enemyPool:
-    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
-    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
-    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
-    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
-  - difficulty: 0
-    actIndex: 2
-    stageNumber: 10
-    stageCode: 3-10
-    stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc (3-10)"
-    killsToClearWave: 1
-    isBossStage: 1
-    recommendedPower: 3916403
-    enemyHp: 6025235
-    enemyDamage: 6025
-    tuViPerKill: 477319
-    linhThachPerKill: 120923
-    swordDropRate: 0.0285
-    swordDropMinLevel: 1
-    swordDropMaxLevel: 2
-    herbDropRate: 1
-    herbTier: 2
-    maxEquipmentRarity: 1
-    enemyPool:
-    - {fileID: 11400000, guid: 642833aaf061116429098a6cb13872a9, type: 2}
-    - {fileID: 11400000, guid: 73c35a8c96cc9af40bb64a498e2619c0, type: 2}
-    - {fileID: 11400000, guid: b7c8a059c92f00c4c918e8262bf0f124, type: 2}
-    bossMonster: {fileID: 11400000, guid: f869fd319f7878148bc21dd973adbd0b, type: 2}
-  - difficulty: 1
-    actIndex: 0
-    stageNumber: 1
-    stageCode: 1-1
-    stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-1"
-    killsToClearWave: 10
-    isBossStage: 0
-    recommendedPower: 1011144
-    enemyHp: 1555606
-    enemyDamage: 4104
-    tuViPerKill: 81144
-    linhThachPerKill: 15720
     swordDropRate: 0.015999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -733,11 +795,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-2"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1435825
-    enemyHp: 2208961
-    enemyDamage: 5171
-    tuViPerKill: 110356
-    linhThachPerKill: 20436
+    requiredRealmIndex: 3
+    requiredSubStage: 1
+    recommendedPower: 22156
+    enemyHp: 10990
+    enemyDamage: 318
+    tuViPerKill: 185
+    linhThachPerKill: 198
     swordDropRate: 0.0175
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -756,11 +820,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-3"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 2038871
-    enemyHp: 3136724
-    enemyDamage: 6515
-    tuViPerKill: 150084
-    linhThachPerKill: 26567
+    requiredRealmIndex: 3
+    requiredSubStage: 2
+    recommendedPower: 24807
+    enemyHp: 12955
+    enemyDamage: 353
+    tuViPerKill: 200
+    linhThachPerKill: 214
     swordDropRate: 0.019
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -779,11 +845,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-4"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 2895196
-    enemyHp: 4454148
-    enemyDamage: 8209
-    tuViPerKill: 204115
-    linhThachPerKill: 34537
+    requiredRealmIndex: 3
+    requiredSubStage: 2
+    recommendedPower: 24807
+    enemyHp: 13616
+    enemyDamage: 368
+    tuViPerKill: 216
+    linhThachPerKill: 231
     swordDropRate: 0.0205
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -802,11 +870,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-5"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 4111178
-    enemyHp: 6324890
-    enemyDamage: 10343
-    tuViPerKill: 277596
-    linhThachPerKill: 44898
+    requiredRealmIndex: 3
+    requiredSubStage: 3
+    recommendedPower: 27769
+    enemyHp: 15995
+    enemyDamage: 406
+    tuViPerKill: 231
+    linhThachPerKill: 247
     swordDropRate: 0.022
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -825,11 +895,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-6"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 5837874
-    enemyHp: 8981344
-    enemyDamage: 13033
-    tuViPerKill: 377530
-    linhThachPerKill: 58367
+    requiredRealmIndex: 3
+    requiredSubStage: 4
+    recommendedPower: 31079
+    enemyHp: 18758
+    enemyDamage: 447
+    tuViPerKill: 246
+    linhThachPerKill: 263
     swordDropRate: 0.0235
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -848,11 +920,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-7"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 8289781
-    enemyHp: 12753509
-    enemyDamage: 16421
-    tuViPerKill: 513441
-    linhThachPerKill: 75877
+    requiredRealmIndex: 3
+    requiredSubStage: 4
+    recommendedPower: 31079
+    enemyHp: 19628
+    enemyDamage: 463
+    tuViPerKill: 262
+    linhThachPerKill: 280
     swordDropRate: 0.025
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -871,11 +945,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-8"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 11771489
-    enemyHp: 18109983
-    enemyDamage: 20690
-    tuViPerKill: 698280
-    linhThachPerKill: 98641
+    requiredRealmIndex: 3
+    requiredSubStage: 5
+    recommendedPower: 34777
+    enemyHp: 22953
+    enemyDamage: 507
+    tuViPerKill: 277
+    linhThachPerKill: 296
     swordDropRate: 0.0265
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -894,11 +970,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-9"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 16715514
-    enemyHp: 25716175
-    enemyDamage: 26070
-    tuViPerKill: 949661
-    linhThachPerKill: 128233
+    requiredRealmIndex: 3
+    requiredSubStage: 6
+    recommendedPower: 38907
+    enemyHp: 26803
+    enemyDamage: 554
+    tuViPerKill: 292
+    linhThachPerKill: 312
     swordDropRate: 0.027999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -917,11 +995,13 @@ MonoBehaviour:
     stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n (1-10)"
     killsToClearWave: 1
     isBossStage: 1
-    recommendedPower: 130548164
-    enemyHp: 200843329
-    enemyDamage: 60769
-    tuViPerKill: 10332309
-    linhThachPerKill: 1667025
+    requiredRealmIndex: 3
+    requiredSubStage: 6
+    recommendedPower: 55610
+    enemyHp: 231309
+    enemyDamage: 1299
+    tuViPerKill: 3388
+    linhThachPerKill: 3960
     swordDropRate: 0.0295
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -940,11 +1020,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 33705162
-    enemyHp: 51854096
-    enemyDamage: 41389
-    tuViPerKill: 1756493
-    linhThachPerKill: 216713
+    requiredRealmIndex: 3
+    requiredSubStage: 7
+    recommendedPower: 43521
+    enemyHp: 20464
+    enemyDamage: 434
+    tuViPerKill: 170
+    linhThachPerKill: 182
     swordDropRate: 0.015999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -963,11 +1045,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-2"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 47861330
-    enemyHp: 73632816
-    enemyDamage: 52150
-    tuViPerKill: 2388830
-    linhThachPerKill: 281727
+    requiredRealmIndex: 3
+    requiredSubStage: 8
+    recommendedPower: 48673
+    enemyHp: 24142
+    enemyDamage: 478
+    tuViPerKill: 185
+    linhThachPerKill: 198
     swordDropRate: 0.0175
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -986,11 +1070,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-3"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 67963089
-    enemyHp: 104558599
-    enemyDamage: 65709
-    tuViPerKill: 3248809
-    linhThachPerKill: 366245
+    requiredRealmIndex: 3
+    requiredSubStage: 8
+    recommendedPower: 48673
+    enemyHp: 25418
+    enemyDamage: 498
+    tuViPerKill: 200
+    linhThachPerKill: 214
     swordDropRate: 0.019
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1009,11 +1095,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-4"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 96507586
-    enemyHp: 148473210
-    enemyDamage: 82793
-    tuViPerKill: 4418380
-    linhThachPerKill: 476119
+    requiredRealmIndex: 3
+    requiredSubStage: 9
+    recommendedPower: 54426
+    enemyHp: 29874
+    enemyDamage: 545
+    tuViPerKill: 216
+    linhThachPerKill: 231
     swordDropRate: 0.0205
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1032,11 +1120,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-5"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 137040773
-    enemyHp: 210831959
-    enemyDamage: 104319
-    tuViPerKill: 6008997
-    linhThachPerKill: 618955
+    requiredRealmIndex: 3
+    requiredSubStage: 9
+    recommendedPower: 54426
+    enemyHp: 31349
+    enemyDamage: 566
+    tuViPerKill: 231
+    linhThachPerKill: 247
     swordDropRate: 0.022
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1055,11 +1145,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-6"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 194597898
-    enemyHp: 299381381
-    enemyDamage: 131442
-    tuViPerKill: 8172235
-    linhThachPerKill: 804641
+    requiredRealmIndex: 3
+    requiredSubStage: 10
+    recommendedPower: 60849
+    enemyHp: 36726
+    enemyDamage: 618
+    tuViPerKill: 246
+    linhThachPerKill: 263
     swordDropRate: 0.0235
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1078,11 +1170,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-7"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 276329015
-    enemyHp: 425121561
-    enemyDamage: 165617
-    tuViPerKill: 11114240
-    linhThachPerKill: 1046033
+    requiredRealmIndex: 4
+    requiredSubStage: 1
+    recommendedPower: 94350
+    enemyHp: 59587
+    enemyDamage: 1144
+    tuViPerKill: 945
+    linhThachPerKill: 1011
     swordDropRate: 0.025
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1101,11 +1195,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-8"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 392387201
-    enemyHp: 603672617
-    enemyDamage: 208677
-    tuViPerKill: 15115366
-    linhThachPerKill: 1359843
+    requiredRealmIndex: 4
+    requiredSubStage: 1
+    recommendedPower: 94350
+    enemyHp: 62271
+    enemyDamage: 1183
+    tuViPerKill: 1000
+    linhThachPerKill: 1070
     swordDropRate: 0.0265
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1124,11 +1220,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-9"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 557189825
-    enemyHp: 857215116
-    enemyDamage: 262934
-    tuViPerKill: 20556898
-    linhThachPerKill: 1767796
+    requiredRealmIndex: 4
+    requiredSubStage: 2
+    recommendedPower: 105453
+    enemyHp: 72645
+    enemyDamage: 1288
+    tuViPerKill: 1056
+    linhThachPerKill: 1130
     swordDropRate: 0.027999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1147,11 +1245,13 @@ MonoBehaviour:
     stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng (2-10)"
     killsToClearWave: 1
     isBossStage: 1
-    recommendedPower: 4351652537
-    enemyHp: 6694850057
-    enemyDamage: 612898
-    tuViPerKill: 223659054
-    linhThachPerKill: 22981349
+    requiredRealmIndex: 4
+    requiredSubStage: 3
+    recommendedPower: 168252
+    enemyHp: 699833
+    enemyDamage: 3163
+    tuViPerKill: 12221
+    linhThachPerKill: 14268
     swordDropRate: 0.0295
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1170,11 +1270,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1123517564
-    enemyHp: 1728488560
-    enemyDamage: 417433
-    tuViPerKill: 38022039
-    linhThachPerKill: 2987575
+    requiredRealmIndex: 4
+    requiredSubStage: 3
+    recommendedPower: 117845
+    enemyHp: 55413
+    enemyDamage: 1006
+    tuViPerKill: 614
+    linhThachPerKill: 657
     swordDropRate: 0.015999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1193,11 +1295,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-2"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1595394941
-    enemyHp: 2454453755
-    enemyDamage: 525966
-    tuViPerKill: 51709973
-    linhThachPerKill: 3883848
+    requiredRealmIndex: 4
+    requiredSubStage: 4
+    recommendedPower: 131675
+    enemyHp: 65311
+    enemyDamage: 1103
+    tuViPerKill: 669
+    linhThachPerKill: 716
     swordDropRate: 0.0175
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1216,11 +1320,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-3"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 2265460816
-    enemyHp: 3485324333
-    enemyDamage: 662717
-    tuViPerKill: 70325564
-    linhThachPerKill: 5049002
+    requiredRealmIndex: 4
+    requiredSubStage: 5
+    recommendedPower: 147108
+    enemyHp: 76823
+    enemyDamage: 1206
+    tuViPerKill: 724
+    linhThachPerKill: 775
     swordDropRate: 0.019
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1239,11 +1345,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-4"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 3216954359
-    enemyHp: 4949160552
-    enemyDamage: 835024
-    tuViPerKill: 95642767
-    linhThachPerKill: 6563703
+    requiredRealmIndex: 4
+    requiredSubStage: 5
+    recommendedPower: 147108
+    enemyHp: 80746
+    enemyDamage: 1255
+    tuViPerKill: 779
+    linhThachPerKill: 834
     swordDropRate: 0.0205
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1262,11 +1370,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-5"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 4568075190
-    enemyHp: 7027807984
-    enemyDamage: 1052130
-    tuViPerKill: 130074163
-    linhThachPerKill: 8532814
+    requiredRealmIndex: 4
+    requiredSubStage: 6
+    recommendedPower: 164328
+    enemyHp: 94653
+    enemyDamage: 1366
+    tuViPerKill: 835
+    linhThachPerKill: 893
     swordDropRate: 0.022
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1285,11 +1395,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-6"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 6486666770
-    enemyHp: 9979487338
-    enemyDamage: 1325684
-    tuViPerKill: 176900861
-    linhThachPerKill: 11092658
+    requiredRealmIndex: 4
+    requiredSubStage: 7
+    recommendedPower: 183540
+    enemyHp: 110776
+    enemyDamage: 1484
+    tuViPerKill: 890
+    linhThachPerKill: 952
     swordDropRate: 0.0235
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1308,11 +1420,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-7"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 9211066813
-    enemyHp: 14170872020
-    enemyDamage: 1670362
-    tuViPerKill: 240585171
-    linhThachPerKill: 14420456
+    requiredRealmIndex: 4
+    requiredSubStage: 7
+    recommendedPower: 183540
+    enemyHp: 115915
+    enemyDamage: 1537
+    tuViPerKill: 945
+    linhThachPerKill: 1011
     swordDropRate: 0.025
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1331,11 +1445,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-8"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 13079714874
-    enemyHp: 20122638268
-    enemyDamage: 2104656
-    tuViPerKill: 327195833
-    linhThachPerKill: 18746592
+    requiredRealmIndex: 4
+    requiredSubStage: 8
+    recommendedPower: 204972
+    enemyHp: 135281
+    enemyDamage: 1664
+    tuViPerKill: 1000
+    linhThachPerKill: 1070
     swordDropRate: 0.0265
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1354,11 +1470,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-9"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 18573195122
-    enemyHp: 28574146341
-    enemyDamage: 2651866
-    tuViPerKill: 444986333
-    linhThachPerKill: 24370570
+    requiredRealmIndex: 4
+    requiredSubStage: 8
+    recommendedPower: 204972
+    enemyHp: 141203
+    enemyDamage: 1720
+    tuViPerKill: 1056
+    linhThachPerKill: 1130
     swordDropRate: 0.027999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1377,11 +1495,13 @@ MonoBehaviour:
     stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc (3-10)"
     killsToClearWave: 1
     isBossStage: 1
-    recommendedPower: 145056653900
-    enemyHp: 223164082923
-    enemyDamage: 6181500
-    tuViPerKill: 4841451302
-    linhThachPerKill: 316817408
+    requiredRealmIndex: 4
+    requiredSubStage: 9
+    recommendedPower: 326528
+    enemyHp: 1358174
+    enemyDamage: 4169
+    tuViPerKill: 12221
+    linhThachPerKill: 14268
     swordDropRate: 0.0295
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1400,11 +1520,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 37450990643
-    enemyHp: 57616908682
-    enemyDamage: 4210103
-    tuViPerKill: 823046721
-    linhThachPerKill: 41186263
+    requiredRealmIndex: 4
+    requiredSubStage: 10
+    recommendedPower: 255544
+    enemyHp: 127999
+    enemyDamage: 1394
+    tuViPerKill: 614
+    linhThachPerKill: 792
     swordDropRate: 0.016999999
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1423,11 +1545,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-2"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 53180406713
-    enemyHp: 81816010328
-    enemyDamage: 5304730
-    tuViPerKill: 1119343541
-    linhThachPerKill: 53542142
+    requiredRealmIndex: 4
+    requiredSubStage: 10
+    recommendedPower: 255544
+    enemyHp: 134927
+    enemyDamage: 1455
+    tuViPerKill: 669
+    linhThachPerKill: 863
     swordDropRate: 0.0185
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1446,11 +1570,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-3"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 75516177533
-    enemyHp: 116178734666
-    enemyDamage: 6683959
-    tuViPerKill: 1522307216
-    linhThachPerKill: 69604785
+    requiredRealmIndex: 5
+    requiredSubStage: 1
+    recommendedPower: 342340
+    enemyHp: 190189
+    enemyDamage: 2495
+    tuViPerKill: 2766
+    linhThachPerKill: 3568
     swordDropRate: 0.02
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1469,11 +1595,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-4"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 107232972097
-    enemyHp: 164973803226
-    enemyDamage: 8421789
-    tuViPerKill: 2070337813
-    linhThachPerKill: 90486220
+    requiredRealmIndex: 5
+    requiredSubStage: 2
+    recommendedPower: 382137
+    enemyHp: 222998
+    enemyDamage: 2714
+    tuViPerKill: 2977
+    linhThachPerKill: 3840
     swordDropRate: 0.021499999
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1492,11 +1620,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-5"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 152270820378
-    enemyHp: 234262800581
-    enemyDamage: 10611454
-    tuViPerKill: 2815659426
-    linhThachPerKill: 117632086
+    requiredRealmIndex: 5
+    requiredSubStage: 2
+    recommendedPower: 382137
+    enemyHp: 233868
+    enemyDamage: 2819
+    tuViPerKill: 3188
+    linhThachPerKill: 4113
     swordDropRate: 0.023
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1515,11 +1645,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-6"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 216224564936
-    enemyHp: 332653176824
-    enemyDamage: 13370432
-    tuViPerKill: 3829296820
-    linhThachPerKill: 152921712
+    requiredRealmIndex: 5
+    requiredSubStage: 3
+    recommendedPower: 426514
+    enemyHp: 273348
+    enemyDamage: 3056
+    tuViPerKill: 3399
+    linhThachPerKill: 4385
     swordDropRate: 0.0245
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1538,11 +1670,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-7"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 307038882209
-    enemyHp: 472367511091
-    enemyDamage: 16846744
-    tuViPerKill: 5207843675
-    linhThachPerKill: 198798225
+    requiredRealmIndex: 5
+    requiredSubStage: 4
+    recommendedPower: 475995
+    enemyHp: 319023
+    enemyDamage: 3305
+    tuViPerKill: 3610
+    linhThachPerKill: 4657
     swordDropRate: 0.026
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1561,11 +1695,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-8"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 435995212737
-    enemyHp: 670761865749
-    enemyDamage: 21226897
-    tuViPerKill: 7082667398
-    linhThachPerKill: 258437693
+    requiredRealmIndex: 5
+    requiredSubStage: 4
+    recommendedPower: 475995
+    enemyHp: 333197
+    enemyDamage: 3419
+    tuViPerKill: 3821
+    linhThachPerKill: 4929
     swordDropRate: 0.0275
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1584,11 +1720,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-9"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 619113202086
-    enemyHp: 952481849363
-    enemyDamage: 26745890
-    tuViPerKill: 9632427661
-    linhThachPerKill: 335969000
+    requiredRealmIndex: 5
+    requiredSubStage: 5
+    recommendedPower: 531162
+    enemyHp: 387866
+    enemyDamage: 3687
+    tuViPerKill: 4032
+    linhThachPerKill: 5201
     swordDropRate: 0.029
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1607,11 +1745,13 @@ MonoBehaviour:
     stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n (1-10)"
     killsToClearWave: 1
     isBossStage: 1
-    recommendedPower: 4835274108291
-    enemyHp: 7438883243525
-    enemyDamage: 62344670
-    tuViPerKill: 104800812951
-    linhThachPerKill: 4367597005
+    requiredRealmIndex: 5
+    requiredSubStage: 5
+    recommendedPower: 757291
+    enemyHp: 3517410
+    enemyDamage: 8536
+    tuViPerKill: 46673
+    linhThachPerKill: 65676
     swordDropRate: 0.03
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1630,11 +1770,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1248379860686
-    enemyHp: 1920584401056
-    enemyDamage: 42461775
-    tuViPerKill: 17816138202
-    linhThachPerKill: 567787611
+    requiredRealmIndex: 5
+    requiredSubStage: 6
+    recommendedPower: 592663
+    enemyHp: 296858
+    enemyDamage: 2853
+    tuViPerKill: 2344
+    linhThachPerKill: 3024
     swordDropRate: 0.016999999
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1653,11 +1795,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-2"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1772699402174
-    enemyHp: 2727229849499
-    enemyDamage: 53501837
-    tuViPerKill: 24229947954
-    linhThachPerKill: 738123894
+    requiredRealmIndex: 5
+    requiredSubStage: 7
+    recommendedPower: 661220
+    enemyHp: 349124
+    enemyDamage: 3103
+    tuViPerKill: 2555
+    linhThachPerKill: 3296
     swordDropRate: 0.0185
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1676,11 +1820,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-3"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 2517233151088
-    enemyHp: 3872666386289
-    enemyDamage: 67412315
-    tuViPerKill: 32952729218
-    linhThachPerKill: 959561062
+    requiredRealmIndex: 5
+    requiredSubStage: 7
+    recommendedPower: 661220
+    enemyHp: 367345
+    enemyDamage: 3232
+    tuViPerKill: 2766
+    linhThachPerKill: 3568
     swordDropRate: 0.02
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1699,11 +1845,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-4"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 3574471074544
-    enemyHp: 5499186268530
-    enemyDamage: 84939517
-    tuViPerKill: 44815711736
-    linhThachPerKill: 1247429381
+    requiredRealmIndex: 5
+    requiredSubStage: 8
+    recommendedPower: 737638
+    enemyHp: 430453
+    enemyDamage: 3501
+    tuViPerKill: 2977
+    linhThachPerKill: 3840
     swordDropRate: 0.021499999
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1722,11 +1870,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-5"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 5075748925853
-    enemyHp: 7808844501312
-    enemyDamage: 107023791
-    tuViPerKill: 60949367961
-    linhThachPerKill: 1621658195
+    requiredRealmIndex: 5
+    requiredSubStage: 9
+    recommendedPower: 822812
+    enemyHp: 503561
+    enemyDamage: 3784
+    tuViPerKill: 3188
+    linhThachPerKill: 4113
     swordDropRate: 0.023
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1745,11 +1895,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-6"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 7207563474712
-    enemyHp: 11088559191864
-    enemyDamage: 134849977
-    tuViPerKill: 82891140427
-    linhThachPerKill: 2108155653
+    requiredRealmIndex: 5
+    requiredSubStage: 9
+    recommendedPower: 822812
+    enemyHp: 527331
+    enemyDamage: 3924
+    tuViPerKill: 3399
+    linhThachPerKill: 4385
     swordDropRate: 0.0245
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1768,11 +1920,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-7"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 10234740134090
-    enemyHp: 15745754052446
-    enemyDamage: 169910970
-    tuViPerKill: 112731950981
-    linhThachPerKill: 2740602349
+    requiredRealmIndex: 5
+    requiredSubStage: 10
+    recommendedPower: 917739
+    enemyHp: 615089
+    enemyDamage: 4228
+    tuViPerKill: 3610
+    linhThachPerKill: 4657
     swordDropRate: 0.026
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1791,11 +1945,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-8"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 14533330990408
-    enemyHp: 22358970754474
-    enemyDamage: 214087823
-    tuViPerKill: 153315453334
-    linhThachPerKill: 3562783054
+    requiredRealmIndex: 6
+    requiredSubStage: 1
+    recommendedPower: 1194114
+    enemyHp: 835880
+    enemyDamage: 7510
+    tuViPerKill: 13653
+    linhThachPerKill: 17612
     swordDropRate: 0.0275
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1814,11 +1970,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-9"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 20637330006379
-    enemyHp: 31749738471353
-    enemyDamage: 269750657
-    tuViPerKill: 208509016535
-    linhThachPerKill: 4631617971
+    requiredRealmIndex: 6
+    requiredSubStage: 1
+    recommendedPower: 1194114
+    enemyHp: 871969
+    enemyDamage: 7760
+    tuViPerKill: 14407
+    linhThachPerKill: 18585
     swordDropRate: 0.029
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1837,11 +1995,13 @@ MonoBehaviour:
     stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng (2-10)"
     killsToClearWave: 1
     isBossStage: 1
-    recommendedPower: 161177547349822
-    enemyHp: 247965457461265
-    enemyDamage: 628788781
-    tuViPerKill: 2268578099897
-    linhThachPerKill: 60211033618
+    requiredRealmIndex: 6
+    requiredSubStage: 2
+    recommendedPower: 1897366
+    enemyHp: 8812752
+    enemyDamage: 18638
+    tuViPerKill: 166771
+    linhThachPerKill: 234696
     swordDropRate: 0.03
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1860,11 +2020,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 41613112224863
-    enemyHp: 64020172653636
-    enemyDamage: 428256142
-    tuViPerKill: 385658276982
-    linhThachPerKill: 7827434370
+    requiredRealmIndex: 6
+    requiredSubStage: 3
+    recommendedPower: 1484895
+    enemyHp: 743768
+    enemyDamage: 6231
+    tuViPerKill: 8376
+    linhThachPerKill: 10805
     swordDropRate: 0.016999999
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1883,11 +2045,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-2"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 59090619359306
-    enemyHp: 90908645168163
-    enemyDamage: 539602739
-    tuViPerKill: 524495256696
-    linhThachPerKill: 10175664681
+    requiredRealmIndex: 6
+    requiredSubStage: 3
+    recommendedPower: 1484895
+    enemyHp: 784025
+    enemyDamage: 6501
+    tuViPerKill: 9130
+    linhThachPerKill: 11778
     swordDropRate: 0.0185
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1906,11 +2070,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-3"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 83908679490214
-    enemyHp: 129090276138791
-    enemyDamage: 679899452
-    tuViPerKill: 713313549107
-    linhThachPerKill: 13228364086
+    requiredRealmIndex: 6
+    requiredSubStage: 4
+    recommendedPower: 1655646
+    enemyHp: 919803
+    enemyDamage: 7039
+    tuViPerKill: 9884
+    linhThachPerKill: 12750
     swordDropRate: 0.02
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1929,11 +2095,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-4"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 119150324876104
-    enemyHp: 183308192117083
-    enemyDamage: 856673309
-    tuViPerKill: 970106426785
-    linhThachPerKill: 17196873312
+    requiredRealmIndex: 6
+    requiredSubStage: 4
+    recommendedPower: 1655646
+    enemyHp: 966161
+    enemyDamage: 7321
+    tuViPerKill: 10638
+    linhThachPerKill: 13723
     swordDropRate: 0.021499999
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1952,11 +2120,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-5"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 169193461324068
-    enemyHp: 260297632806258
-    enemyDamage: 1079408370
-    tuViPerKill: 1319344740428
-    linhThachPerKill: 22355935305
+    requiredRealmIndex: 6
+    requiredSubStage: 5
+    recommendedPower: 1845885
+    enemyHp: 1129682
+    enemyDamage: 7898
+    tuViPerKill: 11392
+    linhThachPerKill: 14696
     swordDropRate: 0.023
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1975,11 +2145,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-6"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 240254715080176
-    enemyHp: 369622638584886
-    enemyDamage: 1360054546
-    tuViPerKill: 1794308846982
-    linhThachPerKill: 29062715897
+    requiredRealmIndex: 6
+    requiredSubStage: 6
+    recommendedPower: 2057825
+    enemyHp: 1318837
+    enemyDamage: 8505
+    tuViPerKill: 12146
+    linhThachPerKill: 15668
     swordDropRate: 0.0245
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1998,11 +2170,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-7"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 341161695413850
-    enemyHp: 524864146790538
-    enemyDamage: 1713668728
-    tuViPerKill: 2440260031896
-    linhThachPerKill: 37781530666
+    requiredRealmIndex: 6
+    requiredSubStage: 6
+    recommendedPower: 2057825
+    enemyHp: 1379200
+    enemyDamage: 8809
+    tuViPerKill: 12900
+    linhThachPerKill: 16641
     swordDropRate: 0.026
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2021,11 +2195,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-8"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 484449607487667
-    enemyHp: 745307088442564
-    enemyDamage: 2159222597
-    tuViPerKill: 3318753643378
-    linhThachPerKill: 49115989865
+    requiredRealmIndex: 6
+    requiredSubStage: 7
+    recommendedPower: 2293927
+    enemyHp: 1605749
+    enemyDamage: 9459
+    tuViPerKill: 13653
+    linhThachPerKill: 17612
     swordDropRate: 0.0275
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2044,11 +2220,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-9"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 687918442632487
-    enemyHp: 1058336065588441
-    enemyDamage: 2720620472
-    tuViPerKill: 4513504954994
-    linhThachPerKill: 63850786825
+    requiredRealmIndex: 6
+    requiredSubStage: 8
+    recommendedPower: 2556929
+    enemyHp: 1867127
+    enemyDamage: 10140
+    tuViPerKill: 14407
+    linhThachPerKill: 18585
     swordDropRate: 0.029
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2067,11 +2245,13 @@ MonoBehaviour:
     stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc (3-10)"
     killsToClearWave: 1
     isBossStage: 1
-    recommendedPower: 5372643036959722
-    enemyHp: 8265604672245726
-    enemyDamage: 6341766320
-    tuViPerKill: 49106933910336
-    linhThachPerKill: 830060228721
+    requiredRealmIndex: 6
+    requiredSubStage: 8
+    recommendedPower: 3641515
+    enemyHp: 16913855
+    enemyDamage: 23338
+    tuViPerKill: 166771
+    linhThachPerKill: 234696
     swordDropRate: 0.03
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2090,11 +2270,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1387118747724146
-    enemyHp: 2134028842652533
-    enemyDamage: 4319257061
-    tuViPerKill: 8348178764757
-    linhThachPerKill: 107907829734
+    requiredRealmIndex: 6
+    requiredSubStage: 9
+    recommendedPower: 2849881
+    enemyHp: 1514870
+    enemyDamage: 7802
+    tuViPerKill: 8376
+    linhThachPerKill: 12648
     swordDropRate: 0.018
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2113,11 +2295,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-2"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1969708621768288
-    enemyHp: 3030320956566596
-    enemyDamage: 5442263897
-    tuViPerKill: 11353523120070
-    linhThachPerKill: 140280178654
+    requiredRealmIndex: 6
+    requiredSubStage: 10
+    recommendedPower: 3176175
+    enemyHp: 1778658
+    enemyDamage: 8440
+    tuViPerKill: 9130
+    linhThachPerKill: 13786
     swordDropRate: 0.0195
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2136,11 +2320,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-3"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 2796986242910968
-    enemyHp: 4303055758324567
-    enemyDamage: 6857252510
-    tuViPerKill: 15440791443295
-    linhThachPerKill: 182364232250
+    requiredRealmIndex: 6
+    requiredSubStage: 10
+    recommendedPower: 3176175
+    enemyHp: 1870414
+    enemyDamage: 8792
+    tuViPerKill: 9884
+    linhThachPerKill: 14925
     swordDropRate: 0.021
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2159,11 +2345,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-4"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 3971720464933576
-    enemyHp: 6110339176820885
-    enemyDamage: 8640138163
-    tuViPerKill: 20999476362881
-    linhThachPerKill: 237073501925
+    requiredRealmIndex: 7
+    requiredSubStage: 1
+    recommendedPower: 4045242
+    enemyHp: 2500859
+    enemyDamage: 16345
+    tuViPerKill: 28205
+    linhThachPerKill: 42590
     swordDropRate: 0.022499999
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2182,11 +2370,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-5"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 5639843060205677
-    enemyHp: 8676681631085656
-    enemyDamage: 10886574085
-    tuViPerKill: 28559287853518
-    linhThachPerKill: 308195552503
+    requiredRealmIndex: 7
+    requiredSubStage: 1
+    recommendedPower: 4045242
+    enemyHp: 2621317
+    enemyDamage: 16974
+    tuViPerKill: 30204
+    linhThachPerKill: 45608
     swordDropRate: 0.024
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2205,11 +2395,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-6"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 8008577145492061
-    enemyHp: 12320887916141632
-    enemyDamage: 13717083347
-    tuViPerKill: 38840631480785
-    linhThachPerKill: 400654218253
+    requiredRealmIndex: 7
+    requiredSubStage: 2
+    recommendedPower: 4507790
+    enemyHp: 3057284
+    enemyDamage: 18241
+    tuViPerKill: 32203
+    linhThachPerKill: 48627
     swordDropRate: 0.0255
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2228,11 +2420,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-7"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 11372179546598724
-    enemyHp: 17495660840921114
-    enemyDamage: 17283525018
-    tuViPerKill: 52823258813867
-    linhThachPerKill: 520850483729
+    requiredRealmIndex: 7
+    requiredSubStage: 3
+    recommendedPower: 5022902
+    enemyHp: 3560679
+    enemyDamage: 19570
+    tuViPerKill: 34201
+    linhThachPerKill: 51644
     swordDropRate: 0.027
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2251,11 +2445,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-8"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 16148494956170188
-    enemyHp: 24843838394107980
-    enemyDamage: 21777241522
-    tuViPerKill: 71839631986859
-    linhThachPerKill: 677105628848
+    requiredRealmIndex: 7
+    requiredSubStage: 3
+    recommendedPower: 5022902
+    enemyHp: 3716947
+    enemyDamage: 20245
+    tuViPerKill: 36200
+    linhThachPerKill: 54662
     swordDropRate: 0.0285
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2274,11 +2470,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n \xB7 \u1EA2i 1-9"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 22930862837761668
-    enemyHp: 35278250519633332
-    enemyDamage: 27439324318
-    tuViPerKill: 97701899502129
-    linhThachPerKill: 880237317503
+    requiredRealmIndex: 7
+    requiredSubStage: 4
+    recommendedPower: 5596521
+    enemyHp: 4318027
+    enemyDamage: 21663
+    tuViPerKill: 38199
+    linhThachPerKill: 57680
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2297,11 +2495,13 @@ MonoBehaviour:
     stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 1: \u0110\u1ED3ng C\u1ECF Thanh V\xE2n (1-10)"
     killsToClearWave: 1
     isBossStage: 1
-    recommendedPower: 1.7909003876291862e+17
-    enemyHp: 2.7552313655833632e+17
-    enemyDamage: 63961064986
-    tuViPerKill: 1062996666583162
-    linhThachPerKill: 11443085127535
+    requiredRealmIndex: 7
+    requiredSubStage: 5
+    recommendedPower: 8876065
+    enemyHp: 45771473
+    enemyDamage: 51508
+    tuViPerKill: 442178
+    linhThachPerKill: 728388
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2320,11 +2520,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 46237791826062616
-    enemyHp: 71135064347788640
-    enemyDamage: 43562671288
-    tuViPerKill: 180709433319138
-    linhThachPerKill: 1487601066580
+    requiredRealmIndex: 7
+    requiredSubStage: 5
+    recommendedPower: 6235263
+    enemyHp: 3314389
+    enemyDamage: 16639
+    tuViPerKill: 22209
+    linhThachPerKill: 33536
     swordDropRate: 0.018
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2343,11 +2545,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-2"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 65657664393008920
-    enemyHp: 1.0101179137385987e+17
-    enemyDamage: 54888965823
-    tuViPerKill: 245764829314027
-    linhThachPerKill: 1933881386553
+    requiredRealmIndex: 7
+    requiredSubStage: 6
+    recommendedPower: 6946485
+    enemyHp: 3890032
+    enemyDamage: 17968
+    tuViPerKill: 24208
+    linhThachPerKill: 36554
     swordDropRate: 0.0195
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2366,11 +2570,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-3"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 93233883438072660
-    enemyHp: 1.4343674375088101e+17
-    enemyDamage: 69160096936
-    tuViPerKill: 334240167867077
-    linhThachPerKill: 2514045802520
+    requiredRealmIndex: 7
+    requiredSubStage: 7
+    recommendedPower: 7738378
+    enemyHp: 4557045
+    enemyDamage: 19364
+    tuViPerKill: 26206
+    linhThachPerKill: 39571
     swordDropRate: 0.021
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2389,11 +2595,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-4"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1.3239211448206318e+17
-    enemyHp: 2.0368017612625104e+17
-    enemyDamage: 87141722140
-    tuViPerKill: 454566628299224
-    linhThachPerKill: 3268259543275
+    requiredRealmIndex: 7
+    requiredSubStage: 7
+    recommendedPower: 7738378
+    enemyHp: 4784037
+    enemyDamage: 20139
+    tuViPerKill: 28205
+    linhThachPerKill: 42590
     swordDropRate: 0.022499999
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2412,11 +2620,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-5"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1.8799680256452966e+17
-    enemyHp: 2.892258500992764e+17
-    enemyDamage: 109798569896
-    tuViPerKill: 618210614486945
-    linhThachPerKill: 4248737406258
+    requiredRealmIndex: 7
+    requiredSubStage: 8
+    recommendedPower: 8620049
+    enemyHp: 5585792
+    enemyDamage: 21631
+    tuViPerKill: 30204
+    linhThachPerKill: 45608
     swordDropRate: 0.024
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2435,11 +2645,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-6"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 2.6695545964163213e+17
-    enemyHp: 4.107007071409725e+17
-    enemyDamage: 138346198069
-    tuViPerKill: 840766435702246
-    linhThachPerKill: 5523358628135
+    requiredRealmIndex: 7
+    requiredSubStage: 9
+    recommendedPower: 9601634
+    enemyHp: 6512042
+    enemyDamage: 23196
+    tuViPerKill: 32203
+    linhThachPerKill: 48627
     swordDropRate: 0.0255
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2458,11 +2670,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-7"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 3.790767526911176e+17
-    enemyHp: 5.831950041401809e+17
-    enemyDamage: 174316209567
-    tuViPerKill: 1143442352555054
-    linhThachPerKill: 7180366216576
+    requiredRealmIndex: 7
+    requiredSubStage: 9
+    recommendedPower: 9601634
+    enemyHp: 6806492
+    enemyDamage: 24025
+    tuViPerKill: 34201
+    linhThachPerKill: 51644
     swordDropRate: 0.027
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2481,11 +2695,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-8"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 5.38288988821387e+17
-    enemyHp: 8.281369058790569e+17
-    enemyDamage: 219638424055
-    tuViPerKill: 1555081599474874
-    linhThachPerKill: 9334476081549
+    requiredRealmIndex: 7
+    requiredSubStage: 10
+    recommendedPower: 10694409
+    enemyHp: 7913862
+    enemyDamage: 25693
+    tuViPerKill: 36200
+    linhThachPerKill: 54662
     swordDropRate: 0.0285
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2504,11 +2720,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng \xB7 \u1EA2i 2-9"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 7.643703641263695e+17
-    enemyHp: 1.1759544063482609e+18
-    enemyDamage: 276744414309
-    tuViPerKill: 2114910975285829
-    linhThachPerKill: 12134818906013
+    requiredRealmIndex: 7
+    requiredSubStage: 10
+    recommendedPower: 10694409
+    enemyHp: 8251330
+    enemyDamage: 26549
+    tuViPerKill: 38199
+    linhThachPerKill: 57680
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2527,11 +2745,13 @@ MonoBehaviour:
     stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 2: Hoang M\u1EA1c N\u1EAFng V\xE0ng (2-10)"
     killsToClearWave: 1
     isBossStage: 1
-    recommendedPower: 5.969732543826945e+18
-    enemyHp: 9.184203913579915e+18
-    enemyDamage: 645091229754
-    tuViPerKill: 23010231411109820
-    linhThachPerKill: 157752645778174
+    requiredRealmIndex: 8
+    requiredSubStage: 1
+    recommendedPower: 19068599
+    enemyHp: 98331620
+    enemyDamage: 113075
+    tuViPerKill: 1479742
+    linhThachPerKill: 2437536
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2550,11 +2770,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-1"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1.5412764022244114e+18
-    enemyHp: 2.371194464960633e+18
-    enemyDamage: 439359432157
-    tuViPerKill: 3911739339888670
-    linhThachPerKill: 20507843951163
+    requiredRealmIndex: 8
+    requiredSubStage: 2
+    recommendedPower: 14923251
+    enemyHp: 7932537
+    enemyDamage: 37801
+    tuViPerKill: 74322
+    linhThachPerKill: 112226
     swordDropRate: 0.018
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2573,11 +2795,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-2"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 2.1886124911586642e+18
-    enemyHp: 3.3670961402440986e+18
-    enemyDamage: 553592884517
-    tuViPerKill: 5319965502248591
-    linhThachPerKill: 26660197136511
+    requiredRealmIndex: 8
+    requiredSubStage: 2
+    recommendedPower: 14923251
+    enemyHp: 8357021
+    enemyDamage: 39445
+    tuViPerKill: 81011
+    linhThachPerKill: 122327
     swordDropRate: 0.0195
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2596,11 +2820,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-3"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 3.1078297374453033e+18
-    enemyHp: 4.78127651914662e+18
-    enemyDamage: 697527034492
-    tuViPerKill: 7235153083058084
-    linhThachPerKill: 34658256277465
+    requiredRealmIndex: 8
+    requiredSubStage: 3
+    recommendedPower: 16619083
+    enemyHp: 9786794
+    enemyDamage: 42434
+    tuViPerKill: 87700
+    linhThachPerKill: 132427
     swordDropRate: 0.021
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2619,11 +2845,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-4"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 4.413118227172329e+18
-    enemyHp: 6.789412657188198e+18
-    enemyDamage: 878884063460
-    tuViPerKill: 9839808192958996
-    linhThachPerKill: 45055733160704
+    requiredRealmIndex: 8
+    requiredSubStage: 4
+    recommendedPower: 18506705
+    enemyHp: 11441256
+    enemyDamage: 45568
+    tuViPerKill: 94389
+    linhThachPerKill: 142527
     swordDropRate: 0.022499999
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2642,11 +2870,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-5"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 6.266627882584708e+18
-    enemyHp: 9.640965973207243e+18
-    enemyDamage: 1107393919960
-    tuViPerKill: 13382139142424234
-    linhThachPerKill: 58572453108916
+    requiredRealmIndex: 8
+    requiredSubStage: 4
+    recommendedPower: 18506705
+    enemyHp: 11992345
+    enemyDamage: 47321
+    tuViPerKill: 101078
+    linhThachPerKill: 152628
     swordDropRate: 0.024
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2665,11 +2895,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-6"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 8.898611593270283e+18
-    enemyHp: 1.3690171681954281e+19
-    enemyDamage: 1395316339149
-    tuViPerKill: 18199709233696960
-    linhThachPerKill: 76144189041590
+    requiredRealmIndex: 8
+    requiredSubStage: 5
+    recommendedPower: 20607726
+    enemyHp: 13976618
+    enemyDamage: 50662
+    tuViPerKill: 107767
+    linhThachPerKill: 162728
     swordDropRate: 0.0255
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2688,11 +2920,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-7"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1.2636028462443803e+19
-    enemyHp: 1.944004378837508e+19
-    enemyDamage: 1758098587328
-    tuViPerKill: 24751604557827868
-    linhThachPerKill: 98987445754067
+    requiredRealmIndex: 8
+    requiredSubStage: 6
+    recommendedPower: 22946186
+    enemyHp: 16266296
+    enemyDamage: 54161
+    tuViPerKill: 114456
+    linhThachPerKill: 172829
     swordDropRate: 0.027
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2711,11 +2945,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-8"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 1.79431604166702e+19
-    enemyHp: 2.7604862179492614e+19
-    enemyDamage: 2215204220033
-    tuViPerKill: 33662182198645900
-    linhThachPerKill: 128683679480287
+    requiredRealmIndex: 8
+    requiredSubStage: 6
+    recommendedPower: 22946186
+    enemyHp: 16980177
+    enemyDamage: 56028
+    tuViPerKill: 121145
+    linhThachPerKill: 182929
     swordDropRate: 0.0285
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2734,11 +2970,13 @@ MonoBehaviour:
     stageName: "V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc \xB7 \u1EA2i 3-9"
     killsToClearWave: 10
     isBossStage: 0
-    recommendedPower: 2.547928779167168e+19
-    enemyHp: 3.919890429487951e+19
-    enemyDamage: 2791157317242
-    tuViPerKill: 45780567790158430
-    linhThachPerKill: 167288783324374
+    requiredRealmIndex: 8
+    requiredSubStage: 7
+    recommendedPower: 25548822
+    enemyHp: 19712335
+    enemyDamage: 59750
+    tuViPerKill: 127834
+    linhThachPerKill: 193029
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2757,11 +2995,13 @@ MonoBehaviour:
     stageName: "Th\u1EE7 L\u0129nh V\u1EF1c 3: Ti\xEAn S\u01A1n B\u1EA1ch Ng\u1ECDc (3-10)"
     killsToClearWave: 1
     isBossStage: 1
-    recommendedPower: 1.9899323765295582e+20
-    enemyHp: 3.0614344254300894e+20
-    enemyDamage: 6506187706490
-    tuViPerKill: 4.980925775569238e+17
-    linhThachPerKill: 2174754183216857
+    requiredRealmIndex: 8
+    requiredSubStage: 8
+    recommendedPower: 40465861
+    enemyHp: 208671534
+    enemyDamage: 139703
+    tuViPerKill: 1479742
+    linhThachPerKill: 2437536
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 5

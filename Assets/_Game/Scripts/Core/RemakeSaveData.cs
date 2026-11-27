@@ -68,6 +68,10 @@ namespace KhiVanChiTu.Remake
         public double tuVi = 0;
         public int consecutiveBreakthroughFails = 0;
         public long mindCalmResetUtcTicks = 0;
+        public float pendingTribulationSeconds;
+        public float pendingTribulationChance;
+        public bool pendingTribulationSuccess;
+        public int pendingTribulationPillQuality = -1;
 
         // Currencies & Materials
         public double linhThach = 100;
@@ -110,6 +114,8 @@ namespace KhiVanChiTu.Remake
 
         // Alchemy Pills, Flame & Support Items
         public List<RemakePillStackEntry> pills = new List<RemakePillStackEntry>();
+        public float pendingBrewSeconds;
+        public int pendingBrewTargetRealm;
         public int spiritFlameTier = 1; // 1..4 (Pham -> Tien Thien Hoa)
         public int spiritFlameXp = 0;
         public int forgeTalismanCount = 1; // +10% ghep kiem
@@ -158,7 +164,7 @@ namespace KhiVanChiTu.Remake
             long now = DateTime.UtcNow.Ticks;
             var save = new RemakeSaveData
             {
-                schemaVersion = 3,
+                schemaVersion = SaveService.CurrentSchemaVersion,
                 daoName = "",
                 hasCreatedCharacter = false,
                 createdUtcTicks = now,
@@ -198,17 +204,17 @@ namespace KhiVanChiTu.Remake
             var save = CreateDefault(isTouchPlatform);
             if (preserveGraphics != null) save.graphics = preserveGraphics;
 
-            save.schemaVersion = 3;
+            save.schemaVersion = SaveService.CurrentSchemaVersion;
             save.daoName = "Thiên Đạo Test";
             save.hasCreatedCharacter = true;
             save.tutorialCompleted = true;
             save.tutorialStep = 3;
             save.tutorialGuaranteedSwordDropped = true;
 
-            // Dai Thua T1 unlocks 100% ALL features, 6 formations + sub-slot, all 4 skills, Tower & Secret Realm
+            // Dai Thua T3 (So Ky Binh Canh) unlocks 100% ALL features, 6 formations + sub-slot, all 4 skills, Tower & Secret Realm
             save.realmIndex = 7;
-            save.subStage = 1;
-            save.tuVi = CultivationTable.GetRequiredTuVi(7, 1) * 1.10;
+            save.subStage = 3;
+            save.tuVi = CultivationTable.GetRequiredTuVi(7, 3);
             save.consecutiveBreakthroughFails = 1;
 
             save.linhThach = 9_999_999;

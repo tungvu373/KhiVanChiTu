@@ -160,12 +160,7 @@ namespace KhiVanChiTu.Remake
         {
             var g = Settings;
             QualitySettings.vSyncCount = 0;
-#if UNITY_WEBGL && !UNITY_EDITOR
-            // On WebGL (Safari iPhone / Android Chrome / Desktop), -1 follows browser requestAnimationFrame natively without jitter!
-            Application.targetFrameRate = g.afkDimMode ? 15 : (g.targetFps <= 35 ? 30 : -1);
-#else
             Application.targetFrameRate = g.afkDimMode ? 15 : (g.targetFps <= 35 ? 30 : 60);
-#endif
 
             var urp = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
             if (urp != null)
