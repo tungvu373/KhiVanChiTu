@@ -45,9 +45,11 @@ join.addEventListener('click', async () => {
         byte => byte.toString(16).padStart(2, '0')).join('');
       localStorage.setItem('kvct-local-test-id', deviceId);
     }
-    const client = new Client(key, location.hostname, location.port || '80', false);
+    const isHttps = location.protocol === 'https:';
+    const port = location.port || (isHttps ? '443' : '80');
+    const client = new Client(key, location.hostname, port, isHttps);
     const session = await client.authenticateDevice(deviceId, true);
-    socket = client.createSocket(false, false);
+    socket = client.createSocket(isHttps, false);
     socket.onchannelmessage = showMessage;
     socket.ondisconnect = () => {
       channel = undefined;

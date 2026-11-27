@@ -55,41 +55,68 @@ namespace KhiVanChiTu.Remake.Editor
 
         public static GameObject BuildXianxiaPlayerPrefab(string destPrefabPath)
         {
+            return BuildXianxiaPlayerVariant(
+                destPrefabPath,
+                $"{ModelDir}/RemakePlayer_Xianxia.fbx",
+                "Tex_Player_ThanhVan.png",
+                "RemakePlayer_Xianxia",
+                "Mat_Player_ThanhVan.mat",
+                "RemakePlayer");
+        }
+
+        public static GameObject BuildXianxiaMalePlayerPrefab(string destPrefabPath)
+        {
+            return BuildXianxiaPlayerVariant(
+                destPrefabPath,
+                $"{ModelDir}/RemakePlayer_Male.fbx",
+                "Tex_Player_Male.png",
+                "RemakePlayer_Male",
+                "Mat_Player_Male.mat",
+                "RemakePlayer_Male");
+        }
+
+        private static GameObject BuildXianxiaPlayerVariant(
+            string destPrefabPath,
+            string fbxPath,
+            string texFileName,
+            string unitKey,
+            string matFileName,
+            string rootName)
+        {
             EnsureFolders();
-            string fbxPath = $"{ModelDir}/RemakePlayer_Xianxia.fbx";
             ConfigureXianxiaModelImporter(fbxPath);
 
             GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath);
             if (modelAsset == null)
                 throw new InvalidOperationException($"Missing animated player FBX: {fbxPath}");
 
-            Texture2D tex = ConfigureAndLoadXianxiaTexture("Tex_Player_ThanhVan.png", 1024);
+            Texture2D tex = ConfigureAndLoadXianxiaTexture(texFileName, 1024);
             Material mat = CreateOrUpdateXianxiaMaterial(
-                $"{MatDir}/Mat_Player_ThanhVan.mat",
+                $"{MatDir}/{matFileName}",
                 tex,
                 Color.white,
-                new Color(0.16f, 0.19f, 0.21f),
-                0.18f);
+                new Color(0.14f, 0.16f, 0.18f),
+                0.16f);
 
-            AnimationClip idleClip = ExtractAndConfigureClip(fbxPath, "Idle", "Player_Idle", true);
-            AnimationClip castClip = ExtractAndConfigureClip(fbxPath, "CastSkill", "Player_CastSkill", false);
-            AnimationClip tribClip = ExtractAndConfigureClip(fbxPath, "Tribulation", "Player_Tribulation", true);
-            AnimationClip respawnClip = ExtractAndConfigureClip(fbxPath, "Respawn", "Player_Respawn", false);
-            AnimatorController ctrl = BuildPlayerAnimatorController($"{AnimDir}/RemakePlayer_Xianxia_Ctrl.controller", idleClip, castClip, tribClip, respawnClip);
+            AnimationClip idleClip = ExtractAndConfigureClip(fbxPath, "Idle", $"{unitKey}_Idle", true);
+            AnimationClip castClip = ExtractAndConfigureClip(fbxPath, "CastSkill", $"{unitKey}_CastSkill", false);
+            AnimationClip tribClip = ExtractAndConfigureClip(fbxPath, "Tribulation", $"{unitKey}_Tribulation", true);
+            AnimationClip respawnClip = ExtractAndConfigureClip(fbxPath, "Respawn", $"{unitKey}_Respawn", false);
+            AnimatorController ctrl = BuildPlayerAnimatorController($"{AnimDir}/{unitKey}_Ctrl.controller", idleClip, castClip, tribClip, respawnClip);
 
             GameObject inst = (GameObject)PrefabUtility.InstantiatePrefab(modelAsset);
             try
             {
                 PrefabUtility.UnpackPrefabInstance(inst, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
-                inst.name = "RemakePlayer";
+                inst.name = rootName;
                 inst.transform.position = Vector3.zero;
                 inst.transform.rotation = Quaternion.identity;
                 inst.transform.localScale = Vector3.one;
 
-                CloneAndBindSkinnedMeshesAndMaterials(inst, "RemakePlayer_Xianxia", new[] { mat });
+                CloneAndBindSkinnedMeshesAndMaterials(inst, unitKey, new[] { mat });
 
                 var anim = inst.GetComponentInChildren<Animator>(true) ?? inst.AddComponent<Animator>();
-                anim.avatar = CloneAvatarFromFbx(fbxPath, "RemakePlayer_Xianxia");
+                anim.avatar = CloneAvatarFromFbx(fbxPath, unitKey);
                 anim.runtimeAnimatorController = ctrl;
                 anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 anim.applyRootMotion = false;
@@ -778,24 +805,24 @@ namespace KhiVanChiTu.Remake.Editor
         public static void OptimizeHolotnaEnvironmentPrefabs()
         {
             EnsureFolders();
-            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Tree01A.prefab", "Env_Act1_Tree", new Color(0.95f, 1.04f, 0.92f));
-            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Bush01.prefab", "Env_Act1_Bush", new Color(0.96f, 1.08f, 0.92f));
+            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Tree01A.prefab", "Env_Act1_Tree", new Color(0.96f, 1.02f, 0.94f), "Environment/tex_act1_meadow_foliage");
+            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Bush01.prefab", "Env_Act1_Bush", new Color(0.96f, 1.04f, 0.94f), "Environment/tex_act1_meadow_foliage");
             BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Rock01.prefab", "Env_Act1_Rock", new Color(0.90f, 0.96f, 0.88f));
             BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Flowers01A.prefab", "Env_Act1_Flower", new Color(1.06f, 1.06f, 1.02f));
             BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Mountain01.prefab", "Env_Act1_Mountain", new Color(0.86f, 0.96f, 0.92f));
 
-            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Rock01.prefab", "Env_Act2_Rock", new Color(1.02f, 0.82f, 0.56f));
-            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Pebbles01.prefab", "Env_Act2_Pebble", new Color(1.04f, 0.86f, 0.60f));
-            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Bush01.prefab", "Env_Act2_DryBush", new Color(0.96f, 0.82f, 0.50f));
-            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Mountain01.prefab", "Env_Act2_Mountain", new Color(1.02f, 0.84f, 0.60f));
+            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Rock01.prefab", "Env_Act2_Rock", Color.white, null, "Environment/tex_act2_sandstone_rock");
+            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Pebbles01.prefab", "Env_Act2_Pebble", Color.white, null, "Environment/tex_act2_sandstone_rock");
+            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Bush01.prefab", "Env_Act2_DryBush", new Color(1.0f, 0.95f, 0.86f), "Environment/tex_act2_desert_foliage");
+            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Mountain01.prefab", "Env_Act2_Mountain", new Color(1.02f, 0.86f, 0.62f));
 
-            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Rock02.prefab", "Env_Act3_JadeCrystal", new Color(0.68f, 1.04f, 0.96f));
-            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Tree01B.prefab", "Env_Act3_SnowPine", new Color(0.82f, 1.02f, 0.98f));
-            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Flowers01B.prefab", "Env_Act3_Flower", new Color(0.86f, 1.02f, 1.04f));
-            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Mountain01.prefab", "Env_Act3_Mountain", new Color(0.76f, 0.96f, 0.98f));
+            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Rock02.prefab", "Env_Act3_JadeCrystal", Color.white, null, "Environment/tex_act3_jade_ice_rock");
+            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Tree01B.prefab", "Env_Act3_SnowPine", new Color(0.95f, 1.00f, 1.02f), "Environment/tex_act3_snow_pine_foliage");
+            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Flowers01B.prefab", "Env_Act3_Flower", new Color(0.90f, 1.00f, 1.04f));
+            BuildEnvVariant("Assets/Holotna/Mountain/Prefabs/Mountain01.prefab", "Env_Act3_Mountain", new Color(0.78f, 0.96f, 0.98f));
         }
 
-        private static GameObject BuildEnvVariant(string srcPrefabPath, string key, Color tint)
+        private static GameObject BuildEnvVariant(string srcPrefabPath, string key, Color tint, string foliageCodexKey = null, string solidCodexKey = null)
         {
             string destPrefabPath = $"{EnvDir}/{key}.prefab";
             var src = AssetDatabase.LoadAssetAtPath<GameObject>(srcPrefabPath);
@@ -852,24 +879,41 @@ namespace KhiVanChiTu.Remake.Editor
                                 AssetDatabase.CreateAsset(envMat, matPath);
                             }
 
-                            Texture srcTex = null;
-                            if (srcMat != null)
+                            bool isAlphaCut = srcMat != null && srcMat.HasProperty("_AlphaClip") && srcMat.GetFloat("_AlphaClip") > 0.5f;
+                            string srcMatName = srcMat != null ? srcMat.name.ToLowerInvariant() : "";
+                            bool looksLikeFoliage = isAlphaCut || srcMatName.Contains("leaf") || srcMatName.Contains("leaves") || srcMatName.Contains("foliage") || srcMatName.Contains("bush") || srcMatName.Contains("crown");
+
+                            Texture2D overrideTex = null;
+                            if (looksLikeFoliage && !string.IsNullOrEmpty(foliageCodexKey))
+                                overrideTex = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/_Game/Resources/CodexDrop/{foliageCodexKey}.png");
+                            else if (!looksLikeFoliage && !string.IsNullOrEmpty(solidCodexKey))
+                                overrideTex = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/_Game/Resources/CodexDrop/{solidCodexKey}.png");
+
+                            if (overrideTex != null)
                             {
-                                if (srcMat.HasProperty("_Albedo")) srcTex = srcMat.GetTexture("_Albedo");
-                                if (srcTex == null && srcMat.HasProperty("_BaseMap")) srcTex = srcMat.GetTexture("_BaseMap");
-                                if (srcTex == null) srcTex = srcMat.mainTexture;
+                                envMat.mainTexture = overrideTex;
+                                if (envMat.HasProperty("_BaseMap")) envMat.SetTexture("_BaseMap", overrideTex);
                             }
-                            if (srcTex is Texture2D tex2d)
+                            else
                             {
-                                Texture2D smallTex = GetOrCreateDownscaledTexture(tex2d, $"EnvTex_{SanitizeFileName(tex2d.name)}", 256);
-                                if (smallTex != null)
+                                Texture srcTex = null;
+                                if (srcMat != null)
                                 {
-                                    envMat.mainTexture = smallTex;
-                                    if (envMat.HasProperty("_BaseMap")) envMat.SetTexture("_BaseMap", smallTex);
+                                    if (srcMat.HasProperty("_Albedo")) srcTex = srcMat.GetTexture("_Albedo");
+                                    if (srcTex == null && srcMat.HasProperty("_BaseMap")) srcTex = srcMat.GetTexture("_BaseMap");
+                                    if (srcTex == null) srcTex = srcMat.mainTexture;
+                                }
+                                if (srcTex is Texture2D tex2d)
+                                {
+                                    Texture2D smallTex = GetOrCreateDownscaledTexture(tex2d, $"EnvTex_{SanitizeFileName(tex2d.name)}", 256);
+                                    if (smallTex != null)
+                                    {
+                                        envMat.mainTexture = smallTex;
+                                        if (envMat.HasProperty("_BaseMap")) envMat.SetTexture("_BaseMap", smallTex);
+                                    }
                                 }
                             }
 
-                            bool isAlphaCut = srcMat != null && srcMat.HasProperty("_AlphaClip") && srcMat.GetFloat("_AlphaClip") > 0.5f;
                             if (envMat.HasProperty("_AlphaClip")) envMat.SetFloat("_AlphaClip", isAlphaCut ? 1f : 0f);
                             if (envMat.HasProperty("_Cutoff")) envMat.SetFloat("_Cutoff", 0.42f);
                             if (isAlphaCut)

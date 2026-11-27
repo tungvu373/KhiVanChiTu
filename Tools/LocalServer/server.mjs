@@ -99,7 +99,20 @@ const contentTypes = {
   '.ttf': 'font/ttf', '.otf': 'font/otf'
 };
 const gameDir = resolve(dir, '../../Builds/LocalWeb');
-const isLocal = req => insideLan(req.socket.remoteAddress) && allowedHosts.has(req.headers.host);
+const publicTunnel = process.env.KHIVANTU_PUBLIC_TUNNEL === '1' || process.env.KHIVANTU_PUBLIC_TUNNEL === 'true';
+const isLoopbackAddr = ip => ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+const isLocal = req => {
+  if (publicTunnel && isLoopbackAddr(req.socket.remoteAddress)) return true;
+  return insideLan(req.socket.remoteAddress) && allowedHosts.has(req.headers.host);
+};
+const isAllowedWsOrigin = req => {
+  const host = req.headers.host;
+  const origin = req.headers.origin;
+  if (!host || !origin) return false;
+  if (origin === 'http://' + host) return true;
+  if (publicTunnel && origin === 'https://' + host) return true;
+  return false;
+};
 const proxy = proxyFactory.createProxyServer({ target: backend, ws: true });
 proxy.on('error', (_error, _req, endpoint) => {
   if (endpoint instanceof http.ServerResponse) {
@@ -184,7 +197,7 @@ try {
       socket.on('close', () => liveSockets.delete(socket));
     });
     server.on('upgrade', (req, socket, head) => {
-      if (isLocal(req) && req.url.startsWith('/ws?') && req.headers.origin === 'http://' + req.headers.host) {
+      if (isLocal(req) && req.url.startsWith('/ws?') && isAllowedWsOrigin(req)) {
         proxy.ws(req, socket, head);
       } else socket.destroy();
     });

@@ -2728,7 +2728,16 @@ namespace KhiVanChiTu.Remake
             tTop.Add(tMeta);
             towerCard.Add(tTop);
 
-            var tBtns = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.FlexEnd, marginTop = 7 } };
+            var tBtns = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.FlexEnd, marginTop = 7 } };
+            var autoClimbBtn = new Button(() => { engine.SetAutoClimbDemonTower(!save.autoClimbDemonTower); Refresh(); })
+            {
+                text = save.autoClimbDemonTower ? "Tự Leo Tầng Kế: BẬT" : "Tự Leo Tầng Kế: TẮT"
+            };
+            autoClimbBtn.AddToClassList("btn-compact");
+            if (save.autoClimbDemonTower) autoClimbBtn.AddToClassList("selected");
+            autoClimbBtn.style.marginRight = 6;
+            tBtns.Add(autoClimbBtn);
+
             var salBtn = new Button(() => { engine.TryClaimTowerDailySalary(); Refresh(); }) { text = "Nhận Bổng Lộc Ngày" };
             salBtn.AddToClassList("btn-secondary");
             salBtn.SetEnabled(towerOpen && save.demonTowerHighestFloor > 0);
@@ -2803,6 +2812,8 @@ namespace KhiVanChiTu.Remake
             realmCard.Add(rBtns);
             body.Add(realmCard);
 
+            bool pvpOpen = CultivationTable.IsFeatureUnlocked(RemakeFeatureId.PvpArena, save.realmIndex, save.subStage);
+            engine.EnsureDailyPvpReset();
             var pvpCard = new VisualElement();
             pvpCard.AddToClassList("card-light");
             pvpCard.style.flexDirection = FlexDirection.Row;
@@ -2815,15 +2826,19 @@ namespace KhiVanChiTu.Remake
             var pMeta = new VisualElement { style = { flexGrow = 1, marginLeft = 10, flexShrink = 1 } };
             var pTitleRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, alignItems = Align.Center } };
             pTitleRow.Add(new Label("Luận Kiếm Đài · Liên Đấu") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, marginRight = 6 } });
-            var csBadge = new Label("COMING SOON");
-            csBadge.AddToClassList("coming-soon-badge");
-            pTitleRow.Add(csBadge);
+            var stBadge = new Label(pvpOpen ? $"LƯỢT: {save.pvpDailyRemaining}/5" : "NGUYÊN ANH T5");
+            stBadge.AddToClassList("diary-status-badge");
+            stBadge.AddToClassList(pvpOpen ? "ready" : "locked");
+            pTitleRow.Add(stBadge);
             pMeta.Add(pTitleRow);
-            pMeta.Add(new Label("Dự kiến Nguyên Anh T5 · So tài Phi Kiếm Bất Đồng Bộ qua Nakama.") { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+            pMeta.Add(new Label(pvpOpen
+                ? $"Kiếm Vọng: {save.swordPrestigePoints} · Chiến thắng: {save.pvpWins} · Đổi Khung Avatar & Nguyên Liệu!"
+                : "Mở ở Nguyên Anh T5 · So tài Phi Kiếm Bất Đồng Bộ qua Nakama.")
+            { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
             pvpCard.Add(pMeta);
 
-            var pvBtn = new Button(() => onOpenPvpPreview?.Invoke()) { text = "Xem Trước" };
-            pvBtn.AddToClassList("btn-compact");
+            var pvBtn = new Button(() => onOpenPvpPreview?.Invoke()) { text = pvpOpen ? "Vào Đài" : "Xem Trước" };
+            pvBtn.AddToClassList(pvpOpen ? "btn-primary" : "btn-compact");
             pvpCard.Add(pvBtn);
             body.Add(pvpCard);
         }
@@ -2863,34 +2878,497 @@ namespace KhiVanChiTu.Remake
             body.Add(c1);
         }
 
-        public static void BuildPvpPreview(VisualElement body)
+        public static void BuildPvpPreview(VisualElement body) => BuildPvpArena(body);
+
+        public static void BuildPvpArena(VisualElement body)
         {
+            var save = SaveService.Current;
+            var engine = GameplayEngine.Instance;
+            engine.EnsureDailyPvpReset();
+            bool unlocked = CultivationTable.IsFeatureUnlocked(RemakeFeatureId.PvpArena, save.realmIndex, save.subStage);
+            double myPower = engine.GetPlayerCombatPowerEstimate();
+
+            void Refresh()
+            {
+                body.Clear();
+                BuildPvpArena(body);
+            }
+
             var hero = new VisualElement();
             hero.AddToClassList("stage-hero-box");
-            var art = new VisualElement { style = { width = 120, height = 120 } };
-            SetBorderAndRadius(art, new Color(0.84f, 0.60f, 0.16f), 2f, 14f);
-            CodexArtLoader.ApplyIconOrPlaceholder(art, "Stages/mode_pvp_arena", "[Luận Kiếm Đài]");
-            hero.Add(art);
-            var badge = new Label("COMING SOON · DỰ KIẾN NGUYÊN ANH T5") { style = { marginTop = 8 } };
-            badge.AddToClassList("coming-soon-badge");
-            hero.Add(badge);
-            hero.Add(new Label("Luận Kiếm Đài — Liên Đấu Phi Kiếm") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 14, marginTop = 6 } });
+            hero.style.alignItems = Align.Stretch;
+            var hRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center } };
+            var art = new VisualElement { style = { width = 66, height = 66, flexShrink = 0 } };
+            SetBorderAndRadius(art, new Color(0.84f, 0.56f, 0.14f), 2f, 12f);
+            CodexArtLoader.ApplyIconOrPlaceholder(art, "Stages/mode_pvp_arena", "[Luận Kiếm]");
+            hRow.Add(art);
+            var hMeta = new VisualElement { style = { flexGrow = 1, marginLeft = 10, flexShrink = 1 } };
+            hMeta.Add(new Label($"Luận Kiếm Đài · Chiến Lực: {CultivationTable.FormatNumber(myPower)}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13 } });
+            hMeta.Add(new Label($"Lượt hôm nay: {save.pvpDailyRemaining}/5 · Thắng: {save.pvpWins} · Điểm Kiếm Vọng: {save.swordPrestigePoints}")
+            { style = { fontSize = 11, color = new Color(0.14f, 0.48f, 0.36f), unityFontStyleAndWeight = FontStyle.Bold, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
+            if (!unlocked)
+                hMeta.Add(new Label("Mở khóa khiêu chiến tại Nguyên Anh Tầng 5!") { style = { fontSize = 10, color = new Color(0.78f, 0.24f, 0.16f), marginTop = 2 } });
+            hRow.Add(hMeta);
+            hero.Add(hRow);
             body.Add(hero);
 
-            string[] bullets =
+            // Rivals List (Pull from live Nakama Leaderboard if connected, otherwise generate balanced Xianxia rivals)
+            var rivalCard = new VisualElement();
+            rivalCard.AddToClassList("card-light");
+            rivalCard.style.marginBottom = 8;
+            rivalCard.Add(new Label("Đối Thủ Luận Kiếm Hôm Nay (Bất Đồng Bộ):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, marginBottom = 6 } });
+
+            var rivals = new List<(string name, string realm, double power)>();
+            var online = RemakeOnlineService.Instance;
+            if (online != null && online.IsConnected && online.Leaderboards.TryGetValue("thien_kieu", out var lbRows))
             {
-                "• So tài Bất Đồng Bộ 24/7 theo đội hình Phi Kiếm & Trận Pháp lưu trên máy chủ Nakama.",
-                "• Quy đổi Điểm Kiếm Vọng lấy Phù Rèn, Đá Tẩy Luyện & Khung Avatar Danh Hiệu.",
-                "• Xếp hạng Mùa Tuần toàn máy chủ LAN / Online — sẽ mở ở bản cập nhật kế tiếp!"
-            };
-            foreach (var bText in bullets)
-            {
-                var c = new VisualElement();
-                c.AddToClassList("card-light");
-                c.style.marginBottom = 6;
-                c.Add(new Label(bText) { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal } });
-                body.Add(c);
+                for (int i = 0; i < lbRows.Count && rivals.Count < 4; i++)
+                {
+                    if (lbRows[i].ownerId == online.MyUserId) continue;
+                    rivals.Add((lbRows[i].displayName, lbRows[i].realmMeta, Math.Max(100, lbRows[i].subscore)));
+                }
             }
+            if (rivals.Count == 0)
+            {
+                string rName = CultivationTable.RealmNames[Mathf.Clamp(save.realmIndex, 0, 8)];
+                rivals.Add(("Bạch Ngọc Kiếm Khách", $"{rName} T4", Math.Round(myPower * 0.82)));
+                rivals.Add(("Thanh Phong Đạo Quân", $"{rName} T6", Math.Round(myPower * 0.96)));
+                rivals.Add(("Tử Tiêu Chân Nhân", $"{rName} T8", Math.Round(myPower * 1.12)));
+                rivals.Add(("Thái Hư Kiếm Chủ", $"{rName} T10", Math.Round(myPower * 1.32)));
+            }
+
+            foreach (var rv in rivals)
+            {
+                var row = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, justifyContent = Justify.SpaceBetween, marginBottom = 6, paddingBottom = 5, borderBottomWidth = 1, borderBottomColor = new Color(0.86f, 0.89f, 0.86f) } };
+                var left = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
+                left.Add(new Label($"{rv.name} [{rv.realm}]") { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold } });
+                left.Add(new Label($"Lực chiến ước tính: {CultivationTable.FormatNumber(rv.power)}") { style = { fontSize = 10, color = new Color(0.36f, 0.44f, 0.40f) } });
+                row.Add(left);
+                var fightBtn = new Button(() => { engine.TryChallengePvpOpponent(rv.name, rv.power); Refresh(); }) { text = "Tỷ Thí" };
+                fightBtn.AddToClassList("btn-primary");
+                fightBtn.style.paddingLeft = 12; fightBtn.style.paddingRight = 12; fightBtn.style.paddingTop = 4; fightBtn.style.paddingBottom = 4;
+                fightBtn.SetEnabled(unlocked && save.pvpDailyRemaining > 0);
+                row.Add(fightBtn);
+                rivalCard.Add(row);
+            }
+            body.Add(rivalCard);
+
+            // Prestige Exchange Shop (including Terra 6.1 Avatar Frames!)
+            var shopCard = new VisualElement();
+            shopCard.AddToClassList("card-light");
+            shopCard.Add(new Label($"Tiệm Kiếm Vọng (Hiện có: {save.swordPrestigePoints} điểm):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, marginBottom = 6 } });
+            var items = new (string title, string codex, string reused, int cost, int idx, int frameId)[]
+            {
+                ("+2 Phù Rèn Kiếm (+10%)", "Equipment/mat_forge_talisman", "RouteMerge", 120, 0, -1),
+                ("+3 Đá Tẩy Luyện Trang Bị", "Equipment/mat_reforge_stone", "Ore", 140, 1, -1),
+                ("+1 Tĩnh Tâm Hương (Trấn Tâm)", "Equipment/mat_calm_incense", "RouteAlchemy", 180, 2, -1),
+                ("Khung Avatar: Kiếm Thánh", "HUD/frame_sword_saint", "RouteAchievements", 350, 3, 1),
+                ("Khung Avatar: Thiên Đạo Chí Tôn", "HUD/frame_heavenly_dao", "RouteAchievements", 600, 4, 2)
+            };
+            foreach (var it in items)
+            {
+                bool ownedFrame = it.frameId > 0 && (save.unlockedFramesMask & (1 << it.frameId)) != 0;
+                bool equippedFrame = it.frameId > 0 && save.equippedAvatarFrame == it.frameId;
+                var row = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, justifyContent = Justify.SpaceBetween, marginBottom = 5 } };
+                var ico = new VisualElement { style = { width = 28, height = 28, marginRight = 8, flexShrink = 0 } };
+                CodexArtLoader.ApplyIconOrPlaceholder(ico, it.codex, "", it.reused);
+                row.Add(ico);
+                row.Add(new Label(it.title) { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, flexGrow = 1 } });
+                var btn = new Button(() => { engine.TryBuyPvpReward(it.idx); Refresh(); })
+                {
+                    text = equippedFrame ? "Đang Đeo" : ownedFrame ? "Trang Bị" : $"{it.cost} ĐKV"
+                };
+                btn.AddToClassList(ownedFrame ? "btn-secondary" : "btn-compact");
+                btn.SetEnabled(!equippedFrame && (ownedFrame || save.swordPrestigePoints >= it.cost));
+                row.Add(btn);
+                shopCard.Add(row);
+            }
+            body.Add(shopCard);
+        }
+
+        public static void BuildOfflineSummary(VisualElement body, Action onClose)
+        {
+            var engine = GameplayEngine.Instance;
+            var sum = engine != null ? engine.LastOfflineSummary : null;
+            var save = SaveService.Current;
+
+            void Refresh()
+            {
+                body.Clear();
+                BuildOfflineSummary(body, onClose);
+            }
+
+            var hero = new VisualElement();
+            hero.AddToClassList("stage-hero-box");
+            var art = new VisualElement { style = { width = 96, height = 96 } };
+            SetBorderAndRadius(art, new Color(0.84f, 0.60f, 0.16f), 2f, 14f);
+            CodexArtLoader.ApplyIconOrPlaceholder(art, "Stages/stage_seclusion_summary", "", "RouteMilestones");
+            hero.Add(art);
+            if (sum == null)
+            {
+                hero.Add(new Label("Chưa có phiên Bế Quan mới") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, marginTop = 8 } });
+                body.Add(hero);
+                return;
+            }
+            int mins = Mathf.Max(1, Mathf.FloorToInt((float)(sum.elapsedSeconds / 60.0)));
+            string dur = mins >= 60 ? $"{mins / 60} giờ {mins % 60} phút" : $"{mins} phút";
+            hero.Add(new Label($"Tổng Kết Bế Quan ({dur})") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 14, marginTop = 6, color = new Color(0.11f, 0.42f, 0.32f) } });
+            hero.Add(new Label($"Hiệu suất: {Mathf.RoundToInt((float)(sum.efficiency * 100))}% · Đã trảm {sum.killsSimulated} Yêu Thú") { style = { fontSize = 11, marginTop = 2 } });
+            body.Add(hero);
+
+            var lootCard = new VisualElement();
+            lootCard.AddToClassList("card-light");
+            lootCard.style.marginBottom = 10;
+            lootCard.Add(new Label($"• Tu Vi thu hoạch: +{CultivationTable.FormatNumber(sum.tuViGained)}") { style = { fontSize = 12, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.44f, 0.04f), marginBottom = 4 } });
+            lootCard.Add(new Label($"• Linh Thạch: +{CultivationTable.FormatNumber(sum.linhThachGained)}") { style = { fontSize = 12, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.50f, 0.38f), marginBottom = 4 } });
+            lootCard.Add(new Label($"• Thảo Dược ({ActStageDatabaseSO.GetHerbName(sum.herbTier)}): +{sum.herbsGained}") { style = { fontSize = 11, marginBottom = 3 } });
+            lootCard.Add(new Label($"• Phôi Kiếm nhặt được: +{sum.swordsGained}") { style = { fontSize = 11 } });
+            body.Add(lootCard);
+
+            var btns = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween } };
+            var bonusBtn = new Button(() => { engine.TryClaimOfflineBonusWithCoDuyen(); Refresh(); })
+            {
+                text = sum.bonusClaimed ? "Đã Nhận +50%" : $"Nhận Thêm +50% (10 Cơ Duyên · Có {save.coDuyen})"
+            };
+            bonusBtn.AddToClassList("btn-secondary");
+            bonusBtn.style.flexGrow = 1; bonusBtn.style.marginRight = 6;
+            bonusBtn.SetEnabled(!sum.bonusClaimed && save.coDuyen >= 10);
+            btns.Add(bonusBtn);
+
+            var okBtn = new Button(() => onClose?.Invoke()) { text = "Tiếp Tục Tu Luyện" };
+            okBtn.AddToClassList("btn-primary");
+            okBtn.style.minWidth = 130;
+            btns.Add(okBtn);
+            body.Add(btns);
+        }
+
+        public static void BuildCodexCollection(VisualElement body)
+        {
+            var save = SaveService.Current;
+            var engine = GameplayEngine.Instance;
+
+            void Refresh()
+            {
+                body.Clear();
+                BuildCodexCollection(body);
+            }
+
+            int totalUnlocked = engine.GetCodexUnlockedCount(out int swCnt, out int bsCnt, out int plCnt);
+            float buffPct = totalUnlocked * 0.8f;
+
+            var hero = new VisualElement();
+            hero.AddToClassList("stage-hero-box");
+            hero.style.alignItems = Align.Stretch;
+            hero.Add(new Label($"Đồ Giám Vạn Giới · Đã Sưu Tầm {totalUnlocked}/21 Mục") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, color = new Color(0.11f, 0.42f, 0.32f) } });
+            hero.Add(new Label($"Hiệu ứng bị động vĩnh viễn: +{buffPct:0.#}% Sát Thương Phi Kiếm & +{buffPct:0.#}% Tu Vi") { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.44f, 0.04f), marginTop = 2 } });
+            hero.Add(new Label($"Phi Kiếm: {swCnt}/10 · Thủ Lĩnh Vực: {bsCnt}/3 · Đan Đột Phá: {plCnt}/8 · Cơ Duyên: {save.coDuyen}") { style = { fontSize = 10, marginTop = 3 } });
+            body.Add(hero);
+
+            // Milestone Reward Strip
+            var msCard = new VisualElement();
+            msCard.AddToClassList("card-light");
+            msCard.style.marginBottom = 8;
+            msCard.Add(new Label("Mốc Thưởng Sưu Tầm (Cơ Duyên + Linh Thạch + Phù Rèn):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, marginBottom = 5 } });
+            var msRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap } };
+            for (int i = 0; i < GameplayEngine.CodexMilestoneThresholds.Length; i++)
+            {
+                int capI = i;
+                int req = GameplayEngine.CodexMilestoneThresholds[i];
+                bool claimed = (save.codexClaimedMask & (1 << i)) != 0;
+                bool ready = engine.IsCodexMilestoneReady(i);
+                var b = new Button(() => { engine.TryClaimCodexMilestone(capI); Refresh(); })
+                {
+                    text = claimed ? $"{req} ✓" : ready ? $"Nhận ({req})" : $"{req} mục"
+                };
+                b.AddToClassList(ready ? "btn-primary" : "btn-compact");
+                b.SetEnabled(ready);
+                b.style.marginRight = 4; b.style.marginBottom = 4; b.style.fontSize = 10;
+                msRow.Add(b);
+            }
+            msCard.Add(msRow);
+            body.Add(msCard);
+
+            // 10 3D Swords Gallery
+            var swCard = new VisualElement();
+            swCard.AddToClassList("card-light");
+            swCard.style.marginBottom = 8;
+            swCard.Add(new Label($"Phi Kiếm Đồ Giám ({swCnt}/10):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, marginBottom = 6 } });
+            var swGrid = new VisualElement();
+            swGrid.AddToClassList("grid-wrap");
+            for (int lv = 1; lv <= 10; lv++)
+            {
+                bool has = (save.codexSwordsMask & (1 << (lv - 1))) != 0;
+                var tile = new VisualElement { style = { width = 56, height = 66, alignItems = Align.Center, justifyContent = Justify.Center, marginRight = 5, marginBottom = 5, opacity = has ? 1f : 0.35f } };
+                ApplySwordTierBorderGlow(tile, lv, false, 8f);
+                var ico = new VisualElement { style = { width = 42, height = 42, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(lv)) } };
+                ico.AddToClassList("icon-fixed");
+                tile.Add(ico);
+                tile.Add(new Label($"Lv.{lv}") { style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold } });
+                swGrid.Add(tile);
+            }
+            swCard.Add(swGrid);
+            body.Add(swCard);
+
+            // 3 Act Bosses & 8 Pills
+            var bpCard = new VisualElement();
+            bpCard.AddToClassList("card-light");
+            bpCard.Add(new Label($"Thủ Lĩnh 3 Vực ({bsCnt}/3) & Đan Đột Phá ({plCnt}/8):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, marginBottom = 6 } });
+            var bpGrid = new VisualElement();
+            bpGrid.AddToClassList("grid-wrap");
+            string[] bossKeys = { "Monsters/act1_boss_guardian", "Monsters/act2_boss_overlord", "Monsters/act3_boss_archon" };
+            string[] bossNames = { "Cổ Mộc", "Sa Hoàng", "Thái Hư" };
+            for (int b = 0; b < 3; b++)
+            {
+                bool has = (save.codexBossesMask & (1 << b)) != 0;
+                var tile = new VisualElement { style = { width = 62, height = 68, alignItems = Align.Center, justifyContent = Justify.Center, marginRight = 5, marginBottom = 5, opacity = has ? 1f : 0.35f } };
+                SetBorderAndRadius(tile, has ? new Color(0.84f, 0.56f, 0.14f) : new Color(0.75f, 0.75f, 0.72f), 1.5f, 8f);
+                var ico = new VisualElement { style = { width = 40, height = 40 } };
+                CodexArtLoader.ApplyIconOrPlaceholder(ico, bossKeys[b], "[Boss]");
+                tile.Add(ico);
+                tile.Add(new Label(bossNames[b]) { style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold } });
+                bpGrid.Add(tile);
+            }
+            for (int r = 0; r < 8; r++)
+            {
+                bool has = (save.codexPillsMask & (1 << r)) != 0;
+                var tile = new VisualElement { style = { width = 56, height = 64, alignItems = Align.Center, justifyContent = Justify.Center, marginRight = 5, marginBottom = 5, opacity = has ? 1f : 0.35f } };
+                SetBorderAndRadius(tile, has ? new Color(0.16f, 0.62f, 0.46f) : new Color(0.75f, 0.75f, 0.72f), 1.5f, 8f);
+                var ico = new VisualElement { style = { width = 34, height = 34 } };
+                CodexArtLoader.ApplyIconOrPlaceholder(ico, CultivationTable.GetPillCodexKey(r), "[Đan]");
+                tile.Add(ico);
+                tile.Add(new Label($"Bậc {r + 1}") { style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold } });
+                bpGrid.Add(tile);
+            }
+            bpCard.Add(bpGrid);
+            body.Add(bpCard);
+        }
+
+        public static void BuildCompanions(VisualElement body)
+        {
+            var save = SaveService.Current;
+            var engine = GameplayEngine.Instance;
+            bool unlocked = CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Companions, save.realmIndex, save.subStage);
+
+            void Refresh()
+            {
+                body.Clear();
+                BuildCompanions(body);
+            }
+
+            var hero = new VisualElement();
+            hero.AddToClassList("stage-hero-box");
+            hero.Add(new Label("Linh Thú Hộ Đạo (Đồng Hành Tu Luyện)") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, color = new Color(0.11f, 0.42f, 0.32f) } });
+            hero.Add(new Label(unlocked
+                ? "Thu phục Linh Thú để kích hoạt hiệu ứng hỗ trợ vĩnh viễn khi xuất chiến!"
+                : "Mở khóa tại Trúc Cơ Tầng 7!")
+            { style = { fontSize = 11, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
+            body.Add(hero);
+
+            RemakeCompanionId[] ids = { RemakeCompanionId.AzureCrane, RemakeCompanionId.WhiteFox, RemakeCompanionId.JadeTurtle, RemakeCompanionId.ThunderSpirit };
+            for (int i = 0; i < ids.Length; i++)
+            {
+                var cid = ids[i];
+                var spec = CultivationTable.GetCompanionSpec(cid);
+                bool owned = (save.unlockedCompanionsMask & (1 << (int)cid)) != 0;
+                bool active = save.activeCompanionId == (int)cid;
+                double cost = Math.Round(1200 * Math.Pow(3.2, (int)cid - 1));
+
+                var card = new VisualElement();
+                card.AddToClassList("card-light");
+                card.style.flexDirection = FlexDirection.Row;
+                card.style.alignItems = Align.Center;
+                card.style.marginBottom = 8;
+                if (active) SetBorderAndRadius(card, new Color(0.86f, 0.60f, 0.12f), 2.2f, 12f);
+
+                var ico = new VisualElement { style = { width = 62, height = 62, marginRight = 10, flexShrink = 0 } };
+                SetBorderAndRadius(ico, active ? new Color(0.86f, 0.60f, 0.12f) : new Color(0.22f, 0.58f, 0.46f), 1.5f, 12f);
+                CodexArtLoader.ApplyIconOrPlaceholder(ico, spec.codexKey, "[Linh Thú]", "SpiritLotus");
+                card.Add(ico);
+
+                var info = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
+                info.Add(new Label(spec.name) { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12 } });
+                info.Add(new Label(spec.desc) { style = { fontSize = 10, color = new Color(0.14f, 0.48f, 0.36f), whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+                info.Add(new Label($"Yêu cầu: {CultivationTable.RealmNames[spec.reqRealmIndex]} · {(owned ? "Đã thu phục" : $"Khế ước: {CultivationTable.FormatNumber(cost)} LT")}") { style = { fontSize = 9, color = new Color(0.42f, 0.46f, 0.44f), marginTop = 2 } });
+                card.Add(info);
+
+                var btn = new Button(() => { engine.TryUnlockOrSelectCompanion(active ? RemakeCompanionId.None : cid); Refresh(); })
+                {
+                    text = active ? "Thu Hồi" : owned ? "Xuất Chiến" : "Thu Phục"
+                };
+                btn.AddToClassList(active ? "btn-secondary" : "btn-primary");
+                btn.SetEnabled(unlocked && (owned || (save.realmIndex >= spec.reqRealmIndex && save.linhThach >= cost)));
+                card.Add(btn);
+                body.Add(card);
+            }
+        }
+
+        public static void BuildCharacterDetail(VisualElement body, Action<string> onNavigate)
+        {
+            var save = SaveService.Current;
+            var engine = GameplayEngine.Instance;
+            if (engine == null) return;
+
+            double reqTuVi = engine.GetRequiredTuViForCurrent();
+            float tvPct = Mathf.Clamp01((float)(save.tuVi / Math.Max(1.0, reqTuVi)));
+            int maxSwords = CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex);
+            string genderLbl = CultivationTable.GetGenderLabel(save.gender);
+            string realmFull = CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage);
+            double power = engine.GetPlayerCombatPowerEstimate();
+
+            // 1. HERO PROFILE HEADER
+            var hero = new VisualElement();
+            hero.AddToClassList("stage-hero-box");
+            hero.style.alignItems = Align.Stretch;
+
+            var topRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center } };
+            var avWrap = new VisualElement { style = { width = 76, height = 76, minWidth = 76, minHeight = 76, marginRight = 12, alignItems = Align.Center, justifyContent = Justify.Center, flexShrink = 0 } };
+            var avPort = new VisualElement { style = { width = 64, height = 64, borderTopLeftRadius = 32, borderTopRightRadius = 32, borderBottomLeftRadius = 32, borderBottomRightRadius = 32, backgroundColor = new Color(0.99f, 0.98f, 0.95f) } };
+            avPort.AddToClassList("art-slot");
+            CodexArtLoader.ApplyIconOrPlaceholder(avPort, CultivationTable.GetPortraitCodexKey(save.gender), "", "CharacterPortrait");
+            var avFrame = new VisualElement { pickingMode = PickingMode.Ignore };
+            avFrame.AddToClassList("full-screen");
+            avFrame.AddToClassList("art-slot");
+            string fKey = CultivationTable.GetAvatarFrameCodexKey(save.equippedAvatarFrame);
+            if (!string.IsNullOrEmpty(fKey))
+                CodexArtLoader.ApplyIconOrPlaceholder(avFrame, fKey, "");
+            avWrap.Add(avPort);
+            avWrap.Add(avFrame);
+            topRow.Add(avWrap);
+
+            var metaCol = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
+            var nameRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, flexWrap = Wrap.Wrap } };
+            nameRow.Add(new Label(string.IsNullOrEmpty(save.daoName) ? "Thanh Vân Tử" : save.daoName)
+            {
+                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 15, color = new Color(0.11f, 0.24f, 0.20f), marginRight = 6 }
+            });
+            var gBadge = new Label(genderLbl)
+            {
+                style =
+                {
+                    fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold,
+                    color = save.gender == RemakeCharacterGender.Male ? new Color(0.12f, 0.36f, 0.68f) : new Color(0.68f, 0.24f, 0.42f),
+                    backgroundColor = save.gender == RemakeCharacterGender.Male ? new Color(0.86f, 0.93f, 1.00f) : new Color(1.00f, 0.90f, 0.94f),
+                    paddingLeft = 6, paddingRight = 6, paddingTop = 2, paddingBottom = 2,
+                    borderTopLeftRadius = 6, borderTopRightRadius = 6, borderBottomLeftRadius = 6, borderBottomRightRadius = 6
+                }
+            };
+            nameRow.Add(gBadge);
+            metaCol.Add(nameRow);
+
+            metaCol.Add(new Label(realmFull)
+            {
+                style = { fontSize = 12, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.46f, 0.04f), marginTop = 2 }
+            });
+            metaCol.Add(new Label($"Chiến Lực Ước Tính: {CultivationTable.FormatNumber(power)} · Ải {save.activeAct + 1}-{save.activeStage}")
+            {
+                style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.14f, 0.48f, 0.36f), marginTop = 2 }
+            });
+
+            var tvTrack = new VisualElement { style = { height = 7, marginTop = 5, width = Length.Percent(100) } };
+            tvTrack.AddToClassList("bar-track");
+            tvTrack.Add(new VisualElement { style = { width = Length.Percent(tvPct * 100f), height = Length.Percent(100), backgroundColor = new Color(0.86f, 0.60f, 0.12f) } });
+            metaCol.Add(tvTrack);
+            metaCol.Add(new Label($"Tu Vi: {CultivationTable.FormatNumber(save.tuVi)} / {CultivationTable.FormatNumber(reqTuVi)} ({Mathf.RoundToInt(tvPct * 100)}%)")
+            {
+                style = { fontSize = 10, color = new Color(0.36f, 0.42f, 0.40f), marginTop = 2 }
+            });
+
+            topRow.Add(metaCol);
+            hero.Add(topRow);
+            body.Add(hero);
+
+            // 2. DETAILED COMBAT & CULTIVATION STATS (2-Column Grid)
+            var statCard = new VisualElement();
+            statCard.AddToClassList("card-light");
+            statCard.style.marginBottom = 8;
+            statCard.Add(new Label("Chỉ Số Chiến Đấu & Tu Luyện:") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, marginBottom = 6 } });
+
+            var statGrid = new VisualElement();
+            statGrid.AddToClassList("grid-wrap");
+            statGrid.style.justifyContent = Justify.SpaceBetween;
+
+            void AddStatRow(string label, string value, Color? accent = null)
+            {
+                var cell = new VisualElement
+                {
+                    style =
+                    {
+                        width = Length.Percent(48.5f),
+                        flexDirection = FlexDirection.Row,
+                        justifyContent = Justify.SpaceBetween,
+                        alignItems = Align.Center,
+                        paddingTop = 4, paddingBottom = 4, paddingLeft = 8, paddingRight = 8,
+                        marginBottom = 5,
+                        backgroundColor = new Color(0.96f, 0.98f, 0.96f),
+                        borderTopLeftRadius = 8, borderTopRightRadius = 8, borderBottomLeftRadius = 8, borderBottomRightRadius = 8,
+                        borderTopWidth = 1, borderBottomWidth = 1, borderLeftWidth = 1, borderRightWidth = 1,
+                        borderTopColor = new Color(0.84f, 0.89f, 0.85f), borderBottomColor = new Color(0.84f, 0.89f, 0.85f),
+                        borderLeftColor = new Color(0.84f, 0.89f, 0.85f), borderRightColor = new Color(0.84f, 0.89f, 0.85f)
+                    }
+                };
+                cell.Add(new Label(label) { style = { fontSize = 10, color = new Color(0.32f, 0.40f, 0.38f) } });
+                cell.Add(new Label(value) { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = accent ?? new Color(0.11f, 0.24f, 0.20f) } });
+                statGrid.Add(cell);
+            }
+
+            AddStatRow("Công Phi Kiếm", CultivationTable.FormatNumber(engine.GetTotalSwordAttackPower()), new Color(0.76f, 0.36f, 0.10f));
+            AddStatRow("Phi Kiếm Ra Trận", $"{save.equippedSwordLevels.Count}/{maxSwords} thanh");
+            AddStatRow("Khí Huyết (HP)", $"{CultivationTable.FormatNumber(engine.PlayerCurrentHp)}/{CultivationTable.FormatNumber(engine.PlayerMaxHp)}", new Color(0.14f, 0.56f, 0.36f));
+            AddStatRow("Linh Lực (MP)", $"{Mathf.RoundToInt(engine.PlayerCurrentMp)}/{Mathf.RoundToInt(engine.PlayerMaxMp)}", new Color(0.16f, 0.46f, 0.78f));
+            AddStatRow("Tốc Độ Kiếm", $"{Mathf.RoundToInt(engine.GetSwordSpeedMultiplier() * 100f)}%");
+            AddStatRow("Bội Số ST Kiếm", $"{Mathf.RoundToInt(engine.GetSwordDamageMultiplier() * 100f)}%");
+            AddStatRow("Tỉ Lệ Chí Mạng", $"{engine.GetCritChance() * 100f:0.#}%", new Color(0.76f, 0.42f, 0.06f));
+            AddStatRow("ST Chí Mạng", $"{Math.Round(engine.GetCritDamageMultiplier() * 100.0):0}%");
+            AddStatRow("Giảm Sát Thương", $"{engine.GetDamageReduction() * 100f:0.#}%");
+            AddStatRow("Xuyên Giáp", $"{engine.GetArmorPenetration() * 100f:0.#}%");
+            AddStatRow("Sát Thương Boss", $"{Mathf.RoundToInt(engine.GetBossBonusMultiplier() * 100f)}%");
+            AddStatRow("Hiệu Suất Tu Vi", $"{Mathf.RoundToInt(engine.GetTuViMultiplier() * 100f)}%", new Color(0.72f, 0.46f, 0.04f));
+            AddStatRow("Linh Thạch Rơi", $"{Mathf.RoundToInt(engine.GetLinhThachMultiplier() * 100f)}%");
+            AddStatRow("Đạo Vận / Đan Sư", $"ĐV {save.daoPoints} · Đan Bậc {save.alchemistRank}");
+            statCard.Add(statGrid);
+            body.Add(statCard);
+
+            // 3. ACTIVE SYSTEMS SUMMARY (Gear, Formation, Companion, Codex & History)
+            var sysCard = new VisualElement();
+            sysCard.AddToClassList("card-light");
+            sysCard.style.marginBottom = 8;
+            sysCard.Add(new Label("Trang Bị, Trận Pháp & Đồng Hành Đang Kích Hoạt:") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, marginBottom = 5 } });
+
+            string mainForm = save.activeMainFormation >= 0 && save.activeMainFormation < RemakeCatalogs.Formations.Count
+                ? RemakeCatalogs.Formations[save.activeMainFormation].name : "Chưa khai trận";
+            string subForm = save.activeSubFormation >= 0 && save.activeSubFormation < RemakeCatalogs.Formations.Count
+                ? RemakeCatalogs.Formations[save.activeSubFormation].name : "Không";
+            string petName = save.activeCompanionId > 0
+                ? CultivationTable.GetCompanionSpec((RemakeCompanionId)save.activeCompanionId).name : "Chưa xuất chiến";
+            int codexCount = engine.GetCodexUnlockedCount(out _, out _, out _);
+
+            sysCard.Add(new Label($"• Trang Bị: {save.equippedGear.Count}/6 món · Bộ Thanh Vân ({engine.GetEquipSetCount(RemakeEquipSet.ThanhVan)}) · Đan Tông ({engine.GetEquipSetCount(RemakeEquipSet.DanTong)}) · Huyền Vũ ({engine.GetEquipSetCount(RemakeEquipSet.HuyenVu)})")
+            { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginBottom = 3 } });
+            sysCard.Add(new Label($"• Trận Pháp: Chính [{mainForm}] · Phụ [{subForm}]")
+            { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginBottom = 3 } });
+            sysCard.Add(new Label($"• Linh Thú Hộ Đạo: {petName} · Đồ Giám: {codexCount}/21 (+{codexCount * 0.8f:0.#}% ST & Tu Vi)")
+            { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginBottom = 3 } });
+            sysCard.Add(new Label($"• Chiến Tích: Đã trảm {save.totalKills} Yêu Thú · Ghép {save.totalMerges} Phi Kiếm · Vạn Yêu Tháp T{save.demonTowerHighestFloor} · Thắng PvP {save.pvpWins}")
+            { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, color = new Color(0.32f, 0.42f, 0.38f) } });
+            body.Add(sysCard);
+
+            // 4. QUICK NAVIGATION BUTTONS
+            var navRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.SpaceBetween } };
+            void AddNavBtn(string text, string route, bool primary = false)
+            {
+                var b = new Button(() => onNavigate?.Invoke(route)) { text = text };
+                b.AddToClassList(primary ? "btn-primary" : "btn-secondary");
+                b.style.marginBottom = 6;
+                b.style.marginRight = 4;
+                b.style.flexGrow = 1;
+                b.style.fontSize = 11;
+                navRow.Add(b);
+            }
+            AddNavBtn("Kiếm Lộ", "swordpath");
+            AddNavBtn("Trang Bị", "equipment");
+            AddNavBtn("Đạo Vận", "daovan");
+            AddNavBtn("Đổi Nhân Vật (3 Ô)", "charselect", true);
+            body.Add(navRow);
         }
 
         private static void SetBorderAndRadius(VisualElement ve, Color c, float w, float r)

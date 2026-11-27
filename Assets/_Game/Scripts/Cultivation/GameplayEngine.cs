@@ -22,8 +22,25 @@ namespace KhiVanChiTu.Remake
         public event Action<bool> OnTribulationStateChanged;
         public event Action<int, int> OnTribulationStrike; // (strikeIndex 1..9, total)
         public event Action<bool> OnRespawnStateChanged;
+        public sealed class OfflineCatchupSummary
+        {
+            public double elapsedSeconds;
+            public double efficiency;
+            public int killsSimulated;
+            public double tuViGained;
+            public double linhThachGained;
+            public int herbsGained;
+            public int herbTier;
+            public int swordsGained;
+            public bool bonusClaimed;
+        }
+
+        public event Action<OfflineCatchupSummary> OnOfflineCatchupSummary;
+        public OfflineCatchupSummary LastOfflineSummary { get; private set; }
+
         public event Action OnAlchemyBrewResolved;
         public event Action<int, int, string> OnWaveStarted;
+        public event Action OnBossShieldStateChanged;
 
         // AoE Batching & O(1) Cached Combat/Drop Multipliers (zero event storms & zero per-hit list scans!)
         private int _aoeBatchDepth;
@@ -144,6 +161,15 @@ namespace KhiVanChiTu.Remake
         public float ActiveBossTimeRemaining { get; private set; }
         public const float BossTimeLimit = 60.0f;
         public const float DemonTowerTimeLimit = 55f;
+
+        // V3 Tactical Boss X-10 Shield-Break State (Pha Ho The)
+        public bool BossShieldActive { get; private set; }
+        public double BossShieldHp { get; private set; }
+        public double BossShieldMaxHp { get; private set; }
+        public float BossShieldTimeRemaining { get; private set; }
+        public float BossBrokenRemaining { get; private set; }
+        public bool IsBossStunned => BossBrokenRemaining > 1.5f;
+        private float _bossShieldCooldown = 11f;
 
         // V2 Arena Modes (Campaign / Demon Tower 100F / Secret Realm)
         public RemakeArenaMode ActiveArenaMode { get; private set; } = RemakeArenaMode.Campaign;
@@ -398,12 +424,19 @@ namespace KhiVanChiTu.Remake
                 }
             }
 
-            // Boss 60s timeout -> Respawn countdown & repeat Boss X-10 cleanly (no retreat!)
+            // Boss 60s timeout & V3 Tactical Boss Shield-Break cycle
             if (ActiveArenaMode == RemakeArenaMode.Campaign && HasActiveBoss)
             {
                 ActiveBossTimeRemaining -= dt;
                 if (ActiveBossTimeRemaining <= 0f)
+                {
+                    ResetBossShieldState();
                     BeginPlayerRespawn("Hết 60 giây khiêu chiến Thủ Lĩnh! Hồi sinh để tái chiến Thủ Lĩnh.");
+                }
+                else
+                {
+                    AdvanceBossShieldCycle(dt);
+                }
             }
             else if (ActiveArenaMode != RemakeArenaMode.Campaign)
             {
@@ -419,13 +452,17 @@ namespace KhiVanChiTu.Remake
                 }
             }
 
-            // V2 Ky Ngo Linh Co (25s floating event while actively viewing)
+            // V2 Ky Ngo Linh Co (25s floating event; WhiteFox companion auto-collects!)
             if (ActiveArenaMode == RemakeArenaMode.Campaign && save.totalKills >= 5)
             {
                 if (HasKyNgoAvailable)
                 {
                     KyNgoTimeRemaining -= dt;
-                    if (KyNgoTimeRemaining <= 0f)
+                    if ((RemakeCompanionId)save.activeCompanionId == RemakeCompanionId.WhiteFox && KyNgoTimeRemaining <= 18f)
+                    {
+                        TryClaimKyNgoChoice(0);
+                    }
+                    else if (KyNgoTimeRemaining <= 0f)
                     {
                         HasKyNgoAvailable = false;
                         OnQuestOrTutorialChanged?.Invoke();
@@ -466,12 +503,16 @@ namespace KhiVanChiTu.Remake
             return CultivationTable.GetRequiredTuVi(save.realmIndex, save.subStage);
         }
 
-        public void CreateOrSelectCharacter(string rawName)
+        public void CreateOrSelectCharacter(string rawName) =>
+            CreateOrSelectCharacter(rawName, SaveService.Current != null ? SaveService.Current.gender : RemakeCharacterGender.Female);
+
+        public void CreateOrSelectCharacter(string rawName, RemakeCharacterGender gender)
         {
             var save = SaveService.Current;
             string clean = string.IsNullOrWhiteSpace(rawName) ? "Thanh Vân Tử" : rawName.Trim();
             if (clean.Length > 20) clean = clean.Substring(0, 20);
             save.daoName = clean;
+            save.gender = gender;
             save.hasCreatedCharacter = true;
             save.lastTickUtcTicks = DateTime.UtcNow.Ticks;
             RecomputePlayerVitals(true);
@@ -628,6 +669,9 @@ namespace KhiVanChiTu.Remake
             int thanhVan = GetEquipSetCount(RemakeEquipSet.ThanhVan);
             int huyenVu = GetEquipSetCount(RemakeEquipSet.HuyenVu);
             int danTong = GetEquipSetCount(RemakeEquipSet.DanTong);
+            var companion = (RemakeCompanionId)save.activeCompanionId;
+            int codexEntries = GetCodexUnlockedCount(out _, out _, out _);
+            float codexBonus = codexEntries * 0.008f; // +0.8% Sword Dmg & Tu Vi per unlocked Codex entry
 
             // Sword Damage Mult
             float daoSwordMult = 1f + coreLv * 0.10f + branchSwordLv * 0.15f + bodyLeechLv * 0.10f + swordMasteryLv * 0.28f;
@@ -636,11 +680,13 @@ namespace KhiVanChiTu.Remake
             if (thanhVan >= 4) eqSwordPct += 0.30f;
             if (thanhVan >= 6) eqSwordPct += 0.60f;
             float formSwordPct = GetFormationBonus(f => f.swordDamagePct) / 100f;
-            _cachedSwordDmgMult = daoSwordMult * (1f + eqSwordPct + formSwordPct);
+            float compSwordMult = companion == RemakeCompanionId.ThunderSpirit ? 1.18f : 1.0f;
+            _cachedSwordDmgMult = daoSwordMult * (1f + eqSwordPct + formSwordPct + codexBonus) * compSwordMult;
 
             // Sword Speed Mult
             float spd = 1f + coreLv * 0.05f;
             if ((RemakeSwordStyle)save.swordStyle == RemakeSwordStyle.KiemXuyen) spd += 0.28f;
+            if (companion == RemakeCompanionId.AzureCrane) spd += 0.12f;
             spd += GetFormationBonus(f => f.swordSpeedPct) / 100f;
             _cachedSwordSpeedMult = spd;
 
@@ -658,19 +704,22 @@ namespace KhiVanChiTu.Remake
             if (huyenVu >= 2) dr += 0.06f;
             if (huyenVu >= 4) dr += 0.12f;
             if (huyenVu >= 6) dr += 0.20f;
+            if (companion == RemakeCompanionId.JadeTurtle) dr += 0.08f;
             dr += GetFormationBonus(f => f.damageReductionPct) / 100f;
             _cachedDamageReduction = Mathf.Clamp(dr, 0f, 0.72f);
 
             // Tu Vi & Linh Thach Mults
             float daoTuVi = 1f + coreLv * 0.12f + branchCultLv * 0.15f + cultEnlightLv * 0.25f;
+            if (companion == RemakeCompanionId.AzureCrane) daoTuVi += 0.10f;
             float eqTuVi = GetEquipmentStatSum(RemakeEquipStatType.TuViGainPct) / 100f;
             if (danTong >= 2) eqTuVi += 0.15f;
             if (danTong >= 4) eqTuVi += 0.30f;
             if (danTong >= 6) eqTuVi += 0.55f;
             float formTuVi = GetFormationBonus(f => f.tuViPct) / 100f;
-            _cachedTuViMultNoKyNgo = daoTuVi * (1f + eqTuVi + formTuVi);
+            _cachedTuViMultNoKyNgo = daoTuVi * (1f + eqTuVi + formTuVi + codexBonus);
 
             float daoLt = 1f + branchWealthLv * 0.15f + wealthFortuneLv * 0.30f;
+            if (companion == RemakeCompanionId.WhiteFox) daoLt += 0.15f;
             float eqLt = GetEquipmentStatSum(RemakeEquipStatType.LinhThachPct) / 100f;
             _cachedLinhThachMult = daoLt * (1f + eqLt);
 
@@ -820,7 +869,7 @@ namespace KhiVanChiTu.Remake
                     droppedEquipRarity = RollAndGrantEquipment(stage, wasBoss);
             }
 
-            // Sword embryo drops (1.5%-3% normal, 100% Boss, tutorial #5 guarantee)
+            // Sword embryo drops (1.5%-3% normal, 100% Boss, tutorial #5 guarantee — single clean drop!)
             bool dropSword = false;
             int dropLevel = 1;
             if (!save.tutorialGuaranteedSwordDropped && save.totalKills >= 5)
@@ -828,8 +877,6 @@ namespace KhiVanChiTu.Remake
                 save.tutorialGuaranteedSwordDropped = true;
                 dropSword = true;
                 dropLevel = 1;
-                if (save.swordInventoryLevels.Count == 0)
-                    save.swordInventoryLevels.Add(1);
             }
             else if (wasBoss)
             {
@@ -851,6 +898,7 @@ namespace KhiVanChiTu.Remake
             if (dropSword)
             {
                 save.swordInventoryLevels.Add(dropLevel);
+                save.codexSwordsMask |= (1 << Mathf.Clamp(dropLevel - 1, 0, 9));
                 OnToastMessage?.Invoke($"Nhặt Phôi Kiếm Cấp {dropLevel}!");
             }
 
@@ -863,6 +911,7 @@ namespace KhiVanChiTu.Remake
             if (wasBoss)
             {
                 if (stage.actIndex == 0 && stage.stageNumber == 10) save.bossAct1Cleared = true;
+                save.codexBossesMask |= (1 << Mathf.Clamp(stage.actIndex, 0, 2));
 
                 int nextLinear = Mathf.Min(119, stage.LinearIndex + 1);
                 if (nextLinear > save.highestUnlockedLinearStage)
@@ -943,12 +992,89 @@ namespace KhiVanChiTu.Remake
         public void SetActiveBoss(bool active, string bossName, double hp, double maxHp)
         {
             if (active && !HasActiveBoss)
+            {
                 ActiveBossTimeRemaining = BossTimeLimit;
+                ResetBossShieldState();
+                _bossShieldCooldown = 10f;
+            }
+            else if (!active && HasActiveBoss)
+            {
+                ResetBossShieldState();
+            }
             HasActiveBoss = active;
             ActiveBossName = bossName;
             ActiveBossHp = Math.Max(0, hp);
             ActiveBossMaxHp = Math.Max(1, maxHp);
             OnBossStatusUpdated?.Invoke(active ? bossName : null, ActiveBossHp, ActiveBossMaxHp);
+        }
+
+        private void ResetBossShieldState()
+        {
+            bool changed = BossShieldActive || BossBrokenRemaining > 0f;
+            BossShieldActive = false;
+            BossShieldHp = 0;
+            BossShieldMaxHp = 0;
+            BossShieldTimeRemaining = 0f;
+            BossBrokenRemaining = 0f;
+            _bossShieldCooldown = 12f;
+            if (changed) OnBossShieldStateChanged?.Invoke();
+        }
+
+        public void AdvanceBossShieldCycle(float dt)
+        {
+            if (BossBrokenRemaining > 0f)
+            {
+                BossBrokenRemaining = Mathf.Max(0f, BossBrokenRemaining - dt);
+                if (BossBrokenRemaining <= 0f) OnBossShieldStateChanged?.Invoke();
+                return;
+            }
+            if (BossShieldActive)
+            {
+                BossShieldTimeRemaining -= dt;
+                if (BossShieldTimeRemaining <= 0f)
+                {
+                    BossShieldActive = false;
+                    BossShieldHp = 0;
+                    _bossShieldCooldown = 13f;
+                    // Boss completes charge: heavy slam!
+                    var stage = GetCurrentStageSpec();
+                    OnPlayerDamaged(stage.enemyDamage * 1.45);
+                    OnToastMessage?.Invoke("Thủ Lĩnh bùng phát Yêu Lực! Hãy dùng Kỹ Năng hoặc Phá Giáp khi Khiên xuất hiện!");
+                    OnBossShieldStateChanged?.Invoke();
+                }
+                return;
+            }
+            _bossShieldCooldown -= dt;
+            if (_bossShieldCooldown <= 0f && ActiveBossMaxHp > 0 && ActiveBossHp > ActiveBossMaxHp * 0.12)
+            {
+                BossShieldActive = true;
+                BossShieldMaxHp = Math.Max(20, Math.Round(ActiveBossMaxHp * 0.11));
+                BossShieldHp = BossShieldMaxHp;
+                BossShieldTimeRemaining = 4.0f;
+                OnToastMessage?.Invoke("Thủ Lĩnh mở Khiên Yêu Lực (4s)! Tung Kỹ Năng để Phá Phòng!");
+                OnBossShieldStateChanged?.Invoke();
+            }
+        }
+
+        public void ApplyBossShieldDamage(double rawDamage, bool fromActiveSkill)
+        {
+            if (!BossShieldActive || BossShieldHp <= 0) return;
+            var save = SaveService.Current;
+            double mult = fromActiveSkill ? 2.6 : ((RemakeSwordStyle)save.swordStyle == RemakeSwordStyle.PhaGiap ? 1.8 : 1.0);
+            if ((RemakeCompanionId)save.activeCompanionId == RemakeCompanionId.ThunderSpirit) mult *= 1.20;
+            BossShieldHp = Math.Max(0, BossShieldHp - rawDamage * mult);
+            if (BossShieldHp <= 0)
+            {
+                BossShieldActive = false;
+                BossShieldTimeRemaining = 0f;
+                BossBrokenRemaining = 5.0f; // 3.5s stun + 5s +35% damage taken!
+                _bossShieldCooldown = 15f;
+                RemakeAudioService.Instance?.PlayBreakthrough();
+                if (RemakeArenaController.Instance != null && RemakeArenaController.Instance.TryFindPriorityTargetPos(out var bPos))
+                    RemakeVfxPool.Instance?.SpawnBreakthroughFlash(bPos, true);
+                OnToastMessage?.Invoke("PHÁ HỘ THỂ! Thủ Lĩnh choáng 3.5s & nhận +35% sát thương!");
+            }
+            OnBossShieldStateChanged?.Invoke();
         }
 
         public void BeginPlayerRespawn(string reasonToast)
@@ -1196,6 +1322,7 @@ namespace KhiVanChiTu.Remake
                 int newLevel = mainLevel + 1;
                 if (mainFromEquipped) save.equippedSwordLevels[mainIndex] = newLevel;
                 else save.swordInventoryLevels[adjustedMainIdx] = newLevel;
+                save.codexSwordsMask |= (1 << Mathf.Clamp(newLevel - 1, 0, 9));
                 InvalidateStatCache();
 
                 if (save.tutorialStep == 1 || save.tutorialStep == 2)
@@ -1303,6 +1430,7 @@ namespace KhiVanChiTu.Remake
                     RemoveOneSwordFromBag(fromLevel);
                     save.swordInventoryLevels.Add(newLevel);
                 }
+                save.codexSwordsMask |= (1 << Mathf.Clamp(newLevel - 1, 0, 9));
                 InvalidateStatCache();
 
                 if (save.tutorialStep == 1 || save.tutorialStep == 2)
@@ -1512,6 +1640,7 @@ namespace KhiVanChiTu.Remake
                     : qRoll < 0.44f ? RemakePillQuality.TrungPham
                     : RemakePillQuality.HaPham;
                 AddPill(targetRealm, quality, 1);
+                save.codexPillsMask |= (1 << Mathf.Clamp(targetRealm, 0, 7));
                 GrantAlchemistXp((targetRealm + 1) * (quality >= RemakePillQuality.ThuongPham ? 25 : 15));
                 if (save.mainQuestIndex == 4) save.mainQuestProgress = 1;
                 if (quality == RemakePillQuality.CucPham)
@@ -2280,6 +2409,8 @@ namespace KhiVanChiTu.Remake
             else
             {
                 float penaltyPct = CultivationTable.GetFailurePenaltyPercent(save.consecutiveBreakthroughFails, pillUsed);
+                if ((RemakeCompanionId)save.activeCompanionId == RemakeCompanionId.JadeTurtle)
+                    penaltyPct = Mathf.Max(0.30f, penaltyPct - 0.10f);
                 save.tuVi = Math.Max(0, save.tuVi - req * penaltyPct);
                 _gateCapToastSentForStage = false;
                 save.consecutiveBreakthroughFails++;
@@ -2581,13 +2712,36 @@ namespace KhiVanChiTu.Remake
                     save.demonTowerHighestFloor = ActiveChallengeFloor;
 
                 RemakeAudioService.Instance?.PlayBreakthrough();
-                OnToastMessage?.Invoke($"Vượt Tháp Tầng {ActiveChallengeFloor}: +{CultivationTable.FormatNumber(spec.rewardLt)} LT & Đá Tẩy Luyện!");
-                ActiveArenaMode = RemakeArenaMode.Campaign;
-                SetActiveBoss(false, "", 0, 0);
-                PlayerCurrentHp = PlayerMaxHp;
-                SaveService.Save();
-                if (_aoeBatchDepth > 0) _batchPendingArenaReset = true;
-                else SyncArenaOrReturnToCampaignScene();
+
+                if (save.autoClimbDemonTower && ActiveChallengeFloor < 100)
+                {
+                    int nextF = ActiveChallengeFloor + 1;
+                    GetWavePlan(RemakeArenaMode.DemonTower, false, nextF, out int totalWaves, out int[] counts, out _);
+                    int totalEnemies = 0;
+                    for (int i = 0; i < counts.Length; i++) totalEnemies += counts[i];
+                    ActiveChallengeFloor = nextF;
+                    ChallengeModeTimeRemaining = DemonTowerTimeLimit;
+                    ChallengeKillsRemaining = totalEnemies;
+                    CurrentWaveIndex = 1;
+                    TotalWavesInStage = totalWaves;
+                    WaveEnemiesRemaining = counts[0];
+                    PlayerCurrentHp = PlayerMaxHp;
+                    SetActiveBoss(false, "", 0, 0);
+                    SaveService.Save();
+                    OnToastMessage?.Invoke($"Vượt Tháp T{nextF - 1}! Tự động tiến lên Tầng {nextF} (+{CultivationTable.FormatNumber(spec.rewardLt)} LT)!");
+                    if (_aoeBatchDepth > 0) _batchPendingArenaReset = true;
+                    else RemakeArenaController.Instance?.ResetForStageChange();
+                }
+                else
+                {
+                    OnToastMessage?.Invoke($"Vượt Tháp Tầng {ActiveChallengeFloor}: +{CultivationTable.FormatNumber(spec.rewardLt)} LT & Đá Tẩy Luyện!");
+                    ActiveArenaMode = RemakeArenaMode.Campaign;
+                    SetActiveBoss(false, "", 0, 0);
+                    PlayerCurrentHp = PlayerMaxHp;
+                    SaveService.Save();
+                    if (_aoeBatchDepth > 0) _batchPendingArenaReset = true;
+                    else SyncArenaOrReturnToCampaignScene();
+                }
             }
             else if (ActiveArenaMode == RemakeArenaMode.SecretRealm)
             {
@@ -2669,6 +2823,8 @@ namespace KhiVanChiTu.Remake
             BeginAoEDamageBatch();
             try
             {
+                if (BossShieldActive)
+                    ApplyBossShieldDamage(dmg, true);
                 if (slot == 0) OnLoiPhatCast?.Invoke(targetPos, dmg, true);
                 OnSkillCast?.Invoke(slot, targetPos, dmg, true);
                 CheckDaoVanAndSkillQuest();
@@ -2774,7 +2930,7 @@ namespace KhiVanChiTu.Remake
             return true;
         }
 
-        public void ApplyCatchupSimulation(double seconds, double efficiency)
+        public void ApplyCatchupSimulation(double seconds, double efficiency, bool forceSummaryPopup = false)
         {
             var save = SaveService.Current;
             var stage = GetCurrentStageSpec();
@@ -2790,16 +2946,291 @@ namespace KhiVanChiTu.Remake
             int herbs = Mathf.FloorToInt((float)(kills * stage.herbDropRate));
             if (herbs > 0) save.herbsByTier[Mathf.Clamp(stage.herbTier - 1, 0, 5)] += herbs;
 
-            int embryos = Mathf.FloorToInt((float)(kills * stage.swordDropRate));
-            for (int i = 0; i < Mathf.Min(embryos, 20); i++)
+            int embryos = Mathf.Min(20, Mathf.FloorToInt((float)(kills * stage.swordDropRate)));
+            for (int i = 0; i < embryos; i++)
                 save.swordInventoryLevels.Add(stage.swordDropMinLevel);
 
             CheckMindCalmReset();
             SaveService.Save();
             OnStatsChanged?.Invoke();
 
-            string durationLabel = seconds >= 60 ? $"{Mathf.FloorToInt((float)(seconds / 60))}p" : $"{Mathf.RoundToInt((float)seconds)}s";
-            OnToastMessage?.Invoke($"Bế Quan / Bù Ẩn Tab ({durationLabel}): +{CultivationTable.FormatNumber(totalTuVi)} Tu Vi · +{CultivationTable.FormatNumber(totalLt)} LT");
+            LastOfflineSummary = new OfflineCatchupSummary
+            {
+                elapsedSeconds = seconds,
+                efficiency = efficiency,
+                killsSimulated = Mathf.FloorToInt((float)kills),
+                tuViGained = totalTuVi,
+                linhThachGained = totalLt,
+                herbsGained = herbs,
+                herbTier = stage.herbTier,
+                swordsGained = embryos,
+                bonusClaimed = false
+            };
+
+            // Avoid toast spam on tiny scene loads (<60s): silent catchup; 1-15m -> short toast; >=15m -> full Welcome-Back Popup!
+            if (forceSummaryPopup || seconds >= 900.0)
+            {
+                OnOfflineCatchupSummary?.Invoke(LastOfflineSummary);
+            }
+            else if (seconds >= 60.0)
+            {
+                string durationLabel = $"{Mathf.FloorToInt((float)(seconds / 60))}p";
+                OnToastMessage?.Invoke($"Bế Quan ({durationLabel}): +{CultivationTable.FormatNumber(totalTuVi)} Tu Vi · +{CultivationTable.FormatNumber(totalLt)} LT");
+            }
+        }
+
+        public bool TryClaimOfflineBonusWithCoDuyen()
+        {
+            if (LastOfflineSummary == null || LastOfflineSummary.bonusClaimed) return false;
+            var save = SaveService.Current;
+            const int cost = 10;
+            if (save.coDuyen < cost)
+            {
+                OnToastMessage?.Invoke($"Cần {cost} Cơ Duyên để nhận thêm +50% thưởng Bế Quan!");
+                return false;
+            }
+            save.coDuyen -= cost;
+            double extraTv = Math.Round(LastOfflineSummary.tuViGained * 0.5);
+            double extraLt = Math.Round(LastOfflineSummary.linhThachGained * 0.5);
+            AddTuViWithAutoLevel(extraTv);
+            save.linhThach += extraLt;
+            LastOfflineSummary.bonusClaimed = true;
+            SaveService.Save();
+            RemakeAudioService.Instance?.PlayBreakthrough();
+            OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke($"Nhận thêm +50% Bế Quan: +{CultivationTable.FormatNumber(extraTv)} Tu Vi & +{CultivationTable.FormatNumber(extraLt)} LT!");
+            return true;
+        }
+
+        public void SetAutoClimbDemonTower(bool enabled)
+        {
+            SaveService.Current.autoClimbDemonTower = enabled;
+            SaveService.Save();
+            OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke(enabled ? "Vạn Yêu Tháp: Đã bật Tự Leo Tầng Kế!" : "Vạn Yêu Tháp: Đã tắt Tự Leo Tầng.");
+        }
+
+        // =========================================================
+        // V3: CODEX COLLECTION, COMPANIONS & ASYNC PVP (LUAN KIEM DAI)
+        // =========================================================
+        public int GetCodexUnlockedCount(out int swords, out int bosses, out int pills)
+        {
+            var save = SaveService.Current;
+            swords = CountBits(save.codexSwordsMask, 10);
+            bosses = CountBits(save.codexBossesMask, 3);
+            pills = CountBits(save.codexPillsMask, 8);
+            return swords + bosses + pills;
+        }
+
+        private static int CountBits(int mask, int maxBits)
+        {
+            int c = 0;
+            for (int i = 0; i < maxBits; i++)
+                if ((mask & (1 << i)) != 0) c++;
+            return c;
+        }
+
+        public static readonly int[] CodexMilestoneThresholds = { 3, 6, 9, 12, 15, 18, 21 };
+
+        public bool IsCodexMilestoneReady(int tierIdx)
+        {
+            if (tierIdx < 0 || tierIdx >= CodexMilestoneThresholds.Length) return false;
+            var save = SaveService.Current;
+            if ((save.codexClaimedMask & (1 << tierIdx)) != 0) return false;
+            return GetCodexUnlockedCount(out _, out _, out _) >= CodexMilestoneThresholds[tierIdx];
+        }
+
+        public bool TryClaimCodexMilestone(int tierIdx)
+        {
+            if (!IsCodexMilestoneReady(tierIdx)) return false;
+            var save = SaveService.Current;
+            save.codexClaimedMask |= (1 << tierIdx);
+            int coDuyenGain = 15 + tierIdx * 10;
+            double ltGain = Math.Round(500 * Math.Pow(2.4, tierIdx));
+            save.coDuyen += coDuyenGain;
+            save.linhThach += ltGain;
+            save.forgeTalismanCount += 1;
+            InvalidateStatCache();
+            SaveService.Save();
+            RemakeAudioService.Instance?.PlayBreakthrough();
+            OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke($"Đồ Giám Mốc {tierIdx + 1}: +{coDuyenGain} Cơ Duyên, +{CultivationTable.FormatNumber(ltGain)} LT & +1 Phù Rèn!");
+            return true;
+        }
+
+        public bool TryUnlockOrSelectCompanion(RemakeCompanionId id)
+        {
+            var save = SaveService.Current;
+            if (id == RemakeCompanionId.None)
+            {
+                save.activeCompanionId = 0;
+                RecomputePlayerVitals(false);
+                SaveService.Save();
+                OnStatsChanged?.Invoke();
+                return true;
+            }
+            if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Companions, save.realmIndex, save.subStage))
+            {
+                OnToastMessage?.Invoke("Linh Thú Hộ Đạo mở ở Trúc Cơ Tầng 7!");
+                return false;
+            }
+            var spec = CultivationTable.GetCompanionSpec(id);
+            int bit = 1 << (int)id;
+            if ((save.unlockedCompanionsMask & bit) == 0)
+            {
+                if (save.realmIndex < spec.reqRealmIndex)
+                {
+                    OnToastMessage?.Invoke($"Cần đạt {CultivationTable.RealmNames[spec.reqRealmIndex]} để thu phục {spec.name}!");
+                    return false;
+                }
+                double cost = Math.Round(1200 * Math.Pow(3.2, (int)id - 1));
+                if (save.linhThach < cost)
+                {
+                    OnToastMessage?.Invoke($"Cần {CultivationTable.FormatNumber(cost)} Linh Thạch để kết khế ước {spec.name}!");
+                    return false;
+                }
+                save.linhThach -= cost;
+                save.unlockedCompanionsMask |= bit;
+                OnToastMessage?.Invoke($"Thu phục thành công Linh Thú: {spec.name}!");
+            }
+            else
+            {
+                OnToastMessage?.Invoke($"Đã xuất chiến Linh Thú: {spec.name}!");
+            }
+            save.activeCompanionId = (int)id;
+            RecomputePlayerVitals(false);
+            SaveService.Save();
+            RemakeAudioService.Instance?.PlayMerge();
+            OnStatsChanged?.Invoke();
+            return true;
+        }
+
+        public double GetPlayerCombatPowerEstimate()
+        {
+            EnsureStatCache();
+            double dps = GetTotalSwordAttackPower() * _cachedSwordSpeedMult * (1.0 + _cachedCritChance * (_cachedCritDmgMult - 1.0));
+            return Math.Max(10.0, Math.Round(dps * 4.5 + PlayerMaxHp * 0.45));
+        }
+
+        public bool IsFeatureTutorialCompleted(RemakeFeatureId fid)
+        {
+            int bit = 1 << (int)fid;
+            return (SaveService.Current.completedFeatureTutorialsMask & bit) != 0;
+        }
+
+        public void MarkFeatureTutorialCompleted(RemakeFeatureId fid)
+        {
+            int bit = 1 << (int)fid;
+            var save = SaveService.Current;
+            if ((save.completedFeatureTutorialsMask & bit) != 0) return;
+            save.completedFeatureTutorialsMask |= bit;
+            SaveService.Save();
+            OnQuestOrTutorialChanged?.Invoke();
+        }
+
+        public void EnsureDailyPvpReset()
+        {
+            var save = SaveService.Current;
+            long todayKey = DateTime.UtcNow.Year * 1000L + DateTime.UtcNow.DayOfYear;
+            if (save.lastPvpResetDayUtc != todayKey)
+            {
+                save.lastPvpResetDayUtc = todayKey;
+                save.pvpDailyRemaining = 5;
+            }
+        }
+
+        public bool TryChallengePvpOpponent(string opponentName, double opponentPower)
+        {
+            var save = SaveService.Current;
+            if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.PvpArena, save.realmIndex, save.subStage))
+            {
+                OnToastMessage?.Invoke("Luận Kiếm Đài mở ở Nguyên Anh Tầng 5!");
+                return false;
+            }
+            EnsureDailyPvpReset();
+            if (save.pvpDailyRemaining <= 0)
+            {
+                OnToastMessage?.Invoke("Đã hết 5 lượt Luận Kiếm hôm nay! Quay lại ngày mai.");
+                return false;
+            }
+            save.pvpDailyRemaining--;
+            double myPower = GetPlayerCombatPowerEstimate();
+            double ratio = myPower / Math.Max(1.0, opponentPower);
+            float winChance = Mathf.Clamp((float)(0.50 + (ratio - 1.0) * 0.65), 0.12f, 0.96f);
+            bool won = UnityEngine.Random.value <= winChance;
+            if (won)
+            {
+                save.pvpWins++;
+                int prestige = 85;
+                double lt = Math.Round(GetCurrentStageSpec().linhThachPerKill * 24);
+                save.swordPrestigePoints += prestige;
+                save.linhThach += lt;
+                RemakeAudioService.Instance?.PlayBreakthrough();
+                OnToastMessage?.Invoke($"Chiến thắng {opponentName}! +{prestige} Kiếm Vọng & +{CultivationTable.FormatNumber(lt)} LT!");
+                RemakeOnlineService.Instance?.BroadcastThienDaoAnnouncement($"{save.daoName} vừa đánh bại {opponentName} tại Luận Kiếm Đài!");
+            }
+            else
+            {
+                int prestige = 30;
+                save.swordPrestigePoints += prestige;
+                RemakeAudioService.Instance?.PlayClick();
+                OnToastMessage?.Invoke($"Thất bại trước {opponentName}! Nhận +{prestige} Kiếm Vọng an ủi.");
+            }
+            SaveService.Save();
+            OnStatsChanged?.Invoke();
+            return won;
+        }
+
+        public bool TryBuyPvpReward(int rewardIdx)
+        {
+            var save = SaveService.Current;
+            int cost = rewardIdx switch { 0 => 120, 1 => 140, 2 => 180, 3 => 350, _ => 600 };
+            if (save.swordPrestigePoints < cost)
+            {
+                OnToastMessage?.Invoke($"Thiếu {cost} Điểm Kiếm Vọng!");
+                return false;
+            }
+            if (rewardIdx == 3 && (save.unlockedFramesMask & (1 << 1)) != 0)
+            {
+                return TryEquipAvatarFrame(1);
+            }
+            if (rewardIdx == 4 && (save.unlockedFramesMask & (1 << 2)) != 0)
+            {
+                return TryEquipAvatarFrame(2);
+            }
+            save.swordPrestigePoints -= cost;
+            switch (rewardIdx)
+            {
+                case 0: save.forgeTalismanCount += 2; OnToastMessage?.Invoke("Đổi thành công +2 Phù Rèn Kiếm!"); break;
+                case 1: save.reforgeStoneCount += 3; OnToastMessage?.Invoke("Đổi thành công +3 Đá Tẩy Luyện!"); break;
+                case 2: save.calmIncenseCount += 1; OnToastMessage?.Invoke("Đổi thành công +1 Tĩnh Tâm Hương!"); break;
+                case 3:
+                    save.unlockedFramesMask |= (1 << 1);
+                    save.equippedAvatarFrame = 1;
+                    OnToastMessage?.Invoke("Mở khóa & đeo Khung Avatar Kiếm Thánh!");
+                    break;
+                default:
+                    save.unlockedFramesMask |= (1 << 2);
+                    save.equippedAvatarFrame = 2;
+                    OnToastMessage?.Invoke("Mở khóa & đeo Khung Avatar Thiên Đạo Chí Tôn!");
+                    break;
+            }
+            SaveService.Save();
+            RemakeAudioService.Instance?.PlayMerge();
+            OnStatsChanged?.Invoke();
+            return true;
+        }
+
+        public bool TryEquipAvatarFrame(int frameId)
+        {
+            var save = SaveService.Current;
+            int bit = 1 << Mathf.Clamp(frameId, 0, 2);
+            if ((save.unlockedFramesMask & bit) == 0) return false;
+            save.equippedAvatarFrame = Mathf.Clamp(frameId, 0, 2);
+            SaveService.Save();
+            OnStatsChanged?.Invoke();
+            OnToastMessage?.Invoke("Đã đổi Khung Avatar!");
+            return true;
         }
 
         private void CheckMindCalmReset()
@@ -2820,7 +3251,8 @@ namespace KhiVanChiTu.Remake
             int realm = save.realmIndex;
             double baseHp = 220.0 * Math.Pow(2.3, realm) + save.subStage * 28.0 * Math.Pow(1.8, realm);
             double flatBody = GetDaoVanLevel("branch_body") * 140.0 * Math.Pow(1.6, realm);
-            float pctMult = 1f + GetDaoVanLevel("body_tempering") * 0.40f
+            float pctMult = 1f + GetDaoVanLevel("branch_body") * 0.06f
+                + ((RemakeCompanionId)save.activeCompanionId == RemakeCompanionId.JadeTurtle ? 0.15f : 0f)
                 + GetEquipmentStatSum(RemakeEquipStatType.MaxHpPct) / 100f
                 + GetFormationBonus(f => f.maxHpPct) / 100f;
             int huyenVu = GetEquipSetCount(RemakeEquipSet.HuyenVu);

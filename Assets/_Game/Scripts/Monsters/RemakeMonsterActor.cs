@@ -116,6 +116,11 @@ namespace KhiVanChiTu.Remake
                 SetMovingParam(false);
                 return;
             }
+            if (Definition != null && Definition.isBoss && engine != null && engine.IsBossStunned)
+            {
+                SetMovingParam(false);
+                return;
+            }
 
             Vector3 targetGround = new Vector3(_playerTarget.position.x, _definitionHover, _playerTarget.position.z);
             Vector3 currentPos = transform.position;
@@ -232,15 +237,23 @@ namespace KhiVanChiTu.Remake
         public void ApplyDamage(double amount, bool isCrit, Vector3 knockDir)
         {
             if (!IsAlive) return;
+            var engine = GameplayEngine.Instance;
             float armor = Definition != null ? Definition.armorMitigation : 0f;
-            float pen = GameplayEngine.Instance != null ? GameplayEngine.Instance.GetArmorPenetration() : 0f;
+            float pen = engine != null ? engine.GetArmorPenetration() : 0f;
             double mitigated = amount * (1.0 - armor * (1f - pen));
+            bool isBoss = Definition != null && Definition.isBoss;
+            if (isBoss && engine != null)
+            {
+                if (engine.BossBrokenRemaining > 0f)
+                    mitigated *= 1.35;
+                else if (engine.BossShieldActive)
+                    engine.ApplyBossShieldDamage(mitigated, false);
+            }
             CurrentHp = Math.Max(0, CurrentHp - Math.Max(1, mitigated));
             _flashTimer = 0.09f;
             _scalePunchTimer = 0.10f;
             ApplyHitFlashTint(true);
 
-            bool isBoss = Definition != null && Definition.isBoss;
             if (!isBoss && knockDir.sqrMagnitude > 0.001f)
             {
                 Vector3 pushed = transform.position + knockDir * (isCrit ? 0.25f : 0.12f);
@@ -249,7 +262,7 @@ namespace KhiVanChiTu.Remake
 
             if (isBoss)
             {
-                GameplayEngine.Instance?.SetActiveBoss(true, Definition.displayName, CurrentHp, MaxHp);
+                engine?.SetActiveBoss(true, Definition.displayName, CurrentHp, MaxHp);
             }
             else if (_hpBarRoot != null && !_hpBarRoot.gameObject.activeSelf && CurrentHp < MaxHp)
             {

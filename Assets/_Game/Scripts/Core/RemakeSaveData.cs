@@ -57,6 +57,7 @@ namespace KhiVanChiTu.Remake
     {
         public int schemaVersion = 1;
         public string daoName = "";
+        public RemakeCharacterGender gender = RemakeCharacterGender.Female;
         public bool hasCreatedCharacter = false;
         public long createdUtcTicks = 0;
         public long lastTickUtcTicks = 0;
@@ -133,10 +134,11 @@ namespace KhiVanChiTu.Remake
         public int activeMainFormation = -1; // -1=None, 0..5
         public int activeSubFormation = -1;  // -1=None, 0..5 (50% effect at Hoa Than)
 
-        // Quests, 2-Beat Tutorial, 30-Day Pioneer Diary & Online
+        // Quests, 2-Beat Tutorial, Progressive Feature Unlock Tutorials, 30-Day Pioneer Diary & Online
         public int tutorialStep = 0; // 0: Kill 5, 1: OpenBagua/KiemLo, 2: MergeLv2, 3: ClaimQuest/Done
         public bool tutorialCompleted = false;
         public bool tutorialGuaranteedSwordDropped = false;
+        public int completedFeatureTutorialsMask = 0; // Bitmask per RemakeFeatureId for guided unlock pointers
         public int mainQuestIndex = 0;
         public int mainQuestProgress = 0;
         public int totalKills = 0;
@@ -149,12 +151,27 @@ namespace KhiVanChiTu.Remake
 
         // V2 Expansion: Demon Tower (100 floors), Secret Realm (3 gates/day) & Ky Ngo
         public int demonTowerHighestFloor = 0;
+        public bool autoClimbDemonTower = true;
         public long lastTowerSalaryDayUtc = 0;
         public int secretRealmDailyRemaining = 3;
         public long lastSecretRealmResetDayUtc = 0;
         public int[] secretRealmClearedTier = new int[3];
         public long tuViDoubleBuffEndUtcTicks = 0;
         public int kyNgoClaimedCount = 0;
+
+        // V3 Expansion: Companions, Codex Collection, Async PvP & Avatar Frames
+        public int activeCompanionId = 0; // RemakeCompanionId
+        public int unlockedCompanionsMask = 0;
+        public int codexSwordsMask = 1;   // Bit (lv-1) unlocked
+        public int codexBossesMask = 0;   // Bit actIndex unlocked
+        public int codexPillsMask = 0;    // Bit realmTarget unlocked
+        public int codexClaimedMask = 0;  // Claimed milestone tiers (bits 0..7)
+        public int pvpWins = 0;
+        public int pvpDailyRemaining = 5;
+        public long lastPvpResetDayUtc = 0;
+        public int swordPrestigePoints = 0;
+        public int equippedAvatarFrame = 0; // 0=Default, 1=SwordSaint, 2=HeavenlyDao
+        public int unlockedFramesMask = 1;
 
         // Graphics & Audio Settings
         public RemakeGraphicsSettingsData graphics = new RemakeGraphicsSettingsData();
@@ -210,6 +227,7 @@ namespace KhiVanChiTu.Remake
             save.tutorialCompleted = true;
             save.tutorialStep = 3;
             save.tutorialGuaranteedSwordDropped = true;
+            save.completedFeatureTutorialsMask = 0x7FFFFFFF;
 
             // Dai Thua T3 (So Ky Binh Canh) unlocks 100% ALL features, 6 formations + sub-slot, all 4 skills, Tower & Secret Realm
             save.realmIndex = 7;
@@ -337,8 +355,17 @@ namespace KhiVanChiTu.Remake
             save.autoChallengeBoss = false;
 
             save.demonTowerHighestFloor = 10;
+            save.autoClimbDemonTower = true;
             save.secretRealmDailyRemaining = 3;
             save.secretRealmClearedTier = new[] { 2, 2, 1 };
+            save.activeCompanionId = (int)RemakeCompanionId.AzureCrane;
+            save.unlockedCompanionsMask = (1 << 1) | (1 << 2) | (1 << 3) | (1 << 4);
+            save.codexSwordsMask = 0b11111111; // Lv.1..8
+            save.codexBossesMask = 0b111;
+            save.codexPillsMask = 0b10000111;
+            save.pvpDailyRemaining = 5;
+            save.swordPrestigePoints = 450;
+            save.unlockedFramesMask = 0b111;
             save.totalKills = 50;
             save.mainQuestIndex = 6;
             save.claimedPioneerMilestonesMask = 0;

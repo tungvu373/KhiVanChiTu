@@ -21,7 +21,7 @@ MonoBehaviour:
   hpMultiplier: 1
   damageMultiplier: 1
   moveSpeed: 1.9
-  attackRange: 2.4
+  attackRange: 2.95
   hoverHeight: 0
   attackInterval: 1.5
   armorMitigation: 0

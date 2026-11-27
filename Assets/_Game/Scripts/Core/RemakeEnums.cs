@@ -117,7 +117,10 @@ namespace KhiVanChiTu.Remake
         SkillPalm = 11,
         ImmortalTower = 12,
         SecretRealm = 13,
-        PvpComingSoon = 14
+        PvpComingSoon = 14,
+        PvpArena = 15,
+        Companions = 16,
+        CodexCollection = 17
     }
 
     public enum RemakeArenaMode
@@ -132,5 +135,20 @@ namespace KhiVanChiTu.Remake
         SwordTomb = 0,
         HerbGarden = 1,
         OreCavern = 2
+    }
+
+    public enum RemakeCharacterGender
+    {
+        Female = 0,
+        Male = 1
+    }
+
+    public enum RemakeCompanionId
+    {
+        None = 0,
+        AzureCrane = 1,
+        WhiteFox = 2,
+        JadeTurtle = 3,
+        ThunderSpirit = 4
     }
 }

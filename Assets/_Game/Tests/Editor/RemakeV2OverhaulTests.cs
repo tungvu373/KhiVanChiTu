@@ -727,5 +727,241 @@ namespace KhiVanChiTu.Remake.Tests
                 UnityEngine.Object.DestroyImmediate(go);
             }
         }
+
+        [Test]
+        public void RearCombatCamera_FacesBehindBack_AndClampsYawAndPitchAgainstFrontOrUnderView()
+        {
+            Vector3 player = Vector3.zero;
+            Vector3 facing = Vector3.forward; // RemakePlayer_Xianxia faces +Z
+
+            // 1. Default rear view sits directly behind character's back (-Z), looking forward (+Z)
+            MeadowEnvironmentController.ComputeRearCameraPose(
+                player, facing,
+                MeadowEnvironmentController.DefaultRearYawOffsetDeg,
+                MeadowEnvironmentController.DefaultRearPitchDeg,
+                MeadowEnvironmentController.DefaultRearDistance,
+                out Vector3 defaultPos, out Quaternion defaultRot);
+
+            Assert.Less(defaultPos.z, -4.0f, "Default rear camera must be behind the character (-Z)");
+            Assert.Greater(defaultPos.y, 2.0f, "Default rear camera must stay well above ground");
+            Assert.Greater(Vector3.Dot(defaultRot * Vector3.forward, facing), 0.85f, "Rear camera must look forward past character's back");
+
+            // 2. Extreme horizontal drag (+/- 500 deg) must stay strictly behind shoulder plane (never look at front face!)
+            foreach (float extremeYaw in new[] { -500f, -180f, 180f, 500f })
+            {
+                MeadowEnvironmentController.ComputeRearCameraPose(
+                    player, facing, extremeYaw, MeadowEnvironmentController.DefaultRearPitchDeg,
+                    MeadowEnvironmentController.DefaultRearDistance,
+                    out Vector3 sidePos, out _);
+
+                Vector3 camToPlayerFlat = Vector3.ProjectOnPlane(player - sidePos, Vector3.up).normalized;
+                Assert.Greater(Vector3.Dot(camToPlayerFlat, facing), 0.45f,
+                    $"Extreme yaw {extremeYaw} must never orbit in front of the character's face");
+            }
+
+            // 3. Extreme downward / upward pitch drag must NEVER dip below ground or look up from underneath!
+            foreach (float extremePitch in new[] { -90f, -15f, 0f, 5f, 120f })
+            {
+                MeadowEnvironmentController.ComputeRearCameraPose(
+                    player, facing, 0f, extremePitch, MeadowEnvironmentController.MinRearDistance,
+                    out Vector3 vPos, out Quaternion vRot);
+
+                Assert.GreaterOrEqual(vPos.y, player.y + MeadowEnvironmentController.MinRearCameraHeightAbovePlayer - 0.001f,
+                    $"Camera at pitch {extremePitch} must never dip below minimum safe elevation");
+                Assert.Less((vRot * Vector3.forward).y, -0.05f,
+                    $"Camera at pitch {extremePitch} must never look upward from underneath the character");
+            }
+        }
+
+        [Test]
+        public void V3Economy_MonotonicTuViAndLinhThachAcross120Stages_AndFastOnboarding()
+        {
+            // Fast Luyen Khi T1-T3 onboarding while keeping total 36k & T10 = 19%
+            double t1 = CultivationTable.GetRequiredTuVi(0, 1);
+            double t10 = CultivationTable.GetRequiredTuVi(0, 10);
+            Assert.LessOrEqual(t1, 700.0, "Luyen Khi T1 should be fast (~5 min to T4)");
+            Assert.That(t10, Is.EqualTo(Math.Round(36000.0 * 0.19)).Within(1.0));
+
+            double prevNormalTuVi = 0;
+            double prevNormalLt = 0;
+            double prevBossTuVi = 0;
+            double prevBossLt = 0;
+            for (int lin = 0; lin < 120; lin++)
+            {
+                var diff = (RemakeDifficulty)(lin / 30);
+                int act = (lin % 30) / 10;
+                int stage = (lin % 10) + 1;
+                var spec = ActStageDatabaseSO.BuildFallbackSpec(diff, act, stage);
+                if (spec.isBossStage)
+                {
+                    Assert.GreaterOrEqual(spec.tuViPerKill, prevBossTuVi, $"Boss TuVi dropped at linear stage {lin}");
+                    Assert.GreaterOrEqual(spec.linhThachPerKill, prevBossLt, $"Boss LT dropped at linear stage {lin}");
+                    prevBossTuVi = spec.tuViPerKill;
+                    prevBossLt = spec.linhThachPerKill;
+                }
+                else
+                {
+                    Assert.GreaterOrEqual(spec.tuViPerKill, prevNormalTuVi, $"Normal TuVi dropped at linear stage {lin}");
+                    Assert.GreaterOrEqual(spec.linhThachPerKill, prevNormalLt, $"Normal LT dropped at linear stage {lin}");
+                    prevNormalTuVi = spec.tuViPerKill;
+                    prevNormalLt = spec.linhThachPerKill;
+                }
+            }
+        }
+
+        [Test]
+        public void V3ThreeSlotSave_CreateGenderPeekSelectAndDeleteWorkCleanly()
+        {
+            SaveService.SelectSlot(0);
+            Assert.That(SaveService.GetSaveFilePathForSlot(0), Is.EqualTo(SaveService.GetSaveFilePath()), "Slot 0 must preserve legacy filename");
+
+            // Create Female in Slot 0
+            var s0 = SaveService.Load();
+            s0.hasCreatedCharacter = true;
+            s0.daoName = "ThanhVanNu";
+            s0.gender = RemakeCharacterGender.Female;
+            s0.realmIndex = 2;
+            SaveService.Save();
+
+            // Create Male in Slot 1
+            SaveService.SelectSlot(1);
+            var s1 = SaveService.Load();
+            s1.hasCreatedCharacter = true;
+            s1.daoName = "KiemTuNam";
+            s1.gender = RemakeCharacterGender.Male;
+            s1.realmIndex = 4;
+            SaveService.Save();
+
+            // Slot 2 empty
+            var p0 = SaveService.PeekSlot(0);
+            var p1 = SaveService.PeekSlot(1);
+            var p2 = SaveService.PeekSlot(2);
+            Assert.IsNotNull(p0);
+            Assert.That(p0.gender, Is.EqualTo(RemakeCharacterGender.Female));
+            Assert.That(p0.daoName, Is.EqualTo("ThanhVanNu"));
+            Assert.IsNotNull(p1);
+            Assert.That(p1.gender, Is.EqualTo(RemakeCharacterGender.Male));
+            Assert.That(p1.daoName, Is.EqualTo("KiemTuNam"));
+            Assert.IsNull(p2);
+
+            // Delete Slot 1 -> Slot 0 stays untouched
+            SaveService.DeleteSlot(1);
+            Assert.IsNull(SaveService.PeekSlot(1));
+            Assert.IsNotNull(SaveService.PeekSlot(0));
+            Assert.That(SaveService.FindFirstOccupiedSlotOrDefault(), Is.EqualTo(0));
+            SaveService.SelectSlot(0);
+        }
+
+        [Test]
+        public void V3Features_BossShieldBreak_Codex_Companions_AutoTower_OfflineAndPvpWork()
+        {
+            var go = new GameObject("TestEngineV3_Features");
+            try
+            {
+                var engine = go.AddComponent<GameplayEngine>();
+                var save = SaveService.Current;
+                save.hasCreatedCharacter = true;
+                save.realmIndex = 4; // Hoa Than (unlocks Codex, Companions, PvP, Tower)
+                save.subStage = 5;
+                save.linhThach = 500000;
+                save.coDuyen = 50;
+                save.tutorialCompleted = true;
+
+                // 1. Boss Shield Break triggers stun + bonus damage window
+                engine.SetActiveBoss(true, "Thái Hư Ma Tôn", 10000, 10000);
+                engine.AdvanceBossShieldCycle(12f);
+                Assert.IsTrue(engine.BossShieldActive);
+                Assert.IsFalse(engine.IsBossStunned);
+                engine.ApplyBossShieldDamage(6000, true);
+                Assert.IsFalse(engine.BossShieldActive);
+                Assert.IsTrue(engine.IsBossStunned);
+                Assert.Greater(engine.BossBrokenRemaining, 4.0f);
+
+                // 2. Codex Collection unlocks & milestone claim
+                save.codexSwordsMask = 0b11111; // 5 swords -> milestone 0 (3 entries) ready!
+                int total = engine.GetCodexUnlockedCount(out int sw, out _, out _);
+                Assert.That(sw, Is.EqualTo(5));
+                Assert.GreaterOrEqual(total, 5);
+                Assert.IsTrue(engine.IsCodexMilestoneReady(0));
+                int cdBefore = save.coDuyen;
+                Assert.IsTrue(engine.TryClaimCodexMilestone(0));
+                Assert.Greater(save.coDuyen, cdBefore);
+
+                // 3. Companion unlock & switch
+                Assert.IsTrue(engine.TryUnlockOrSelectCompanion(RemakeCompanionId.AzureCrane));
+                Assert.That(save.activeCompanionId, Is.EqualTo((int)RemakeCompanionId.AzureCrane));
+
+                // 4. Auto-Climb Demon Tower toggle
+                engine.SetAutoClimbDemonTower(true);
+                Assert.IsTrue(save.autoClimbDemonTower);
+
+                // 5. Live Luan Kiem Dai PvP + Avatar Frame purchase
+                engine.EnsureDailyPvpReset();
+                Assert.That(save.pvpDailyRemaining, Is.EqualTo(5));
+                double myPower = engine.GetPlayerCombatPowerEstimate();
+                Assert.IsTrue(engine.TryChallengePvpOpponent("Bạch Ngọc Kiếm Khách", myPower * 0.5));
+                Assert.That(save.pvpDailyRemaining, Is.EqualTo(4));
+                Assert.Greater(save.swordPrestigePoints, 0);
+                save.swordPrestigePoints = 1000;
+                Assert.IsTrue(engine.TryBuyPvpReward(3)); // Frame Sword Saint
+                Assert.That(save.equippedAvatarFrame, Is.EqualTo(1));
+
+                // 6. Progressive Feature Unlock Tutorials bitmask tracking
+                save.completedFeatureTutorialsMask = 0;
+                Assert.IsFalse(engine.IsFeatureTutorialCompleted(RemakeFeatureId.DaoVanTree));
+                engine.MarkFeatureTutorialCompleted(RemakeFeatureId.DaoVanTree);
+                Assert.IsTrue(engine.IsFeatureTutorialCompleted(RemakeFeatureId.DaoVanTree));
+                Assert.IsFalse(engine.IsFeatureTutorialCompleted(RemakeFeatureId.Alchemy));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void CloudCushionVfx_PrefabLoadsZeroShadowsAndEvolvesAcrossAll9Realms()
+        {
+            var prefab = Resources.Load<RemakeCloudCushionVfx>("VFX/VFX_PlayerCloudCushion");
+            Assert.NotNull(prefab, "VFX_PlayerCloudCushion.prefab must exist under Assets/_Game/Resources/VFX/");
+
+            var inst = UnityEngine.Object.Instantiate(prefab);
+            try
+            {
+                foreach (var r in inst.GetComponentsInChildren<Renderer>(true))
+                {
+                    Assert.That(r.shadowCastingMode, Is.EqualTo(UnityEngine.Rendering.ShadowCastingMode.Off));
+                    Assert.IsFalse(r.receiveShadows);
+                }
+                Assert.That(inst.GetComponentsInChildren<Light>(true).Length, Is.EqualTo(0));
+
+                // Realm colors evolve distinctly from Luyen Khi -> Kim Dan -> Nguyen Anh -> Hoa Than
+                RemakeCloudCushionVfx.GetRealmCloudColors(0, 0f, out Color cLk, out Color rLk);
+                RemakeCloudCushionVfx.GetRealmCloudColors(2, 0f, out Color cKd, out Color rKd);
+                RemakeCloudCushionVfx.GetRealmCloudColors(3, 0f, out Color cNa, out Color rNa);
+                RemakeCloudCushionVfx.GetRealmCloudColors(4, 0f, out Color cHt, out Color rHt);
+                Assert.AreNotEqual(rLk, rKd);
+                Assert.AreNotEqual(rKd, rNa);
+                Assert.AreNotEqual(rNa, rHt);
+
+                // Tribulation lifts cloud higher than normal seat height
+                float normalY = inst.TickCloud(0.05f);
+                inst.SetTribulationActive(true);
+                float tribY = normalY;
+                for (int i = 0; i < 30; i++) tribY = inst.TickCloud(0.05f);
+                Assert.Greater(tribY, normalY + 0.08f, "Tribulation must visibly lift the cloud cushion higher");
+
+                // Death dissolve hides cloud cleanly
+                inst.SetDissolveProgress(1f);
+                inst.TickCloud(0.05f);
+                var mr = inst.GetComponentInChildren<MeshRenderer>(true);
+                Assert.NotNull(mr);
+                Assert.IsFalse(mr.enabled, "Fully dissolved cloud mesh should disable renderer");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(inst.gameObject);
+            }
+        }
     }
 }

@@ -39,6 +39,7 @@ namespace KhiVanChiTu.Remake.Editor
 
             var flyingSwordPrefab = CreateFlyingSwordPrefab();
             WebGlPrefabOptimizerTool.BuildXianxiaPlayerPrefab(PrefabsRoot + "/Player/RemakePlayer.prefab");
+            WebGlPrefabOptimizerTool.BuildXianxiaMalePlayerPrefab(PrefabsRoot + "/Player/RemakePlayer_Male.prefab");
             var act1Monsters = CreateAct1Monsters();
             CloneCleanModelPrefab("Assets/Prefabs/Enemy1.prefab", PrefabsRoot + "/Monsters/Monster_Act2_Bear.prefab");
             CloneCleanModelPrefab("Assets/Prefabs/Enemy2.prefab", PrefabsRoot + "/Monsters/Monster_Act3_ThunderSpirit.prefab");
@@ -56,6 +57,7 @@ namespace KhiVanChiTu.Remake.Editor
 
             BuildBootScene(panelSettings, audioBank);
             BuildMainMenuScene(panelSettings);
+            BuildCharacterSelectScene(panelSettings, defaultArt, volumeProfile);
             BuildUiOverlayScene(panelSettings);
             string[] act1Paths =
             {
@@ -117,6 +119,7 @@ namespace KhiVanChiTu.Remake.Editor
                 {
                     ScenesRoot + "/00_Boot.unity",
                     ScenesRoot + "/01_MainMenu.unity",
+                    ScenesRoot + "/01b_CharacterSelect.unity",
                     ScenesRoot + "/02_World_Act1_Meadow.unity",
                     ScenesRoot + "/03_World_Act2_Wasteland.unity",
                     ScenesRoot + "/04_World_Act3_JadePeaks.unity",
@@ -701,6 +704,90 @@ namespace KhiVanChiTu.Remake.Editor
             return profile;
         }
 
+        private static GameObject BuildCloudCushionPrefab()
+        {
+            const string prefabPath = ResourcesRoot + "/VFX/VFX_PlayerCloudCushion.prefab";
+            const string fbxPath = "Assets/_Game/Prefabs/Optimized/Models/RemakeCloudPedestal.fbx";
+            const string albedoPath = ResourcesRoot + "/VFX/Tex_CloudPedestal_Base.png";
+            const string puffPath = ResourcesRoot + "/VFX/Tex_CloudPuff_Soft.png";
+
+            EnsureFolder(ResourcesRoot + "/VFX");
+            ConfigureCloudTextureImporter(albedoPath, 512, false);
+            ConfigureCloudTextureImporter(puffPath, 256, true);
+
+            Mesh cloudMesh = null;
+            var fbxAssets = AssetDatabase.LoadAllAssetsAtPath(fbxPath);
+            if (fbxAssets != null)
+            {
+                for (int i = 0; i < fbxAssets.Length; i++)
+                {
+                    if (fbxAssets[i] is Mesh m) { cloudMesh = m; break; }
+                }
+            }
+
+            var root = new GameObject("VFX_PlayerCloudCushion");
+            try
+            {
+                var ctrl = root.AddComponent<RemakeCloudCushionVfx>();
+                var meshGo = new GameObject("CloudPedestalMesh");
+                meshGo.transform.SetParent(root.transform, false);
+                meshGo.transform.localPosition = Vector3.zero;
+                meshGo.transform.localRotation = Quaternion.identity;
+                meshGo.transform.localScale = Vector3.one;
+
+                var mf = meshGo.AddComponent<MeshFilter>();
+                if (cloudMesh != null) mf.sharedMesh = cloudMesh;
+                var mr = meshGo.AddComponent<MeshRenderer>();
+                mr.shadowCastingMode = ShadowCastingMode.Off;
+                mr.receiveShadows = false;
+
+                Texture2D albedoTex = AssetDatabase.LoadAssetAtPath<Texture2D>(albedoPath);
+                Shader lit = Shader.Find("Universal Render Pipeline/Simple Lit") ?? Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+                Material cloudMat = CreateOrUpdateMaterial(DefaultArtRoot + "/Mat_CloudPedestal_Default.mat", lit, m =>
+                {
+                    if (albedoTex != null)
+                    {
+                        m.mainTexture = albedoTex;
+                        if (m.HasProperty("_BaseMap")) m.SetTexture("_BaseMap", albedoTex);
+                    }
+                    if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", new Color(1f, 0.99f, 0.97f, 1f));
+                    if (m.HasProperty("_Smoothness")) m.SetFloat("_Smoothness", 0.05f);
+                    if (m.HasProperty("_Surface")) m.SetFloat("_Surface", 0f);
+                    m.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                    m.renderQueue = -1;
+                    if (m.HasProperty("_EmissionColor"))
+                    {
+                        m.EnableKeyword("_EMISSION");
+                        m.SetColor("_EmissionColor", new Color(0.16f, 0.18f, 0.17f, 1f));
+                    }
+                });
+                mr.sharedMaterial = cloudMat;
+
+                SetSerializedObjectField(ctrl, "cloudMeshTransform", meshGo.transform);
+                SetSerializedObjectField(ctrl, "cloudMeshRenderer", mr);
+                EditorUtility.SetDirty(ctrl);
+
+                GameObject saved = PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+                return saved;
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
+        private static void ConfigureCloudTextureImporter(string assetPath, int maxSize, bool alphaIsTrans)
+        {
+            var imp = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+            if (imp == null) return;
+            bool dirty = false;
+            if (imp.textureType != TextureImporterType.Default) { imp.textureType = TextureImporterType.Default; dirty = true; }
+            if (imp.alphaIsTransparency != alphaIsTrans) { imp.alphaIsTransparency = alphaIsTrans; dirty = true; }
+            if (imp.maxTextureSize != maxSize) { imp.maxTextureSize = maxSize; dirty = true; }
+            if (imp.wrapMode != TextureWrapMode.Clamp) { imp.wrapMode = TextureWrapMode.Clamp; dirty = true; }
+            if (dirty) imp.SaveAndReimport();
+        }
+
         private static RemakeFlyingSwordActor CreateFlyingSwordPrefab()
         {
             TribulationVfxPrefabBuilder.BuildPrefab();
@@ -827,7 +914,7 @@ namespace KhiVanChiTu.Remake.Editor
                 d.hpMultiplier = 1.0f;
                 d.damageMultiplier = 1.0f;
                 d.moveSpeed = 1.9f;
-                d.attackRange = 2.4f;
+                d.attackRange = 2.95f;
                 d.attackInterval = 1.5f;
                 d.visualScale = 1.35f;
                 d.hpBarHeight = 3.4f;
@@ -883,7 +970,7 @@ namespace KhiVanChiTu.Remake.Editor
                 d.description = "Thủ lĩnh ải X-10 Hoang Mạc Nắng Vàng.";
                 d.archetype = RemakeMonsterArchetype.BossGuardian; d.codexPortraitKey = "Monsters/act2_boss_overlord";
                 d.prefab = bossPrefab; d.hpMultiplier = 1.15f; d.damageMultiplier = 1.05f;
-                d.moveSpeed = 2.0f; d.attackRange = 2.5f; d.visualScale = 1.55f; d.hpBarHeight = 3.5f; d.isBoss = true;
+                d.moveSpeed = 2.0f; d.attackRange = 3.10f; d.visualScale = 1.55f; d.hpBarHeight = 3.5f; d.isBoss = true;
             });
             return new[] { m1, m2, m3, boss };
         }
@@ -934,7 +1021,7 @@ namespace KhiVanChiTu.Remake.Editor
                 d.description = "Thủ lĩnh ải X-10 Tiên Sơn Bạch Ngọc.";
                 d.archetype = RemakeMonsterArchetype.BossGuardian; d.codexPortraitKey = "Monsters/act3_boss_archon";
                 d.prefab = bossPrefab; d.hpMultiplier = 1.35f; d.damageMultiplier = 1.15f;
-                d.moveSpeed = 2.1f; d.attackRange = 2.6f; d.visualScale = 1.65f; d.hpBarHeight = 3.6f; d.isBoss = true;
+                d.moveSpeed = 2.1f; d.attackRange = 3.15f; d.visualScale = 1.65f; d.hpBarHeight = 3.6f; d.isBoss = true;
             });
             return new[] { m1, m2, m3, boss };
         }
@@ -1112,6 +1199,159 @@ namespace KhiVanChiTu.Remake.Editor
             EditorSceneManager.SaveScene(sc, ScenesRoot + "/01_MainMenu.unity");
         }
 
+        private static void BuildCharacterSelectScene(PanelSettings panelSettings, MeadowDefaultAssets art, VolumeProfile volumeProfile)
+        {
+            Scene sc = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            MeadowEnvironmentController.ApplyDaylightLighting(MeadowEnvironmentController.WorldThemePreset.Act1Meadow);
+
+            // Sunlit 3D stage camera framing the ENTIRE meditating Male/Female cultivator (head-to-lotus-pedestal) in upper-center above the 3 vertical slots
+            var camGo = new GameObject("CharacterSelectCamera");
+            camGo.tag = "MainCamera";
+            camGo.transform.position = new Vector3(0f, 1.15f, -5.15f);
+            camGo.transform.rotation = Quaternion.Euler(8f, 0f, 0f);
+            var cam = camGo.AddComponent<Camera>();
+            cam.fieldOfView = 38f;
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0.84f, 0.94f, 0.98f, 1f);
+            var urpCam = camGo.AddComponent<UniversalAdditionalCameraData>();
+            urpCam.renderPostProcessing = true;
+
+            var lightGo = new GameObject("SunLight");
+            var dirLight = lightGo.AddComponent<Light>();
+            dirLight.type = LightType.Directional;
+            dirLight.color = new Color(1f, 0.97f, 0.90f, 1f);
+            dirLight.intensity = 1.38f;
+            dirLight.shadows = LightShadows.Soft;
+            lightGo.transform.rotation = Quaternion.Euler(36f, -22f, 0f);
+
+            var volGo = new GameObject("DaylightVolume");
+            var vol = volGo.AddComponent<Volume>();
+            vol.isGlobal = true;
+            vol.sharedProfile = volumeProfile;
+
+            var sky = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sky.name = "DaylightSkyDome";
+            UnityEngine.Object.DestroyImmediate(sky.GetComponent<Collider>());
+            sky.transform.position = new Vector3(0f, -6f, 12f);
+            sky.transform.localScale = new Vector3(110f, 75f, 110f);
+            var skyMr = sky.GetComponent<MeshRenderer>();
+            skyMr.sharedMaterial = art.skyMat;
+            skyMr.shadowCastingMode = ShadowCastingMode.Off;
+
+            // Sunlit Xianxia Backdrop Quad BEHIND the 3D cultivator (zero UI haze over the 3D character!)
+            Texture2D bgTex = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/CodexDrop/Backgrounds/bg_character_select_daylight.png");
+            if (bgTex != null)
+            {
+                var bgQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                bgQuad.name = "CharSelectBackdrop3D";
+                UnityEngine.Object.DestroyImmediate(bgQuad.GetComponent<Collider>());
+                bgQuad.transform.position = new Vector3(0f, 0.1f, 11.5f);
+                bgQuad.transform.rotation = Quaternion.Euler(8f, 0f, 0f);
+                bgQuad.transform.localScale = new Vector3(28f, 19f, 1f);
+                Shader unlitBg = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Sprites/Default");
+                Material bgMat = CreateOrUpdateMaterial(DefaultArtRoot + "/Mat_CharSelect_Backdrop.mat", unlitBg, m =>
+                {
+                    m.mainTexture = bgTex;
+                    m.color = Color.white;
+                    if (m.HasProperty("_BaseMap")) m.SetTexture("_BaseMap", bgTex);
+                    if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", Color.white);
+                });
+                var bgMr = bgQuad.GetComponent<MeshRenderer>();
+                bgMr.sharedMaterial = bgMat;
+                bgMr.shadowCastingMode = ShadowCastingMode.Off;
+                bgMr.receiveShadows = false;
+            }
+
+            // 3D Turntable Anchor positioned cleanly in the upper showcase window above the 3 vertical slots!
+            var stageRoot = new GameObject("CharacterStageRoot");
+            stageRoot.transform.position = new Vector3(0f, 0.62f, 0f);
+
+            var turntable = new GameObject("PreviewTurntable");
+            turntable.transform.SetParent(stageRoot.transform, false);
+            turntable.transform.localPosition = Vector3.zero;
+            turntable.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+
+            GameObject femalePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsRoot + "/Player/RemakePlayer.prefab");
+            GameObject malePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsRoot + "/Player/RemakePlayer_Male.prefab");
+
+            GameObject femaleInst = (GameObject)PrefabUtility.InstantiatePrefab(femalePrefab);
+            femaleInst.name = "Preview_Female";
+            femaleInst.transform.SetParent(turntable.transform, false);
+            femaleInst.transform.localPosition = Vector3.zero;
+            femaleInst.transform.localRotation = Quaternion.identity;
+            femaleInst.transform.localScale = Vector3.one * 0.92f;
+
+            GameObject maleInst = (GameObject)PrefabUtility.InstantiatePrefab(malePrefab);
+            maleInst.name = "Preview_Male";
+            maleInst.transform.SetParent(turntable.transform, false);
+            maleInst.transform.localPosition = Vector3.zero;
+            maleInst.transform.localRotation = Quaternion.identity;
+            maleInst.transform.localScale = Vector3.one * 0.92f;
+            maleInst.SetActive(false);
+
+            // White-Jade Lotus Pedestal Ring beneath cultivator
+            var ringGo = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            ringGo.name = "LotusPedestalRing";
+            UnityEngine.Object.DestroyImmediate(ringGo.GetComponent<Collider>());
+            ringGo.transform.SetParent(stageRoot.transform, false);
+            ringGo.transform.localPosition = new Vector3(0f, 0.01f, 0f);
+            ringGo.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            ringGo.transform.localScale = new Vector3(2.35f, 2.35f, 1f);
+            var ringMr = ringGo.GetComponent<MeshRenderer>();
+            Texture2D pedestalTex = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Resources/CodexDrop/Environment/tex_charselect_lotus_pedestal.png");
+            if (pedestalTex != null)
+            {
+                Shader unlit = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Sprites/Default");
+                Material pedMat = CreateOrUpdateMaterial(DefaultArtRoot + "/Mat_CharSelect_LotusPedestal.mat", unlit, m =>
+                {
+                    m.mainTexture = pedestalTex;
+                    m.color = Color.white;
+                    if (m.HasProperty("_BaseMap")) m.SetTexture("_BaseMap", pedestalTex);
+                    if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", Color.white);
+                    if (m.HasProperty("_Surface"))
+                    {
+                        m.SetFloat("_Surface", 1f);
+                        m.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                        m.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                        m.SetFloat("_ZWrite", 0f);
+                        m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                        m.renderQueue = (int)RenderQueue.Transparent;
+                    }
+                });
+                ringMr.sharedMaterial = pedMat;
+            }
+            else
+            {
+                ringMr.sharedMaterial = art.groundRingMat;
+            }
+            ringMr.shadowCastingMode = ShadowCastingMode.Off;
+            ringMr.receiveShadows = false;
+
+            CreateAmbientMotes(stageRoot.transform, 0);
+
+            var uiGo = new GameObject("CharacterSelectUI");
+            var uiDoc = uiGo.AddComponent<UIDocument>();
+            var resolvedPs = AssetDatabase.LoadAssetAtPath<PanelSettings>(ResourcesRoot + "/RemakePanelSettings.asset")
+                ?? Resources.Load<PanelSettings>("RemakePanelSettings")
+                ?? panelSettings;
+            if (resolvedPs == null) throw new InvalidOperationException("RemakePanelSettings.asset missing when building 01b_CharacterSelect");
+            uiDoc.panelSettings = resolvedPs;
+            uiDoc.visualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/_Game/UI/UXML/CharacterSelect.uxml");
+            uiDoc.sortingOrder = 15;
+            SetSerializedObjectField(uiDoc, "m_PanelSettings", resolvedPs);
+            EditorUtility.SetDirty(uiDoc);
+
+            var ctrl = uiGo.AddComponent<CharacterSelectController>();
+            SetSerializedObjectField(ctrl, "uiDocument", uiDoc);
+            SetSerializedObjectField(ctrl, "femalePreviewModel", femaleInst);
+            SetSerializedObjectField(ctrl, "malePreviewModel", maleInst);
+            SetSerializedObjectField(ctrl, "previewTurntable", turntable.transform);
+            SetSerializedObjectField(ctrl, "pedestalRing", ringGo.transform);
+            EditorUtility.SetDirty(ctrl);
+
+            EditorSceneManager.SaveScene(sc, ScenesRoot + "/01b_CharacterSelect.unity");
+        }
+
         private static void BuildUiOverlayScene(PanelSettings panelSettings)
         {
             Scene sc = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -1244,13 +1484,33 @@ namespace KhiVanChiTu.Remake.Editor
             SetSerializedObjectField(envCtrl, "skyDomeRenderer", skyMr);
             SetSerializedObjectField(envCtrl, "arenaCamera", cam);
 
-            // IMPORTANT: Load ALREADY-OPTIMIZED Player prefab (never re-clone raw FBX!)
-            GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsRoot + "/Player/RemakePlayer.prefab");
-            GameObject playerGo = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab);
-            playerGo.name = "CultivatorPlayer";
+            // IMPORTANT: Dual-gender CultivatorPlayer root (Female + Male optimized prefabs, switched live by SaveService.Current.gender!)
+            GameObject playerGo = new GameObject("CultivatorPlayer");
             playerGo.transform.position = Vector3.zero;
             playerGo.transform.rotation = Quaternion.identity;
             playerGo.transform.localScale = Vector3.one * 1.25f;
+
+            GameObject femalePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsRoot + "/Player/RemakePlayer.prefab");
+            GameObject malePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsRoot + "/Player/RemakePlayer_Male.prefab");
+            GameObject cloudPrefab = BuildCloudCushionPrefab();
+            GameObject cloudInst = cloudPrefab != null ? (GameObject)PrefabUtility.InstantiatePrefab(cloudPrefab) : null;
+            if (cloudInst != null)
+            {
+                cloudInst.name = "PlayerCloudCushion";
+                cloudInst.transform.SetParent(playerGo.transform, false);
+                cloudInst.transform.localPosition = RemakeCloudCushionVfx.BaseCloudLocalOffset;
+                cloudInst.transform.localRotation = Quaternion.identity;
+                cloudInst.transform.localScale = Vector3.one;
+            }
+            GameObject femaleVisual = (GameObject)PrefabUtility.InstantiatePrefab(femalePrefab);
+            femaleVisual.name = "Visual_Female";
+            femaleVisual.transform.SetParent(playerGo.transform, false);
+            femaleVisual.transform.localPosition = new Vector3(0f, RemakeCloudCushionVfx.BaseSeatLocalY, 0f);
+            GameObject maleVisual = (GameObject)PrefabUtility.InstantiatePrefab(malePrefab);
+            maleVisual.name = "Visual_Male";
+            maleVisual.transform.SetParent(playerGo.transform, false);
+            maleVisual.transform.localPosition = new Vector3(0f, RemakeCloudCushionVfx.BaseSeatLocalY, 0f);
+            maleVisual.SetActive(false);
 
             var ringGo = GameObject.CreatePrimitive(PrimitiveType.Quad);
             ringGo.name = "GroundFormationRing";
@@ -1285,6 +1545,10 @@ namespace KhiVanChiTu.Remake.Editor
             var arenaGo = new GameObject("RemakeArenaController");
             var arenaCtrl = arenaGo.AddComponent<RemakeArenaController>();
             SetSerializedObjectField(arenaCtrl, "playerTransform", playerGo.transform);
+            SetSerializedObjectField(arenaCtrl, "femalePlayerVisual", femaleVisual);
+            SetSerializedObjectField(arenaCtrl, "malePlayerVisual", maleVisual);
+            if (cloudInst != null)
+                SetSerializedObjectField(arenaCtrl, "cloudCushion", cloudInst.GetComponent<RemakeCloudCushionVfx>());
             SetSerializedObjectField(arenaCtrl, "swordsRoot", swordsGo.transform);
             SetSerializedObjectField(arenaCtrl, "groundFormationRing", ringGo.transform);
             SetSerializedObjectField(arenaCtrl, "flyingSwordPrefab", resolvedSwordPrefab);
@@ -1388,12 +1652,32 @@ namespace KhiVanChiTu.Remake.Editor
             SetSerializedObjectField(envCtrl, "skyDomeRenderer", skyMr);
             SetSerializedObjectField(envCtrl, "arenaCamera", cam);
 
-            GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsRoot + "/Player/RemakePlayer.prefab");
-            GameObject playerGo = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab);
-            playerGo.name = "CultivatorPlayer";
+            GameObject playerGo = new GameObject("CultivatorPlayer");
             playerGo.transform.position = Vector3.zero;
             playerGo.transform.rotation = Quaternion.identity;
             playerGo.transform.localScale = Vector3.one * 1.25f;
+
+            GameObject femalePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsRoot + "/Player/RemakePlayer.prefab");
+            GameObject malePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsRoot + "/Player/RemakePlayer_Male.prefab");
+            GameObject cloudPrefab = BuildCloudCushionPrefab();
+            GameObject cloudInst = cloudPrefab != null ? (GameObject)PrefabUtility.InstantiatePrefab(cloudPrefab) : null;
+            if (cloudInst != null)
+            {
+                cloudInst.name = "PlayerCloudCushion";
+                cloudInst.transform.SetParent(playerGo.transform, false);
+                cloudInst.transform.localPosition = RemakeCloudCushionVfx.BaseCloudLocalOffset;
+                cloudInst.transform.localRotation = Quaternion.identity;
+                cloudInst.transform.localScale = Vector3.one;
+            }
+            GameObject femaleVisual = (GameObject)PrefabUtility.InstantiatePrefab(femalePrefab);
+            femaleVisual.name = "Visual_Female";
+            femaleVisual.transform.SetParent(playerGo.transform, false);
+            femaleVisual.transform.localPosition = new Vector3(0f, RemakeCloudCushionVfx.BaseSeatLocalY, 0f);
+            GameObject maleVisual = (GameObject)PrefabUtility.InstantiatePrefab(malePrefab);
+            maleVisual.name = "Visual_Male";
+            maleVisual.transform.SetParent(playerGo.transform, false);
+            maleVisual.transform.localPosition = new Vector3(0f, RemakeCloudCushionVfx.BaseSeatLocalY, 0f);
+            maleVisual.SetActive(false);
 
             var ringGo = GameObject.CreatePrimitive(PrimitiveType.Quad);
             ringGo.name = "GroundFormationRing";
@@ -1424,6 +1708,10 @@ namespace KhiVanChiTu.Remake.Editor
             var arenaGo = new GameObject("RemakeArenaController");
             var arenaCtrl = arenaGo.AddComponent<RemakeArenaController>();
             SetSerializedObjectField(arenaCtrl, "playerTransform", playerGo.transform);
+            SetSerializedObjectField(arenaCtrl, "femalePlayerVisual", femaleVisual);
+            SetSerializedObjectField(arenaCtrl, "malePlayerVisual", maleVisual);
+            if (cloudInst != null)
+                SetSerializedObjectField(arenaCtrl, "cloudCushion", cloudInst.GetComponent<RemakeCloudCushionVfx>());
             SetSerializedObjectField(arenaCtrl, "swordsRoot", swordsGo.transform);
             SetSerializedObjectField(arenaCtrl, "groundFormationRing", ringGo.transform);
             SetSerializedObjectField(arenaCtrl, "flyingSwordPrefab", resolvedSwordPrefab);
@@ -1743,6 +2031,7 @@ namespace KhiVanChiTu.Remake.Editor
             {
                 new EditorBuildSettingsScene(ScenesRoot + "/00_Boot.unity", true),
                 new EditorBuildSettingsScene(ScenesRoot + "/01_MainMenu.unity", true),
+                new EditorBuildSettingsScene(ScenesRoot + "/01b_CharacterSelect.unity", true),
                 new EditorBuildSettingsScene(ScenesRoot + "/02_World_Act1_Meadow.unity", true),
                 new EditorBuildSettingsScene(ScenesRoot + "/03_World_Act2_Wasteland.unity", true),
                 new EditorBuildSettingsScene(ScenesRoot + "/04_World_Act3_JadePeaks.unity", true),

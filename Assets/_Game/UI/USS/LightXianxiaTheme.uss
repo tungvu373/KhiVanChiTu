@@ -1180,3 +1180,82 @@
     margin-right: 5px;
     margin-bottom: 4px;
 }
+
+.btn-danger {
+    background-color: #C94436;
+    color: #FFFFFF;
+    border-width: 1.5px;
+    border-color: #93271D;
+    border-radius: 11px;
+    -unity-font-style: bold;
+    font-size: 12px;
+    padding: 6px 12px;
+}
+
+.btn-danger:hover {
+    background-color: #B4372A;
+}
+
+.desktop-wide #cs-main-panel {
+    max-width: 460px;
+    align-self: flex-end;
+    margin-right: 12px;
+}
+
+/* =========================================================
+   CHARACTER SELECT 2D SHOWCASE & FLOATING UTILITY DRAWER
+   ========================================================= */
+.cs-2d-showcase-ring {
+    width: 214px;
+    height: 214px;
+    border-radius: 107px;
+    border-width: 3px;
+    border-color: rgba(212, 162, 52, 0.92);
+    background-color: rgba(255, 252, 244, 0.92);
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+
+.cs-2d-showcase-ring.compact {
+    width: 152px;
+    height: 152px;
+    border-radius: 76px;
+    padding: 6px;
+}
+
+.cs-2d-showcase-art {
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+}
+
+.hud-profile-trigger {
+    border-radius: 14px;
+}
+
+.hud-profile-trigger:hover .hud-hero-card {
+    border-color: #D89B22;
+    background-color: rgba(255, 252, 240, 0.99);
+}
+
+.utility-floating-drawer {
+    position: absolute;
+    right: 8px;
+    top: 86px;
+    width: 158px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 8px 6px 4px 8px;
+}
+
+.desktop-wide .utility-floating-drawer {
+    right: 12px;
+    top: 84px;
+    width: auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 8px 10px;
+}

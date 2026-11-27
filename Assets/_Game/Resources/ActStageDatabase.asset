@@ -100,8 +100,8 @@ MonoBehaviour:
     recommendedPower: 75
     enemyHp: 38
     enemyDamage: 11
-    tuViPerKill: 14
-    linhThachPerKill: 12
+    tuViPerKill: 13
+    linhThachPerKill: 11
     swordDropRate: 0.0195
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -125,8 +125,8 @@ MonoBehaviour:
     recommendedPower: 86
     enemyHp: 46
     enemyDamage: 13
-    tuViPerKill: 15
-    linhThachPerKill: 13
+    tuViPerKill: 14
+    linhThachPerKill: 12
     swordDropRate: 0.021
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -150,8 +150,8 @@ MonoBehaviour:
     recommendedPower: 121
     enemyHp: 68
     enemyDamage: 16
-    tuViPerKill: 16
-    linhThachPerKill: 14
+    tuViPerKill: 15
+    linhThachPerKill: 13
     swordDropRate: 0.022499999
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -175,8 +175,8 @@ MonoBehaviour:
     recommendedPower: 139
     enemyHp: 82
     enemyDamage: 18
-    tuViPerKill: 17
-    linhThachPerKill: 14
+    tuViPerKill: 16
+    linhThachPerKill: 15
     swordDropRate: 0.024
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -200,8 +200,8 @@ MonoBehaviour:
     recommendedPower: 159
     enemyHp: 99
     enemyDamage: 21
-    tuViPerKill: 18
-    linhThachPerKill: 15
+    tuViPerKill: 17
+    linhThachPerKill: 16
     swordDropRate: 0.0255
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -226,7 +226,7 @@ MonoBehaviour:
     enemyHp: 118
     enemyDamage: 25
     tuViPerKill: 19
-    linhThachPerKill: 16
+    linhThachPerKill: 18
     swordDropRate: 0.026999999
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -251,7 +251,7 @@ MonoBehaviour:
     enemyHp: 987
     enemyDamage: 60
     tuViPerKill: 220
-    linhThachPerKill: 204
+    linhThachPerKill: 228
     swordDropRate: 0.0285
     swordDropMinLevel: 1
     swordDropMaxLevel: 1
@@ -276,7 +276,7 @@ MonoBehaviour:
     enemyHp: 357
     enemyDamage: 36
     tuViPerKill: 21
-    linhThachPerKill: 18
+    linhThachPerKill: 20
     swordDropRate: 0.015
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -301,7 +301,7 @@ MonoBehaviour:
     enemyHp: 377
     enemyDamage: 37
     tuViPerKill: 23
-    linhThachPerKill: 20
+    linhThachPerKill: 22
     swordDropRate: 0.0165
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -325,8 +325,8 @@ MonoBehaviour:
     recommendedPower: 920
     enemyHp: 450
     enemyDamage: 43
-    tuViPerKill: 25
-    linhThachPerKill: 21
+    tuViPerKill: 26
+    linhThachPerKill: 25
     swordDropRate: 0.018
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -350,8 +350,8 @@ MonoBehaviour:
     recommendedPower: 1041
     enemyHp: 535
     enemyDamage: 50
-    tuViPerKill: 27
-    linhThachPerKill: 23
+    tuViPerKill: 29
+    linhThachPerKill: 28
     swordDropRate: 0.0195
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -375,8 +375,8 @@ MonoBehaviour:
     recommendedPower: 1177
     enemyHp: 635
     enemyDamage: 57
-    tuViPerKill: 29
-    linhThachPerKill: 25
+    tuViPerKill: 31
+    linhThachPerKill: 30
     swordDropRate: 0.021
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -400,8 +400,8 @@ MonoBehaviour:
     recommendedPower: 1330
     enemyHp: 753
     enemyDamage: 65
-    tuViPerKill: 31
-    linhThachPerKill: 26
+    tuViPerKill: 35
+    linhThachPerKill: 35
     swordDropRate: 0.022499999
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -425,8 +425,8 @@ MonoBehaviour:
     recommendedPower: 1502
     enemyHp: 891
     enemyDamage: 73
-    tuViPerKill: 33
-    linhThachPerKill: 28
+    tuViPerKill: 38
+    linhThachPerKill: 38
     swordDropRate: 0.024
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -450,8 +450,8 @@ MonoBehaviour:
     recommendedPower: 1695
     enemyHp: 1051
     enemyDamage: 82
-    tuViPerKill: 35
-    linhThachPerKill: 30
+    tuViPerKill: 42
+    linhThachPerKill: 42
     swordDropRate: 0.0255
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -475,8 +475,8 @@ MonoBehaviour:
     recommendedPower: 1913
     enemyHp: 1239
     enemyDamage: 91
-    tuViPerKill: 36
-    linhThachPerKill: 31
+    tuViPerKill: 47
+    linhThachPerKill: 48
     swordDropRate: 0.026999999
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -500,8 +500,8 @@ MonoBehaviour:
     recommendedPower: 2756
     enemyHp: 10199
     enemyDamage: 217
-    tuViPerKill: 418
-    linhThachPerKill: 384
+    tuViPerKill: 572
+    linhThachPerKill: 648
     swordDropRate: 0.0285
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -526,7 +526,7 @@ MonoBehaviour:
     enemyHp: 2329
     enemyDamage: 110
     tuViPerKill: 57
-    linhThachPerKill: 48
+    linhThachPerKill: 59
     swordDropRate: 0.015
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -550,8 +550,8 @@ MonoBehaviour:
     recommendedPower: 5298
     enemyHp: 2458
     enemyDamage: 115
-    tuViPerKill: 62
-    linhThachPerKill: 53
+    tuViPerKill: 64
+    linhThachPerKill: 67
     swordDropRate: 0.0165
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -575,8 +575,8 @@ MonoBehaviour:
     recommendedPower: 5947
     enemyHp: 2907
     enemyDamage: 130
-    tuViPerKill: 67
-    linhThachPerKill: 57
+    tuViPerKill: 71
+    linhThachPerKill: 75
     swordDropRate: 0.018
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -600,8 +600,8 @@ MonoBehaviour:
     recommendedPower: 6673
     enemyHp: 3431
     enemyDamage: 146
-    tuViPerKill: 72
-    linhThachPerKill: 61
+    tuViPerKill: 79
+    linhThachPerKill: 84
     swordDropRate: 0.0195
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -625,8 +625,8 @@ MonoBehaviour:
     recommendedPower: 7486
     enemyHp: 4042
     enemyDamage: 163
-    tuViPerKill: 77
-    linhThachPerKill: 65
+    tuViPerKill: 88
+    linhThachPerKill: 95
     swordDropRate: 0.021
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -650,8 +650,8 @@ MonoBehaviour:
     recommendedPower: 8396
     enemyHp: 4754
     enemyDamage: 181
-    tuViPerKill: 83
-    linhThachPerKill: 71
+    tuViPerKill: 98
+    linhThachPerKill: 107
     swordDropRate: 0.022499999
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -675,8 +675,8 @@ MonoBehaviour:
     recommendedPower: 9413
     enemyHp: 5581
     enemyDamage: 200
-    tuViPerKill: 88
-    linhThachPerKill: 75
+    tuViPerKill: 110
+    linhThachPerKill: 121
     swordDropRate: 0.024
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -700,8 +700,8 @@ MonoBehaviour:
     recommendedPower: 10551
     enemyHp: 6542
     enemyDamage: 221
-    tuViPerKill: 93
-    linhThachPerKill: 79
+    tuViPerKill: 122
+    linhThachPerKill: 135
     swordDropRate: 0.0255
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -725,8 +725,8 @@ MonoBehaviour:
     recommendedPower: 11824
     enemyHp: 7657
     enemyDamage: 243
-    tuViPerKill: 98
-    linhThachPerKill: 83
+    tuViPerKill: 137
+    linhThachPerKill: 153
     swordDropRate: 0.026999999
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -750,8 +750,8 @@ MonoBehaviour:
     recommendedPower: 16927
     enemyHp: 62643
     enemyDamage: 574
-    tuViPerKill: 1133
-    linhThachPerKill: 1056
+    tuViPerKill: 1672
+    linhThachPerKill: 2052
     swordDropRate: 0.0285
     swordDropMinLevel: 1
     swordDropMaxLevel: 2
@@ -776,7 +776,7 @@ MonoBehaviour:
     enemyHp: 10418
     enemyDamage: 305
     tuViPerKill: 170
-    linhThachPerKill: 182
+    linhThachPerKill: 193
     swordDropRate: 0.015999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -800,8 +800,8 @@ MonoBehaviour:
     recommendedPower: 22156
     enemyHp: 10990
     enemyDamage: 318
-    tuViPerKill: 185
-    linhThachPerKill: 198
+    tuViPerKill: 184
+    linhThachPerKill: 210
     swordDropRate: 0.0175
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -826,7 +826,7 @@ MonoBehaviour:
     enemyHp: 12955
     enemyDamage: 353
     tuViPerKill: 200
-    linhThachPerKill: 214
+    linhThachPerKill: 229
     swordDropRate: 0.019
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -850,8 +850,8 @@ MonoBehaviour:
     recommendedPower: 24807
     enemyHp: 13616
     enemyDamage: 368
-    tuViPerKill: 216
-    linhThachPerKill: 231
+    tuViPerKill: 217
+    linhThachPerKill: 250
     swordDropRate: 0.0205
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -875,8 +875,8 @@ MonoBehaviour:
     recommendedPower: 27769
     enemyHp: 15995
     enemyDamage: 406
-    tuViPerKill: 231
-    linhThachPerKill: 247
+    tuViPerKill: 236
+    linhThachPerKill: 274
     swordDropRate: 0.022
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -900,8 +900,8 @@ MonoBehaviour:
     recommendedPower: 31079
     enemyHp: 18758
     enemyDamage: 447
-    tuViPerKill: 246
-    linhThachPerKill: 263
+    tuViPerKill: 256
+    linhThachPerKill: 298
     swordDropRate: 0.0235
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -925,8 +925,8 @@ MonoBehaviour:
     recommendedPower: 31079
     enemyHp: 19628
     enemyDamage: 463
-    tuViPerKill: 262
-    linhThachPerKill: 280
+    tuViPerKill: 278
+    linhThachPerKill: 326
     swordDropRate: 0.025
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -950,8 +950,8 @@ MonoBehaviour:
     recommendedPower: 34777
     enemyHp: 22953
     enemyDamage: 507
-    tuViPerKill: 277
-    linhThachPerKill: 296
+    tuViPerKill: 302
+    linhThachPerKill: 356
     swordDropRate: 0.0265
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -975,8 +975,8 @@ MonoBehaviour:
     recommendedPower: 38907
     enemyHp: 26803
     enemyDamage: 554
-    tuViPerKill: 292
-    linhThachPerKill: 312
+    tuViPerKill: 328
+    linhThachPerKill: 388
     swordDropRate: 0.027999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -1000,8 +1000,8 @@ MonoBehaviour:
     recommendedPower: 55610
     enemyHp: 231309
     enemyDamage: 1299
-    tuViPerKill: 3388
-    linhThachPerKill: 3960
+    tuViPerKill: 3916
+    linhThachPerKill: 5088
     swordDropRate: 0.0295
     swordDropMinLevel: 2
     swordDropMaxLevel: 2
@@ -1025,8 +1025,8 @@ MonoBehaviour:
     recommendedPower: 43521
     enemyHp: 20464
     enemyDamage: 434
-    tuViPerKill: 170
-    linhThachPerKill: 182
+    tuViPerKill: 387
+    linhThachPerKill: 463
     swordDropRate: 0.015999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1050,8 +1050,8 @@ MonoBehaviour:
     recommendedPower: 48673
     enemyHp: 24142
     enemyDamage: 478
-    tuViPerKill: 185
-    linhThachPerKill: 198
+    tuViPerKill: 420
+    linhThachPerKill: 505
     swordDropRate: 0.0175
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1075,8 +1075,8 @@ MonoBehaviour:
     recommendedPower: 48673
     enemyHp: 25418
     enemyDamage: 498
-    tuViPerKill: 200
-    linhThachPerKill: 214
+    tuViPerKill: 456
+    linhThachPerKill: 551
     swordDropRate: 0.019
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1100,8 +1100,8 @@ MonoBehaviour:
     recommendedPower: 54426
     enemyHp: 29874
     enemyDamage: 545
-    tuViPerKill: 216
-    linhThachPerKill: 231
+    tuViPerKill: 495
+    linhThachPerKill: 601
     swordDropRate: 0.0205
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1125,8 +1125,8 @@ MonoBehaviour:
     recommendedPower: 54426
     enemyHp: 31349
     enemyDamage: 566
-    tuViPerKill: 231
-    linhThachPerKill: 247
+    tuViPerKill: 537
+    linhThachPerKill: 655
     swordDropRate: 0.022
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1150,8 +1150,8 @@ MonoBehaviour:
     recommendedPower: 60849
     enemyHp: 36726
     enemyDamage: 618
-    tuViPerKill: 246
-    linhThachPerKill: 263
+    tuViPerKill: 584
+    linhThachPerKill: 716
     swordDropRate: 0.0235
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1175,8 +1175,8 @@ MonoBehaviour:
     recommendedPower: 94350
     enemyHp: 59587
     enemyDamage: 1144
-    tuViPerKill: 945
-    linhThachPerKill: 1011
+    tuViPerKill: 634
+    linhThachPerKill: 781
     swordDropRate: 0.025
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1200,8 +1200,8 @@ MonoBehaviour:
     recommendedPower: 94350
     enemyHp: 62271
     enemyDamage: 1183
-    tuViPerKill: 1000
-    linhThachPerKill: 1070
+    tuViPerKill: 691
+    linhThachPerKill: 856
     swordDropRate: 0.0265
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1225,8 +1225,8 @@ MonoBehaviour:
     recommendedPower: 105453
     enemyHp: 72645
     enemyDamage: 1288
-    tuViPerKill: 1056
-    linhThachPerKill: 1130
+    tuViPerKill: 753
+    linhThachPerKill: 937
     swordDropRate: 0.027999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1250,8 +1250,8 @@ MonoBehaviour:
     recommendedPower: 168252
     enemyHp: 699833
     enemyDamage: 3163
-    tuViPerKill: 12221
-    linhThachPerKill: 14268
+    tuViPerKill: 9031
+    linhThachPerKill: 12324
     swordDropRate: 0.0295
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1275,8 +1275,8 @@ MonoBehaviour:
     recommendedPower: 117845
     enemyHp: 55413
     enemyDamage: 1006
-    tuViPerKill: 614
-    linhThachPerKill: 657
+    tuViPerKill: 894
+    linhThachPerKill: 1123
     swordDropRate: 0.015999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1300,8 +1300,8 @@ MonoBehaviour:
     recommendedPower: 131675
     enemyHp: 65311
     enemyDamage: 1103
-    tuViPerKill: 669
-    linhThachPerKill: 716
+    tuViPerKill: 974
+    linhThachPerKill: 1230
     swordDropRate: 0.0175
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1325,8 +1325,8 @@ MonoBehaviour:
     recommendedPower: 147108
     enemyHp: 76823
     enemyDamage: 1206
-    tuViPerKill: 724
-    linhThachPerKill: 775
+    tuViPerKill: 1062
+    linhThachPerKill: 1348
     swordDropRate: 0.019
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1350,8 +1350,8 @@ MonoBehaviour:
     recommendedPower: 147108
     enemyHp: 80746
     enemyDamage: 1255
-    tuViPerKill: 779
-    linhThachPerKill: 834
+    tuViPerKill: 1157
+    linhThachPerKill: 1475
     swordDropRate: 0.0205
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1375,8 +1375,8 @@ MonoBehaviour:
     recommendedPower: 164328
     enemyHp: 94653
     enemyDamage: 1366
-    tuViPerKill: 835
-    linhThachPerKill: 893
+    tuViPerKill: 1261
+    linhThachPerKill: 1615
     swordDropRate: 0.022
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1400,8 +1400,8 @@ MonoBehaviour:
     recommendedPower: 183540
     enemyHp: 110776
     enemyDamage: 1484
-    tuViPerKill: 890
-    linhThachPerKill: 952
+    tuViPerKill: 1374
+    linhThachPerKill: 1768
     swordDropRate: 0.0235
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1425,8 +1425,8 @@ MonoBehaviour:
     recommendedPower: 183540
     enemyHp: 115915
     enemyDamage: 1537
-    tuViPerKill: 945
-    linhThachPerKill: 1011
+    tuViPerKill: 1497
+    linhThachPerKill: 1936
     swordDropRate: 0.025
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1450,8 +1450,8 @@ MonoBehaviour:
     recommendedPower: 204972
     enemyHp: 135281
     enemyDamage: 1664
-    tuViPerKill: 1000
-    linhThachPerKill: 1070
+    tuViPerKill: 1631
+    linhThachPerKill: 2119
     swordDropRate: 0.0265
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1475,8 +1475,8 @@ MonoBehaviour:
     recommendedPower: 204972
     enemyHp: 141203
     enemyDamage: 1720
-    tuViPerKill: 1056
-    linhThachPerKill: 1130
+    tuViPerKill: 1777
+    linhThachPerKill: 2320
     swordDropRate: 0.027999999
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1500,8 +1500,8 @@ MonoBehaviour:
     recommendedPower: 326528
     enemyHp: 1358174
     enemyDamage: 4169
-    tuViPerKill: 12221
-    linhThachPerKill: 14268
+    tuViPerKill: 21296
+    linhThachPerKill: 30468
     swordDropRate: 0.0295
     swordDropMinLevel: 2
     swordDropMaxLevel: 3
@@ -1525,8 +1525,8 @@ MonoBehaviour:
     recommendedPower: 255544
     enemyHp: 127999
     enemyDamage: 1394
-    tuViPerKill: 614
-    linhThachPerKill: 792
+    tuViPerKill: 2110
+    linhThachPerKill: 2780
     swordDropRate: 0.016999999
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1550,8 +1550,8 @@ MonoBehaviour:
     recommendedPower: 255544
     enemyHp: 134927
     enemyDamage: 1455
-    tuViPerKill: 669
-    linhThachPerKill: 863
+    tuViPerKill: 2299
+    linhThachPerKill: 3043
     swordDropRate: 0.0185
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1575,8 +1575,8 @@ MonoBehaviour:
     recommendedPower: 342340
     enemyHp: 190189
     enemyDamage: 2495
-    tuViPerKill: 2766
-    linhThachPerKill: 3568
+    tuViPerKill: 2497
+    linhThachPerKill: 3320
     swordDropRate: 0.02
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1600,8 +1600,8 @@ MonoBehaviour:
     recommendedPower: 382137
     enemyHp: 222998
     enemyDamage: 2714
-    tuViPerKill: 2977
-    linhThachPerKill: 3840
+    tuViPerKill: 2709
+    linhThachPerKill: 3619
     swordDropRate: 0.021499999
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1625,8 +1625,8 @@ MonoBehaviour:
     recommendedPower: 382137
     enemyHp: 233868
     enemyDamage: 2819
-    tuViPerKill: 3188
-    linhThachPerKill: 4113
+    tuViPerKill: 2939
+    linhThachPerKill: 3944
     swordDropRate: 0.023
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1650,8 +1650,8 @@ MonoBehaviour:
     recommendedPower: 426514
     enemyHp: 273348
     enemyDamage: 3056
-    tuViPerKill: 3399
-    linhThachPerKill: 4385
+    tuViPerKill: 3189
+    linhThachPerKill: 4299
     swordDropRate: 0.0245
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1675,8 +1675,8 @@ MonoBehaviour:
     recommendedPower: 475995
     enemyHp: 319023
     enemyDamage: 3305
-    tuViPerKill: 3610
-    linhThachPerKill: 4657
+    tuViPerKill: 3460
+    linhThachPerKill: 4685
     swordDropRate: 0.026
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1700,8 +1700,8 @@ MonoBehaviour:
     recommendedPower: 475995
     enemyHp: 333197
     enemyDamage: 3419
-    tuViPerKill: 3821
-    linhThachPerKill: 4929
+    tuViPerKill: 3754
+    linhThachPerKill: 5106
     swordDropRate: 0.0275
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1725,8 +1725,8 @@ MonoBehaviour:
     recommendedPower: 531162
     enemyHp: 387866
     enemyDamage: 3687
-    tuViPerKill: 4032
-    linhThachPerKill: 5201
+    tuViPerKill: 4073
+    linhThachPerKill: 5565
     swordDropRate: 0.029
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1750,8 +1750,8 @@ MonoBehaviour:
     recommendedPower: 757291
     enemyHp: 3517410
     enemyDamage: 8536
-    tuViPerKill: 46673
-    linhThachPerKill: 65676
+    tuViPerKill: 48609
+    linhThachPerKill: 72768
     swordDropRate: 0.03
     swordDropMinLevel: 3
     swordDropMaxLevel: 3
@@ -1775,8 +1775,8 @@ MonoBehaviour:
     recommendedPower: 592663
     enemyHp: 296858
     enemyDamage: 2853
-    tuViPerKill: 2344
-    linhThachPerKill: 3024
+    tuViPerKill: 4794
+    linhThachPerKill: 6608
     swordDropRate: 0.016999999
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1800,8 +1800,8 @@ MonoBehaviour:
     recommendedPower: 661220
     enemyHp: 349124
     enemyDamage: 3103
-    tuViPerKill: 2555
-    linhThachPerKill: 3296
+    tuViPerKill: 5202
+    linhThachPerKill: 7202
     swordDropRate: 0.0185
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1825,8 +1825,8 @@ MonoBehaviour:
     recommendedPower: 661220
     enemyHp: 367345
     enemyDamage: 3232
-    tuViPerKill: 2766
-    linhThachPerKill: 3568
+    tuViPerKill: 5644
+    linhThachPerKill: 7848
     swordDropRate: 0.02
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1850,8 +1850,8 @@ MonoBehaviour:
     recommendedPower: 737638
     enemyHp: 430453
     enemyDamage: 3501
-    tuViPerKill: 2977
-    linhThachPerKill: 3840
+    tuViPerKill: 6123
+    linhThachPerKill: 8552
     swordDropRate: 0.021499999
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1875,8 +1875,8 @@ MonoBehaviour:
     recommendedPower: 822812
     enemyHp: 503561
     enemyDamage: 3784
-    tuViPerKill: 3188
-    linhThachPerKill: 4113
+    tuViPerKill: 6643
+    linhThachPerKill: 9318
     swordDropRate: 0.023
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1900,8 +1900,8 @@ MonoBehaviour:
     recommendedPower: 822812
     enemyHp: 527331
     enemyDamage: 3924
-    tuViPerKill: 3399
-    linhThachPerKill: 4385
+    tuViPerKill: 7208
+    linhThachPerKill: 10155
     swordDropRate: 0.0245
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1925,8 +1925,8 @@ MonoBehaviour:
     recommendedPower: 917739
     enemyHp: 615089
     enemyDamage: 4228
-    tuViPerKill: 3610
-    linhThachPerKill: 4657
+    tuViPerKill: 7820
+    linhThachPerKill: 11064
     swordDropRate: 0.026
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1950,8 +1950,8 @@ MonoBehaviour:
     recommendedPower: 1194114
     enemyHp: 835880
     enemyDamage: 7510
-    tuViPerKill: 13653
-    linhThachPerKill: 17612
+    tuViPerKill: 8459
+    linhThachPerKill: 12020
     swordDropRate: 0.0275
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -1975,8 +1975,8 @@ MonoBehaviour:
     recommendedPower: 1194114
     enemyHp: 871969
     enemyDamage: 7760
-    tuViPerKill: 14407
-    linhThachPerKill: 18585
+    tuViPerKill: 9004
+    linhThachPerKill: 12849
     swordDropRate: 0.029
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2000,8 +2000,8 @@ MonoBehaviour:
     recommendedPower: 1897366
     enemyHp: 8812752
     enemyDamage: 18638
-    tuViPerKill: 166771
-    linhThachPerKill: 234696
+    tuViPerKill: 105435
+    linhThachPerKill: 164844
     swordDropRate: 0.03
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2025,8 +2025,8 @@ MonoBehaviour:
     recommendedPower: 1484895
     enemyHp: 743768
     enemyDamage: 6231
-    tuViPerKill: 8376
-    linhThachPerKill: 10805
+    tuViPerKill: 10202
+    linhThachPerKill: 14683
     swordDropRate: 0.016999999
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2050,8 +2050,8 @@ MonoBehaviour:
     recommendedPower: 1484895
     enemyHp: 784025
     enemyDamage: 6501
-    tuViPerKill: 9130
-    linhThachPerKill: 11778
+    tuViPerKill: 10860
+    linhThachPerKill: 15696
     swordDropRate: 0.0185
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2075,8 +2075,8 @@ MonoBehaviour:
     recommendedPower: 1655646
     enemyHp: 919803
     enemyDamage: 7039
-    tuViPerKill: 9884
-    linhThachPerKill: 12750
+    tuViPerKill: 11560
+    linhThachPerKill: 16778
     swordDropRate: 0.02
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2100,8 +2100,8 @@ MonoBehaviour:
     recommendedPower: 1655646
     enemyHp: 966161
     enemyDamage: 7321
-    tuViPerKill: 10638
-    linhThachPerKill: 13723
+    tuViPerKill: 12305
+    linhThachPerKill: 17934
     swordDropRate: 0.021499999
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2125,8 +2125,8 @@ MonoBehaviour:
     recommendedPower: 1845885
     enemyHp: 1129682
     enemyDamage: 7898
-    tuViPerKill: 11392
-    linhThachPerKill: 14696
+    tuViPerKill: 13097
+    linhThachPerKill: 19168
     swordDropRate: 0.023
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2150,8 +2150,8 @@ MonoBehaviour:
     recommendedPower: 2057825
     enemyHp: 1318837
     enemyDamage: 8505
-    tuViPerKill: 12146
-    linhThachPerKill: 15668
+    tuViPerKill: 13941
+    linhThachPerKill: 20488
     swordDropRate: 0.0245
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2175,8 +2175,8 @@ MonoBehaviour:
     recommendedPower: 2057825
     enemyHp: 1379200
     enemyDamage: 8809
-    tuViPerKill: 12900
-    linhThachPerKill: 16641
+    tuViPerKill: 14840
+    linhThachPerKill: 21900
     swordDropRate: 0.026
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2200,8 +2200,8 @@ MonoBehaviour:
     recommendedPower: 2293927
     enemyHp: 1605749
     enemyDamage: 9459
-    tuViPerKill: 13653
-    linhThachPerKill: 17612
+    tuViPerKill: 15796
+    linhThachPerKill: 23407
     swordDropRate: 0.0275
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2225,8 +2225,8 @@ MonoBehaviour:
     recommendedPower: 2556929
     enemyHp: 1867127
     enemyDamage: 10140
-    tuViPerKill: 14407
-    linhThachPerKill: 18585
+    tuViPerKill: 16814
+    linhThachPerKill: 25017
     swordDropRate: 0.029
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2250,8 +2250,8 @@ MonoBehaviour:
     recommendedPower: 3641515
     enemyHp: 16913855
     enemyDamage: 23338
-    tuViPerKill: 166771
-    linhThachPerKill: 234696
+    tuViPerKill: 196867
+    linhThachPerKill: 320856
     swordDropRate: 0.03
     swordDropMinLevel: 3
     swordDropMaxLevel: 4
@@ -2275,8 +2275,8 @@ MonoBehaviour:
     recommendedPower: 2849881
     enemyHp: 1514870
     enemyDamage: 7802
-    tuViPerKill: 8376
-    linhThachPerKill: 12648
+    tuViPerKill: 19051
+    linhThachPerKill: 28578
     swordDropRate: 0.018
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2300,8 +2300,8 @@ MonoBehaviour:
     recommendedPower: 3176175
     enemyHp: 1778658
     enemyDamage: 8440
-    tuViPerKill: 9130
-    linhThachPerKill: 13786
+    tuViPerKill: 20278
+    linhThachPerKill: 30542
     swordDropRate: 0.0195
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2325,8 +2325,8 @@ MonoBehaviour:
     recommendedPower: 3176175
     enemyHp: 1870414
     enemyDamage: 8792
-    tuViPerKill: 9884
-    linhThachPerKill: 14925
+    tuViPerKill: 21585
+    linhThachPerKill: 32641
     swordDropRate: 0.021
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2350,8 +2350,8 @@ MonoBehaviour:
     recommendedPower: 4045242
     enemyHp: 2500859
     enemyDamage: 16345
-    tuViPerKill: 28205
-    linhThachPerKill: 42590
+    tuViPerKill: 23163
+    linhThachPerKill: 35169
     swordDropRate: 0.022499999
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2375,8 +2375,8 @@ MonoBehaviour:
     recommendedPower: 4045242
     enemyHp: 2621317
     enemyDamage: 16974
-    tuViPerKill: 30204
-    linhThachPerKill: 45608
+    tuViPerKill: 25026
+    linhThachPerKill: 38149
     swordDropRate: 0.024
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2400,8 +2400,8 @@ MonoBehaviour:
     recommendedPower: 4507790
     enemyHp: 3057284
     enemyDamage: 18241
-    tuViPerKill: 32203
-    linhThachPerKill: 48627
+    tuViPerKill: 27039
+    linhThachPerKill: 41383
     swordDropRate: 0.0255
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2425,8 +2425,8 @@ MonoBehaviour:
     recommendedPower: 5022902
     enemyHp: 3560679
     enemyDamage: 19570
-    tuViPerKill: 34201
-    linhThachPerKill: 51644
+    tuViPerKill: 29214
+    linhThachPerKill: 44889
     swordDropRate: 0.027
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2450,8 +2450,8 @@ MonoBehaviour:
     recommendedPower: 5022902
     enemyHp: 3716947
     enemyDamage: 20245
-    tuViPerKill: 36200
-    linhThachPerKill: 54662
+    tuViPerKill: 31564
+    linhThachPerKill: 48692
     swordDropRate: 0.0285
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2475,8 +2475,8 @@ MonoBehaviour:
     recommendedPower: 5596521
     enemyHp: 4318027
     enemyDamage: 21663
-    tuViPerKill: 38199
-    linhThachPerKill: 57680
+    tuViPerKill: 34102
+    linhThachPerKill: 52815
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2500,8 +2500,8 @@ MonoBehaviour:
     recommendedPower: 8876065
     enemyHp: 45771473
     enemyDamage: 51508
-    tuViPerKill: 442178
-    linhThachPerKill: 728388
+    tuViPerKill: 405295
+    linhThachPerKill: 687444
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 4
@@ -2525,8 +2525,8 @@ MonoBehaviour:
     recommendedPower: 6235263
     enemyHp: 3314389
     enemyDamage: 16639
-    tuViPerKill: 22209
-    linhThachPerKill: 33536
+    tuViPerKill: 39809
+    linhThachPerKill: 62138
     swordDropRate: 0.018
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2550,8 +2550,8 @@ MonoBehaviour:
     recommendedPower: 6946485
     enemyHp: 3890032
     enemyDamage: 17968
-    tuViPerKill: 24208
-    linhThachPerKill: 36554
+    tuViPerKill: 43011
+    linhThachPerKill: 67398
     swordDropRate: 0.0195
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2575,8 +2575,8 @@ MonoBehaviour:
     recommendedPower: 7738378
     enemyHp: 4557045
     enemyDamage: 19364
-    tuViPerKill: 26206
-    linhThachPerKill: 39571
+    tuViPerKill: 46470
+    linhThachPerKill: 73100
     swordDropRate: 0.021
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2600,8 +2600,8 @@ MonoBehaviour:
     recommendedPower: 7738378
     enemyHp: 4784037
     enemyDamage: 20139
-    tuViPerKill: 28205
-    linhThachPerKill: 42590
+    tuViPerKill: 50208
+    linhThachPerKill: 79286
     swordDropRate: 0.022499999
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2625,8 +2625,8 @@ MonoBehaviour:
     recommendedPower: 8620049
     enemyHp: 5585792
     enemyDamage: 21631
-    tuViPerKill: 30204
-    linhThachPerKill: 45608
+    tuViPerKill: 54246
+    linhThachPerKill: 85993
     swordDropRate: 0.024
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2650,8 +2650,8 @@ MonoBehaviour:
     recommendedPower: 9601634
     enemyHp: 6512042
     enemyDamage: 23196
-    tuViPerKill: 32203
-    linhThachPerKill: 48627
+    tuViPerKill: 58609
+    linhThachPerKill: 93266
     swordDropRate: 0.0255
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2675,8 +2675,8 @@ MonoBehaviour:
     recommendedPower: 9601634
     enemyHp: 6806492
     enemyDamage: 24025
-    tuViPerKill: 34201
-    linhThachPerKill: 51644
+    tuViPerKill: 63323
+    linhThachPerKill: 101152
     swordDropRate: 0.027
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2700,8 +2700,8 @@ MonoBehaviour:
     recommendedPower: 10694409
     enemyHp: 7913862
     enemyDamage: 25693
-    tuViPerKill: 36200
-    linhThachPerKill: 54662
+    tuViPerKill: 68417
+    linhThachPerKill: 109706
     swordDropRate: 0.0285
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2725,8 +2725,8 @@ MonoBehaviour:
     recommendedPower: 10694409
     enemyHp: 8251330
     enemyDamage: 26549
-    tuViPerKill: 38199
-    linhThachPerKill: 57680
+    tuViPerKill: 73919
+    linhThachPerKill: 118978
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2750,8 +2750,8 @@ MonoBehaviour:
     recommendedPower: 19068599
     enemyHp: 98331620
     enemyDamage: 113075
-    tuViPerKill: 1479742
-    linhThachPerKill: 2437536
+    tuViPerKill: 817542
+    linhThachPerKill: 1440948
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2776,7 +2776,7 @@ MonoBehaviour:
     enemyHp: 7932537
     enemyDamage: 37801
     tuViPerKill: 74322
-    linhThachPerKill: 112226
+    linhThachPerKill: 120531
     swordDropRate: 0.018
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2800,8 +2800,8 @@ MonoBehaviour:
     recommendedPower: 14923251
     enemyHp: 8357021
     enemyDamage: 39445
-    tuViPerKill: 81011
-    linhThachPerKill: 122327
+    tuViPerKill: 74322
+    linhThachPerKill: 120983
     swordDropRate: 0.0195
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2825,8 +2825,8 @@ MonoBehaviour:
     recommendedPower: 16619083
     enemyHp: 9786794
     enemyDamage: 42434
-    tuViPerKill: 87700
-    linhThachPerKill: 132427
+    tuViPerKill: 74322
+    linhThachPerKill: 121435
     swordDropRate: 0.021
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2850,8 +2850,8 @@ MonoBehaviour:
     recommendedPower: 18506705
     enemyHp: 11441256
     enemyDamage: 45568
-    tuViPerKill: 94389
-    linhThachPerKill: 142527
+    tuViPerKill: 74322
+    linhThachPerKill: 121888
     swordDropRate: 0.022499999
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2875,8 +2875,8 @@ MonoBehaviour:
     recommendedPower: 18506705
     enemyHp: 11992345
     enemyDamage: 47321
-    tuViPerKill: 101078
-    linhThachPerKill: 152628
+    tuViPerKill: 74322
+    linhThachPerKill: 122340
     swordDropRate: 0.024
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2900,8 +2900,8 @@ MonoBehaviour:
     recommendedPower: 20607726
     enemyHp: 13976618
     enemyDamage: 50662
-    tuViPerKill: 107767
-    linhThachPerKill: 162728
+    tuViPerKill: 74322
+    linhThachPerKill: 122792
     swordDropRate: 0.0255
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2925,8 +2925,8 @@ MonoBehaviour:
     recommendedPower: 22946186
     enemyHp: 16266296
     enemyDamage: 54161
-    tuViPerKill: 114456
-    linhThachPerKill: 172829
+    tuViPerKill: 74322
+    linhThachPerKill: 123244
     swordDropRate: 0.027
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2950,8 +2950,8 @@ MonoBehaviour:
     recommendedPower: 22946186
     enemyHp: 16980177
     enemyDamage: 56028
-    tuViPerKill: 121145
-    linhThachPerKill: 182929
+    tuViPerKill: 74322
+    linhThachPerKill: 123696
     swordDropRate: 0.0285
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -2975,8 +2975,8 @@ MonoBehaviour:
     recommendedPower: 25548822
     enemyHp: 19712335
     enemyDamage: 59750
-    tuViPerKill: 127834
-    linhThachPerKill: 193029
+    tuViPerKill: 74322
+    linhThachPerKill: 124149
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 5
@@ -3000,8 +3000,8 @@ MonoBehaviour:
     recommendedPower: 40465861
     enemyHp: 208671534
     enemyDamage: 139703
-    tuViPerKill: 1479742
-    linhThachPerKill: 2437536
+    tuViPerKill: 817542
+    linhThachPerKill: 1495212
     swordDropRate: 0.03
     swordDropMinLevel: 4
     swordDropMaxLevel: 5

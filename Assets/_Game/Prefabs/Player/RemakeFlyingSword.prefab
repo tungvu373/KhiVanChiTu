@@ -180,6 +180,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 2716e31569d99de44ae69c2909f20a8e, type: 2}
   - {fileID: 2100000, guid: 6dc5e16392e540247a9d4ecc82b0538e, type: 2}
   - {fileID: 2100000, guid: 7c62a98eba0d73e40bc0698381bfe818, type: 2}
+  bladeTipPointsBackward: 1
 --- !u!1 &5973016026912322198
 GameObject:
   m_ObjectHideFlags: 0

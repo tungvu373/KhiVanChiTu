@@ -14,14 +14,15 @@ namespace KhiVanChiTu.Remake
         private Button _btnGfxHigh;
 
         private VisualElement _existingSaveBox;
-        private VisualElement _createCharBox;
+        private VisualElement _portraitSlot;
+        private VisualElement _avatarFrameSlot;
+        private VisualElement _devAccountSwitcher;
         private Button _btnAccountMain;
         private Button _btnAccountTest;
         private Label _saveDaoNameLabel;
         private Label _saveRealmLabel;
-        private TextField _inputDaoName;
+        private Button _btnOpenCharSelect;
         private Button _btnPlayContinue;
-        private Button _btnStartNew;
         private Button _btnResetSave;
 
         private void OnEnable()
@@ -57,9 +58,10 @@ namespace KhiVanChiTu.Remake
             var bgSlot = root.Q("menu-bg-slot");
             CodexArtLoader.ApplyIconOrPlaceholder(bgSlot, "Backgrounds/bg_main_menu_daylight", "[A11: Nền Sơn Môn Ban Ngày]");
 
-            var portraitSlot = root.Q("menu-portrait-slot");
-            CodexArtLoader.ApplyIconOrPlaceholder(portraitSlot, "", "[Chân Dung]", "CharacterPortrait");
-            CodexArtLoader.ApplyIconOrPlaceholder(root.Q("menu-avatar-frame"), "HUD/hud_avatar_frame", "");
+            _portraitSlot = root.Q("menu-portrait-slot");
+            _avatarFrameSlot = root.Q("menu-avatar-frame");
+            CodexArtLoader.ApplyIconOrPlaceholder(_portraitSlot, CultivationTable.GetPortraitCodexKey(SaveService.Current.gender), "[Chân Dung]", "CharacterPortrait");
+            CodexArtLoader.ApplyIconOrPlaceholder(_avatarFrameSlot, CultivationTable.GetAvatarFrameCodexKey(SaveService.Current.equippedAvatarFrame), "");
 
             _fpsLabel = root.Q<Label>("menu-fps-label");
             _btnPreset = root.Q<Button>("btn-menu-preset");
@@ -67,16 +69,18 @@ namespace KhiVanChiTu.Remake
             _btnGfxMed = root.Q<Button>("btn-gfx-med");
             _btnGfxHigh = root.Q<Button>("btn-gfx-high");
 
+            _devAccountSwitcher = root.Q("dev-account-switcher");
             _existingSaveBox = root.Q("existing-save-box");
-            _createCharBox = root.Q("create-char-box");
             _btnAccountMain = root.Q<Button>("btn-account-main");
             _btnAccountTest = root.Q<Button>("btn-account-test");
             _saveDaoNameLabel = root.Q<Label>("save-dao-name");
             _saveRealmLabel = root.Q<Label>("save-realm-info");
-            _inputDaoName = root.Q<TextField>("input-dao-name");
+            _btnOpenCharSelect = root.Q<Button>("btn-open-charselect");
             _btnPlayContinue = root.Q<Button>("btn-play-continue");
-            _btnStartNew = root.Q<Button>("btn-start-new");
             _btnResetSave = root.Q<Button>("btn-reset-remake-save");
+
+            if (!Application.isEditor && !Debug.isDebugBuild && _devAccountSwitcher != null)
+                _devAccountSwitcher.style.display = DisplayStyle.None;
 
             _btnGfxLow?.RegisterCallback<ClickEvent>(_ => SelectPreset(RemakeGraphicsPreset.Low));
             _btnGfxMed?.RegisterCallback<ClickEvent>(_ => SelectPreset(RemakeGraphicsPreset.Medium));
@@ -87,27 +91,11 @@ namespace KhiVanChiTu.Remake
                 SelectPreset((RemakeGraphicsPreset)(((int)cur + 1) % 3));
             });
 
-            root.Q<Button>("btn-touch-keyboard")?.RegisterCallback<ClickEvent>(_ =>
-            {
-                RemakeAudioService.Instance?.PlayClick();
-                if (BootOverlayController.Instance != null)
-                {
-                    BootOverlayController.Instance.PromptTextInput(
-                        "Nhập Đạo Hiệu",
-                        _inputDaoName != null ? _inputDaoName.value : "Thanh Vân Tử",
-                        20,
-                        val =>
-                        {
-                            if (_inputDaoName != null && !string.IsNullOrWhiteSpace(val))
-                                _inputDaoName.SetValueWithoutNotify(val);
-                        });
-                }
-            });
-
             _btnAccountMain?.RegisterCallback<ClickEvent>(_ =>
             {
                 RemakeAudioService.Instance?.PlayClick();
                 SaveService.SetProfileOverride(null);
+                SaveService.SelectSlot(SaveService.FindFirstOccupiedSlotOrDefault());
                 GameplayEngine.Instance?.ReloadFromActiveProfile();
                 RemakeOnlineService.Instance?.SwitchAccountProfile();
                 RefreshUi();
@@ -122,17 +110,15 @@ namespace KhiVanChiTu.Remake
                 RefreshUi();
             });
 
+            _btnOpenCharSelect?.RegisterCallback<ClickEvent>(_ =>
+            {
+                RemakeAudioService.Instance?.PlayClick();
+                SceneFlowController.Instance?.OpenCharacterSelect();
+            });
+
             _btnPlayContinue?.RegisterCallback<ClickEvent>(_ =>
             {
                 RemakeAudioService.Instance?.PlayClick();
-                SceneFlowController.Instance?.EnterWorldAct1();
-            });
-
-            _btnStartNew?.RegisterCallback<ClickEvent>(_ =>
-            {
-                RemakeAudioService.Instance?.PlayClick();
-                string chosen = _inputDaoName != null ? _inputDaoName.value : "Thanh Vân Tử";
-                GameplayEngine.Instance?.CreateOrSelectCharacter(chosen);
                 SceneFlowController.Instance?.EnterWorldAct1();
             });
 
@@ -144,14 +130,10 @@ namespace KhiVanChiTu.Remake
                 {
                     SaveService.SeedOrSelectTestAllAccount(true);
                     BootOverlayController.Instance?.ShowToast("Đã đặt lại Tài Khoản Test Full!");
+                    GameplayEngine.Instance?.ReloadFromActiveProfile();
+                    RemakeOnlineService.Instance?.SwitchAccountProfile();
+                    RefreshUi();
                 }
-                else
-                {
-                    SaveService.ResetCurrentSave(true);
-                }
-                GameplayEngine.Instance?.ReloadFromActiveProfile();
-                RemakeOnlineService.Instance?.SwitchAccountProfile();
-                RefreshUi();
             });
         }
 
@@ -164,22 +146,36 @@ namespace KhiVanChiTu.Remake
 
         private void RefreshUi()
         {
+            if (!SaveService.IsTestAllProfileActive)
+                SaveService.SelectSlot(SaveService.FindFirstOccupiedSlotOrDefault());
+
             var save = SaveService.Current;
             bool readOnly = SaveService.IsActiveSaveFromNewerVersion;
             bool hasChar = save.hasCreatedCharacter;
             bool showSaveBox = hasChar || readOnly;
             bool isTest = SaveService.IsTestAllProfileActive;
 
+            int occupiedCount = 0;
+            for (int i = 0; i < SaveService.MaxCharacterSlots; i++)
+            {
+                var p = SaveService.PeekSlot(i);
+                if (p != null && p.hasCreatedCharacter) occupiedCount++;
+            }
+
             _btnAccountMain?.EnableInClassList("selected", !isTest);
             _btnAccountTest?.EnableInClassList("selected", isTest);
-            if (_btnResetSave != null)
-                _btnResetSave.text = isTest ? "Đặt Lại Tài Khoản Test" : "Tạo Lại Nhân Vật Mới";
-
             if (_existingSaveBox != null) _existingSaveBox.style.display = showSaveBox ? DisplayStyle.Flex : DisplayStyle.None;
-            if (_createCharBox != null) _createCharBox.style.display = showSaveBox ? DisplayStyle.None : DisplayStyle.Flex;
-            if (_btnPlayContinue != null) _btnPlayContinue.style.display = hasChar ? DisplayStyle.Flex : DisplayStyle.None;
-            if (_btnStartNew != null) _btnStartNew.style.display = showSaveBox ? DisplayStyle.None : DisplayStyle.Flex;
-            if (_btnResetSave != null) _btnResetSave.style.display = hasChar ? DisplayStyle.Flex : DisplayStyle.None;
+            if (_btnPlayContinue != null)
+            {
+                _btnPlayContinue.style.display = hasChar ? DisplayStyle.Flex : DisplayStyle.None;
+                _btnPlayContinue.text = $"VÀO NHANH · {save.daoName} (Ô #{SaveService.ActiveSlotIndex + 1})";
+            }
+            if (_btnOpenCharSelect != null)
+                _btnOpenCharSelect.text = occupiedCount > 0 ? $"CHỌN / TẠO NHÂN VẬT ({occupiedCount}/3 Ô)" : "TẠO NHÂN VẬT & KHAI ĐẠO (3 Ô)";
+            if (_btnResetSave != null) _btnResetSave.style.display = isTest ? DisplayStyle.Flex : DisplayStyle.None;
+
+            CodexArtLoader.ApplyIconOrPlaceholder(_portraitSlot, CultivationTable.GetPortraitCodexKey(save.gender), "[Chân Dung]", "CharacterPortrait");
+            CodexArtLoader.ApplyIconOrPlaceholder(_avatarFrameSlot, CultivationTable.GetAvatarFrameCodexKey(save.equippedAvatarFrame), "");
 
             if (readOnly)
             {
@@ -188,7 +184,8 @@ namespace KhiVanChiTu.Remake
             }
             else if (hasChar)
             {
-                if (_saveDaoNameLabel != null) _saveDaoNameLabel.text = $"Đạo Hữu: {save.daoName}";
+                string gLbl = CultivationTable.GetGenderLabel(save.gender);
+                if (_saveDaoNameLabel != null) _saveDaoNameLabel.text = $"Ô #{SaveService.ActiveSlotIndex + 1} · {save.daoName} ({gLbl})";
                 if (_saveRealmLabel != null)
                     _saveRealmLabel.text = $"{CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)} · Ải {save.activeAct + 1}-{save.activeStage}";
             }

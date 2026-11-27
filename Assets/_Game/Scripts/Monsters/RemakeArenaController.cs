@@ -10,6 +10,9 @@ namespace KhiVanChiTu.Remake
 
         [Header("Arena References")]
         [SerializeField] private Transform playerTransform;
+        [SerializeField] private GameObject femalePlayerVisual;
+        [SerializeField] private GameObject malePlayerVisual;
+        [SerializeField] private RemakeCloudCushionVfx cloudCushion;
         [SerializeField] private Transform swordsRoot;
         [SerializeField] private Transform groundFormationRing;
         [SerializeField] private RemakeFlyingSwordActor flyingSwordPrefab;
@@ -17,8 +20,8 @@ namespace KhiVanChiTu.Remake
         [SerializeField] private MonsterDefinitionSO act1BossMonster;
 
         public Vector3 PlayerWorldPosition => playerTransform != null ? playerTransform.position : Vector3.zero;
-        // The Cultivator's rig faces local -Z.
-        public Vector3 PlayerFacingDirection => playerTransform != null ? -playerTransform.forward : Vector3.back;
+        // RemakePlayer_Xianxia.fbx faces local +Z (facing the Northern Mountains & combat arena forward).
+        public Vector3 PlayerFacingDirection => playerTransform != null ? playerTransform.forward : Vector3.forward;
 
         private readonly Dictionary<string, Queue<RemakeMonsterActor>> _monsterPools = new Dictionary<string, Queue<RemakeMonsterActor>>();
         private readonly List<RemakeMonsterActor> _activeMonsters = new List<RemakeMonsterActor>();
@@ -69,15 +72,34 @@ namespace KhiVanChiTu.Remake
             {
                 _playerBaseScale = Vector3.one * 1.25f;
                 playerTransform.localScale = _playerBaseScale;
-                _playerAnimator = playerTransform.GetComponentInChildren<Animator>();
-                _playerMeshRenderers = playerTransform.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-                CachePlayerAnimatorParams();
+                SyncPlayerGenderVisual();
+                EnsureCloudCushion();
                 CreatePlayerShadowDisc();
                 CreatePlayerRealmAura();
                 SyncPlayerRealmAura();
             }
 
             PrewarmMonsterPools();
+        }
+
+        public void SyncPlayerGenderVisual()
+        {
+            if (playerTransform == null) return;
+            var gender = SaveService.Current != null ? SaveService.Current.gender : RemakeCharacterGender.Female;
+            if (femalePlayerVisual != null && malePlayerVisual != null)
+            {
+                femalePlayerVisual.SetActive(gender == RemakeCharacterGender.Female);
+                malePlayerVisual.SetActive(gender == RemakeCharacterGender.Male);
+                GameObject activeGo = gender == RemakeCharacterGender.Male ? malePlayerVisual : femalePlayerVisual;
+                _playerAnimator = activeGo.GetComponentInChildren<Animator>(true);
+                _playerMeshRenderers = activeGo.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            }
+            else
+            {
+                _playerAnimator = playerTransform.GetComponentInChildren<Animator>();
+                _playerMeshRenderers = playerTransform.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            }
+            CachePlayerAnimatorParams();
         }
 
         private void OnEnable()
@@ -89,6 +111,7 @@ namespace KhiVanChiTu.Remake
                 GameplayEngine.Instance.OnTribulationStateChanged += HandleTribulationStateChanged;
                 GameplayEngine.Instance.OnTribulationStrike += HandleTribulationStrike;
                 GameplayEngine.Instance.OnRespawnStateChanged += HandleRespawnStateChanged;
+                GameplayEngine.Instance.OnBreakthroughResolved += HandleBreakthroughRealmVisual;
             }
             if (GraphicsSettingsService.Instance != null)
                 GraphicsSettingsService.Instance.OnGraphicsChanged += HandleGraphicsChanged;
@@ -103,9 +126,50 @@ namespace KhiVanChiTu.Remake
                 GameplayEngine.Instance.OnTribulationStateChanged -= HandleTribulationStateChanged;
                 GameplayEngine.Instance.OnTribulationStrike -= HandleTribulationStrike;
                 GameplayEngine.Instance.OnRespawnStateChanged -= HandleRespawnStateChanged;
+                GameplayEngine.Instance.OnBreakthroughResolved -= HandleBreakthroughRealmVisual;
             }
             if (GraphicsSettingsService.Instance != null)
                 GraphicsSettingsService.Instance.OnGraphicsChanged -= HandleGraphicsChanged;
+        }
+
+        private void HandleBreakthroughRealmVisual(bool success, string _)
+        {
+            if (success) SyncPlayerRealmAura();
+        }
+
+        private void EnsureCloudCushion()
+        {
+            if (playerTransform == null) return;
+            if (cloudCushion == null)
+                cloudCushion = playerTransform.GetComponentInChildren<RemakeCloudCushionVfx>(true);
+            if (cloudCushion == null)
+            {
+                var prefab = Resources.Load<RemakeCloudCushionVfx>("VFX/VFX_PlayerCloudCushion");
+                if (prefab != null)
+                {
+                    cloudCushion = Instantiate(prefab, playerTransform, false);
+                    cloudCushion.name = "PlayerCloudCushion";
+                    cloudCushion.transform.localPosition = RemakeCloudCushionVfx.BaseCloudLocalOffset;
+                    cloudCushion.transform.localRotation = Quaternion.identity;
+                    cloudCushion.transform.localScale = Vector3.one;
+                }
+                else
+                {
+                    var go = new GameObject("PlayerCloudCushion");
+                    go.transform.SetParent(playerTransform, false);
+                    go.transform.localPosition = RemakeCloudCushionVfx.BaseCloudLocalOffset;
+                    cloudCushion = go.AddComponent<RemakeCloudCushionVfx>();
+                    cloudCushion.InitializeRuntime(null);
+                }
+            }
+            ApplyPlayerSeatHeight(RemakeCloudCushionVfx.BaseSeatLocalY);
+        }
+
+        private void ApplyPlayerSeatHeight(float localY)
+        {
+            Vector3 seatPos = new Vector3(0f, localY, 0f);
+            if (femalePlayerVisual != null) femalePlayerVisual.transform.localPosition = seatPos;
+            if (malePlayerVisual != null) malePlayerVisual.transform.localPosition = seatPos;
         }
 
         private void OnDestroy()
@@ -148,9 +212,20 @@ namespace KhiVanChiTu.Remake
                     float vanishT = Mathf.Clamp01((_respawnAnimTimer - 0.68f) / 0.38f);
                     float s = Mathf.Lerp(1f, 0.02f, vanishT * vanishT);
                     playerTransform.localScale = _playerBaseScale * s;
+                    cloudCushion?.SetDissolveProgress(vanishT);
                     if (vanishT >= 0.99f)
                         SetPlayerVisualVisible(false);
                 }
+                else
+                {
+                    cloudCushion?.SetDissolveProgress(Mathf.Clamp01(_respawnAnimTimer / 0.68f) * 0.28f);
+                }
+            }
+
+            if (cloudCushion != null)
+            {
+                float seatY = cloudCushion.TickCloud(Time.deltaTime);
+                ApplyPlayerSeatHeight(seatY);
             }
 
             if (!respawning && !inTrib)
@@ -476,6 +551,7 @@ namespace KhiVanChiTu.Remake
             {
                 _respawnAnimTimer = 0f;
                 _playerDissolved = false;
+                cloudCushion?.SetDissolveProgress(0f);
                 SetPlayerVisualVisible(true);
                 if (playerTransform != null) playerTransform.localScale = _playerBaseScale;
                 RemakeVfxPool.Instance?.SpawnDeathDissolve(PlayerWorldPosition + Vector3.up * 0.45f);
@@ -498,6 +574,7 @@ namespace KhiVanChiTu.Remake
         private void HandleTribulationStateChanged(bool entering)
         {
             SetPlayerAnimBool(_hasPlayerTribParam, HashInTribulation, entering);
+            cloudCushion?.SetTribulationActive(entering);
             MeadowEnvironmentController.Instance?.SetTribulationStormMode(entering);
             RemakeVfxPool.Instance?.SetTribulationSeclusionVisual(entering, PlayerWorldPosition);
 
@@ -595,6 +672,8 @@ namespace KhiVanChiTu.Remake
         {
             bool useFakeShadow = GraphicsSettingsService.Instance != null && GraphicsSettingsService.Instance.UseFakeBlobShadows;
             if (_playerShadowDisc != null) _playerShadowDisc.SetActive(useFakeShadow);
+            if (cloudCushion != null && SaveService.Current != null)
+                cloudCushion.ApplyGraphicsDensity(SaveService.Current.graphics.vfxDensity);
             for (int i = 0; i < _activeMonsters.Count; i++)
             {
                 if (_activeMonsters[i] != null) _activeMonsters[i].SyncShadowSetting(useFakeShadow);
@@ -751,8 +830,9 @@ namespace KhiVanChiTu.Remake
 
         public void SyncPlayerRealmAura()
         {
-            if (_playerRealmRingMat == null) return;
             int realm = SaveService.Current != null ? SaveService.Current.realmIndex : 0;
+            cloudCushion?.SyncRealm(realm);
+            if (_playerRealmRingMat == null) return;
             Color c = realm switch
             {
                 0 => new Color(0.45f, 0.92f, 0.74f, 0.80f), // Luyen Khi - Thanh Ngoc

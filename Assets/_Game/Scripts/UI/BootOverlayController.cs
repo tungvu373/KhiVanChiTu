@@ -88,9 +88,13 @@ namespace KhiVanChiTu.Remake
                 GraphicsSettingsService.Instance.OnGraphicsChanged -= RefreshAfkVeil;
         }
 
+        public bool SuppressAmbientToasts { get; set; }
+        public bool IsMiniModeActive { get; set; }
+
         private void HandleWaveStarted(int waveIdx, int totalWaves, string bannerText)
         {
             if (string.IsNullOrEmpty(bannerText)) return;
+            if (SuppressAmbientToasts || IsMiniModeActive) return;
             bool isBossOrElite = waveIdx >= totalWaves && (bannerText.Contains("Thủ Lĩnh") || bannerText.Contains("Tinh Anh"));
             ShowFeedback(bannerText, isBossOrElite ? RemakeFeedbackKind.GoldSuccess : RemakeFeedbackKind.JadeReward, $"ĐỢT {waveIdx}/{totalWaves}");
         }
@@ -120,6 +124,12 @@ namespace KhiVanChiTu.Remake
         public void ShowToast(string message)
         {
             if (string.IsNullOrEmpty(message)) return;
+            string lo = message.ToLowerInvariant();
+            bool isAmbientCombatLog = lo.StartsWith("nhặt phôi") || lo.StartsWith("hạ gục thủ lĩnh") ||
+                lo.StartsWith("vượt ải") || lo.StartsWith("đợt ");
+            if ((SuppressAmbientToasts || IsMiniModeActive) && isAmbientCombatLog) return;
+            if (IsMiniModeActive && !lo.Contains("đột phá") && !lo.Contains("độ kiếp") && !lo.Contains("trọng thương") && !lo.Contains("hết "))
+                return;
             RemakeFeedbackKind kind = ClassifyMessage(message, out string badge);
             ShowFeedback(message, kind, badge);
         }
@@ -180,7 +190,8 @@ namespace KhiVanChiTu.Remake
                 return RemakeFeedbackKind.GoldSuccess;
             }
             badge = lo.Contains("nhặt") || lo.Contains("nhận") || lo.Contains("bổng lộc") ? "NHẬN"
-                : lo.Contains("bế quan") || lo.Contains("thiên kiếp") ? "THIÊN KIẾP"
+                : lo.Contains("thiên kiếp") ? "THIÊN KIẾP"
+                : lo.Contains("bế quan") ? "BẾ QUAN"
                 : lo.Contains("khai lò") ? "LUYỆN ĐAN"
                 : "THÔNG BÁO";
             return RemakeFeedbackKind.JadeReward;

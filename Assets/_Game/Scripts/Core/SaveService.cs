@@ -11,13 +11,16 @@ namespace KhiVanChiTu.Remake
     {
         public const string BaseSaveFileName = "KhiVanChiTu_RemakeSave.json";
         public const string TestAllProfileId = "test_all";
-        public const int CurrentSchemaVersion = 4;
+        public const int CurrentSchemaVersion = 5;
+        public const int MaxCharacterSlots = 3;
         private static string _profileOverride;
+        private static int _activeSlotIndex;
         private static RemakeSaveData _cached;
         private static string _loadedSavePath;
         private static bool _primaryIsKnownGood;
 
         public static bool IsActiveSaveFromNewerVersion { get; private set; }
+        public static int ActiveSlotIndex => _activeSlotIndex;
 
         public static bool IsTestAllProfileActive => string.Equals(_profileOverride, TestAllProfileId, StringComparison.Ordinal);
 
@@ -30,12 +33,22 @@ namespace KhiVanChiTu.Remake
         private static void ResetStaticState()
         {
             _profileOverride = null;
+            _activeSlotIndex = 0;
             ClearLoadedSave();
         }
 
         public static void SetProfileOverride(string profileId)
         {
             _profileOverride = string.IsNullOrEmpty(profileId) ? null : profileId;
+            _activeSlotIndex = 0;
+            ClearLoadedSave();
+        }
+
+        public static void SelectSlot(int slotIndex)
+        {
+            int clamped = Mathf.Clamp(slotIndex, 0, MaxCharacterSlots - 1);
+            if (_activeSlotIndex == clamped && _cached != null) return;
+            _activeSlotIndex = clamped;
             ClearLoadedSave();
         }
 
@@ -63,11 +76,57 @@ namespace KhiVanChiTu.Remake
             return string.Empty;
         }
 
-        public static string GetSaveFilePath()
+        public static string GetSaveFilePath() => GetSaveFilePathForSlot(_activeSlotIndex);
+
+        public static string GetSaveFilePathForSlot(int slotIndex)
         {
+            int clamped = Mathf.Clamp(slotIndex, 0, MaxCharacterSlots - 1);
             string profile = ResolveProfileId();
-            string fileName = WorkspaceSaveProfile.FileName(BaseSaveFileName, profile);
+            // Slot 0 uses the original filename directly so existing saves auto-migrate into Slot 1 with zero risk!
+            string slotBase = clamped == 0 ? BaseSaveFileName : $"slot{clamped}_{BaseSaveFileName}";
+            string fileName = WorkspaceSaveProfile.FileName(slotBase, profile);
             return Path.Combine(Application.persistentDataPath, fileName);
+        }
+
+        public static RemakeSaveData PeekSlot(int slotIndex)
+        {
+            string path = GetSaveFilePathForSlot(slotIndex);
+            RemakeSaveData loaded = TryReadJson(path) ?? TryReadJson(path + ".bak");
+            if (loaded == null) return null;
+            if (loaded.schemaVersion > CurrentSchemaVersion) return loaded;
+            Migrate(loaded, PlatformWebBridge.IsTouchPlatform());
+            return loaded;
+        }
+
+        public static bool DeleteSlot(int slotIndex)
+        {
+            int clamped = Mathf.Clamp(slotIndex, 0, MaxCharacterSlots - 1);
+            string path = GetSaveFilePathForSlot(clamped);
+            bool deleted = false;
+            foreach (string candidate in new[] { path, path + ".bak", path + ".tmp" })
+            {
+                if (File.Exists(candidate))
+                {
+                    File.Delete(candidate);
+                    deleted = true;
+                }
+            }
+            if (clamped == _activeSlotIndex)
+                ClearLoadedSave();
+#if UNITY_WEBGL && !UNITY_EDITOR
+            if (deleted) WebGLBridge_SyncIndexedDb();
+#endif
+            return deleted;
+        }
+
+        public static int FindFirstOccupiedSlotOrDefault()
+        {
+            for (int i = 0; i < MaxCharacterSlots; i++)
+            {
+                var peek = PeekSlot(i);
+                if (peek != null && peek.hasCreatedCharacter) return i;
+            }
+            return 0;
         }
 
         public static RemakeSaveData Current
@@ -285,6 +344,21 @@ namespace KhiVanChiTu.Remake
             {
                 data.autoChallengeBoss = true;
                 data.secretRealmDailyRemaining = 3;
+            }
+            if (data.schemaVersion < 5)
+            {
+                data.autoClimbDemonTower = true;
+                if (data.codexSwordsMask <= 0) data.codexSwordsMask = 1;
+                if (data.unlockedFramesMask <= 0) data.unlockedFramesMask = 1;
+                if (data.pvpDailyRemaining <= 0 && data.lastPvpResetDayUtc <= 0) data.pvpDailyRemaining = 5;
+                if (data.equippedSwordLevels != null)
+                {
+                    for (int i = 0; i < data.equippedSwordLevels.Count; i++)
+                    {
+                        int lv = Mathf.Clamp(data.equippedSwordLevels[i], 1, 10);
+                        data.codexSwordsMask |= (1 << (lv - 1));
+                    }
+                }
             }
             data.schemaVersion = CurrentSchemaVersion;
         }

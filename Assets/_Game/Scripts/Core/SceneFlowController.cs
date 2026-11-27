@@ -11,6 +11,7 @@ namespace KhiVanChiTu.Remake
 
         public const string BootScene = "00_Boot";
         public const string MainMenuScene = "01_MainMenu";
+        public const string CharacterSelectScene = "01b_CharacterSelect";
         public const string WorldAct1Scene = "02_World_Act1_Meadow";
         public const string WorldAct2Scene = "03_World_Act2_Wasteland";
         public const string WorldAct3Scene = "04_World_Act3_JadePeaks";
@@ -59,6 +60,11 @@ namespace KhiVanChiTu.Remake
         public void BootToMainMenu()
         {
             if (!IsTransitioning) StartCoroutine(LoadMainMenuRoutine());
+        }
+
+        public void OpenCharacterSelect()
+        {
+            if (!IsTransitioning) StartCoroutine(OpenCharacterSelectRoutine());
         }
 
         public void EnterWorldAct1()
@@ -120,16 +126,43 @@ namespace KhiVanChiTu.Remake
             IsTransitioning = false;
         }
 
+        private IEnumerator OpenCharacterSelectRoutine()
+        {
+            IsTransitioning = true;
+            if (IsInGame) SaveService.Save();
+            IsInGame = false;
+            OnLoadingOverlayChanged?.Invoke(true, 0.15f, "Đang mở Động Phủ Chọn Nhân Vật...");
+
+            yield return UnloadAllInstancesOfScene(MainMenuScene);
+            yield return UnloadAllInstancesOfScene(UiOverlayScene);
+            yield return UnloadAllInstancesOfScene(CharacterSelectScene);
+            if (!string.IsNullOrEmpty(ActiveWorldSceneName))
+                yield return UnloadAllInstancesOfScene(ActiveWorldSceneName);
+            ActiveWorldSceneName = null;
+            yield return Resources.UnloadUnusedAssets();
+
+            if (!IsSceneLoaded(CharacterSelectScene))
+            {
+                yield return LoadSceneAdditiveAsync(CharacterSelectScene, p =>
+                    OnLoadingOverlayChanged?.Invoke(true, 0.35f + p * 0.60f, "Đang dựng Tiên Đài 3D..."));
+            }
+
+            SetActiveSceneByName(CharacterSelectScene);
+            RemakeAudioService.Instance?.PlayMenuMusic();
+            GraphicsSettingsService.Instance?.ApplyFromSave();
+
+            OnLoadingOverlayChanged?.Invoke(false, 1f, string.Empty);
+            IsTransitioning = false;
+        }
+
         private IEnumerator TransitionToGameplayRoutine(string worldSceneName)
         {
             IsTransitioning = true;
             OnLoadingOverlayChanged?.Invoke(true, 0.1f, "Đang thu dọn sảnh chính...");
 
-            if (IsSceneLoaded(MainMenuScene))
-            {
-                yield return SceneManager.UnloadSceneAsync(MainMenuScene);
-                yield return Resources.UnloadUnusedAssets();
-            }
+            yield return UnloadAllInstancesOfScene(MainMenuScene);
+            yield return UnloadAllInstancesOfScene(CharacterSelectScene);
+            yield return Resources.UnloadUnusedAssets();
 
             OnLoadingOverlayChanged?.Invoke(true, 0.35f, "Đang mở Đồng Cỏ Thanh Vân...");
             if (!IsSceneLoaded(worldSceneName))
@@ -191,21 +224,48 @@ namespace KhiVanChiTu.Remake
             IsInGame = false;
             OnLoadingOverlayChanged?.Invoke(true, 0.15f, "Đang lưu Tu Vi & rời Đấu Trường...");
 
-            if (IsSceneLoaded(UiOverlayScene))
-                yield return SceneManager.UnloadSceneAsync(UiOverlayScene);
-            if (!string.IsNullOrEmpty(ActiveWorldSceneName) && IsSceneLoaded(ActiveWorldSceneName))
-                yield return SceneManager.UnloadSceneAsync(ActiveWorldSceneName);
+            yield return UnloadAllInstancesOfScene(UiOverlayScene);
+            yield return UnloadAllInstancesOfScene(CharacterSelectScene);
+            if (!string.IsNullOrEmpty(ActiveWorldSceneName))
+                yield return UnloadAllInstancesOfScene(ActiveWorldSceneName);
             ActiveWorldSceneName = null;
 
             yield return Resources.UnloadUnusedAssets();
 
-            yield return LoadSceneAdditiveAsync(MainMenuScene, p =>
-                OnLoadingOverlayChanged?.Invoke(true, 0.55f + p * 0.45f, "Đang trở về Sơn Môn..."));
+            if (!IsSceneLoaded(MainMenuScene))
+            {
+                yield return LoadSceneAdditiveAsync(MainMenuScene, p =>
+                    OnLoadingOverlayChanged?.Invoke(true, 0.55f + p * 0.45f, "Đang trở về Sơn Môn..."));
+            }
             SetActiveSceneByName(MainMenuScene);
             RemakeAudioService.Instance?.PlayMenuMusic();
 
             OnLoadingOverlayChanged?.Invoke(false, 1f, string.Empty);
             IsTransitioning = false;
+        }
+
+        private static IEnumerator UnloadAllInstancesOfScene(string sceneName)
+        {
+            if (string.IsNullOrEmpty(sceneName)) yield break;
+            for (int guard = 0; guard < 8; guard++)
+            {
+                Scene found = default;
+                bool hasFound = false;
+                for (int i = 0; i < SceneManager.sceneCount; i++)
+                {
+                    var s = SceneManager.GetSceneAt(i);
+                    if (s.isLoaded && s.name == sceneName)
+                    {
+                        found = s;
+                        hasFound = true;
+                        break;
+                    }
+                }
+                if (!hasFound) yield break;
+                var op = SceneManager.UnloadSceneAsync(found);
+                if (op == null) yield break;
+                while (!op.isDone) yield return null;
+            }
         }
 
         private static bool IsSceneLoaded(string sceneName)

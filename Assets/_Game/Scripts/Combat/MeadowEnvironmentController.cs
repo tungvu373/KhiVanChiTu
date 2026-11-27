@@ -27,11 +27,32 @@ namespace KhiVanChiTu.Remake
 
         public static bool IsRearCombatView { get; private set; }
 
+        public const float DefaultRearYawOffsetDeg = 0f;
+        public const float MinRearYawOffsetDeg = -58f;
+        public const float MaxRearYawOffsetDeg = 58f;
+        public const float DefaultRearPitchDeg = 22f;
+        public const float MinRearPitchDeg = 16f;
+        public const float MaxRearPitchDeg = 54f;
+        public const float DefaultRearDistance = 6.2f;
+        public const float MinRearDistance = 4.6f;
+        public const float MaxRearDistance = 8.8f;
+        public const float MinRearCameraHeightAbovePlayer = 1.85f;
+
+        public float RearYawOffsetDeg => _targetRearYawDeg;
+        public float RearPitchDeg => _targetRearPitchDeg;
+        public float RearDistance => _targetRearDistance;
+
         private Vector3 _overviewPosition;
         private Quaternion _overviewRotation;
         private float _overviewFov;
         private float _rearFov;
         private float _cameraViewBlend;
+        private float _targetRearYawDeg = DefaultRearYawOffsetDeg;
+        private float _rearYawDeg = DefaultRearYawOffsetDeg;
+        private float _targetRearPitchDeg = DefaultRearPitchDeg;
+        private float _rearPitchDeg = DefaultRearPitchDeg;
+        private float _targetRearDistance = DefaultRearDistance;
+        private float _rearDistance = DefaultRearDistance;
         private int _lastScreenW;
         private int _lastScreenH;
         private float _trauma;
@@ -135,15 +156,83 @@ namespace KhiVanChiTu.Remake
                 return false;
 
             IsRearCombatView = !IsRearCombatView;
+            ResetRearCameraOrbit();
             return true;
+        }
+
+        public void ResetRearCameraOrbit()
+        {
+            _targetRearYawDeg = DefaultRearYawOffsetDeg;
+            _targetRearPitchDeg = DefaultRearPitchDeg;
+            _targetRearDistance = DefaultRearDistance;
+            if (!IsRearCombatView)
+            {
+                _rearYawDeg = DefaultRearYawOffsetDeg;
+                _rearPitchDeg = DefaultRearPitchDeg;
+                _rearDistance = DefaultRearDistance;
+            }
+        }
+
+        /// <summary>
+        /// Orbits the rear combat camera smoothly behind the character's back.
+        /// Clamps yaw strictly within [-58, +58] deg (never wraps around to front face)
+        /// and clamps pitch within [16, 54] deg (never looks upward from underneath/below ground).
+        /// </summary>
+        public void ApplyRearCameraDrag(float deltaScreenX, float deltaScreenY)
+        {
+            if (!IsRearCombatView) return;
+            _targetRearYawDeg = Mathf.Clamp(_targetRearYawDeg + deltaScreenX * 0.24f, MinRearYawOffsetDeg, MaxRearYawOffsetDeg);
+            _targetRearPitchDeg = Mathf.Clamp(_targetRearPitchDeg + deltaScreenY * 0.18f, MinRearPitchDeg, MaxRearPitchDeg);
+        }
+
+        public void ApplyRearCameraZoom(float wheelDeltaY)
+        {
+            if (!IsRearCombatView) return;
+            _targetRearDistance = Mathf.Clamp(_targetRearDistance + wheelDeltaY * 0.35f, MinRearDistance, MaxRearDistance);
+        }
+
+        public static void ComputeRearCameraPose(
+            Vector3 playerPos,
+            Vector3 playerFacingDir,
+            float yawOffsetDeg,
+            float pitchDeg,
+            float distance,
+            out Vector3 cameraPos,
+            out Quaternion cameraRot)
+        {
+            Vector3 forward = Vector3.ProjectOnPlane(playerFacingDir, Vector3.up);
+            forward = forward.sqrMagnitude > 0.0001f ? forward.normalized : Vector3.forward;
+
+            float clampedYaw = Mathf.Clamp(yawOffsetDeg, MinRearYawOffsetDeg, MaxRearYawOffsetDeg);
+            float clampedPitch = Mathf.Clamp(pitchDeg, MinRearPitchDeg, MaxRearPitchDeg);
+            float clampedDist = Mathf.Clamp(distance, MinRearDistance, MaxRearDistance);
+
+            Vector3 rearHorizDir = Quaternion.AngleAxis(clampedYaw, Vector3.up) * (-forward);
+            float pitchRad = clampedPitch * Mathf.Deg2Rad;
+            Vector3 pivot = playerPos + Vector3.up * 1.15f;
+            cameraPos = pivot
+                + rearHorizDir * (Mathf.Cos(pitchRad) * clampedDist)
+                + Vector3.up * (Mathf.Sin(pitchRad) * clampedDist);
+            cameraPos.y = Mathf.Max(cameraPos.y, playerPos.y + MinRearCameraHeightAbovePlayer);
+
+            Vector3 orbitForward = -rearHorizDir;
+            Vector3 focus = playerPos + Vector3.up * 1.05f + orbitForward * 2.15f;
+            cameraRot = Quaternion.LookRotation(focus - cameraPos, Vector3.up);
         }
 
         private void UpdateCameraPose(float dt)
         {
             if (arenaCamera == null) return;
 
-            _cameraViewBlend = Mathf.MoveTowards(_cameraViewBlend, IsRearCombatView ? 1f : 0f, Time.unscaledDeltaTime * 3.5f);
+            float unscaledDt = Time.unscaledDeltaTime;
+            _cameraViewBlend = Mathf.MoveTowards(_cameraViewBlend, IsRearCombatView ? 1f : 0f, unscaledDt * 3.5f);
             float blend = Mathf.SmoothStep(0f, 1f, _cameraViewBlend);
+
+            float orbitLerp = 1f - Mathf.Exp(-14f * unscaledDt);
+            _rearYawDeg = Mathf.Lerp(_rearYawDeg, _targetRearYawDeg, orbitLerp);
+            _rearPitchDeg = Mathf.Lerp(_rearPitchDeg, _targetRearPitchDeg, orbitLerp);
+            _rearDistance = Mathf.Lerp(_rearDistance, _targetRearDistance, orbitLerp);
+
             Vector3 position = _overviewPosition;
             Quaternion rotation = _overviewRotation;
             var arena = RemakeArenaController.Instance;
@@ -151,21 +240,18 @@ namespace KhiVanChiTu.Remake
             if (blend > 0f && arena != null)
             {
                 Vector3 player = arena.PlayerWorldPosition;
-                Vector3 forward = Vector3.ProjectOnPlane(arena.PlayerFacingDirection, Vector3.up).normalized;
-                Vector3 rearPosition = player - forward * 6.8f + Vector3.up * 3.5f;
-                Vector3 focus = player + forward * 2f + Vector3.up;
-                position = rearPosition;
+                ComputeRearCameraPose(player, arena.PlayerFacingDirection, _rearYawDeg, _rearPitchDeg, _rearDistance, out Vector3 rearPosition, out Quaternion rearRotation);
+
                 if (blend < 1f)
                 {
-                    Vector3 overviewLook = _overviewRotation * Vector3.forward;
-                    float focusDistance = Vector3.Dot(player + Vector3.up - _overviewPosition, overviewLook);
-                    Vector3 overviewFocus = _overviewPosition + overviewLook * focusDistance;
-                    focus = Vector3.Lerp(overviewFocus, focus, blend);
-                    // Arc around the character instead of looking straight down at the midpoint.
-                    Vector3 side = Vector3.Cross(Vector3.up, forward);
-                    position = Vector3.Lerp(_overviewPosition, rearPosition, blend) + side * (12f * blend * (1f - blend));
+                    position = Vector3.Lerp(_overviewPosition, rearPosition, blend);
+                    rotation = Quaternion.Slerp(_overviewRotation, rearRotation, blend);
                 }
-                rotation = Quaternion.LookRotation(focus - position);
+                else
+                {
+                    position = rearPosition;
+                    rotation = rearRotation;
+                }
             }
 
             if (_trauma > 0f)

@@ -11,7 +11,7 @@ namespace KhiVanChiTu.Remake
 
         private enum DrawerKind
         {
-            None, SwordPath, DaoVan, Alchemy, Equipment, Formation, Skills, Stages, Breakthrough, Settings, Diary, Leaderboard, Friends, WorldChat, ImmortalGate, KyNgo, PvpPreview
+            None, SwordPath, DaoVan, Alchemy, Equipment, Formation, Skills, Stages, Breakthrough, Settings, Diary, Leaderboard, Friends, WorldChat, ImmortalGate, KyNgo, PvpPreview, Codex, Companions, OfflineSummary, CharacterDetail
         }
 
         private VisualElement _safeRoot;
@@ -23,6 +23,9 @@ namespace KhiVanChiTu.Remake
 
         // Top-Left & Radial TuVi
         private RadialRingElement _tuViRing;
+        private VisualElement _avatarPortrait;
+        private VisualElement _avatarFrameOverlay;
+        private int _lastDrawnAvatarKey = -1;
         private Label _hudDaoName;
         private Label _hudRealmLabel;
         private VisualElement _hpFill;
@@ -65,6 +68,11 @@ namespace KhiVanChiTu.Remake
         private Label _bossTimerLabel;
         private VisualElement _bossHpFill;
         private Label _bossHpText;
+        private VisualElement _bossShieldRow;
+        private VisualElement _bossShieldIcon;
+        private Label _bossShieldLabel;
+        private VisualElement _bossShieldFill;
+        private bool _isMiniMode;
         private VisualElement _wrapKyNgo;
         private Label _kyNgoTimerLabel;
         private VisualElement _buffDoubleTuViPill;
@@ -76,6 +84,10 @@ namespace KhiVanChiTu.Remake
         private Label _hudFpsLabel;
         private Button _btnAfkDim;
         private Button _btnCameraView;
+        private VisualElement _cameraDragSurface;
+        private bool _isDraggingCamera;
+        private int _cameraDragPointerId = -1;
+        private Vector2 _lastCameraDragPos;
 
         // Quest & 4 Combat Skills
         private Label _questTitleLabel;
@@ -259,6 +271,10 @@ namespace KhiVanChiTu.Remake
             _bossTimerLabel = root.Q<Label>("boss-timer-label");
             _bossHpFill = root.Q("boss-hp-fill");
             _bossHpText = root.Q<Label>("boss-hp-text");
+            _bossShieldRow = root.Q("boss-shield-row");
+            _bossShieldIcon = root.Q("icon-boss-shield");
+            _bossShieldLabel = root.Q<Label>("boss-shield-label");
+            _bossShieldFill = root.Q("boss-shield-fill");
             _wrapKyNgo = root.Q("wrap-ky-ngo");
             _kyNgoTimerLabel = root.Q<Label>("ky-ngo-timer-label");
             _buffDoubleTuViPill = root.Q("buff-double-tuvi-pill");
@@ -307,13 +323,18 @@ namespace KhiVanChiTu.Remake
             PrewarmPopupPool();
 
             // Bind REAL Images / Codex Art Slots (zero emoji!)
-            CodexArtLoader.ApplyIconOrPlaceholder(root.Q("avatar-portrait"), "", "[Avatar]", "CharacterPortrait");
-            CodexArtLoader.ApplyIconOrPlaceholder(root.Q("avatar-frame-overlay"), "HUD/hud_avatar_frame", "");
+            _avatarPortrait = root.Q("avatar-portrait");
+            _avatarFrameOverlay = root.Q("avatar-frame-overlay");
+            CodexArtLoader.ApplyIconOrPlaceholder(_avatarPortrait, CultivationTable.GetPortraitCodexKey(SaveService.Current.gender), "[Avatar]", "CharacterPortrait");
+            CodexArtLoader.ApplyIconOrPlaceholder(_avatarFrameOverlay, CultivationTable.GetAvatarFrameCodexKey(SaveService.Current.equippedAvatarFrame), "");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-breakthrough"), "HUD/nav_breakthrough", "[G6: Đột Phá]");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-stage-pill"), "HUD/nav_map_stage", "[G5: Ải]");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("boss-portrait-slot"), "Monsters/act1_boss_guardian", "[F11: Boss]");
+            CodexArtLoader.ApplyIconOrPlaceholder(_bossShieldIcon, "HUD/icon_boss_shield", "", "GoldenBell");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-linhthach"), "", "[LT]", "SpiritStone");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-cluster-utility"), "", "[Tiện Ích]", "RouteSettings");
+            CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-codex"), "HUD/nav_codex", "", "RouteAchievements");
+            CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-companion"), "Companions/pet_azure_crane", "", "SpiritLotus");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-settings"), "", "[Cài Đặt]", "RouteSettings");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-leaderboard"), "HUD/nav_leaderboard", "[G1: BXH]");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-friends"), "HUD/nav_friends", "[G3: Đạo Hữu]");
@@ -338,6 +359,7 @@ namespace KhiVanChiTu.Remake
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-ky-ngo"), "Stages/event_fortuitous_orb", "[Kỳ Ngộ]");
 
             // Wire Buttons
+            root.Q("btn-hud-character-profile")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.CharacterDetail));
             _btnChallengeBoss?.RegisterCallback<ClickEvent>(_ =>
             {
                 RemakeAudioService.Instance?.PlayClick();
@@ -363,6 +385,8 @@ namespace KhiVanChiTu.Remake
             _btnMiniBreakthrough?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Breakthrough));
             _btnCameraView?.RegisterCallback<ClickEvent>(_ => ToggleCombatCamera());
             _btnMiniCameraView?.RegisterCallback<ClickEvent>(_ => ToggleCombatCamera());
+            _cameraDragSurface = root.Q("camera-drag-surface");
+            BindCameraDragSurface();
             RefreshCameraButtons();
             root.Q<Button>("btn-chat-bubble")?.RegisterCallback<ClickEvent>(_ =>
             {
@@ -391,6 +415,8 @@ namespace KhiVanChiTu.Remake
             _btnNavSkills?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Skills));
 
             root.Q<Button>("btn-nav-diary")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Diary));
+            root.Q<Button>("btn-nav-codex")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Codex));
+            root.Q<Button>("btn-nav-companion")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Companions));
             root.Q<Button>("btn-nav-settings")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Settings));
             root.Q<Button>("btn-nav-leaderboard")?.RegisterCallback<ClickEvent>(_ =>
             {
@@ -402,7 +428,7 @@ namespace KhiVanChiTu.Remake
                 RemakeOnlineService.Instance?.SyncAllOnlineData();
                 OpenDrawer(DrawerKind.Friends);
             });
-            root.Q<Button>("btn-nav-mainmenu")?.RegisterCallback<ClickEvent>(_ => SceneFlowController.Instance?.ReturnToMainMenu());
+            root.Q<Button>("btn-nav-mainmenu")?.RegisterCallback<ClickEvent>(_ => SceneFlowController.Instance?.OpenCharacterSelect());
 
             root.Q<Button>("btn-close-modal")?.RegisterCallback<ClickEvent>(_ => CloseDrawer());
             ApplySafeAreaAndBreakpoints();
@@ -422,6 +448,8 @@ namespace KhiVanChiTu.Remake
                 GameplayEngine.Instance.OnTribulationStateChanged += HandleTribulationStateChanged;
                 GameplayEngine.Instance.OnTribulationStrike += HandleTribulationStrike;
                 GameplayEngine.Instance.OnRespawnStateChanged += HandleRespawnStateChanged;
+                GameplayEngine.Instance.OnOfflineCatchupSummary += HandleOfflineCatchupSummary;
+                GameplayEngine.Instance.OnBossShieldStateChanged += MarkHudDirty;
             }
             if (FpsMonitorService.Instance != null)
                 FpsMonitorService.Instance.OnFpsUpdated += RefreshFpsHud;
@@ -447,6 +475,13 @@ namespace KhiVanChiTu.Remake
                 GameplayEngine.Instance.OnTribulationStateChanged -= HandleTribulationStateChanged;
                 GameplayEngine.Instance.OnTribulationStrike -= HandleTribulationStrike;
                 GameplayEngine.Instance.OnRespawnStateChanged -= HandleRespawnStateChanged;
+                GameplayEngine.Instance.OnOfflineCatchupSummary -= HandleOfflineCatchupSummary;
+                GameplayEngine.Instance.OnBossShieldStateChanged -= MarkHudDirty;
+            }
+            if (BootOverlayController.Instance != null)
+            {
+                BootOverlayController.Instance.SuppressAmbientToasts = false;
+                BootOverlayController.Instance.IsMiniModeActive = false;
             }
             if (FpsMonitorService.Instance != null)
                 FpsMonitorService.Instance.OnFpsUpdated -= RefreshFpsHud;
@@ -518,6 +553,12 @@ namespace KhiVanChiTu.Remake
             _hudDirty = true;
         }
 
+        private void HandleOfflineCatchupSummary(GameplayEngine.OfflineCatchupSummary summary)
+        {
+            if (summary != null && !_isMiniMode)
+                OpenDrawer(DrawerKind.OfflineSummary);
+        }
+
         private void ToggleLeftHud()
         {
             RemakeAudioService.Instance?.PlayClick();
@@ -565,6 +606,65 @@ namespace KhiVanChiTu.Remake
             if (environment == null || !environment.TryToggleCombatCamera()) return;
             RemakeAudioService.Instance?.PlayClick();
             RefreshCameraButtons();
+            if (MeadowEnvironmentController.IsRearCombatView)
+                BootOverlayController.Instance?.ShowToast("Góc nhìn sau lưng — Kéo màn hình để xoay nhẹ góc quan sát");
+        }
+
+        private void BindCameraDragSurface()
+        {
+            if (_cameraDragSurface == null) return;
+
+            _cameraDragSurface.RegisterCallback<PointerDownEvent>(evt =>
+            {
+                if (!MeadowEnvironmentController.IsRearCombatView || _activeDrawer != DrawerKind.None) return;
+                if (evt.button != 0 && evt.button != 1 && evt.pointerType != UnityEngine.UIElements.PointerType.touch) return;
+                _isDraggingCamera = true;
+                _cameraDragPointerId = evt.pointerId;
+                _lastCameraDragPos = evt.position;
+                _cameraDragSurface.CapturePointer(evt.pointerId);
+            });
+
+            _cameraDragSurface.RegisterCallback<PointerMoveEvent>(evt =>
+            {
+                if (!_isDraggingCamera || evt.pointerId != _cameraDragPointerId) return;
+                if (!MeadowEnvironmentController.IsRearCombatView || _activeDrawer != DrawerKind.None)
+                {
+                    EndCameraDrag();
+                    return;
+                }
+                Vector2 cur = evt.position;
+                Vector2 delta = cur - _lastCameraDragPos;
+                _lastCameraDragPos = cur;
+                if (delta.sqrMagnitude > 0.001f)
+                    MeadowEnvironmentController.Instance?.ApplyRearCameraDrag(delta.x, delta.y);
+            });
+
+            _cameraDragSurface.RegisterCallback<PointerUpEvent>(evt =>
+            {
+                if (evt.pointerId == _cameraDragPointerId)
+                    EndCameraDrag();
+            });
+
+            _cameraDragSurface.RegisterCallback<PointerCaptureOutEvent>(_ =>
+            {
+                _isDraggingCamera = false;
+                _cameraDragPointerId = -1;
+            });
+
+            _cameraDragSurface.RegisterCallback<WheelEvent>(evt =>
+            {
+                if (!MeadowEnvironmentController.IsRearCombatView || _activeDrawer != DrawerKind.None) return;
+                MeadowEnvironmentController.Instance?.ApplyRearCameraZoom(evt.delta.y);
+                evt.StopPropagation();
+            });
+        }
+
+        private void EndCameraDrag()
+        {
+            if (_cameraDragSurface != null && _cameraDragPointerId >= 0 && _cameraDragSurface.HasPointerCapture(_cameraDragPointerId))
+                _cameraDragSurface.ReleasePointer(_cameraDragPointerId);
+            _isDraggingCamera = false;
+            _cameraDragPointerId = -1;
         }
 
         private void RefreshCameraButtons()
@@ -573,6 +673,12 @@ namespace KhiVanChiTu.Remake
             string tooltip = rear ? "Góc nhìn từ trên cao" : "Góc nhìn sau lưng";
             ApplyCameraButtonState(_btnCameraView, rear, tooltip);
             ApplyCameraButtonState(_btnMiniCameraView, rear, tooltip);
+
+            bool allowDrag = rear && _activeDrawer == DrawerKind.None;
+            if (!allowDrag && _isDraggingCamera)
+                EndCameraDrag();
+            if (_cameraDragSurface != null)
+                _cameraDragSurface.pickingMode = allowDrag ? PickingMode.Position : PickingMode.Ignore;
         }
 
         private static void ApplyCameraButtonState(Button button, bool rear, string tooltip)
@@ -611,10 +717,67 @@ namespace KhiVanChiTu.Remake
         {
             RemakeAudioService.Instance?.PlayClick();
             _activeDrawer = kind;
-            bool useWide = kind == DrawerKind.Diary || kind == DrawerKind.Stages;
+            // Auto-complete progressive feature unlock tutorial when player visits the newly unlocked feature!
+            CompleteFeatureTutorialForDrawer(kind);
+            if (_utilityExpanded)
+            {
+                _utilityExpanded = false;
+                ApplyClusterVisibility();
+            }
+            bool useWide = kind == DrawerKind.Diary || kind == DrawerKind.Stages || kind == DrawerKind.Codex || kind == DrawerKind.CharacterDetail;
             _modalSheet?.EnableInClassList("drawer-sheet-wide", useWide);
             if (_modalBackdrop != null) _modalBackdrop.style.display = DisplayStyle.Flex;
+            if (BootOverlayController.Instance != null) BootOverlayController.Instance.SuppressAmbientToasts = true;
+            RefreshCameraButtons();
             RefreshActiveDrawerIfOpen();
+        }
+
+        private static void CompleteFeatureTutorialForDrawer(DrawerKind kind)
+        {
+            var eng = GameplayEngine.Instance;
+            if (eng == null) return;
+            var save = SaveService.Current;
+            if (!save.tutorialCompleted) return;
+
+            switch (kind)
+            {
+                case DrawerKind.DaoVan:
+                    if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.DaoVanTree, save.realmIndex, save.subStage))
+                        eng.MarkFeatureTutorialCompleted(RemakeFeatureId.DaoVanTree);
+                    break;
+                case DrawerKind.Skills:
+                    if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.SkillLoiPhat, save.realmIndex, save.subStage))
+                        eng.MarkFeatureTutorialCompleted(RemakeFeatureId.SkillLoiPhat);
+                    break;
+                case DrawerKind.Alchemy:
+                    if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Alchemy, save.realmIndex, save.subStage))
+                        eng.MarkFeatureTutorialCompleted(RemakeFeatureId.Alchemy);
+                    break;
+                case DrawerKind.Equipment:
+                    if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.EquipmentLoot, save.realmIndex, save.subStage))
+                        eng.MarkFeatureTutorialCompleted(RemakeFeatureId.EquipmentLoot);
+                    break;
+                case DrawerKind.Formation:
+                    if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Formation1, save.realmIndex, save.subStage))
+                        eng.MarkFeatureTutorialCompleted(RemakeFeatureId.Formation1);
+                    break;
+                case DrawerKind.Companions:
+                    if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Companions, save.realmIndex, save.subStage))
+                        eng.MarkFeatureTutorialCompleted(RemakeFeatureId.Companions);
+                    break;
+                case DrawerKind.ImmortalGate:
+                    if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.ImmortalTower, save.realmIndex, save.subStage))
+                        eng.MarkFeatureTutorialCompleted(RemakeFeatureId.ImmortalTower);
+                    if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.SecretRealm, save.realmIndex, save.subStage))
+                        eng.MarkFeatureTutorialCompleted(RemakeFeatureId.SecretRealm);
+                    if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.PvpArena, save.realmIndex, save.subStage))
+                        eng.MarkFeatureTutorialCompleted(RemakeFeatureId.PvpArena);
+                    break;
+                case DrawerKind.PvpPreview:
+                    if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.PvpArena, save.realmIndex, save.subStage))
+                        eng.MarkFeatureTutorialCompleted(RemakeFeatureId.PvpArena);
+                    break;
+            }
         }
 
         private void CloseDrawer()
@@ -623,6 +786,8 @@ namespace KhiVanChiTu.Remake
             _activeDrawer = DrawerKind.None;
             _modalSheet?.EnableInClassList("drawer-sheet-wide", false);
             if (_modalBackdrop != null) _modalBackdrop.style.display = DisplayStyle.None;
+            if (BootOverlayController.Instance != null) BootOverlayController.Instance.SuppressAmbientToasts = false;
+            RefreshCameraButtons();
         }
 
         private void HandleQuestTrackerClicked()
@@ -668,6 +833,38 @@ namespace KhiVanChiTu.Remake
             if (_hudRealmLabel != null)
                 _hudRealmLabel.text = $"{CultivationTable.GetRealmShortName(save.realmIndex, save.subStage)} ({pct}%)";
             _tuViRing?.SetProgress(tuViRatio, new Color(0.86f, 0.62f, 0.14f, 0.96f), new Color(0.75f, 0.85f, 0.80f, 0.55f), 4.5f);
+
+            int avatarKey = (int)save.gender * 10 + save.equippedAvatarFrame;
+            if (_lastDrawnAvatarKey != avatarKey)
+            {
+                _lastDrawnAvatarKey = avatarKey;
+                if (_avatarPortrait != null)
+                {
+                    string pKey = CultivationTable.GetPortraitCodexKey(save.gender);
+                    CodexArtLoader.ApplyIconOrPlaceholder(_avatarPortrait, pKey, save.gender == RemakeCharacterGender.Male ? "Nam" : "Nữ");
+                }
+                if (_avatarFrameOverlay != null)
+                {
+                    string fKey = CultivationTable.GetAvatarFrameCodexKey(save.equippedAvatarFrame);
+                    if (!string.IsNullOrEmpty(fKey))
+                    {
+                        var fTex = CodexArtLoader.LoadCodexTexture(fKey);
+                        if (fTex != null)
+                        {
+                            _avatarFrameOverlay.style.backgroundImage = new StyleBackground(fTex);
+                            _avatarFrameOverlay.style.display = DisplayStyle.Flex;
+                        }
+                        else
+                        {
+                            _avatarFrameOverlay.style.display = DisplayStyle.None;
+                        }
+                    }
+                    else
+                    {
+                        _avatarFrameOverlay.style.display = DisplayStyle.None;
+                    }
+                }
+            }
 
             if (_wrapBreakthrough != null)
                 _wrapBreakthrough.style.display = engine.IsBreakthroughReady ? DisplayStyle.Flex : DisplayStyle.None;
@@ -812,7 +1009,7 @@ namespace KhiVanChiTu.Remake
         private void HandleBossStatus(string bossName, double hp, double maxHp)
         {
             if (_bossPanel == null) return;
-            if (string.IsNullOrEmpty(bossName))
+            if (_isMiniMode || string.IsNullOrEmpty(bossName))
             {
                 _bossPanel.style.display = DisplayStyle.None;
                 return;
@@ -857,6 +1054,41 @@ namespace KhiVanChiTu.Remake
 
             if (_bossTimerLabel != null && engine.HasActiveBoss)
                 _bossTimerLabel.text = $"{Mathf.Max(0f, engine.ActiveBossTimeRemaining):0.0}s";
+
+            if (_bossShieldRow != null)
+            {
+                bool showShield = engine.HasActiveBoss && !_isMiniMode && (engine.BossShieldActive || engine.BossBrokenRemaining > 0f);
+                _bossShieldRow.style.display = showShield ? DisplayStyle.Flex : DisplayStyle.None;
+                if (showShield)
+                {
+                    if (engine.BossShieldActive)
+                    {
+                        float shieldPct = Mathf.Clamp01((float)(engine.BossShieldHp / System.Math.Max(1.0, engine.BossShieldMaxHp))) * 100f;
+                        if (_bossShieldIcon != null)
+                            CodexArtLoader.ApplyIconOrPlaceholder(_bossShieldIcon, "HUD/icon_boss_shield", "Khiên");
+                        if (_bossShieldLabel != null)
+                            _bossShieldLabel.text = $"Hộ Thể {Mathf.RoundToInt(shieldPct)}% · {engine.BossShieldTimeRemaining:0.0}s (Dùng Chiêu Phá!)";
+                        if (_bossShieldFill != null)
+                        {
+                            _bossShieldFill.style.width = Length.Percent(shieldPct);
+                            _bossShieldFill.style.backgroundColor = new Color(0.92f, 0.72f, 0.16f, 0.96f);
+                        }
+                    }
+                    else
+                    {
+                        float breakPct = Mathf.Clamp01(engine.BossBrokenRemaining / 5f) * 100f;
+                        if (_bossShieldIcon != null)
+                            CodexArtLoader.ApplyIconOrPlaceholder(_bossShieldIcon, "HUD/icon_boss_break", "Phá");
+                        if (_bossShieldLabel != null)
+                            _bossShieldLabel.text = $"PHÁ HỘ THỂ! Choáng {engine.BossBrokenRemaining:0.0}s (+35% ST)";
+                        if (_bossShieldFill != null)
+                        {
+                            _bossShieldFill.style.width = Length.Percent(breakPct);
+                            _bossShieldFill.style.backgroundColor = new Color(0.20f, 0.78f, 0.56f, 0.96f);
+                        }
+                    }
+                }
+            }
 
             if (_wrapKyNgo != null)
             {
@@ -1026,8 +1258,36 @@ namespace KhiVanChiTu.Remake
                     RemakeDrawerViews.BuildKyNgo(_modalBody, CloseDrawer);
                     break;
                 case DrawerKind.PvpPreview:
-                    _modalTitle.text = "Luận Kiếm Đài (Coming Soon)";
-                    RemakeDrawerViews.BuildPvpPreview(_modalBody);
+                    _modalTitle.text = "Luận Kiếm Đài — Liên Đấu Phi Kiếm";
+                    RemakeDrawerViews.BuildPvpArena(_modalBody);
+                    break;
+                case DrawerKind.Codex:
+                    _modalTitle.text = "Đồ Giám Vạn Giới — Sưu Tầm & Buff Vĩnh Viễn";
+                    RemakeDrawerViews.BuildCodexCollection(_modalBody);
+                    break;
+                case DrawerKind.Companions:
+                    _modalTitle.text = "Linh Thú Hộ Đạo — Đồng Hành Tu Luyện";
+                    RemakeDrawerViews.BuildCompanions(_modalBody);
+                    break;
+                case DrawerKind.OfflineSummary:
+                    _modalTitle.text = "Tổng Kết Bế Quan — Thu Hoạch Khi Vắng Mặt";
+                    RemakeDrawerViews.BuildOfflineSummary(_modalBody, CloseDrawer);
+                    break;
+                case DrawerKind.CharacterDetail:
+                    _modalTitle.text = "Thông Tin Chi Tiết Nhân Vật";
+                    RemakeDrawerViews.BuildCharacterDetail(_modalBody, route =>
+                    {
+                        switch (route)
+                        {
+                            case "swordpath": OpenDrawer(DrawerKind.SwordPath); break;
+                            case "equipment": OpenDrawer(DrawerKind.Equipment); break;
+                            case "daovan": OpenDrawer(DrawerKind.DaoVan); break;
+                            case "charselect":
+                                CloseDrawer();
+                                SceneFlowController.Instance?.OpenCharacterSelect();
+                                break;
+                        }
+                    });
                     break;
             }
         }
@@ -1057,6 +1317,16 @@ namespace KhiVanChiTu.Remake
 
             bool isMini = isMiniScreen || w < 450f || h < 420f;
             bool isDesktop = (w > h * 1.15f || isLandscapeDesktop) && !isMini;
+            bool miniChanged = _isMiniMode != isMini;
+            _isMiniMode = isMini;
+            if (BootOverlayController.Instance != null)
+                BootOverlayController.Instance.IsMiniModeActive = isMini;
+            if (miniChanged)
+            {
+                var eng = GameplayEngine.Instance;
+                if (eng != null)
+                    HandleBossStatus(eng.HasActiveBoss ? eng.ActiveBossName : null, eng.ActiveBossHp, eng.ActiveBossMaxHp);
+            }
 
             // Apply on rootVisualElement so BOTH hud-safe-root AND modal-backdrop/drawer-sheet receive desktop-wide / mini-mode!
             uiDocument.rootVisualElement.EnableInClassList("mini-mode", isMini);
@@ -1090,7 +1360,8 @@ namespace KhiVanChiTu.Remake
         {
             if (_tutorialOverlay == null || uiDocument == null) return;
             var save = SaveService.Current;
-            if (save.tutorialCompleted)
+            var engine = GameplayEngine.Instance;
+            if (_isMiniMode || (engine != null && (engine.IsInTribulation || engine.IsRespawning)))
             {
                 _tutorialOverlay.style.display = DisplayStyle.None;
                 return;
@@ -1100,23 +1371,31 @@ namespace KhiVanChiTu.Remake
             string tipText = null;
             var root = uiDocument.rootVisualElement;
 
-            if (save.tutorialStep == 1 || save.tutorialStep == 2)
+            if (!save.tutorialCompleted)
             {
-                if (_activeDrawer == DrawerKind.SwordPath)
+                if (save.tutorialStep == 1 || save.tutorialStep == 2)
                 {
-                    target = root.Q("btn-sword-merge-1");
-                    tipText = "Bấm ghép 2 Kiếm Cấp 1 → Cấp 2!";
+                    if (_activeDrawer == DrawerKind.SwordPath)
+                    {
+                        target = root.Q("btn-sword-merge-1");
+                        tipText = "Bấm ghép 2 Kiếm Cấp 1 → Cấp 2!";
+                    }
+                    else if (_activeDrawer == DrawerKind.None && _cultivationExpanded)
+                    {
+                        target = root.Q("btn-nav-swordpath");
+                        tipText = "Mở Kiếm Lộ để ghép kiếm!";
+                    }
+                    else if (_activeDrawer == DrawerKind.None)
+                    {
+                        target = root.Q("btn-cluster-cultivation");
+                        tipText = "Mở Cụm Tu Luyện";
+                    }
                 }
-                else if (_activeDrawer == DrawerKind.None && _cultivationExpanded)
-                {
-                    target = root.Q("btn-nav-swordpath");
-                    tipText = "Mở Kiếm Lộ để ghép kiếm!";
-                }
-                else if (_activeDrawer == DrawerKind.None)
-                {
-                    target = root.Q("btn-cluster-cultivation");
-                    tipText = "Mở Cụm Tu Luyện (☯)";
-                }
+            }
+            else if (engine != null && _activeDrawer == DrawerKind.None)
+            {
+                // Progressive Feature Unlock Guided Tutorials (same pulsing ring + tooltip style as Sword Path!)
+                ResolveNextFeatureUnlockTutorial(root, save, engine, out target, out tipText);
             }
 
             if (target == null || target.resolvedStyle.display == DisplayStyle.None || target.worldBound.width <= 1f)
@@ -1134,10 +1413,62 @@ namespace KhiVanChiTu.Remake
             _tutorialRing.style.height = b.height + 8f + pulse * 2f;
 
             _tutorialTip.text = tipText;
-            float tipX = Mathf.Clamp(b.xMin - 70f, 12f, Mathf.Max(20f, root.resolvedStyle.width - 230f));
-            float tipY = b.yMin > 90f ? b.yMin - 36f : b.yMax + 8f;
+            _tutorialTip.style.maxWidth = Mathf.Min(250f, root.resolvedStyle.width - 24f);
+            _tutorialTip.style.whiteSpace = WhiteSpace.Normal;
+            float tipW = float.IsNaN(_tutorialTip.resolvedStyle.width) || _tutorialTip.resolvedStyle.width < 10f
+                ? 250f : _tutorialTip.resolvedStyle.width;
+            float tipX = Mathf.Clamp(b.center.x - tipW * 0.5f, 12f, Mathf.Max(12f, root.resolvedStyle.width - tipW - 12f));
+            float tipY = b.yMin > 90f ? b.yMin - 42f : b.yMax + 8f;
             _tutorialTip.style.left = tipX;
             _tutorialTip.style.top = tipY;
+        }
+
+        private void ResolveNextFeatureUnlockTutorial(
+            VisualElement root,
+            RemakeSaveData save,
+            GameplayEngine engine,
+            out VisualElement target,
+            out string tipText)
+        {
+            target = null;
+            tipText = null;
+
+            (RemakeFeatureId fid, int hostGroup, string btnName, string clusterTip, string navTip)[] steps =
+            {
+                (RemakeFeatureId.DaoVanTree,    1, "btn-nav-daovan",          "Đạo Vận đã mở! Mở Cụm Tu Luyện",      "Mở Cây Đạo Vận để tăng chỉ số vĩnh viễn!"),
+                (RemakeFeatureId.SkillLoiPhat,  1, "btn-nav-skills",          "Kỹ Năng đã mở! Mở Cụm Tu Luyện",      "Mở Kỹ Năng để nâng cấp & bật Tự Động!"),
+                (RemakeFeatureId.Alchemy,       1, "btn-nav-alchemy",         "Luyện Đan đã mở! Mở Cụm Tu Luyện",    "Mở Luyện Đan để luyện Đan Đột Phá!"),
+                (RemakeFeatureId.EquipmentLoot, 1, "btn-nav-equipment",       "Trang Bị đã mở! Mở Cụm Tu Luyện",     "Mở Trang Bị để mặc & cường hóa bảo giáp!"),
+                (RemakeFeatureId.Formation1,    1, "btn-nav-formation",       "Trận Pháp đã mở! Mở Cụm Tu Luyện",    "Mở Trận Pháp để khai mở Lục Đại Trận!"),
+                (RemakeFeatureId.ImmortalTower, 3, "btn-immortal-gate-quick", "Mở Tiện Ích để vào Vạn Yêu Tháp!",    "Vạn Yêu Tháp đã mở! Chạm Tiên Môn để leo tháp!"),
+                (RemakeFeatureId.Companions,    2, "btn-nav-companion",       "Linh Thú đã mở! Mở Cụm Tiện Ích",     "Mở Linh Thú để thu phục đồng hành hộ đạo!"),
+                (RemakeFeatureId.SecretRealm,   3, "btn-immortal-gate-quick", "Mở Tiện Ích để vào Bí Cảnh!",         "Bí Cảnh đã mở! Vào Tiên Môn càn quét nguyên liệu!"),
+                (RemakeFeatureId.PvpArena,      3, "btn-immortal-gate-quick", "Mở Tiện Ích để vào Luận Kiếm Đài!",   "Luận Kiếm Đài đã mở! Vào Tiên Môn tỷ thí!")
+            };
+
+            for (int i = 0; i < steps.Length; i++)
+            {
+                var st = steps[i];
+                if (!CultivationTable.IsFeatureUnlocked(st.fid, save.realmIndex, save.subStage)) continue;
+                if (engine.IsFeatureTutorialCompleted(st.fid)) continue;
+
+                if (st.hostGroup == 1)
+                {
+                    if (_cultivationExpanded) { target = root.Q(st.btnName); tipText = st.navTip; }
+                    else { target = root.Q("btn-cluster-cultivation"); tipText = st.clusterTip; }
+                }
+                else if (st.hostGroup == 2)
+                {
+                    if (_utilityExpanded) { target = root.Q(st.btnName); tipText = st.navTip; }
+                    else { target = root.Q("btn-cluster-utility"); tipText = st.clusterTip; }
+                }
+                else
+                {
+                    if (_leftHudExpanded) { target = root.Q(st.btnName); tipText = st.navTip; }
+                    else { target = root.Q("btn-toggle-left-hud"); tipText = st.clusterTip; }
+                }
+                return;
+            }
         }
 
         private void PrewarmPopupPool()

@@ -49,6 +49,15 @@ namespace KhiVanChiTu.Remake
         }
 
         // Ty le phan bo 10 tang trong 1 Dai Canh Gioi (Tang 10 = 19% -> tong = 100%)
+        // Luyen Khi (R0) nhe nhang hon o T1-T3 (~5 phut len T4 mo Dao Van & Loi Phat), bu sang T7-T9 va giu nguyen T10 = 19%!
+        private static readonly double[] LuyenKhiSubStageWeights =
+        {
+            0.018, 0.026, 0.036, // Tang 1-3: So Ky (~5-6 phut dau game)
+            0.065, 0.080, 0.100, // Tang 4-6: Trung Ky
+            0.135, 0.165, 0.185, // Tang 7-9: Hau Ky
+            0.190                // Tang 10: Dinh Phong Binh Canh (19.0%)
+        };
+
         private static readonly double[] SubStageWeights =
         {
             0.045, 0.055, 0.065, // Tang 1-3: So Ky (16.5%)
@@ -126,7 +135,8 @@ namespace KhiVanChiTu.Remake
         {
             int r = Mathf.Clamp(realmIndex, 0, BaseRealmTotalTuVi.Length - 1);
             int s = Mathf.Clamp(subStage, 1, 10) - 1;
-            return Math.Round(BaseRealmTotalTuVi[r] * SubStageWeights[s]);
+            double[] weights = r == 0 ? LuyenKhiSubStageWeights : SubStageWeights;
+            return Math.Round(BaseRealmTotalTuVi[r] * weights[s]);
         }
 
         public static int GetMaxSwordSlotsForRealm(int realmIndex)
@@ -306,17 +316,21 @@ namespace KhiVanChiTu.Remake
             double normalHit = Math.Max(7.0, Math.Round(expectedEhp * 0.034 * stageFactor));
             enemyDamage = isBoss ? Math.Round(normalHit * 2.15) : normalHit;
 
-            // Tu Vi per kill anchored directly to 720-hour / 30-day ExpectedRealmHours24x7 at ~650 kills/hr
-            double expectedTuViMult = 1.0 + reqR * 0.22;
-            double realmTotal = GetRealmTotalTuVi(reqR);
-            double realmHours = ExpectedRealmHours24x7[Mathf.Clamp(reqR, 0, ExpectedRealmHours24x7.Length - 1)];
-            double baseKillTuVi = realmTotal / (realmHours * 650.0 * expectedTuViMult);
-            double subSlope = 0.80 + (stageNum - 1) * 0.072;
-            double normalTuVi = Math.Max(11.0, Math.Round(baseKillTuVi * subSlope));
+            // Continuous strictly monotonic Tu Vi & Linh Thach scaling across ALL 120 stages (R0..R8, zero drops across Act boundaries!)
+            double cultProg = lin < 30
+                ? (lin / 10.0)
+                : (3.0 + (lin - 30) * (5.7 / 89.0));
+            int rLow = Mathf.Clamp((int)Math.Floor(cultProg), 0, BaseRealmTotalTuVi.Length - 2);
+            int rHigh = rLow + 1;
+            double frac = Math.Max(0.0, Math.Min(1.0, cultProg - rLow));
+            double anchorLow = GetRealmTotalTuVi(rLow) / (ExpectedRealmHours24x7[rLow] * 650.0 * (1.0 + rLow * 0.22));
+            double anchorHigh = GetRealmTotalTuVi(rHigh) / (ExpectedRealmHours24x7[rHigh] * 650.0 * (1.0 + rHigh * 0.22));
+            double interpTuVi = anchorLow * Math.Pow(anchorHigh / Math.Max(1.0, anchorLow), frac);
+            double normalTuVi = Math.Max(11.0, Math.Round(interpTuVi * 0.80));
             tuViPerKill = isBoss ? Math.Round(normalTuVi * 11.0) : normalTuVi;
 
-            // Linh Thach per kill scales cleanly with stage progression & difficulty
-            double normalLt = Math.Max(9.0, Math.Round(normalTuVi * (0.85 + diffIdx * 0.22)));
+            // Linh Thach per kill strictly climbs with stage & difficulty
+            double normalLt = Math.Max(9.0, Math.Round(normalTuVi * (0.85 + cultProg * 0.095)));
             linhThachPerKill = isBoss ? Math.Round(normalLt * 12.0) : normalLt;
 
             recommendedPower = Math.Round(expectedDps * (isBoss ? 1.15 : 0.90) * 10.0);
@@ -374,7 +388,10 @@ namespace KhiVanChiTu.Remake
                 RemakeFeatureId.FormationSubSlot => linearRealmStage >= 41,   // Hoa Than So Ky
                 RemakeFeatureId.ImmortalTower => linearRealmStage >= 15,      // Truc Co Tang 5
                 RemakeFeatureId.SecretRealm => linearRealmStage >= 21,        // Kim Dan So Ky
-                RemakeFeatureId.PvpComingSoon => false,                       // Coming Soon (Du kien Nguyen Anh T5)
+                RemakeFeatureId.PvpComingSoon => false,                       // Legacy flag kept for tests
+                RemakeFeatureId.PvpArena => linearRealmStage >= 35,           // Nguyen Anh Tang 5 (Luan Kiem Dai)
+                RemakeFeatureId.Companions => linearRealmStage >= 17,         // Truc Co Tang 7 (Linh Thu Ho Dao)
+                RemakeFeatureId.CodexCollection => true,                      // Do Giam Van Gioi
                 RemakeFeatureId.OnlineFeatures => true,
                 _ => false
             };
@@ -395,8 +412,35 @@ namespace KhiVanChiTu.Remake
             RemakeFeatureId.ImmortalTower => "Mở ở Trúc Cơ Tầng 5",
             RemakeFeatureId.SecretRealm => "Mở ở Kim Đan Sơ Kỳ",
             RemakeFeatureId.PvpComingSoon => "Sắp Ra Mắt (Dự kiến Nguyên Anh T5)",
+            RemakeFeatureId.PvpArena => "Mở ở Nguyên Anh Tầng 5",
+            RemakeFeatureId.Companions => "Mở ở Trúc Cơ Tầng 7",
+            RemakeFeatureId.CodexCollection => "Đã mở",
             RemakeFeatureId.OnlineFeatures => "Mở ở Mốc 3 (Online LAN)",
             _ => "Đã mở"
+        };
+
+        public static string GetGenderLabel(RemakeCharacterGender g) => g == RemakeCharacterGender.Male ? "Nam Tu" : "Nữ Tu";
+
+        public static string GetPortraitCodexKey(RemakeCharacterGender g) =>
+            g == RemakeCharacterGender.Male ? "HUD/portrait_male_cultivator" : "HUD/portrait_female_cultivator";
+
+        public static string GetGenderIconCodexKey(RemakeCharacterGender g) =>
+            g == RemakeCharacterGender.Male ? "HUD/icon_gender_male" : "HUD/icon_gender_female";
+
+        public static string GetAvatarFrameCodexKey(int frameId) => frameId switch
+        {
+            1 => "HUD/frame_sword_saint",
+            2 => "HUD/frame_heavenly_dao",
+            _ => "HUD/hud_avatar_frame"
+        };
+
+        public static (string name, string codexKey, string desc, int reqRealmIndex) GetCompanionSpec(RemakeCompanionId id) => id switch
+        {
+            RemakeCompanionId.AzureCrane => ("Thanh Loan Tiên Hạc", "Companions/pet_azure_crane", "+12% Tốc Độ Phi Kiếm & +10% Tốc Độ Tu Vi", 1),
+            RemakeCompanionId.WhiteFox => ("Bạch Hồ Linh Thú", "Companions/pet_white_fox", "Tự thu thập Kỳ Ngộ Linh Cơ & +15% Linh Thạch rơi", 2),
+            RemakeCompanionId.JadeTurtle => ("Huyền Quy Hộ Đạo", "Companions/pet_jade_turtle", "+15% Khí Huyết, +8% Giảm Thương & -10% Phạt Độ Kiếp", 3),
+            RemakeCompanionId.ThunderSpirit => ("Cửu Tiêu Lôi Linh", "Companions/pet_thunder_spirit", "+18% Sát Thương Kiếm & +20% Phá Khiên Thủ Lĩnh", 4),
+            _ => ("Chưa chọn Linh Thú", "", "Mở khóa Linh Thú Hộ Đạo từ Trúc Cơ Tầng 7", 1)
         };
 
         // =========================================================
