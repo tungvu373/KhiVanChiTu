@@ -26,5 +26,32 @@ namespace KhiVanChiTu.Remake
         public float hpBarHeight = 2.1f;
         public float visualScale = 1f;
         public bool isBoss = false;
+        public RemakeMonsterAudioFamily audioFamily = RemakeMonsterAudioFamily.Auto;
+
+        public RemakeMonsterAudioFamily ResolveAudioFamily()
+        {
+            if (audioFamily != RemakeMonsterAudioFamily.Auto)
+                return audioFamily;
+            return ResolveAudioFamilyFromMetadata(monsterId, isBoss, archetype);
+        }
+
+        public static RemakeMonsterAudioFamily ResolveAudioFamilyFromMetadata(
+            string id,
+            bool boss,
+            RemakeMonsterArchetype arch)
+        {
+            if (boss || arch == RemakeMonsterArchetype.BossGuardian)
+                return RemakeMonsterAudioFamily.Boss;
+
+            string lo = (id ?? "").ToLowerInvariant();
+            if (lo.Contains("boss")) return RemakeMonsterAudioFamily.Boss;
+            if (lo.Contains("scorpion") || lo.Contains("thunder_spirit") || lo.Contains("insect"))
+                return RemakeMonsterAudioFamily.SpiritInsect;
+            if (lo.Contains("turtle") || arch == RemakeMonsterArchetype.ArmoredTank)
+                return RemakeMonsterAudioFamily.Armored;
+            if (lo.Contains("bird") || lo.Contains("crane") || arch == RemakeMonsterArchetype.FlyingAgile)
+                return RemakeMonsterAudioFamily.Avian;
+            return RemakeMonsterAudioFamily.Beast;
+        }
     }
 }

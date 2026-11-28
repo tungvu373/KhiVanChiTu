@@ -30,3 +30,4 @@ MonoBehaviour:
   hpBarHeight: 2.1
   visualScale: 1
   isBoss: 0
+  audioFamily: 0

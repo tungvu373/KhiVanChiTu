@@ -13,16 +13,16 @@
         <!-- MINI-MODE COMPACT BAR (< 480px browser width) -->
         <ui:VisualElement name="mini-pill-bar" class="mini-pill-bar">
             <ui:VisualElement style="flex-grow: 1; margin-right: 8px;">
-                <ui:Label name="mini-realm-stage" text="Luyện Khí T1 · 1-1" class="text-section" style="font-size: 12px;" />
+                <ui:Label name="mini-realm-stage" text="Luyện Khí T1 · 1-1" class="text-section" style="font-size: 15px;" />
                 <ui:VisualElement class="bar-track" style="margin-top: 3px; height: 5px;">
                     <ui:VisualElement name="mini-tuvi-fill" class="bar-fill-tuvi" style="width: 10%;" />
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:Label name="mini-fps-label" text="60 FPS" class="text-muted fps-good" style="margin-right: 8px;" />
+            <ui:Label name="mini-fps-label" text="60 FPS" class="text-muted fps-good" style="font-size: 11px; margin-right: 8px;" />
             <ui:Button name="btn-mini-camera-view" class="circle-btn hud-mini-camera-button">
                 <ui:VisualElement name="icon-mini-camera-view" picking-mode="Ignore" class="art-slot hud-mini-camera-icon" />
             </ui:Button>
-            <ui:Button name="btn-mini-breakthrough" text="Đột Phá !" class="btn-primary" style="padding: 4px 10px; font-size: 11px; display: none;" />
+            <ui:Button name="btn-mini-breakthrough" text="Đột Phá !" class="btn-primary" style="padding: 4px 12px; min-width: 86px; font-size: 11.5px; display: none;" />
         </ui:VisualElement>
 
         <!-- =================================================
@@ -54,31 +54,31 @@
                             <ui:VisualElement name="icon-breakthrough" class="circle-btn-icon art-slot" style="width: 30px; height: 30px;" />
                             <ui:Label name="badge-breakthrough-bang" text="!" picking-mode="Ignore" class="alert-bang-badge" />
                         </ui:Button>
-                        <ui:Label text="Đột Phá" class="circle-btn-label text-gold" />
+                        <ui:Label text="Đột Phá" class="circle-btn-label font-calligraphy text-gold" style="font-size: 12.5px;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
 
-                <!-- TOP-RIGHT: Row 1 Currencies + Utility (≡) | Row 2 FPS + AFK Dim | Drawer -->
+                <!-- TOP-RIGHT: Row 1 Currencies + Camera + Direct Settings (⚙) | Row 2 FPS + AFK Dim -->
                 <ui:VisualElement picking-mode="Ignore" class="hud-top-right-wrap">
                     <ui:VisualElement style="flex-direction: row; align-items: center;">
                         <ui:VisualElement class="pill-light hud-currency-pill">
-                            <ui:VisualElement name="icon-linhthach" class="art-slot" style="width: 15px; height: 15px; margin-right: 4px; flex-shrink: 0;" />
-                            <ui:Label name="hud-linhthach-label" text="120" class="text-body" style="-unity-font-style: bold; font-size: 11px; margin: 0; padding: 0;" />
+                            <ui:VisualElement name="icon-linhthach" class="art-slot" style="width: 16px; height: 16px; margin-right: 4px; flex-shrink: 0;" />
+                            <ui:Label name="hud-linhthach-label" text="120" class="font-ui-semibold" style="font-size: 12px; margin: 0; padding: 0;" />
                         </ui:VisualElement>
                         <ui:Button name="btn-camera-view" class="circle-btn hud-camera-button">
                             <ui:VisualElement name="icon-camera-view" picking-mode="Ignore" class="art-slot hud-camera-icon" />
                         </ui:Button>
-                        <ui:Button name="btn-cluster-utility" class="circle-btn" style="width: 42px; height: 42px; padding: 6px;">
-                            <ui:VisualElement name="icon-cluster-utility" class="art-slot" style="width: 24px; height: 24px;" />
+                        <ui:Button name="btn-cluster-utility" class="circle-btn" style="width: 44px; height: 44px; padding: 6px;">
+                            <ui:VisualElement name="icon-cluster-utility" class="art-slot" style="width: 26px; height: 26px;" />
                             <ui:VisualElement name="badge-cluster-utility" picking-mode="Ignore" class="badge-dot" style="display: none;" />
                         </ui:Button>
                     </ui:VisualElement>
 
                     <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 3px;">
                         <ui:VisualElement name="pill-fps" class="pill-light hud-fps-pill">
-                            <ui:Label name="hud-fps-label" text="60 FPS" class="text-muted fps-good" style="font-size: 10px; margin: 0; padding: 0;" />
+                            <ui:Label name="hud-fps-label" text="60 FPS" class="fps-good" style="font-size: 11px; margin: 0; padding: 0;" />
                         </ui:VisualElement>
-                        <ui:Button name="btn-afk-dim" text="Tĩnh" class="btn-compact" style="border-radius: 999px; padding: 2px 8px; font-size: 10px; margin: 0;" />
+                        <ui:Button name="btn-afk-dim" text="Tĩnh" class="btn-compact" style="border-radius: 999px; padding: 3px 9px; font-size: 11px; margin: 0;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
@@ -87,80 +87,33 @@
             <ui:VisualElement picking-mode="Ignore" class="hud-stage-center-wrap">
                 <ui:Button name="btn-stage-pill" class="pill-light hud-stage-pill">
                     <ui:VisualElement name="icon-stage-pill" class="art-slot" style="width: 18px; height: 18px; margin-right: 5px; border-radius: 9px; flex-shrink: 0;" />
-                    <ui:Label name="hud-stage-label" text="Phàm Giới · 1-1 · Đợt 1/3 (3)" class="text-body" style="-unity-font-style: bold; font-size: 11px; margin: 0; padding: 0;" />
+                    <ui:Label name="hud-stage-label" text="Phàm Giới · 1-1 · Đợt 1/3 (3)" class="hud-stage-label" />
                 </ui:Button>
-                <ui:Button name="btn-challenge-boss" text="Khiêu Chiến Boss!" class="btn-primary" style="display: none; margin-top: 4px; padding: 3px 10px; font-size: 10px;" />
-                <ui:VisualElement name="challenge-banner" class="pill-light" style="display: none; margin-top: 4px; padding: 3px 8px; border-color: #2D8B74;">
-                    <ui:Label name="challenge-banner-label" text="Tháp T1 · 45s" class="text-section" style="font-size: 10px; margin-right: 5px;" />
-                    <ui:Button name="btn-exit-challenge" text="Rời" class="btn-compact" style="padding: 1px 6px; font-size: 9px;" />
+                <ui:Button name="btn-challenge-boss" text="Khiêu Chiến Boss!" class="btn-primary" style="display: none; margin-top: 4px; padding: 5px 18px; min-width: 126px; font-size: 11px;" />
+                <ui:VisualElement name="challenge-banner" class="pill-light" style="display: none; margin-top: 4px; padding: 4px 10px; border-color: #2D8B74;">
+                    <ui:Label name="challenge-banner-label" text="Tháp T1 · 45s" class="font-calligraphy" style="font-size: 13.5px; color: #165B4A; margin-right: 6px;" />
+                    <ui:Button name="btn-exit-challenge" text="Rời" class="btn-compact" style="padding: 2px 8px; font-size: 10.5px;" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
 
-        <!-- Cluster 2 Floating Overlay Drawer (Absolute-positioned on right edge — NEVER pushes Stage/Left HUD down!) -->
-        <ui:VisualElement name="cluster-utility-drawer" class="cluster-panel utility-floating-drawer hide-in-mini" style="display: none;">
-            <ui:VisualElement class="circle-btn-wrap">
-                <ui:Button name="btn-nav-diary" class="circle-btn">
-                    <ui:VisualElement name="icon-nav-diary" class="circle-btn-icon art-slot" />
-                    <ui:VisualElement name="badge-pioneer-diary" picking-mode="Ignore" class="badge-dot" style="display: none;" />
-                </ui:Button>
-                <ui:Label text="Tiên Lộ" class="circle-btn-label" />
-            </ui:VisualElement>
-            <ui:VisualElement class="circle-btn-wrap">
-                <ui:Button name="btn-nav-codex" class="circle-btn">
-                    <ui:VisualElement name="icon-nav-codex" class="circle-btn-icon art-slot" />
-                </ui:Button>
-                <ui:Label text="Đồ Giám" class="circle-btn-label" />
-            </ui:VisualElement>
-            <ui:VisualElement class="circle-btn-wrap">
-                <ui:Button name="btn-nav-companion" class="circle-btn">
-                    <ui:VisualElement name="icon-nav-companion" class="circle-btn-icon art-slot" />
-                </ui:Button>
-                <ui:Label text="Linh Thú" class="circle-btn-label" />
-            </ui:VisualElement>
-            <ui:VisualElement class="circle-btn-wrap">
-                <ui:Button name="btn-nav-settings" class="circle-btn">
-                    <ui:VisualElement name="icon-nav-settings" class="circle-btn-icon art-slot" />
-                </ui:Button>
-                <ui:Label text="Đồ Họa" class="circle-btn-label" />
-            </ui:VisualElement>
-            <ui:VisualElement class="circle-btn-wrap">
-                <ui:Button name="btn-nav-leaderboard" class="circle-btn">
-                    <ui:VisualElement name="icon-nav-leaderboard" class="circle-btn-icon art-slot" />
-                </ui:Button>
-                <ui:Label text="BXH" class="circle-btn-label" />
-            </ui:VisualElement>
-            <ui:VisualElement class="circle-btn-wrap">
-                <ui:Button name="btn-nav-friends" class="circle-btn">
-                    <ui:VisualElement name="icon-nav-friends" class="circle-btn-icon art-slot" />
-                </ui:Button>
-                <ui:Label text="Đạo Hữu" class="circle-btn-label" />
-            </ui:VisualElement>
-            <ui:VisualElement class="circle-btn-wrap">
-                <ui:Button name="btn-nav-mainmenu" class="circle-btn">
-                    <ui:VisualElement name="icon-nav-mainmenu" class="circle-btn-icon art-slot" />
-                </ui:Button>
-                <ui:Label text="Nhân Vật" class="circle-btn-label" />
-            </ui:VisualElement>
-        </ui:VisualElement>
-
         <!-- Centered Boss HP Bar below Header so it never overlaps Top-Left/Right -->
-        <ui:VisualElement name="boss-hp-panel" picking-mode="Ignore" class="panel-compact hide-in-mini" style="display: none; align-self: center; margin-top: 4px; padding: 5px 10px; width: 242px; border-color: #D9483B;">
+        <ui:VisualElement name="boss-hp-panel" picking-mode="Ignore" class="panel-compact hide-in-mini" style="display: none; align-self: center; margin-top: 4px; padding: 6px 12px; width: 296px; border-color: #D9483B;">
             <ui:VisualElement style="flex-direction: row; align-items: center;">
-                <ui:VisualElement name="boss-portrait-slot" class="art-slot" style="width: 30px; height: 30px; margin-right: 7px; flex-shrink: 0;" />
-                <ui:VisualElement style="flex-grow: 1;">
+                <ui:VisualElement name="boss-portrait-slot" class="art-slot" style="width: 34px; height: 34px; margin-right: 8px; flex-shrink: 0;" />
+                <ui:VisualElement style="flex-grow: 1; flex-shrink: 1;">
                     <ui:VisualElement style="flex-direction: row; justify-content: space-between; align-items: center;">
-                        <ui:Label name="boss-name-label" text="Cổ Mộc Yêu Vương" class="text-danger" style="font-size: 11px; margin: 0; padding: 0;" />
-                        <ui:Label name="boss-timer-label" text="60.0s" class="text-gold" style="font-size: 10px; margin: 0; padding: 0;" />
+                        <ui:Label name="boss-name-label" text="Cổ Mộc Yêu Vương" class="font-heading text-danger" style="font-size: 15.5px; margin: 0; padding: 0;" />
+                        <ui:Label name="boss-timer-label" text="60.0s" class="text-gold" style="font-size: 11px; margin: 0; padding: 0;" />
                     </ui:VisualElement>
-                    <ui:VisualElement class="bar-track" style="height: 7px; margin-top: 3px;">
+                    <ui:VisualElement class="bar-track" style="height: 8px; margin-top: 3px;">
                         <ui:VisualElement name="boss-hp-fill" class="bar-fill-boss" style="width: 100%;" />
                     </ui:VisualElement>
-                    <ui:Label name="boss-hp-text" text="100 / 100" class="text-muted" style="font-size: 10px; margin: 2px 0 0 0; padding: 0;" />
+                    <ui:Label name="boss-hp-text" text="100 / 100" class="font-ui-semibold text-muted" style="font-size: 11px; margin: 2px 0 0 0; padding: 0;" />
                     <ui:VisualElement name="boss-shield-row" style="display: none; margin-top: 3px;">
                         <ui:VisualElement style="flex-direction: row; align-items: center;">
-                            <ui:VisualElement name="icon-boss-shield" class="art-slot" style="width: 14px; height: 14px; margin-right: 4px; flex-shrink: 0;" />
-                            <ui:Label name="boss-shield-label" text="Khiên Yêu Lực · Tung Kỹ Năng!" class="text-gold" style="font-size: 9px; margin: 0; padding: 0;" />
+                            <ui:VisualElement name="icon-boss-shield" class="art-slot" style="width: 15px; height: 15px; margin-right: 4px; flex-shrink: 0;" />
+                            <ui:Label name="boss-shield-label" text="Khiên Yêu Lực · Tung Kỹ Năng!" class="text-gold" style="font-size: 10px; white-space: normal; flex-shrink: 1; margin: 0; padding: 0;" />
                         </ui:VisualElement>
                         <ui:VisualElement class="bar-track" style="height: 4px; margin-top: 2px;">
                             <ui:VisualElement name="boss-shield-fill" style="width: 100%; height: 100%; background-color: #E2A220;" />
@@ -173,10 +126,10 @@
         <!-- Centered Player Death Respawn Countdown Banner (Halts Combat & Spawns) -->
         <ui:VisualElement name="respawn-hud-panel" picking-mode="Ignore" class="respawn-hud-panel hide-in-mini" style="display: none;">
             <ui:VisualElement style="flex-direction: row; justify-content: space-between; align-items: center;">
-                <ui:Label text="TRỌNG THƯƠNG — ĐANG HỒI SINH" class="text-danger" style="font-size: 11px; margin: 0; padding: 0;" />
-                <ui:Label name="respawn-timer-label" text="5.0s" class="text-danger" style="font-size: 13px; margin: 0; padding: 0;" />
+                <ui:Label text="TRỌNG THƯƠNG — ĐANG HỒI SINH" class="font-heading text-danger" style="font-size: 15.5px; margin: 0; padding: 0;" />
+                <ui:Label name="respawn-timer-label" text="5.0s" class="text-danger" style="font-size: 13.5px; margin: 0; padding: 0;" />
             </ui:VisualElement>
-            <ui:Label name="respawn-reason-label" text="Yêu thú đã tạm rút · Tái chiến Ải hiện tại sau khi hồi sinh" class="text-body" style="font-size: 10px; margin-top: 2px; white-space: normal;" />
+            <ui:Label name="respawn-reason-label" text="Yêu thú đã tạm rút · Tái chiến Ải hiện tại sau khi hồi sinh" class="text-body" style="font-size: 11.5px; margin-top: 2px; white-space: normal;" />
             <ui:VisualElement class="bar-track" style="height: 8px; margin-top: 5px;">
                 <ui:VisualElement name="respawn-progress-fill" class="bar-fill-respawn" style="width: 0%;" />
             </ui:VisualElement>
@@ -185,46 +138,47 @@
         <!-- Centered 15-Second Breakthrough Seclusion & Heavenly Tribulation Banner -->
         <ui:VisualElement name="tribulation-hud-panel" picking-mode="Ignore" class="tribulation-hud-panel hide-in-mini" style="display: none;">
             <ui:VisualElement style="flex-direction: row; justify-content: space-between; align-items: center;">
-                <ui:Label text="BẾ QUAN ĐÓN THIÊN KIẾP" class="text-danger" style="font-size: 11px;" />
-                <ui:Label name="tribulation-timer-label" text="15.0s" class="text-gold" style="font-size: 12px;" />
+                <ui:Label text="Bế Quan Đón Thiên Kiếp" class="font-calligraphy text-danger" style="font-size: 17px; margin: 0; padding: 0;" />
+                <ui:Label name="tribulation-timer-label" text="15.0s" class="text-gold" style="font-size: 12.5px; margin: 0; padding: 0;" />
             </ui:VisualElement>
-            <ui:Label name="tribulation-target-label" text="Hướng tới Trúc Cơ Sơ Kỳ · Tỉ lệ 100%" class="text-body" style="font-size: 10px; margin-top: 2px; -unity-font-style: bold;" />
+            <ui:Label name="tribulation-target-label" text="Hướng tới Trúc Cơ Sơ Kỳ · Tỉ lệ 100%" class="font-heading" style="font-size: 14px; color: #223531; margin-top: 2px; white-space: normal;" />
             <ui:VisualElement class="bar-track" style="height: 8px; margin-top: 4px;">
                 <ui:VisualElement name="tribulation-progress-fill" class="bar-fill-tribulation" style="width: 0%;" />
             </ui:VisualElement>
-            <ui:Label name="tribulation-strike-label" text="Thiên Lôi giáng xuống: Đạo 0/9" class="text-muted" style="font-size: 10px; margin-top: 3px;" />
+            <ui:Label name="tribulation-strike-label" text="Thiên Lôi giáng xuống: Đạo 0/9" class="text-muted" style="font-size: 11px; margin-top: 3px;" />
         </ui:VisualElement>
 
         <!-- =================================================
              MIDDLE ROW: Collapsible Quest + Chat + Tiên Môn | Kỳ Ngộ Floating Orb
              ================================================= -->
         <ui:VisualElement picking-mode="Ignore" class="hud-middle-row hide-in-mini">
-            <ui:VisualElement picking-mode="Ignore" style="align-items: flex-start; max-width: 190px;">
+            <ui:VisualElement picking-mode="Ignore" style="align-items: flex-start; max-width: 234px;">
                 <ui:VisualElement style="flex-direction: row; align-items: center;">
                     <ui:Button name="btn-toggle-left-hud" text="◀ Ẩn Tiện Ích" class="hud-collapse-pill" />
-                    <ui:VisualElement name="badge-left-hud-collapsed" picking-mode="Ignore" class="badge-dot" style="position: relative; right: 0; top: -2px; margin-left: 4px; display: none;" />
+                    <ui:Label name="badge-left-hud-collapsed" text="" picking-mode="Ignore" class="badge-dot badge-count" style="position: relative; right: 0; top: -2px; margin-left: 4px; display: none;" />
                 </ui:VisualElement>
 
                 <ui:VisualElement name="left-hud-collapsible" picking-mode="Ignore" style="align-items: flex-start;">
-                    <ui:Button name="btn-quest-tracker" class="panel-compact" style="padding: 7px 10px; align-items: flex-start;">
-                        <ui:Label name="quest-header-label" text="NHIỆM VỤ CHÍNH" class="text-section" style="font-size: 10px; padding-right: 16px;" />
+                    <ui:Button name="btn-quest-tracker" class="panel-compact" style="padding: 8px 11px; align-items: flex-start; max-width: 230px;">
+                        <ui:Label name="quest-header-label" text="NHIỆM VỤ CHÍNH" class="text-section" style="font-size: 13px; padding-right: 16px;" />
                         <ui:VisualElement name="badge-main-quest" picking-mode="Ignore" class="badge-dot hud-quest-reward-dot" style="display: none;" />
-                        <ui:Label name="quest-title-label" text="Tiêu diệt 5 Yêu Thú (0/5)" class="text-body" style="white-space: normal; -unity-font-style: bold; font-size: 11px; margin-top: 2px;" />
+                        <ui:Label name="quest-title-label" text="Tiêu diệt 5 Yêu Thú (0/5)" class="font-ui-semibold" style="white-space: normal; font-size: 11.5px; color: #223531; margin-top: 2px;" />
                     </ui:Button>
 
-                    <ui:Button name="btn-chat-bubble" class="pill-light" style="margin-top: 6px; padding: 4px 10px; max-width: 185px; overflow: hidden;">
+                    <ui:Button name="btn-chat-bubble" class="pill-light" style="margin-top: 6px; padding: 5px 11px; max-width: 228px; overflow: hidden;">
                         <ui:VisualElement name="icon-chat-bubble" class="art-slot" style="width: 22px; height: 22px; min-width: 22px; margin-right: 6px; border-radius: 11px;" />
-                        <ui:Label name="chat-ticker-label" text="Chat Thế Giới &amp; Thiên Đạo" class="text-muted" style="font-size: 10px; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" />
+                        <ui:Label name="chat-ticker-label" text="Chat Thế Giới &amp; Thiên Đạo" class="text-muted" style="font-size: 11px; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" />
                     </ui:Button>
 
-                    <ui:Button name="btn-immortal-gate-quick" class="pill-light" style="margin-top: 6px; padding: 4px 10px; border-color: #2D8B74;">
+                    <ui:Button name="btn-immortal-gate-quick" class="pill-light" style="margin-top: 6px; padding: 5px 14px 5px 11px; border-color: #2D8B74;">
                         <ui:VisualElement name="icon-immortal-gate-quick" class="art-slot" style="width: 22px; height: 22px; min-width: 22px; margin-right: 6px; border-radius: 11px;" />
-                        <ui:Label text="Tiên Môn · Tháp / Bí Cảnh" class="text-section" style="font-size: 10px;" />
+                        <ui:Label text="Tiên Môn · Tháp / Bí Cảnh" class="font-calligraphy" style="font-size: 13.5px; color: #165B4A;" />
+                        <ui:VisualElement name="badge-immortal-gate" picking-mode="Ignore" class="badge-dot" style="right: 3px; top: 3px; display: none;" />
                     </ui:Button>
                 </ui:VisualElement>
 
-                <ui:VisualElement name="buff-double-tuvi-pill" class="pill-light" style="display: none; margin-top: 5px; padding: 2px 8px; border-color: #E2A220;">
-                    <ui:Label name="buff-double-tuvi-label" text="x2 Tu Vi · 90s" class="text-gold" style="font-size: 10px;" />
+                <ui:VisualElement name="buff-double-tuvi-pill" class="pill-light" style="display: none; margin-top: 5px; padding: 3px 9px; border-color: #E2A220;">
+                    <ui:Label name="buff-double-tuvi-label" text="x2 Tu Vi · 90s" class="text-gold" style="font-size: 11px;" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1;" />
@@ -232,73 +186,66 @@
                 <ui:Button name="btn-ky-ngo" class="ky-ngo-orb-btn">
                     <ui:VisualElement name="icon-ky-ngo" class="art-slot" style="width: 38px; height: 38px; border-radius: 19px;" />
                 </ui:Button>
-                <ui:Label name="ky-ngo-timer-label" text="Kỳ Ngộ · 25s" class="circle-btn-label text-gold" style="font-size: 9px;" />
+                <ui:Label name="ky-ngo-timer-label" text="Kỳ Ngộ · 25s" class="circle-btn-label font-calligraphy text-gold" style="font-size: 12px;" />
             </ui:VisualElement>
         </ui:VisualElement>
 
         <!-- =================================================
-             BOTTOM BAR: Unlocked Skill Slot(s) | Cluster 1 (☯)
+             BOTTOM BAR: Unlocked Skill Slot(s) | Unified Bagua Cluster (☯)
              ================================================= -->
         <ui:VisualElement picking-mode="Ignore" class="hud-bottom-bar hide-in-mini">
 
-            <!-- BOTTOM-LEFT: Combat Skills 1..4 (Loi Phat / Am Duong / Van Kiem / An Chuong) -->
-            <ui:VisualElement name="skills-bar-wrap" style="flex-direction: row; align-items: flex-end;">
-                <ui:VisualElement name="wrap-skill-0" style="align-items: center; margin-right: 6px;">
-                    <ui:VisualElement name="cd-host-0" style="width: 54px; height: 54px; align-items: center; justify-content: center;">
-                        <ui:Button name="btn-skill-0" class="circle-btn" style="width: 48px; height: 48px;">
-                            <ui:VisualElement name="icon-skill-0" class="circle-btn-icon art-slot" style="width: 32px; height: 32px;" />
+            <!-- BOTTOM-LEFT: Combat Skills 1..4 (Symmetric Uniform-Width Slots) -->
+            <ui:VisualElement name="skills-bar-wrap" class="hud-skills-bar">
+                <ui:VisualElement name="wrap-skill-0" class="hud-skill-slot">
+                    <ui:VisualElement name="cd-host-0" class="hud-skill-cd-host">
+                        <ui:Button name="btn-skill-0" class="circle-btn hud-skill-btn">
+                            <ui:VisualElement name="icon-skill-0" class="circle-btn-icon art-slot hud-skill-icon" />
                             <ui:Label text="1" picking-mode="Ignore" class="pc-hotkey-badge" />
                         </ui:Button>
+                        <ui:Button name="btn-auto-skill-0" text="A" class="btn-compact hud-skill-auto-pill" />
                     </ui:VisualElement>
-                    <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 2px;">
-                        <ui:Label name="lbl-skill-0" text="Lôi Phạt" class="circle-btn-label" style="font-size: 9px;" />
-                        <ui:Button name="btn-auto-skill-0" text="A" class="btn-compact" style="margin-left: 2px; padding: 1px 4px; font-size: 9px; border-radius: 5px;" />
-                    </ui:VisualElement>
+                    <ui:Label name="lbl-skill-0" text="Lôi Phạt" class="skill-name-label" />
                 </ui:VisualElement>
 
-                <ui:VisualElement name="wrap-skill-1" style="align-items: center; margin-right: 6px; display: none;">
-                    <ui:VisualElement name="cd-host-1" style="width: 54px; height: 54px; align-items: center; justify-content: center;">
-                        <ui:Button name="btn-skill-1" class="circle-btn" style="width: 48px; height: 48px;">
-                            <ui:VisualElement name="icon-skill-1" class="circle-btn-icon art-slot" style="width: 32px; height: 32px;" />
+                <ui:VisualElement name="wrap-skill-1" class="hud-skill-slot" style="display: none;">
+                    <ui:VisualElement name="cd-host-1" class="hud-skill-cd-host">
+                        <ui:Button name="btn-skill-1" class="circle-btn hud-skill-btn">
+                            <ui:VisualElement name="icon-skill-1" class="circle-btn-icon art-slot hud-skill-icon" />
                             <ui:Label text="2" picking-mode="Ignore" class="pc-hotkey-badge" />
                         </ui:Button>
+                        <ui:Button name="btn-auto-skill-1" text="A" class="btn-compact hud-skill-auto-pill" />
                     </ui:VisualElement>
-                    <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 2px;">
-                        <ui:Label text="Âm Dương" class="circle-btn-label" style="font-size: 9px;" />
-                        <ui:Button name="btn-auto-skill-1" text="A" class="btn-compact" style="margin-left: 2px; padding: 1px 4px; font-size: 9px; border-radius: 5px;" />
-                    </ui:VisualElement>
+                    <ui:Label text="Âm Dương" class="skill-name-label" />
                 </ui:VisualElement>
 
-                <ui:VisualElement name="wrap-skill-2" style="align-items: center; margin-right: 6px; display: none;">
-                    <ui:VisualElement name="cd-host-2" style="width: 54px; height: 54px; align-items: center; justify-content: center;">
-                        <ui:Button name="btn-skill-2" class="circle-btn" style="width: 48px; height: 48px;">
-                            <ui:VisualElement name="icon-skill-2" class="circle-btn-icon art-slot" style="width: 32px; height: 32px;" />
+                <ui:VisualElement name="wrap-skill-2" class="hud-skill-slot" style="display: none;">
+                    <ui:VisualElement name="cd-host-2" class="hud-skill-cd-host">
+                        <ui:Button name="btn-skill-2" class="circle-btn hud-skill-btn">
+                            <ui:VisualElement name="icon-skill-2" class="circle-btn-icon art-slot hud-skill-icon" />
                             <ui:Label text="3" picking-mode="Ignore" class="pc-hotkey-badge" />
                         </ui:Button>
+                        <ui:Button name="btn-auto-skill-2" text="A" class="btn-compact hud-skill-auto-pill" />
                     </ui:VisualElement>
-                    <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 2px;">
-                        <ui:Label text="Vạn Kiếm" class="circle-btn-label" style="font-size: 9px;" />
-                        <ui:Button name="btn-auto-skill-2" text="A" class="btn-compact" style="margin-left: 2px; padding: 1px 4px; font-size: 9px; border-radius: 5px;" />
-                    </ui:VisualElement>
+                    <ui:Label text="Vạn Kiếm" class="skill-name-label" />
                 </ui:VisualElement>
 
-                <ui:VisualElement name="wrap-skill-3" style="align-items: center; display: none;">
-                    <ui:VisualElement name="cd-host-3" style="width: 54px; height: 54px; align-items: center; justify-content: center;">
-                        <ui:Button name="btn-skill-3" class="circle-btn" style="width: 48px; height: 48px;">
-                            <ui:VisualElement name="icon-skill-3" class="circle-btn-icon art-slot" style="width: 32px; height: 32px;" />
+                <ui:VisualElement name="wrap-skill-3" class="hud-skill-slot hud-skill-slot-last" style="display: none;">
+                    <ui:VisualElement name="cd-host-3" class="hud-skill-cd-host">
+                        <ui:Button name="btn-skill-3" class="circle-btn hud-skill-btn">
+                            <ui:VisualElement name="icon-skill-3" class="circle-btn-icon art-slot hud-skill-icon" />
                             <ui:Label text="4" picking-mode="Ignore" class="pc-hotkey-badge" />
                         </ui:Button>
+                        <ui:Button name="btn-auto-skill-3" text="A" class="btn-compact hud-skill-auto-pill" />
                     </ui:VisualElement>
-                    <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 2px;">
-                        <ui:Label text="Ấn Chưởng" class="circle-btn-label" style="font-size: 9px;" />
-                        <ui:Button name="btn-auto-skill-3" text="A" class="btn-compact" style="margin-left: 2px; padding: 1px 4px; font-size: 9px; border-radius: 5px;" />
-                    </ui:VisualElement>
+                    <ui:Label text="Ấn Chưởng" class="skill-name-label" />
                 </ui:VisualElement>
             </ui:VisualElement>
 
-            <!-- BOTTOM-RIGHT: Cluster 1 Cultivation (☯ Toggle + 6 Circular Slots; horizontal dock on PC) -->
+            <!-- BOTTOM-RIGHT: Unified Bagua Menu (6 Cultivation + 6 Journey & Social) -->
             <ui:VisualElement class="hud-cultivation-dock" style="align-items: flex-end;">
                 <ui:VisualElement name="cluster-cultivation-drawer" class="cluster-panel" style="display: none; margin-bottom: 6px;">
+                    <ui:Label text="Tu Luyện &amp; Tiên Lộ" class="cluster-section-heading" />
                     <ui:VisualElement class="cluster-grid">
                         <ui:VisualElement class="circle-btn-wrap">
                             <ui:Button name="btn-nav-swordpath" class="circle-btn">
@@ -319,6 +266,7 @@
                         <ui:VisualElement class="circle-btn-wrap">
                             <ui:Button name="btn-nav-alchemy" class="circle-btn">
                                 <ui:VisualElement name="icon-nav-alchemy" class="circle-btn-icon art-slot" />
+                                <ui:VisualElement name="badge-alchemy" picking-mode="Ignore" class="badge-dot" style="display: none;" />
                             </ui:Button>
                             <ui:Label text="Luyện Đan" class="circle-btn-label" />
                         </ui:VisualElement>
@@ -326,6 +274,7 @@
                         <ui:VisualElement class="circle-btn-wrap">
                             <ui:Button name="btn-nav-equipment" class="circle-btn locked">
                                 <ui:VisualElement name="icon-nav-equipment" class="circle-btn-icon art-slot" />
+                                <ui:VisualElement name="badge-equipment" picking-mode="Ignore" class="badge-dot" style="display: none;" />
                             </ui:Button>
                             <ui:Label text="Trang Bị" class="circle-btn-label" />
                         </ui:VisualElement>
@@ -333,6 +282,7 @@
                         <ui:VisualElement class="circle-btn-wrap">
                             <ui:Button name="btn-nav-formation" class="circle-btn locked">
                                 <ui:VisualElement name="icon-nav-formation" class="circle-btn-icon art-slot" />
+                                <ui:VisualElement name="badge-formation" picking-mode="Ignore" class="badge-dot" style="display: none;" />
                             </ui:Button>
                             <ui:Label text="Trận Pháp" class="circle-btn-label" />
                         </ui:VisualElement>
@@ -340,16 +290,63 @@
                         <ui:VisualElement class="circle-btn-wrap">
                             <ui:Button name="btn-nav-skills" class="circle-btn">
                                 <ui:VisualElement name="icon-nav-skills" class="circle-btn-icon art-slot" />
+                                <ui:VisualElement name="badge-skills" picking-mode="Ignore" class="badge-dot" style="display: none;" />
                             </ui:Button>
                             <ui:Label text="Kỹ Năng" class="circle-btn-label" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="circle-btn-wrap">
+                            <ui:Button name="btn-nav-diary" class="circle-btn">
+                                <ui:VisualElement name="icon-nav-diary" class="circle-btn-icon art-slot" />
+                                <ui:VisualElement name="badge-pioneer-diary" picking-mode="Ignore" class="badge-dot" style="display: none;" />
+                            </ui:Button>
+                            <ui:Label text="Tiên Lộ" class="circle-btn-label" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="circle-btn-wrap">
+                            <ui:Button name="btn-nav-codex" class="circle-btn">
+                                <ui:VisualElement name="icon-nav-codex" class="circle-btn-icon art-slot" />
+                                <ui:VisualElement name="badge-codex" picking-mode="Ignore" class="badge-dot" style="display: none;" />
+                            </ui:Button>
+                            <ui:Label text="Đồ Giám" class="circle-btn-label" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="circle-btn-wrap">
+                            <ui:Button name="btn-nav-companion" class="circle-btn">
+                                <ui:VisualElement name="icon-nav-companion" class="circle-btn-icon art-slot" />
+                                <ui:VisualElement name="badge-companion" picking-mode="Ignore" class="badge-dot" style="display: none;" />
+                            </ui:Button>
+                            <ui:Label text="Linh Thú" class="circle-btn-label" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="circle-btn-wrap">
+                            <ui:Button name="btn-nav-leaderboard" class="circle-btn">
+                                <ui:VisualElement name="icon-nav-leaderboard" class="circle-btn-icon art-slot" />
+                            </ui:Button>
+                            <ui:Label text="BXH" class="circle-btn-label" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="circle-btn-wrap">
+                            <ui:Button name="btn-nav-friends" class="circle-btn">
+                                <ui:VisualElement name="icon-nav-friends" class="circle-btn-icon art-slot" />
+                                <ui:VisualElement name="badge-friends" picking-mode="Ignore" class="badge-dot" style="display: none;" />
+                            </ui:Button>
+                            <ui:Label text="Đạo Hữu" class="circle-btn-label" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="circle-btn-wrap">
+                            <ui:Button name="btn-nav-mainmenu" class="circle-btn">
+                                <ui:VisualElement name="icon-nav-mainmenu" class="circle-btn-icon art-slot" />
+                            </ui:Button>
+                            <ui:Label text="Nhân Vật" class="circle-btn-label" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
 
                 <ui:VisualElement class="circle-btn-wrap">
-                    <ui:Button name="btn-cluster-cultivation" class="circle-btn" style="width: 62px; height: 62px;">
-                        <ui:VisualElement name="icon-cluster-bagua" class="art-slot" style="width: 44px; height: 44px; border-radius: 22px;" />
-                        <ui:VisualElement name="badge-cluster-bagua" class="badge-dot" style="display: none;" />
+                    <ui:Button name="btn-cluster-cultivation" class="circle-btn" style="width: 64px; height: 64px;">
+                        <ui:VisualElement name="icon-cluster-bagua" class="art-slot" style="width: 46px; height: 46px; border-radius: 23px;" />
+                        <ui:Label name="badge-cluster-bagua" text="" picking-mode="Ignore" class="badge-dot badge-count" style="display: none;" />
                     </ui:Button>
                 </ui:VisualElement>
             </ui:VisualElement>
@@ -362,12 +359,18 @@
     <ui:VisualElement name="modal-backdrop" class="drawer-backdrop" style="display: none;">
         <ui:VisualElement name="modal-sheet" class="panel-light drawer-sheet">
             <ui:VisualElement style="flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom-width: 1px; border-bottom-color: rgba(200,155,60,0.45); padding-bottom: 8px;">
-                <ui:Label name="modal-title" text="Tiêu đề" class="text-title" style="font-size: 17px;" />
-                <ui:Button name="btn-close-modal" text="Đóng" class="btn-compact" style="padding: 4px 10px;" />
+                <ui:Label name="modal-title" text="Tiêu đề" class="text-title" style="font-size: 21.5px; flex-shrink: 1; white-space: normal; margin-right: 8px;" />
+                <ui:Button name="btn-close-modal" text="Đóng" class="btn-compact" style="padding: 5px 12px; flex-shrink: 0;" />
             </ui:VisualElement>
             <ui:ScrollView name="modal-scroll" style="flex-grow: 1;">
                 <ui:VisualElement name="modal-body" style="padding-bottom: 8px;" />
             </ui:ScrollView>
+            <!-- Zone 3: Drawer Inline Feedback Bar (attached cleanly inside modal-sheet bottom) -->
+            <ui:VisualElement name="drawer-inline-toast" picking-mode="Ignore" class="drawer-inline-toast toast-jade" style="display: none;">
+                <ui:VisualElement name="drawer-inline-toast-icon" picking-mode="Ignore" class="toast-icon art-slot" style="display: none;" />
+                <ui:Label name="drawer-inline-toast-tag" text="THÔNG BÁO" picking-mode="Ignore" class="toast-tag" />
+                <ui:Label name="drawer-inline-toast-msg" text="" picking-mode="Ignore" class="toast-msg" />
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 

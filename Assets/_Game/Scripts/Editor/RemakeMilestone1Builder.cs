@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
+using UnityEngine.TextCore.LowLevel;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
 
@@ -163,6 +164,7 @@ namespace KhiVanChiTu.Remake.Editor
                 DataRoot + "/BuildProfiles",
                 DefaultArtRoot,
                 "Assets/_Game/UI/Themes",
+                ResourcesRoot + "/Fonts",
                 ResourcesRoot + "/CodexDrop"
             })
             {
@@ -183,6 +185,7 @@ namespace KhiVanChiTu.Remake.Editor
             }
             bank.menuBgm = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/nhạcmenu.mp3");
             bank.gameBgm = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/NhạcNềnInGame.mp3");
+            bank.bossBgm = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/combat.mp3");
             bank.clickSfx = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/click.mp3");
             bank.swordHitSfx = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/sword.mp3");
             bank.swordMergeSfx = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sounds/mergesword.mp3");
@@ -192,36 +195,210 @@ namespace KhiVanChiTu.Remake.Editor
             return bank;
         }
 
-        private static FontAsset CreateOrUpdateVietnameseFontAsset()
+        private const string FontPathBeVietnamRegular = "Assets/_Game/UI/Fonts/BeVietnamPro/BeVietnamPro-Regular.ttf";
+        private const string FontPathBeVietnamSemiBold = "Assets/_Game/UI/Fonts/BeVietnamPro/BeVietnamPro-SemiBold.ttf";
+        private const string FontPathCormorantBold = "Assets/Import/Asset/Font/Cormorant/Cormorant-Bold.otf";
+        private const string FontPathCharmBold = "Assets/_Game/UI/Fonts/Charm/Charm-Bold.ttf";
+        private const string FontPathBabylonicaRegular = "Assets/Import/Asset/Font/Babylonica/Babylonica-Regular.ttf";
+        private const string FontPathSymbolFallback = "Assets/Resources/SourceSansPro-Regular.ttf";
+
+        [MenuItem("KhiVan/Remake/Rebuild Vietnamese Font Assets")]
+        public static void RebuildVietnameseFontAssetsMenu()
         {
-            string assetPath = ResourcesRoot + "/RemakeFontSDF.asset";
+            EnsureFolders();
+            var baseFont = CreateOrUpdateVietnameseFontAsset(forceRebuild: true);
+            var theme = CreateOrUpdateThemeStyleSheet();
+            CreateOrUpdatePanelSettings(baseFont, theme);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log("[RemakeM1Builder] Rebuilt Vietnamese SDF font family (Cormorant Bold, Be Vietnam Pro Regular/SemiBold, Charm Bold, Babylonica Regular + Symbol Fallback).");
+        }
+
+        private static FontAsset CreateOrUpdateVietnameseFontAsset(bool forceRebuild = false)
+        {
+            EnsureFolder(ResourcesRoot + "/Fonts");
+
+            string fallbackPath = ResourcesRoot + "/Fonts/RemakeFont_SymbolFallbackSDF.asset";
+            string semiBoldPath = ResourcesRoot + "/Fonts/RemakeFont_UiSemiBoldSDF.asset";
+            string cormorantPath = ResourcesRoot + "/Fonts/RemakeFont_CormorantBoldSDF.asset";
+            string charmPath = ResourcesRoot + "/Fonts/RemakeFont_CharmBoldSDF.asset";
+            string babylonicaPath = ResourcesRoot + "/Fonts/RemakeFont_BabylonicaSDF.asset";
+            string baseUiPath = ResourcesRoot + "/RemakeFontSDF.asset";
+
+            var fallbackFont = CreateOrUpdateSingleSdfFontAsset(
+                FontPathSymbolFallback,
+                fallbackPath,
+                "RemakeFont_SymbolFallbackSDF",
+                samplingPointSize: 64,
+                atlasPadding: 6,
+                atlasSize: 1024,
+                normalStyle: 0f,
+                boldStyle: 0.35f,
+                boldSpacing: 0f,
+                fallback: null,
+                forceRebuild: forceRebuild);
+
+            var semiBoldFont = CreateOrUpdateSingleSdfFontAsset(
+                FontPathBeVietnamSemiBold,
+                semiBoldPath,
+                "RemakeFont_UiSemiBoldSDF",
+                samplingPointSize: 64,
+                atlasPadding: 6,
+                atlasSize: 1024,
+                normalStyle: 0f,
+                boldStyle: 0.15f,
+                boldSpacing: 0f,
+                fallback: fallbackFont,
+                forceRebuild: forceRebuild);
+
+            CreateOrUpdateSingleSdfFontAsset(
+                FontPathCormorantBold,
+                cormorantPath,
+                "RemakeFont_CormorantBoldSDF",
+                samplingPointSize: 72,
+                atlasPadding: 7,
+                atlasSize: 1024,
+                normalStyle: 0.10f,
+                boldStyle: 0.18f,
+                boldSpacing: 0f,
+                fallback: fallbackFont,
+                forceRebuild: forceRebuild);
+
+            CreateOrUpdateSingleSdfFontAsset(
+                FontPathCharmBold,
+                charmPath,
+                "RemakeFont_CharmBoldSDF",
+                samplingPointSize: 72,
+                atlasPadding: 7,
+                atlasSize: 1024,
+                normalStyle: 0.04f,
+                boldStyle: 0.12f,
+                boldSpacing: 0f,
+                fallback: fallbackFont,
+                forceRebuild: forceRebuild);
+
+            CreateOrUpdateSingleSdfFontAsset(
+                FontPathBabylonicaRegular,
+                babylonicaPath,
+                "RemakeFont_BabylonicaSDF",
+                samplingPointSize: 72,
+                atlasPadding: 7,
+                atlasSize: 1024,
+                normalStyle: 0.44f,
+                boldStyle: 0.56f,
+                boldSpacing: 0f,
+                fallback: fallbackFont,
+                forceRebuild: forceRebuild);
+
+            var baseUiFont = CreateOrUpdateSingleSdfFontAsset(
+                FontPathBeVietnamRegular,
+                baseUiPath,
+                "RemakeFontSDF",
+                samplingPointSize: 64,
+                atlasPadding: 6,
+                atlasSize: 1024,
+                normalStyle: 0f,
+                boldStyle: 0.35f,
+                boldSpacing: 0f,
+                fallback: fallbackFont,
+                forceRebuild: forceRebuild);
+
+            // Map SemiBold/Bold (weight 600 & 700 -> indices 6, 7) on Be Vietnam Pro Regular directly to genuine Be Vietnam Pro SemiBold!
+            if (baseUiFont != null && semiBoldFont != null && baseUiFont.fontWeightTable != null && baseUiFont.fontWeightTable.Length >= 8)
+            {
+                baseUiFont.fontWeightTable[6] = new FontWeightPair { regularTypeface = semiBoldFont };
+                baseUiFont.fontWeightTable[7] = new FontWeightPair { regularTypeface = semiBoldFont };
+                EditorUtility.SetDirty(baseUiFont);
+            }
+
+            return baseUiFont;
+        }
+
+        private static FontAsset CreateOrUpdateSingleSdfFontAsset(
+            string sourceFontPath,
+            string assetPath,
+            string assetName,
+            int samplingPointSize,
+            int atlasPadding,
+            int atlasSize,
+            float normalStyle,
+            float boldStyle,
+            float boldSpacing,
+            FontAsset fallback,
+            bool forceRebuild)
+        {
+            Font sourceFont = AssetDatabase.LoadAssetAtPath<Font>(sourceFontPath);
+            if (sourceFont == null)
+                throw new InvalidOperationException($"Source font not found at: {sourceFontPath}");
+
             var existing = AssetDatabase.LoadAssetAtPath<FontAsset>(assetPath);
-            if (existing != null) return existing;
+            bool sourceMatches = existing != null && existing.sourceFontFile == sourceFont;
+            if (existing != null && sourceMatches && !forceRebuild)
+            {
+                ConfigureFontAssetProperties(existing, normalStyle, boldStyle, boldSpacing, fallback);
+                return existing;
+            }
 
-            Font sourceFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/Resources/SourceSansPro-Regular.ttf");
-            if (sourceFont == null)
-                sourceFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/Import/Asset/Font/Source Sans Pro/SourceSansPro-Semibold.ttf");
+            if (existing != null)
+                AssetDatabase.DeleteAsset(assetPath);
 
-            if (sourceFont == null)
-                throw new InvalidOperationException("SourceSansPro Vietnamese TTF font not found.");
+            FontAsset fontAsset = FontAsset.CreateFontAsset(
+                sourceFont,
+                samplingPointSize,
+                atlasPadding,
+                GlyphRenderMode.SDFAA,
+                atlasSize,
+                atlasSize,
+                AtlasPopulationMode.Dynamic,
+                enableMultiAtlasSupport: true);
 
-            FontAsset fontAsset = FontAsset.CreateFontAsset(sourceFont);
-            fontAsset.name = "RemakeFontSDF";
+            fontAsset.name = assetName;
             AssetDatabase.CreateAsset(fontAsset, assetPath);
 
-            // Save atlas texture & material as subassets so Dynamic font atlas works in builds
             if (fontAsset.material != null)
             {
-                fontAsset.material.name = "RemakeFontSDF_Material";
+                fontAsset.material.name = assetName + "_Material";
                 AssetDatabase.AddObjectToAsset(fontAsset.material, fontAsset);
             }
             if (fontAsset.atlasTexture != null)
             {
-                fontAsset.atlasTexture.name = "RemakeFontSDF_Atlas";
+                fontAsset.atlasTexture.name = assetName + "_Atlas";
                 AssetDatabase.AddObjectToAsset(fontAsset.atlasTexture, fontAsset);
             }
-            EditorUtility.SetDirty(fontAsset);
+
+            ConfigureFontAssetProperties(fontAsset, normalStyle, boldStyle, boldSpacing, fallback);
             return fontAsset;
+        }
+
+        private static void ConfigureFontAssetProperties(
+            FontAsset fontAsset,
+            float normalStyle,
+            float boldStyle,
+            float boldSpacing,
+            FontAsset fallback)
+        {
+            if (fontAsset == null) return;
+            var so = new SerializedObject(fontAsset);
+            var regW = so.FindProperty("m_RegularStyleWeight");
+            if (regW != null) regW.floatValue = normalStyle;
+            var regS = so.FindProperty("m_RegularStyleSpacing");
+            if (regS != null) regS.floatValue = 0f;
+            var boldW = so.FindProperty("m_BoldStyleWeight");
+            if (boldW != null) boldW.floatValue = boldStyle;
+            var boldS = so.FindProperty("m_BoldStyleSpacing");
+            if (boldS != null) boldS.floatValue = boldSpacing;
+            var clearDyn = so.FindProperty("m_ClearDynamicDataOnBuild");
+            if (clearDyn != null) clearDyn.boolValue = true;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            if (fallback != null && fallback != fontAsset)
+            {
+                if (fontAsset.fallbackFontAssetTable == null)
+                    fontAsset.fallbackFontAssetTable = new List<FontAsset>();
+                fontAsset.fallbackFontAssetTable.Clear();
+                fontAsset.fallbackFontAssetTable.Add(fallback);
+            }
+            EditorUtility.SetDirty(fontAsset);
         }
 
         private static ThemeStyleSheet CreateOrUpdateThemeStyleSheet()
@@ -261,9 +438,15 @@ namespace KhiVanChiTu.Remake.Editor
                 AssetDatabase.CreateAsset(ts, textSettingsPath);
             }
 
-            // Bind SourceSansPro Vietnamese FontAsset cleanly as default font
+            // Bind Be Vietnam Pro Regular (with SemiBold weight table) as default font + SourceSansPro Symbol fallback
             var defaultFontProp = typeof(TextSettings).GetProperty("defaultFontAsset", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             defaultFontProp?.SetValue(ts, fontAsset);
+            var fallbackFont = AssetDatabase.LoadAssetAtPath<FontAsset>(ResourcesRoot + "/Fonts/RemakeFont_SymbolFallbackSDF.asset");
+            if (fallbackFont != null)
+            {
+                var fallbackProp = typeof(TextSettings).GetProperty("fallbackFontAssets", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                fallbackProp?.SetValue(ts, new List<FontAsset> { fallbackFont });
+            }
             EditorUtility.SetDirty(ts);
 
             ps.textSettings = ts;

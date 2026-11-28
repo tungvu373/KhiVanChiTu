@@ -156,11 +156,94 @@ namespace KhiVanChiTu.Remake
             OnGraphicsChanged?.Invoke();
         }
 
+        public void SetMasterVolume(float value, bool saveAndNotify = true)
+        {
+            Settings.masterVolume = Mathf.Clamp01(value);
+            Settings.audioVolumeInitialized = true;
+            RemakeAudioService.Instance?.RefreshVolumes();
+            if (saveAndNotify)
+            {
+                SaveService.Save();
+                OnGraphicsChanged?.Invoke();
+            }
+        }
+
+        public void SetMusicVolume(float value, bool saveAndNotify = true)
+        {
+            Settings.musicVolume = Mathf.Clamp01(value);
+            Settings.audioVolumeInitialized = true;
+            RemakeAudioService.Instance?.RefreshVolumes();
+            if (saveAndNotify)
+            {
+                SaveService.Save();
+                OnGraphicsChanged?.Invoke();
+            }
+        }
+
+        public void SetSfxVolume(float value, bool saveAndNotify = true)
+        {
+            Settings.sfxVolume = Mathf.Clamp01(value);
+            Settings.audioVolumeInitialized = true;
+            RemakeAudioService.Instance?.RefreshVolumes();
+            if (saveAndNotify)
+            {
+                SaveService.Save();
+                OnGraphicsChanged?.Invoke();
+            }
+        }
+
+        public void SetAmbienceVolume(float value, bool saveAndNotify = true)
+        {
+            Settings.ambienceVolume = Mathf.Clamp01(value);
+            Settings.extendedAudioInitialized = true;
+            RemakeAudioService.Instance?.RefreshVolumes();
+            if (saveAndNotify)
+            {
+                SaveService.Save();
+                OnGraphicsChanged?.Invoke();
+            }
+        }
+
+        public void SetVoiceVolume(float value, bool saveAndNotify = true)
+        {
+            Settings.voiceVolume = Mathf.Clamp01(value);
+            Settings.extendedAudioInitialized = true;
+            RemakeAudioService.Instance?.RefreshVolumes();
+            if (saveAndNotify)
+            {
+                SaveService.Save();
+                OnGraphicsChanged?.Invoke();
+            }
+        }
+
+        public static bool IsSoftwareWebGlRenderer()
+        {
+            string dev = SystemInfo.graphicsDeviceName ?? "";
+            return dev.IndexOf("SwiftShader", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   dev.IndexOf("Basic Render", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   dev.IndexOf("llvmpipe", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   dev.IndexOf("Software", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
         public void ApplyFromSave()
         {
             var g = Settings;
             QualitySettings.vSyncCount = 0;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // CRITICAL PC WebGL FPS FIX:
+            // Setting Application.targetFrameRate = 60 on WebGL disables requestAnimationFrame() and falls back
+            // to JS setTimeout(16ms), which Windows Chrome/Edge timer quantization throttles down to 25-35 FPS
+            // across ALL graphics presets! Using -1 restores native requestAnimationFrame() synced smoothly to the display.
+            if (g.afkDimMode)
+                Application.targetFrameRate = 15;
+            else if (g.targetFps <= 35)
+                Application.targetFrameRate = 30;
+            else
+                Application.targetFrameRate = -1;
+#else
             Application.targetFrameRate = g.afkDimMode ? 15 : (g.targetFps <= 35 ? 30 : 60);
+#endif
 
             var urp = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
             if (urp != null)
@@ -183,12 +266,21 @@ namespace KhiVanChiTu.Remake
                         urp.shadowDistance = 40f;
                         break;
                 }
+#if UNITY_WEBGL && !UNITY_EDITOR
+                // Avoid expensive WebGL 2 multisample renderbuffer resolve blits on ANGLE D3D11 desktop browsers
+                urp.msaaSampleCount = 1;
+#else
                 urp.msaaSampleCount = (g.preset == RemakeGraphicsPreset.High && !PlatformWebBridge.IsTouchPlatform()) ? 2 : 1;
+#endif
             }
 
-            // Disable Post-Processing (Bloom RT allocation & blur passes) on Low preset or touch mobile Low/Medium for cool battery & low Safari RAM
+            // Enable Post-Processing (Bloom) only on High preset for WebGL/Mobile so Low & Medium stay zero-blit fast
+#if UNITY_WEBGL && !UNITY_EDITOR
+            bool enablePostFx = g.preset == RemakeGraphicsPreset.High;
+#else
             bool enablePostFx = g.preset == RemakeGraphicsPreset.High ||
                                 (g.preset == RemakeGraphicsPreset.Medium && !PlatformWebBridge.IsTouchPlatform());
+#endif
             var cams = FindObjectsByType<UniversalAdditionalCameraData>(FindObjectsInactive.Exclude);
             for (int i = 0; i < cams.Length; i++)
             {

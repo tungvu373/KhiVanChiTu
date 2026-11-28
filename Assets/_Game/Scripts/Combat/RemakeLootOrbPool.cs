@@ -47,6 +47,8 @@ namespace KhiVanChiTu.Remake
         private Material _beamMat;
         private Texture2D _softGlowTex;
         private Texture2D _beamGradTex;
+        private Camera _cachedMainCam;
+        private int _activeOrbCount;
         private static readonly int ColorPropId = Shader.PropertyToID("_BaseColor");
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -70,11 +72,15 @@ namespace KhiVanChiTu.Remake
 
         private void Update()
         {
+            if (_activeOrbCount <= 0) return;
+
             Vector3 playerPos = RemakeArenaController.Instance != null
                 ? RemakeArenaController.Instance.PlayerWorldPosition + Vector3.up * 1.15f
                 : Vector3.up * 1.15f;
             float dt = Time.deltaTime;
-            Camera cam = Camera.main;
+            if (_cachedMainCam == null || !_cachedMainCam.isActiveAndEnabled)
+                _cachedMainCam = Camera.main;
+            Camera cam = _cachedMainCam;
 
             for (int i = 0; i < PoolSize; i++)
             {
@@ -85,6 +91,7 @@ namespace KhiVanChiTu.Remake
                 if (slot.elapsed >= slot.totalDuration)
                 {
                     slot.active = false;
+                    _activeOrbCount = Mathf.Max(0, _activeOrbCount - 1);
                     slot.root.SetActive(false);
                     continue;
                 }
@@ -179,8 +186,10 @@ namespace KhiVanChiTu.Remake
             slot.totalDuration = beam ? 1.15f : 0.78f;
             slot.baseScale = beam ? 0.42f : 0.28f;
             slot.color = c;
+            bool wasActive = slot.active;
             slot.hasBeam = beam;
             slot.active = true;
+            if (!wasActive) _activeOrbCount++;
 
             slot.orbMpb.SetColor(ColorPropId, c);
             slot.orbRenderer.SetPropertyBlock(slot.orbMpb);

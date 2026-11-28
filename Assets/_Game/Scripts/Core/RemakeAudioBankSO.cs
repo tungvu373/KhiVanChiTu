@@ -11,6 +11,7 @@ namespace KhiVanChiTu.Remake
     {
         public AudioClip menuBgm;
         public AudioClip gameBgm;
+        public AudioClip bossBgm;
         public AudioClip clickSfx;
         public AudioClip swordHitSfx;
         public AudioClip swordMergeSfx;

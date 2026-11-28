@@ -16,7 +16,8 @@ MonoBehaviour:
   m_ShowObsoleteProperties: 0
   m_DefaultFontAsset: {fileID: 11400000, guid: 3c0dc4c0445257247aee58893d63caa7, type: 2}
   m_DefaultFontAssetPath: Fonts & Materials/
-  m_FallbackFontAssets: []
+  m_FallbackFontAssets:
+  - {fileID: 11400000, guid: 4c76ae651bac71147bdc6b2cdb34a751, type: 2}
   m_MatchMaterialPreset: 0
   m_MissingCharacterUnicode: 0
   m_ClearDynamicDataOnBuild: 1

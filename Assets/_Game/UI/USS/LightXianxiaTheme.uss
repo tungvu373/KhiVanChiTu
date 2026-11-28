@@ -3,6 +3,38 @@
     color: #1F2B29;
 }
 
+/* =========================================================
+   XIANXIA TYPOGRAPHY ROLES (Cormorant / Be Vietnam Pro / Charm / Babylonica)
+   ========================================================= */
+.font-ui-regular {
+    -unity-font-definition: resource("RemakeFontSDF");
+    -unity-font-style: normal;
+}
+
+.font-ui-semibold {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
+    -unity-font-style: normal;
+}
+
+.font-heading {
+    -unity-font-definition: resource("Fonts/RemakeFont_CormorantBoldSDF");
+    -unity-font-style: normal;
+}
+
+.font-calligraphy {
+    -unity-font-definition: resource("Fonts/RemakeFont_CharmBoldSDF");
+    -unity-font-style: normal;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.font-ornament {
+    -unity-font-definition: resource("Fonts/RemakeFont_BabylonicaSDF");
+    -unity-font-style: normal;
+    padding-top: 1px;
+    padding-bottom: 2px;
+}
+
 .full-screen {
     position: absolute;
     left: 0;
@@ -48,50 +80,60 @@
 }
 
 .text-title {
-    font-size: 20px;
-    -unity-font-style: bold;
+    -unity-font-definition: resource("Fonts/RemakeFont_CormorantBoldSDF");
+    font-size: 24px;
+    -unity-font-style: normal;
+    letter-spacing: 0.4px;
     color: #182725;
 }
 
 .text-section {
-    font-size: 14px;
-    -unity-font-style: bold;
+    -unity-font-definition: resource("Fonts/RemakeFont_CormorantBoldSDF");
+    font-size: 17px;
+    -unity-font-style: normal;
     color: #1B745C;
 }
 
 .text-body {
-    font-size: 12px;
+    -unity-font-definition: resource("RemakeFontSDF");
+    font-size: 13px;
+    -unity-font-style: normal;
     color: #2A3A37;
 }
 
 .text-muted {
-    font-size: 11px;
+    -unity-font-definition: resource("RemakeFontSDF");
+    font-size: 11.5px;
+    -unity-font-style: normal;
     color: #5A6E6A;
 }
 
 .text-gold {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     color: #A06D10;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 .text-danger {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     color: #B83226;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 /* =========================================================
-   BUTTONS
+   BUTTONS (Be Vietnam Pro SemiBold — Larger & Crisp Fit)
    ========================================================= */
 .btn-primary {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     background-image: resource("BakedMaps/hud_btn_primary_9slice");
     -unity-slice-scale: 0.22;
     background-color: transparent;
     border-width: 0;
-    padding: 9px 26px;
-    min-width: 118px;
+    padding: 9px 22px;
+    min-width: 116px;
     color: #4A2703;
-    -unity-font-style: bold;
-    font-size: 13px;
+    -unity-font-style: normal;
+    font-size: 13.5px;
     -unity-text-align: middle-center;
     transition-property: scale, -unity-background-image-tint-color;
     transition-duration: 0.12s;
@@ -106,15 +148,16 @@
 }
 
 .btn-secondary {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     background-image: resource("BakedMaps/hud_btn_secondary_9slice");
     -unity-slice-scale: 0.20;
     background-color: transparent;
     border-width: 0;
-    padding: 7px 20px;
-    min-width: 88px;
+    padding: 8px 15px;
+    min-width: 84px;
     color: #12483A;
-    -unity-font-style: bold;
-    font-size: 12px;
+    -unity-font-style: normal;
+    font-size: 12.5px;
     -unity-text-align: middle-center;
     transition-property: scale, -unity-background-image-tint-color;
     transition-duration: 0.12s;
@@ -134,14 +177,15 @@
 }
 
 .btn-compact {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     background-color: #DDF0E7;
     border-width: 1.5px;
     border-color: #26876F;
     border-radius: 9px;
-    padding: 4px 10px;
+    padding: 5px 9px;
     color: #165B4A;
-    -unity-font-style: bold;
-    font-size: 11px;
+    -unity-font-style: normal;
+    font-size: 11.5px;
     -unity-text-align: middle-center;
 }
 
@@ -160,14 +204,20 @@
 }
 
 .btn-danger {
-    background-color: #FBE6E4;
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
+    background-color: #C94436;
     border-width: 1.5px;
-    border-color: #C94A38;
+    border-color: #93271D;
     border-radius: 10px;
     padding: 7px 12px;
-    color: #9F291B;
-    -unity-font-style: bold;
-    font-size: 12px;
+    color: #FFFFFF;
+    -unity-font-style: normal;
+    font-size: 12.5px;
+    -unity-text-align: middle-center;
+}
+
+.btn-danger:hover {
+    background-color: #B4372A;
 }
 
 /* =========================================================
@@ -208,16 +258,16 @@
    CIRCULAR HUD BUTTONS (56px TOUCH TARGETS)
    ========================================================= */
 .circle-btn-wrap {
-    width: 62px;
+    width: 74px;
     align-items: center;
-    margin: 3px;
+    margin: 2px;
     transition-property: scale, opacity;
     transition-duration: 0.16s;
 }
 
 .circle-btn {
-    width: 58px;
-    height: 58px;
+    width: 56px;
+    height: 56px;
     background-image: resource("CodexDrop/HUD/hud_circle_btn_idle");
     background-size: contain;
     background-position: center;
@@ -226,7 +276,7 @@
     border-width: 0;
     align-items: center;
     justify-content: center;
-    padding: 9px;
+    padding: 8px;
     transition-property: scale;
     transition-duration: 0.12s;
 }
@@ -258,14 +308,113 @@
 }
 
 .circle-btn-label {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     margin-top: 2px;
-    font-size: 10px;
-    -unity-font-style: bold;
+    font-size: 11px;
+    -unity-font-style: normal;
     color: #1E2E2B;
-    background-color: rgba(250, 247, 238, 0.82);
+    background-color: rgba(250, 247, 238, 0.88);
     border-radius: 6px;
-    padding: 1px 4px;
+    padding: 1px 5px;
+    white-space: nowrap;
     -unity-text-align: middle-center;
+}
+
+.hud-skills-bar {
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.hud-skill-slot {
+    width: 82px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: 6px;
+}
+
+.hud-skill-slot-last {
+    margin-right: 0;
+}
+
+.desktop-wide .hud-skill-slot {
+    width: 90px;
+    margin-right: 8px;
+}
+
+.hud-skill-cd-host {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-skill-btn {
+    width: 50px;
+    height: 50px;
+    padding: 7px;
+}
+
+.hud-skill-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+}
+
+.hud-skill-auto-pill {
+    position: absolute;
+    right: -3px;
+    bottom: -2px;
+    width: 21px;
+    height: 21px;
+    padding: 0;
+    margin: 0;
+    font-size: 9.5px;
+    border-radius: 11px;
+    border-width: 1.5px;
+    -unity-text-align: middle-center;
+}
+
+.skill-name-label {
+    -unity-font-definition: resource("Fonts/RemakeFont_CharmBoldSDF");
+    width: 78px;
+    margin-top: 3px;
+    font-size: 12.5px;
+    -unity-font-style: normal;
+    color: #17302B;
+    background-color: rgba(250, 247, 238, 0.92);
+    border-width: 1px;
+    border-color: rgba(200, 155, 60, 0.45);
+    border-radius: 7px;
+    padding: 1px 4px;
+    white-space: nowrap;
+    -unity-text-align: middle-center;
+}
+
+.desktop-wide .skill-name-label {
+    width: 86px;
+    font-size: 13px;
+}
+
+/* Symmetric Skill Medallion Frame inside Skills Drawer */
+.skill-drawer-medallion {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    border-radius: 24px;
+    background-color: #FFFBF0;
+    border-width: 2px;
+    border-color: #C89B3C;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    flex-shrink: 0;
+}
+
+.grid-tile-selected .skill-drawer-medallion {
+    border-color: #D8890E;
+    background-color: #FFF4CE;
 }
 
 .hud-camera-button {
@@ -302,6 +451,22 @@
     background-color: #D83B2D;
     border-width: 1.5px;
     border-color: #FFFFFF;
+}
+
+.badge-dot.badge-count {
+    width: auto;
+    min-width: 19px;
+    height: 19px;
+    border-radius: 10px;
+    padding: 0 4px;
+    margin: 0;
+    right: -2px;
+    top: -2px;
+    font-size: 10px;
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
+    -unity-font-style: normal;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
 }
 
 .badge-dot.hud-quest-reward-dot {
@@ -343,14 +508,32 @@
     -unity-slice-scale: 0.16;
     background-color: transparent;
     border-width: 0;
-    padding: 12px;
+    padding: 10px 10px 8px 10px;
 }
 
 .cluster-grid {
     flex-direction: row;
     flex-wrap: wrap;
-    width: 210px;
-    justify-content: flex-end;
+    width: 314px;
+    justify-content: flex-start;
+}
+
+.cluster-section-heading {
+    -unity-font-definition: resource("Fonts/RemakeFont_CormorantBoldSDF");
+    -unity-font-style: normal;
+    font-size: 13px;
+    color: #1B6B55;
+    margin-left: 4px;
+    margin-bottom: 3px;
+    padding: 0;
+}
+
+.cluster-divider {
+    height: 1px;
+    width: 100%;
+    background-color: rgba(200, 155, 60, 0.42);
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .mini-mode .hide-in-mini {
@@ -428,9 +611,9 @@
     background-color: #D9483B;
 }
 
-.fps-good { color: #197B56; -unity-font-style: bold; }
-.fps-warn { color: #B4740C; -unity-font-style: bold; }
-.fps-low { color: #C0352B; -unity-font-style: bold; }
+.fps-good { -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF"); color: #197B56; -unity-font-style: normal; }
+.fps-warn { -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF"); color: #B4740C; -unity-font-style: normal; }
+.fps-low { -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF"); color: #C0352B; -unity-font-style: normal; }
 
 /* =========================================================
    TUTORIAL POINTER HIGHLIGHT RING
@@ -444,31 +627,33 @@
 }
 
 .tutorial-tip-pill {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     position: absolute;
     background-color: #FFF9E6;
     border-width: 2px;
     border-color: #D48D15;
     border-radius: 12px;
-    padding: 5px 10px;
-    font-size: 12px;
-    -unity-font-style: bold;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    -unity-font-style: normal;
     color: #5D3C04;
 }
 
 .damage-popup-label {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     position: absolute;
-    font-size: 15px;
-    -unity-font-style: bold;
+    font-size: 16px;
+    -unity-font-style: normal;
     color: #1F2B29;
-    background-color: rgba(255, 253, 246, 0.72);
+    background-color: rgba(255, 253, 246, 0.80);
     border-radius: 8px;
-    padding: 1px 5px;
+    padding: 1px 6px;
 }
 
 .damage-popup-crit {
-    font-size: 19px;
+    font-size: 21px;
     color: #C73E1D;
-    background-color: rgba(255, 245, 214, 0.90);
+    background-color: rgba(255, 245, 214, 0.94);
 }
 
 /* =========================================================
@@ -485,22 +670,25 @@
 }
 
 .stat-up {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     color: #167D52;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 .stat-down {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     color: #C73E1D;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 .coming-soon-badge {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     background-color: #D98E1F;
     color: #FFFFFF;
     border-radius: 6px;
     padding: 2px 7px;
-    font-size: 9px;
-    -unity-font-style: bold;
+    font-size: 8.5px;
+    -unity-font-style: normal;
 }
 
 .ky-ngo-orb-btn {
@@ -518,6 +706,16 @@
 /* =========================================================
    JUICY NOTIFICATION BANNERS, RED ! BADGE, GRIDS & TRIBULATION
    ========================================================= */
+.toast-container-host {
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 134px;
+}
+
+.desktop-wide .toast-container-host {
+    padding-top: 72px;
+}
+
 .toast-stack {
     width: 92%;
     max-width: 440px;
@@ -546,17 +744,37 @@
     border-color: #1F8A6B;
 }
 
+.toast-azure {
+    background-color: rgba(233, 244, 252, 0.98);
+    border-color: #2578B5;
+}
+
+.toast-violet {
+    background-color: rgba(245, 238, 253, 0.98);
+    border-color: #7B46BA;
+}
+
 .toast-danger {
     background-color: rgba(255, 240, 238, 0.98);
     border-color: #D13D2E;
 }
 
+.toast-icon {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    margin-right: 6px;
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
 .toast-tag {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     border-radius: 6px;
-    padding: 2px 6px;
-    margin-right: 7px;
-    font-size: 9px;
-    -unity-font-style: bold;
+    padding: 2px 7px;
+    margin-right: 8px;
+    font-size: 10px;
+    -unity-font-style: normal;
     color: #FFFFFF;
     flex-shrink: 0;
 }
@@ -569,15 +787,32 @@
     background-color: #1A7F62;
 }
 
+.toast-azure .toast-tag {
+    background-color: #1F6CA6;
+}
+
+.toast-violet .toast-tag {
+    background-color: #6A39A6;
+}
+
 .toast-danger .toast-tag {
     background-color: #C83425;
 }
 
 .toast-msg {
-    font-size: 11px;
-    -unity-font-style: bold;
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
+    font-size: 12px;
+    -unity-font-style: normal;
     white-space: normal;
     flex-shrink: 1;
+}
+
+.toast-calligraphy .toast-msg {
+    -unity-font-definition: resource("Fonts/RemakeFont_CharmBoldSDF");
+    font-size: 15px;
+    -unity-font-style: normal;
+    padding-top: 1px;
+    padding-bottom: 1px;
 }
 
 .toast-gold .toast-msg {
@@ -588,11 +823,73 @@
     color: #104939;
 }
 
+.toast-azure .toast-msg {
+    color: #11456E;
+}
+
+.toast-violet .toast-msg {
+    color: #442073;
+}
+
 .toast-danger .toast-msg {
     color: #8A1E14;
 }
 
+/* Zone 2: Compact Combat & Rare Loot Ticker above Bottom-Left Skills */
+.combat-ticker-stack {
+    position: absolute;
+    left: 12px;
+    bottom: 98px;
+    max-width: 344px;
+    align-items: flex-start;
+}
+
+.combat-ticker-pill {
+    flex-direction: row;
+    align-items: center;
+    max-width: 100%;
+    padding: 4px 10px;
+    margin-top: 4px;
+    border-radius: 10px;
+    border-width: 1.5px;
+    transition-property: scale, opacity;
+    transition-duration: 0.14s;
+}
+
+.combat-ticker-pill .toast-icon {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    margin-right: 5px;
+    border-radius: 4px;
+}
+
+.combat-ticker-pill .toast-tag {
+    padding: 1px 5px;
+    margin-right: 6px;
+    font-size: 9px;
+}
+
+.combat-ticker-pill .toast-msg {
+    font-size: 11px;
+}
+
+/* Zone 3: Drawer Inline Feedback Bar inside modal-sheet */
+.drawer-inline-toast {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: 6px 11px;
+    margin-top: 8px;
+    border-radius: 11px;
+    border-width: 1.5px;
+    flex-shrink: 0;
+    transition-property: opacity;
+    transition-duration: 0.16s;
+}
+
 .alert-bang-badge {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     position: absolute;
     right: -3px;
     top: -3px;
@@ -604,19 +901,20 @@
     border-color: #FFFFFF;
     color: #FFFFFF;
     font-size: 13px;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
     -unity-text-align: middle-center;
     padding: 0;
 }
 
 .hud-collapse-pill {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     background-color: rgba(248, 244, 233, 0.94);
     border-width: 1.5px;
     border-color: #C89B3C;
     border-radius: 999px;
-    padding: 3px 10px;
-    font-size: 10px;
-    -unity-font-style: bold;
+    padding: 4px 10px;
+    font-size: 11px;
+    -unity-font-style: normal;
     color: #1B5E4A;
     margin-bottom: 5px;
 }
@@ -626,9 +924,9 @@
     border-width: 2.5px;
     border-color: #D98E14;
     border-radius: 14px;
-    padding: 8px 14px;
-    width: 288px;
-    max-width: 92%;
+    padding: 9px 15px;
+    width: 336px;
+    max-width: 94%;
     align-self: center;
     margin-top: 4px;
 }
@@ -676,8 +974,8 @@
 }
 
 .fifa-main-slot {
-    width: 78px;
-    height: 84px;
+    width: 84px;
+    height: 90px;
     background-color: rgba(255, 246, 216, 0.98);
     border-width: 2.5px;
     border-color: #D98D14;
@@ -690,8 +988,8 @@
 }
 
 .fifa-fodder-slot {
-    width: 60px;
-    height: 72px;
+    width: 66px;
+    height: 78px;
     background-color: rgba(242, 248, 244, 0.95);
     border-width: 1.5px;
     border-color: #469982;
@@ -754,8 +1052,8 @@
    WEB PC / LAPTOP HORIZONTAL LANDSCAPE LAYOUT (16:9)
    ========================================================= */
 .menu-card {
-    width: 396px;
-    max-width: 94%;
+    width: 438px;
+    max-width: 95%;
     padding: 24px 22px;
     align-items: center;
 }
@@ -816,9 +1114,18 @@
     margin-left: 10px;
 }
 
-.desktop-wide #cluster-utility-drawer {
-    flex-direction: row;
-    padding: 8px 10px;
+.hud-cultivation-dock {
+    position: relative;
+    flex-direction: column;
+    align-items: flex-end;
+    overflow: visible;
+}
+
+#cluster-cultivation-drawer {
+    position: absolute;
+    right: 0;
+    bottom: 72px;
+    margin-bottom: 0;
 }
 
 .desktop-wide .hud-cultivation-dock {
@@ -827,16 +1134,19 @@
 }
 
 .desktop-wide #cluster-cultivation-drawer {
+    position: relative;
+    right: auto;
+    bottom: auto;
     margin-bottom: 0;
     margin-right: 8px;
     padding: 8px 10px;
 }
 
 .desktop-wide .cluster-grid {
-    width: auto;
+    width: 472px;
     flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
+    flex-wrap: wrap;
+    justify-content: flex-start;
 }
 
 .desktop-wide .drawer-sheet {
@@ -877,14 +1187,15 @@
 }
 
 .pc-hotkey-badge {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     display: none;
     position: absolute;
     left: -2px;
     top: -2px;
     background-color: rgba(24, 39, 37, 0.85);
     color: #FFF7D6;
-    font-size: 9px;
-    -unity-font-style: bold;
+    font-size: 8.5px;
+    -unity-font-style: normal;
     border-radius: 5px;
     padding: 1px 4px;
     border-width: 1px;
@@ -932,20 +1243,23 @@
 
 .hud-hero-card {
     margin-left: 5px;
-    padding: 4px 8px;
-    min-width: 118px;
-    max-width: 158px;
+    padding: 5px 10px;
+    min-width: 142px;
+    max-width: 196px;
     justify-content: center;
 }
 
 .desktop-wide .hud-hero-card {
-    min-width: 146px;
-    max-width: 196px;
-    padding: 5px 10px;
+    min-width: 170px;
+    max-width: 242px;
+    padding: 6px 11px;
 }
 
 .hud-hero-name {
-    font-size: 12px;
+    -unity-font-definition: resource("Fonts/RemakeFont_CormorantBoldSDF");
+    -unity-font-style: normal;
+    font-size: 15.5px;
+    color: #182725;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -953,13 +1267,24 @@
     white-space: nowrap;
 }
 
+.desktop-wide .hud-hero-name {
+    font-size: 16.5px;
+}
+
 .hud-hero-realm {
-    font-size: 10px;
+    -unity-font-definition: resource("Fonts/RemakeFont_CormorantBoldSDF");
+    -unity-font-style: normal;
+    font-size: 13.5px;
+    color: #9A650B;
     margin: 1px 0 0 0;
     padding: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.desktop-wide .hud-hero-realm {
+    font-size: 14.5px;
 }
 
 .hud-top-right-wrap {
@@ -969,14 +1294,14 @@
 
 .hud-currency-pill {
     margin-right: 4px;
-    padding: 3px 9px;
-    min-height: 24px;
+    padding: 4px 10px;
+    min-height: 26px;
 }
 
 .hud-fps-pill {
     margin-right: 4px;
-    padding: 2px 8px;
-    min-height: 20px;
+    padding: 3px 9px;
+    min-height: 22px;
 }
 
 .hud-stage-center-wrap {
@@ -987,14 +1312,33 @@
 }
 
 .hud-stage-pill {
-    padding: 4px 12px;
+    padding: 5px 14px;
     border-color: rgba(200, 155, 60, 0.85);
+}
+
+.hud-stage-label {
+    -unity-font-definition: resource("Fonts/RemakeFont_CormorantBoldSDF");
+    -unity-font-style: normal;
+    font-size: 14px;
+    color: #182725;
+    margin: 0;
+    padding: 0;
+}
+
+.desktop-wide .hud-stage-label {
+    font-size: 15.5px;
+}
+
+.hud-stage-label.font-calligraphy {
+    -unity-font-definition: resource("Fonts/RemakeFont_CharmBoldSDF");
+    font-size: 14.5px;
+    color: #155948;
 }
 
 .desktop-wide .hud-stage-center-wrap {
     position: absolute;
-    left: 255px;
-    right: 235px;
+    left: 306px;
+    right: 256px;
     top: 3px;
     width: auto;
     margin-top: 0;
@@ -1028,9 +1372,9 @@
     border-width: 2px;
     border-color: #C94A38;
     border-radius: 14px;
-    padding: 8px 14px;
-    width: 296px;
-    max-width: 92%;
+    padding: 9px 15px;
+    width: 336px;
+    max-width: 94%;
     align-self: center;
     margin-top: 5px;
 }
@@ -1142,10 +1486,11 @@
 }
 
 .diary-status-badge {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
     border-radius: 999px;
-    padding: 2px 8px;
-    font-size: 9px;
-    -unity-font-style: bold;
+    padding: 2px 9px;
+    font-size: 10px;
+    -unity-font-style: normal;
     flex-shrink: 0;
 }
 
@@ -1179,21 +1524,6 @@
     padding: 2px 6px;
     margin-right: 5px;
     margin-bottom: 4px;
-}
-
-.btn-danger {
-    background-color: #C94436;
-    color: #FFFFFF;
-    border-width: 1.5px;
-    border-color: #93271D;
-    border-radius: 11px;
-    -unity-font-style: bold;
-    font-size: 12px;
-    padding: 6px 12px;
-}
-
-.btn-danger:hover {
-    background-color: #B4372A;
 }
 
 .desktop-wide #cs-main-panel {
@@ -1239,23 +1569,76 @@
     background-color: rgba(255, 252, 240, 0.99);
 }
 
-.utility-floating-drawer {
-    position: absolute;
-    right: 8px;
-    top: 86px;
-    width: 158px;
+/* =========================================================
+   SETTINGS AUDIO VOLUME SLIDERS (LIGHT SUNLIT XIANXIA)
+   ========================================================= */
+.volume-slider-row {
     flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding: 8px 6px 4px 8px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 7px;
 }
 
-.desktop-wide .utility-floating-drawer {
-    right: 12px;
-    top: 84px;
-    width: auto;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    padding: 8px 10px;
+.volume-slider {
+    flex-grow: 1;
+    height: 24px;
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.volume-slider .unity-base-slider__input {
+    align-items: center;
+}
+
+.volume-slider .unity-base-slider__tracker {
+    height: 8px;
+    top: 50%;
+    margin-top: -4px;
+    border-radius: 4px;
+    background-color: #DCE5DF;
+    border-width: 1px;
+    border-color: rgba(180, 150, 90, 0.58);
+}
+
+.volume-slider .unity-base-slider__fill {
+    background-color: #22886F;
+    border-radius: 4px;
+}
+
+.volume-slider .unity-base-slider__dragger {
+    width: 18px;
+    height: 18px;
+    top: 50%;
+    margin-top: -9px;
+    border-radius: 9px;
+    background-color: #FFF8E1;
+    border-width: 2px;
+    border-color: #C89B3C;
+}
+
+.volume-slider .unity-base-slider__dragger:hover {
+    background-color: #FFE7A0;
+    border-color: #A87412;
+}
+
+.volume-step-btn {
+    width: 28px;
+    height: 26px;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+    border-radius: 7px;
+    flex-shrink: 0;
+}
+
+.volume-pct-label {
+    -unity-font-definition: resource("Fonts/RemakeFont_UiSemiBoldSDF");
+    width: 44px;
+    font-size: 12px;
+    color: #165B4A;
+    -unity-text-align: middle-right;
+    margin-left: 4px;
+    flex-shrink: 0;
 }

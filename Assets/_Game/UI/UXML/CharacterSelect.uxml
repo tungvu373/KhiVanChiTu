@@ -7,12 +7,12 @@
 
         <!-- TOP BAR: Back to MainMenu + Title + FPS -->
         <ui:VisualElement picking-mode="Ignore" style="flex-direction: row; justify-content: space-between; align-items: center;">
-            <ui:Button name="btn-cs-back" text="← Sơn Môn" class="btn-compact" style="padding: 6px 12px; font-size: 11px;" />
+            <ui:Button name="btn-cs-back" text="← Sơn Môn" class="btn-compact" style="padding: 6px 11px; font-size: 11.5px;" />
             <ui:VisualElement class="pill-light" style="padding: 5px 14px;">
-                <ui:Label text="ĐỘNG PHỦ CHỌN NHÂN VẬT (3 Ô)" class="text-section" style="font-size: 12px; margin: 0; padding: 0;" />
+                <ui:Label text="ĐỘNG PHỦ CHỌN NHÂN VẬT (3 Ô)" class="text-section" style="font-size: 16px; margin: 0; padding: 0;" />
             </ui:VisualElement>
             <ui:VisualElement class="pill-light" style="padding: 4px 10px;">
-                <ui:Label name="cs-fps-label" text="60 FPS" class="text-muted fps-good" style="font-size: 10px; margin: 0; padding: 0;" />
+                <ui:Label name="cs-fps-label" text="60 FPS" class="text-muted fps-good" style="font-size: 11px; margin: 0; padding: 0;" />
             </ui:VisualElement>
         </ui:VisualElement>
 
@@ -29,54 +29,54 @@
 
             <!-- FLOATING GENDER TAG BELOW 2D PORTRAIT -->
             <ui:VisualElement picking-mode="Ignore" style="align-items: center; margin-bottom: 6px;">
-                <ui:VisualElement class="pill-light" style="padding: 4px 12px; border-color: #C89B3C;">
+                <ui:VisualElement class="pill-light" style="padding: 5px 14px; border-color: #C89B3C;">
                     <ui:VisualElement name="cs-preview-gender-icon" class="art-slot" style="width: 18px; height: 18px; margin-right: 6px;" />
-                    <ui:Label name="cs-preview-stage-label" text="Nữ Tu · Thanh Vân Tiên Tử" class="text-section" style="font-size: 11px; margin: 0; padding: 0;" />
+                    <ui:Label name="cs-preview-stage-label" text="Nữ Tu · Thanh Vân Tiên Tử" class="text-section" style="font-size: 15px; margin: 0; padding: 0;" />
                 </ui:VisualElement>
             </ui:VisualElement>
 
             <!-- MAIN PANEL: 3 VERTICAL CHARACTER SLOTS + CREATE / ENTER PANEL -->
             <ui:VisualElement name="cs-main-panel" class="panel-light" style="width: 100%; max-width: 520px; align-self: center; padding: 12px;">
                 <!-- 3 VERTICAL SLOTS -->
-                <ui:Label text="Chọn Ô Lưu Tu Luyện (Xếp Dọc — Tối Đa 3 Nhân Vật):" class="text-muted" style="margin-bottom: 6px; font-size: 11px;" />
+                <ui:Label text="Chọn Ô Lưu Tu Luyện (Xếp Dọc — Tối Đa 3 Nhân Vật):" class="text-muted" style="margin-bottom: 6px; font-size: 12px;" />
                 <ui:VisualElement name="cs-slots-vertical" style="flex-direction: column; width: 100%; margin-bottom: 8px;" />
 
                 <!-- CREATE CHARACTER BOX (Shown when an empty slot is selected) -->
                 <ui:VisualElement name="cs-create-box" class="card-light" style="width: 100%; display: none; margin-bottom: 8px; padding: 10px;">
-                    <ui:Label name="cs-create-title" text="Khai Mở Đạo Lộ Mới (Ô #1)" class="text-section" style="font-size: 12px; margin-bottom: 6px;" />
+                    <ui:Label name="cs-create-title" text="Khai Mở Đạo Lộ Mới (Ô #1)" class="text-section" style="font-size: 16px; margin-bottom: 6px;" />
 
                     <!-- Gender Picker -->
-                    <ui:Label text="Chọn Giới Tính Nhân Vật:" class="text-muted" style="font-size: 10px; margin-bottom: 4px;" />
+                    <ui:Label text="Chọn Giới Tính Nhân Vật:" class="text-muted" style="font-size: 11.5px; margin-bottom: 4px;" />
                     <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 8px;">
-                        <ui:Button name="btn-gender-female" class="btn-secondary" style="flex-grow: 1; margin-right: 6px; flex-direction: row; align-items: center; justify-content: center; height: 38px;">
-                            <ui:VisualElement name="ico-gender-female" picking-mode="Ignore" class="art-slot" style="width: 20px; height: 20px; margin-right: 6px;" />
-                            <ui:Label text="Nữ Tu (Tóc Đen)" picking-mode="Ignore" class="text-body" style="-unity-font-style: bold; font-size: 11px; margin: 0; padding: 0;" />
+                        <ui:Button name="btn-gender-female" class="btn-secondary" style="flex-grow: 1; margin-right: 6px; flex-direction: row; align-items: center; justify-content: center; height: 40px; padding-left: 8px; padding-right: 8px;">
+                            <ui:VisualElement name="ico-gender-female" picking-mode="Ignore" class="art-slot" style="width: 20px; height: 20px; margin-right: 5px; flex-shrink: 0;" />
+                            <ui:Label text="Nữ Tu (Tóc Đen)" picking-mode="Ignore" class="font-ui-semibold" style="font-size: 12px; margin: 0; padding: 0;" />
                         </ui:Button>
-                        <ui:Button name="btn-gender-male" class="btn-secondary" style="flex-grow: 1; flex-direction: row; align-items: center; justify-content: center; height: 38px;">
-                            <ui:VisualElement name="ico-gender-male" picking-mode="Ignore" class="art-slot" style="width: 20px; height: 20px; margin-right: 6px;" />
-                            <ui:Label text="Nam Tu (Kiếm Tu)" picking-mode="Ignore" class="text-body" style="-unity-font-style: bold; font-size: 11px; margin: 0; padding: 0;" />
+                        <ui:Button name="btn-gender-male" class="btn-secondary" style="flex-grow: 1; flex-direction: row; align-items: center; justify-content: center; height: 40px; padding-left: 8px; padding-right: 8px;">
+                            <ui:VisualElement name="ico-gender-male" picking-mode="Ignore" class="art-slot" style="width: 20px; height: 20px; margin-right: 5px; flex-shrink: 0;" />
+                            <ui:Label text="Nam Tu (Kiếm Tu)" picking-mode="Ignore" class="font-ui-semibold" style="font-size: 12px; margin: 0; padding: 0;" />
                         </ui:Button>
                     </ui:VisualElement>
 
                     <!-- Dao Name Input -->
-                    <ui:Label text="Nhập Đạo Hiệu (Tối đa 20 ký tự · Hỗ trợ Telex iOS):" class="text-muted" style="font-size: 10px; margin-bottom: 4px;" />
+                    <ui:Label text="Nhập Đạo Hiệu (Tối đa 20 ký tự · Hỗ trợ Telex iOS):" class="text-muted" style="font-size: 11.5px; margin-bottom: 4px;" />
                     <ui:VisualElement style="flex-direction: row; align-items: center;">
-                        <ui:TextField name="cs-input-dao-name" value="Thanh Vân Tiên Tử" max-length="20" style="flex-grow: 1; height: 34px; margin-right: 6px; background-color: #FFFFFF;" />
-                        <ui:Button name="btn-cs-touch-keyboard" text="Sửa Tên" class="btn-compact" style="padding: 6px 10px;" />
+                        <ui:TextField name="cs-input-dao-name" value="Thanh Vân Tiên Tử" max-length="20" style="flex-grow: 1; height: 36px; margin-right: 6px; background-color: #FFFFFF; font-size: 13px;" />
+                        <ui:Button name="btn-cs-touch-keyboard" text="Sửa Tên" class="btn-compact" style="padding: 7px 11px;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
 
                 <!-- PRIMARY ACTION BUTTON -->
-                <ui:Button name="btn-cs-enter" text="TIẾP TỤC TU HÀNH" class="btn-primary" style="width: 100%; height: 42px; font-size: 14px;" />
+                <ui:Button name="btn-cs-enter" text="TIẾP TỤC TU HÀNH" class="btn-primary" style="width: 100%; height: 44px; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 
     <!-- DELETE CONFIRMATION MODAL (Mandatory 2-Step Confirm!) -->
     <ui:VisualElement name="cs-delete-modal" class="drawer-backdrop" style="display: none; align-items: center; justify-content: center;">
-        <ui:VisualElement class="panel-light" style="width: 90%; max-width: 380px; padding: 16px;">
-            <ui:Label text="XÁC NHẬN XÓA NHÂN VẬT" class="text-danger" style="font-size: 15px; -unity-text-align: middle-center; margin-bottom: 8px;" />
-            <ui:Label name="cs-delete-message" text="Bạn có chắc muốn xóa nhân vật này? Hành động này không thể hoàn tác!" class="text-body" style="white-space: normal; font-size: 12px; -unity-text-align: middle-center; margin-bottom: 14px;" />
+        <ui:VisualElement class="panel-light" style="width: 90%; max-width: 400px; padding: 18px;">
+            <ui:Label text="XÁC NHẬN XÓA NHÂN VẬT" class="font-heading text-danger" style="font-size: 20px; -unity-text-align: middle-center; margin-bottom: 8px;" />
+            <ui:Label name="cs-delete-message" text="Bạn có chắc muốn xóa nhân vật này? Hành động này không thể hoàn tác!" class="text-body" style="white-space: normal; font-size: 13px; -unity-text-align: middle-center; margin-bottom: 14px;" />
             <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
                 <ui:Button name="btn-cs-delete-cancel" text="Hủy Bỏ" class="btn-secondary" style="flex-grow: 1; margin-right: 8px; height: 38px;" />
                 <ui:Button name="btn-cs-delete-confirm" text="Xác Nhận Xóa" class="btn-danger" style="flex-grow: 1; height: 38px;" />

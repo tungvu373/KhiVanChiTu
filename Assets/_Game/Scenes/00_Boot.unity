@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &198484522
+--- !u!1 &1234202065
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,9 +127,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 198484525}
-  - component: {fileID: 198484524}
-  - component: {fileID: 198484523}
+  - component: {fileID: 1234202068}
+  - component: {fileID: 1234202067}
+  - component: {fileID: 1234202066}
   m_Layer: 0
   m_Name: BootOverlayUI
   m_TagString: Untagged
@@ -137,26 +137,26 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &198484523
+--- !u!114 &1234202066
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198484522}
+  m_GameObject: {fileID: 1234202065}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ffad72d12cdfd124ba26f3e781e2882c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.BootOverlayController
-  uiDocument: {fileID: 198484524}
---- !u!114 &198484524
+  uiDocument: {fileID: 1234202067}
+--- !u!114 &1234202067
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198484522}
+  m_GameObject: {fileID: 1234202065}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
@@ -173,13 +173,13 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!4 &198484525
+--- !u!4 &1234202068
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198484522}
+  m_GameObject: {fileID: 1234202065}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -188,7 +188,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1042319884
+--- !u!1 &2082706938
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -196,17 +196,17 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1042319895}
-  - component: {fileID: 1042319894}
-  - component: {fileID: 1042319893}
-  - component: {fileID: 1042319892}
-  - component: {fileID: 1042319891}
-  - component: {fileID: 1042319890}
-  - component: {fileID: 1042319889}
-  - component: {fileID: 1042319888}
-  - component: {fileID: 1042319887}
-  - component: {fileID: 1042319886}
-  - component: {fileID: 1042319885}
+  - component: {fileID: 2082706949}
+  - component: {fileID: 2082706948}
+  - component: {fileID: 2082706947}
+  - component: {fileID: 2082706946}
+  - component: {fileID: 2082706945}
+  - component: {fileID: 2082706944}
+  - component: {fileID: 2082706943}
+  - component: {fileID: 2082706942}
+  - component: {fileID: 2082706941}
+  - component: {fileID: 2082706940}
+  - component: {fileID: 2082706939}
   m_Layer: 0
   m_Name: RemakeBootCore
   m_TagString: Untagged
@@ -214,132 +214,132 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1042319885
+--- !u!114 &2082706939
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: df5090459a007804b9549d647290ce3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.GameplayEngine
   stageDatabase: {fileID: 11400000, guid: f9752096a65d4f14ba9a332e6e01ff69, type: 2}
---- !u!114 &1042319886
+--- !u!114 &2082706940
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8cadd7a027b4b634297b5ccd85ab0f25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.RemakeOnlineService
---- !u!114 &1042319887
+--- !u!114 &2082706941
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f3b7ff93bdca504b9ed97175d40285b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.SceneFlowController
---- !u!114 &1042319888
+--- !u!114 &2082706942
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4325d672f326c445abb996f52f04757, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.RemakeAudioService
   audioBank: {fileID: 11400000, guid: 75a5884ba94d1f040bea0de19742ee53, type: 2}
---- !u!114 &1042319889
+--- !u!114 &2082706943
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 597515f60029d24428e0339066d71663, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.BackgroundCatchupService
---- !u!114 &1042319890
+--- !u!114 &2082706944
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdfc50b771d695f478d849e4bcc52300, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.FpsMonitorService
---- !u!114 &1042319891
+--- !u!114 &2082706945
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16b0f436953422a48ae8d2823bf63186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.GraphicsSettingsService
---- !u!114 &1042319892
+--- !u!114 &2082706946
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46f2cb2f90d0e8943a14240190990abf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.PlatformWebBridge
---- !u!114 &1042319893
+--- !u!114 &2082706947
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f86164bee1ddd2f42866865074fa3474, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.GameBootstrap
   autoStartMainMenu: 1
---- !u!81 &1042319894
+--- !u!81 &2082706948
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   m_Enabled: 1
---- !u!4 &1042319895
+--- !u!4 &2082706949
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042319884}
+  m_GameObject: {fileID: 2082706938}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -352,5 +352,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1042319895}
-  - {fileID: 198484525}
+  - {fileID: 2082706949}
+  - {fileID: 1234202068}

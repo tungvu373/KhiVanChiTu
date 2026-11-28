@@ -3,9 +3,10 @@
 ## Cách chạy nhanh sau khi `git pull` (Windows x64)
 
 1. Cài **Node.js 22 trở lên** (nếu máy chưa có).
-2. Mở file **`Open-ServerConsole.bat`** (double-click).
-   - Trình duyệt sẽ tự mở trang **`http://khivan.localhost:9090/`**.
+2. Chạy **`Install-DesktopApp.bat`** để tạo icon app **`KhiVan Server Console`** ngay trên màn hình Desktop (hoặc mở trực tiếp **`Open-ServerConsole.bat`**).
+   - Khi nhấn đúp icon trên Desktop, cửa sổ App độc lập sẽ tự mở tại **`http://khivan.localhost:9090/`** (không cần bật terminal hay Antigravity).
    - Lần đầu bấm **Bật Máy Chủ Public (Internet)** hoặc **Bật Chỉ Mạng Wi-Fi (LAN)**, Console sẽ tự động chạy `npm install`, tải `Nakama` và `cloudflared` về `%LOCALAPPDATA%\KhiVanChiTu\LocalServer\`.
+   - Khi muốn tắt hẳn Console và giải phóng 100% RAM, nhấn nút **`⏻ Tắt App Console`** ở góc trên phải trong app.
 3. Để chơi game tại `/game/`, hãy build bản WebGL từ Unity vào thư mục **`Builds/LocalWeb/`** ở gốc project (hoặc giải nén bản build vào đó).
 
 ---

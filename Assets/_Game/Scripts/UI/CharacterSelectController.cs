@@ -110,11 +110,13 @@ namespace KhiVanChiTu.Remake
             {
                 RemakeAudioService.Instance?.PlayClick();
                 SelectDraftGender(RemakeCharacterGender.Female);
+                RemakeAudioService.Instance?.TryPlayVoice(RemakeVoiceLineId.SelectPreview, RemakeCharacterGender.Female, true);
             });
             _btnGenderMale?.RegisterCallback<ClickEvent>(_ =>
             {
                 RemakeAudioService.Instance?.PlayClick();
                 SelectDraftGender(RemakeCharacterGender.Male);
+                RemakeAudioService.Instance?.TryPlayVoice(RemakeVoiceLineId.SelectPreview, RemakeCharacterGender.Male, true);
             });
 
             _inputDaoName?.RegisterValueChangedCallback(_ => _userEditedName = true);
@@ -151,7 +153,7 @@ namespace KhiVanChiTu.Remake
                 if (_pendingDeleteSlot >= 0 && _pendingDeleteSlot < SaveService.MaxCharacterSlots)
                 {
                     SaveService.DeleteSlot(_pendingDeleteSlot);
-                    BootOverlayController.Instance?.ShowToast($"Đã xóa nhân vật tại Ô #{_pendingDeleteSlot + 1}!");
+                    BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.Warning, $"Đã xóa nhân vật tại Ô #{_pendingDeleteSlot + 1}!", RemakeNotifyZone.GrandTop);
                     _selectedSlot = _pendingDeleteSlot;
                 }
                 _pendingDeleteSlot = -1;
@@ -176,7 +178,7 @@ namespace KhiVanChiTu.Remake
 
             if (peek != null && peek.schemaVersion > SaveService.CurrentSchemaVersion)
             {
-                BootOverlayController.Instance?.ShowToast("Bản lưu ô này thuộc phiên bản mới hơn, không thể mở!");
+                BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.Error, "Bản lưu ô này thuộc phiên bản mới hơn, không thể mở!", RemakeNotifyZone.GrandTop, true);
                 return;
             }
 
@@ -241,6 +243,9 @@ namespace KhiVanChiTu.Remake
                     RemakeAudioService.Instance?.PlayClick();
                     _selectedSlot = slotIdx;
                     _userEditedName = false;
+                    var slotPeek = SaveService.PeekSlot(slotIdx);
+                    if (slotPeek != null && slotPeek.hasCreatedCharacter)
+                        RemakeAudioService.Instance?.TryPlayVoice(RemakeVoiceLineId.SelectPreview, slotPeek.gender, false);
                     RefreshAll();
                 })
                 {
@@ -285,39 +290,46 @@ namespace KhiVanChiTu.Remake
                     string realmLbl = CultivationTable.GetRealmDisplayName(data.realmIndex, data.subStage);
 
                     var info = new VisualElement { pickingMode = PickingMode.Ignore, style = { flexGrow = 1, flexShrink = 1, alignItems = Align.FlexStart } };
-                    var topLine = new VisualElement { pickingMode = PickingMode.Ignore, style = { flexDirection = FlexDirection.Row, alignItems = Align.Center } };
-                    topLine.Add(new Label($"Ô {slotIdx + 1} · {data.daoName}")
+                    var topLine = new VisualElement { pickingMode = PickingMode.Ignore, style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, flexWrap = Wrap.NoWrap } };
+                    var slotNameLbl = new Label($"Ô {slotIdx + 1} · {data.daoName}")
                     {
                         pickingMode = PickingMode.Ignore,
-                        style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, color = new Color(0.11f, 0.22f, 0.19f), marginRight = 6 }
-                    });
+                        style = { fontSize = 16.5f, color = new Color(0.11f, 0.22f, 0.19f), marginRight = 6, overflow = Overflow.Hidden, textOverflow = TextOverflow.Ellipsis, whiteSpace = WhiteSpace.NoWrap, flexShrink = 1 }
+                    };
+                    slotNameLbl.AddToClassList("font-heading");
+                    topLine.Add(slotNameLbl);
                     var gTag = new Label(gLbl)
                     {
                         pickingMode = PickingMode.Ignore,
                         style =
                         {
-                            fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold,
+                            fontSize = 10f, flexShrink = 0,
                             color = data.gender == RemakeCharacterGender.Male ? new Color(0.12f, 0.36f, 0.68f) : new Color(0.68f, 0.24f, 0.42f),
                             backgroundColor = data.gender == RemakeCharacterGender.Male ? new Color(0.86f, 0.93f, 1.00f) : new Color(1.00f, 0.90f, 0.94f),
                             paddingLeft = 5, paddingRight = 5, paddingTop = 1, paddingBottom = 1,
                             borderTopLeftRadius = 5, borderTopRightRadius = 5, borderBottomLeftRadius = 5, borderBottomRightRadius = 5
                         }
                     };
+                    gTag.AddToClassList("font-ui-semibold");
                     topLine.Add(gTag);
                     info.Add(topLine);
 
-                    info.Add(new Label($"{realmLbl} · Ải {data.activeAct + 1}-{data.activeStage}")
+                    var realmStageLbl = new Label($"{realmLbl} · Ải {data.activeAct + 1}-{data.activeStage}")
                     {
                         pickingMode = PickingMode.Ignore,
-                        style = { fontSize = 10, color = new Color(0.15f, 0.48f, 0.36f), unityFontStyleAndWeight = FontStyle.Bold, marginTop = 2 }
-                    });
+                        style = { fontSize = 14f, color = new Color(0.15f, 0.48f, 0.36f), marginTop = 2 }
+                    };
+                    realmStageLbl.AddToClassList("font-heading");
+                    info.Add(realmStageLbl);
 
                     var tvRow = new VisualElement { pickingMode = PickingMode.Ignore, style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, width = Length.Percent(100), marginTop = 3 } };
                     var track = new VisualElement { pickingMode = PickingMode.Ignore, style = { flexGrow = 1, height = 6, marginRight = 6 } };
                     track.AddToClassList("bar-track");
                     track.Add(new VisualElement { pickingMode = PickingMode.Ignore, style = { width = Length.Percent(tvPct * 100f), height = Length.Percent(100), backgroundColor = new Color(0.86f, 0.60f, 0.12f) } });
                     tvRow.Add(track);
-                    tvRow.Add(new Label($"Tu Vi {Mathf.RoundToInt(tvPct * 100)}%") { pickingMode = PickingMode.Ignore, style = { fontSize = 9, color = new Color(0.42f, 0.36f, 0.18f) } });
+                    var tvPctLbl = new Label($"Tu Vi {Mathf.RoundToInt(tvPct * 100)}%") { pickingMode = PickingMode.Ignore, style = { fontSize = 10f, color = new Color(0.42f, 0.36f, 0.18f), flexShrink = 0 } };
+                    tvPctLbl.AddToClassList("font-ui-semibold");
+                    tvRow.Add(tvPctLbl);
                     info.Add(tvRow);
 
                     selectArea.Add(info);
@@ -331,7 +343,7 @@ namespace KhiVanChiTu.Remake
                     {
                         name = $"btn-delete-slot-{slotIdx}",
                         text = "Xóa",
-                        style = { paddingLeft = 9, paddingRight = 9, paddingTop = 5, paddingBottom = 5, fontSize = 10, flexShrink = 0 }
+                        style = { paddingLeft = 10, paddingRight = 10, paddingTop = 5, paddingBottom = 5, fontSize = 11f, flexShrink = 0 }
                     };
                     delBtn.AddToClassList("btn-danger");
                     card.Add(delBtn);
@@ -344,17 +356,20 @@ namespace KhiVanChiTu.Remake
                         style =
                         {
                             width = 42, height = 42, marginRight = 10, fontSize = 22,
-                            unityFontStyleAndWeight = FontStyle.Bold, unityTextAlign = TextAnchor.MiddleCenter,
+                            unityTextAlign = TextAnchor.MiddleCenter,
                             color = new Color(0.16f, 0.52f, 0.40f),
                             backgroundColor = new Color(0.88f, 0.95f, 0.92f),
                             borderTopLeftRadius = 21, borderTopRightRadius = 21, borderBottomLeftRadius = 21, borderBottomRightRadius = 21
                         }
                     };
+                    plus.AddToClassList("font-ui-semibold");
                     selectArea.Add(plus);
 
                     var emptyInfo = new VisualElement { pickingMode = PickingMode.Ignore, style = { flexGrow = 1, alignItems = Align.FlexStart } };
-                    emptyInfo.Add(new Label($"Ô Lưu #{slotIdx + 1} — Trống") { pickingMode = PickingMode.Ignore, style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, color = new Color(0.24f, 0.34f, 0.30f) } });
-                    emptyInfo.Add(new Label("Chạm để chọn giới tính Nam / Nữ và tạo nhân vật mới") { pickingMode = PickingMode.Ignore, style = { fontSize = 10, color = new Color(0.45f, 0.52f, 0.49f), marginTop = 2 } });
+                    var emptyTitle = new Label($"Ô Lưu #{slotIdx + 1} — Trống") { pickingMode = PickingMode.Ignore, style = { fontSize = 15.5f, color = new Color(0.24f, 0.34f, 0.30f) } };
+                    emptyTitle.AddToClassList("font-heading");
+                    emptyInfo.Add(emptyTitle);
+                    emptyInfo.Add(new Label("Chạm để chọn giới tính Nam / Nữ và tạo nhân vật mới") { pickingMode = PickingMode.Ignore, style = { fontSize = 11.5f, color = new Color(0.45f, 0.52f, 0.49f), marginTop = 2, whiteSpace = WhiteSpace.Normal } });
                     selectArea.Add(emptyInfo);
                     card.Add(selectArea);
                 }

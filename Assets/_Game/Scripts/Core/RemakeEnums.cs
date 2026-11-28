@@ -151,4 +151,87 @@ namespace KhiVanChiTu.Remake
         JadeTurtle = 3,
         ThunderSpirit = 4
     }
+
+    public enum RemakeNotifyCategory
+    {
+        Breakthrough = 0,
+        Tribulation = 1,
+        BossCombat = 2,
+        CombatWave = 3,
+        LootDrop = 4,
+        SwordPath = 5,
+        Alchemy = 6,
+        Equipment = 7,
+        DaoVan = 8,
+        Skill = 9,
+        Formation = 10,
+        QuestDiary = 11,
+        Codex = 12,
+        Companion = 13,
+        ImmortalGate = 14,
+        KyNgo = 15,
+        Social = 16,
+        Warning = 17,
+        Error = 18
+    }
+
+    public enum RemakeNotifyZone
+    {
+        Auto = 0,
+        GrandTop = 1,
+        CombatTicker = 2,
+        DrawerInline = 3
+    }
+
+    public enum RemakeMonsterAudioFamily
+    {
+        Auto = 0,
+        Beast = 1,
+        Avian = 2,
+        Armored = 3,
+        SpiritInsect = 4,
+        Boss = 5
+    }
+
+    public enum RemakeVoiceLineId
+    {
+        SelectPreview = 0,
+        RealmTrucCo = 1,
+        RealmKimDan = 2,
+        RealmNguyenAnh = 3,
+        RealmHoaThan = 4,
+        RealmDaiThua = 5,
+        SkillLoiPhat = 6,
+        SkillAmDuong = 7,
+        SkillVanKiem = 8,
+        SkillAnChuong = 9,
+        TribulationStart = 10,
+        BossEncounter = 11,
+        BreakthroughFail = 12,
+        PlayerRespawn = 13,
+        IdleLine1 = 14,
+        IdleLine2 = 15,
+        IdleLine3 = 16,
+        IdleLine4 = 17
+    }
+
+    public enum RemakeVoiceDuckMode
+    {
+        Standard = 0,
+        FullCinematic = 1
+    }
+
+    public enum RemakeAmbienceZone
+    {
+        None = 0,
+        MenuMountain = 1,
+        Act1Meadow = 2,
+        Act2Wasteland = 3,
+        Act3JadePeaks = 4,
+        DemonTower = 5,
+        SecretSword = 6,
+        SecretHerb = 7,
+        SecretOre = 8,
+        TribulationStorm = 9
+    }
 }

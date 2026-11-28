@@ -21,38 +21,39 @@
                         <ui:VisualElement name="menu-portrait-slot" class="art-slot" style="width: 76px; height: 76px; border-radius: 38px; background-color: #FFFDF8;" />
                         <ui:VisualElement name="menu-avatar-frame" picking-mode="Ignore" class="full-screen art-slot" />
                     </ui:VisualElement>
-                    <ui:Label text="KHÍ VẬN CHI TỬ" class="text-title" style="font-size: 26px; margin-top: 8px; -unity-text-align: middle-center;" />
-                    <ui:Label text="Bản Thương Mại · Vạn Giới Đồng Cỏ" class="text-muted" style="margin-top: 2px; margin-bottom: 10px; -unity-text-align: middle-center;" />
+                    <ui:Label text="KHÍ VẬN CHI TỬ" class="text-title" style="font-size: 34px; letter-spacing: 1px; margin-top: 6px; -unity-text-align: middle-center;" />
+                    <ui:Label text="Vạn Giới Đồng Cỏ · Tu Tiên Vấn Đạo" class="font-ornament" style="font-size: 26px; color: #9A6814; margin-top: -1px; margin-bottom: 2px; -unity-text-align: middle-center;" />
+                    <ui:Label text="Bản Thương Mại · Khí Vận Trường Lưu" class="text-muted" style="font-size: 11.5px; margin-top: 0; margin-bottom: 10px; -unity-text-align: middle-center;" />
                 </ui:VisualElement>
 
                 <ui:VisualElement class="menu-form-col">
                     <!-- Account Switcher (Hidden in Release Builds; Editor/Dev Only) -->
                     <ui:VisualElement name="dev-account-switcher" style="width: 100%; margin-bottom: 10px;">
-                        <ui:Label text="Chế Độ Phát Triển (Editor/Dev):" class="text-muted" style="margin-bottom: 4px;" />
+                        <ui:Label text="Chế Độ Phát Triển (Editor/Dev):" class="text-muted" style="font-size: 11.5px; margin-bottom: 4px;" />
                         <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
-                            <ui:Button name="btn-account-main" text="Tài Khoản Chính" class="btn-secondary" style="flex-grow: 1; margin-right: 4px; font-size: 11px;" />
-                            <ui:Button name="btn-account-test" text="Tài Khoản Test Full" class="btn-secondary" style="flex-grow: 1; font-size: 11px;" />
+                            <ui:Button name="btn-account-main" text="Tài Khoản Chính" class="btn-secondary" style="flex-grow: 1; margin-right: 4px; font-size: 11.5px; padding-left: 8px; padding-right: 8px;" />
+                            <ui:Button name="btn-account-test" text="Tài Khoản Test Full" class="btn-secondary" style="flex-grow: 1; font-size: 11.5px; padding-left: 8px; padding-right: 8px;" />
                         </ui:VisualElement>
                     </ui:VisualElement>
 
                     <!-- Active Slot Preview Card -->
                     <ui:VisualElement name="existing-save-box" class="card-light" style="width: 100%; display: none; margin-bottom: 12px;">
-                        <ui:Label name="save-dao-name" text="Đạo Hữu: Thanh Vân Tử" class="text-section" />
-                        <ui:Label name="save-realm-info" text="Luyện Khí Tầng 1 · Ải 1-1" class="text-body" style="margin-top: 3px;" />
+                        <ui:Label name="save-dao-name" text="Đạo Hữu: Thanh Vân Tử" class="text-section" style="font-size: 17px;" />
+                        <ui:Label name="save-realm-info" text="Luyện Khí Tầng 1 · Ải 1-1" class="font-heading" style="font-size: 14.5px; color: #9A650B; margin-top: 3px;" />
                     </ui:VisualElement>
 
                     <!-- Graphics Preset Selector -->
                     <ui:VisualElement style="width: 100%; margin-bottom: 14px;">
-                        <ui:Label text="Cấu Hình 3D Khởi Đầu:" class="text-muted" style="margin-bottom: 6px;" />
+                        <ui:Label text="Cấu Hình 3D Khởi Đầu:" class="text-muted" style="font-size: 11.5px; margin-bottom: 6px;" />
                         <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
-                            <ui:Button name="btn-gfx-low" text="Thấp (iPhone)" class="btn-secondary" style="flex-grow: 1; margin-right: 4px;" />
-                            <ui:Button name="btn-gfx-med" text="Trung (Web)" class="btn-secondary" style="flex-grow: 1; margin-right: 4px;" />
-                            <ui:Button name="btn-gfx-high" text="Cao (PC)" class="btn-secondary" style="flex-grow: 1;" />
+                            <ui:Button name="btn-gfx-low" text="Thấp (iPhone)" class="btn-secondary" style="flex-grow: 1; margin-right: 4px; font-size: 11px; min-width: 76px; padding-left: 6px; padding-right: 6px;" />
+                            <ui:Button name="btn-gfx-med" text="Trung (Web)" class="btn-secondary" style="flex-grow: 1; margin-right: 4px; font-size: 11px; min-width: 76px; padding-left: 6px; padding-right: 6px;" />
+                            <ui:Button name="btn-gfx-high" text="Cao (PC)" class="btn-secondary" style="flex-grow: 1; font-size: 11px; min-width: 76px; padding-left: 6px; padding-right: 6px;" />
                         </ui:VisualElement>
                     </ui:VisualElement>
 
-                    <ui:Button name="btn-open-charselect" text="CHỌN / TẠO NHÂN VẬT (3 Ô)" class="btn-primary" style="width: 100%; height: 44px; font-size: 14px; margin-bottom: 8px;" />
-                    <ui:Button name="btn-play-continue" text="TIẾP TỤC NHANH" class="btn-secondary" style="width: 100%; height: 38px; font-size: 13px; display: none; margin-bottom: 6px;" />
+                    <ui:Button name="btn-open-charselect" text="CHỌN / TẠO NHÂN VẬT (3 Ô)" class="btn-primary" style="width: 100%; height: 46px; font-size: 14px; margin-bottom: 8px;" />
+                    <ui:Button name="btn-play-continue" text="TIẾP TỤC NHANH" class="btn-secondary" style="width: 100%; height: 40px; font-size: 13px; display: none; margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" />
                     <ui:Button name="btn-reset-remake-save" text="Đặt Lại Tài Khoản Test" class="btn-danger" style="width: 100%; margin-top: 4px; display: none;" />
                 </ui:VisualElement>
             </ui:VisualElement>

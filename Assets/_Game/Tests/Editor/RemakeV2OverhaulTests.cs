@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 namespace KhiVanChiTu.Remake.Tests
 {
@@ -962,6 +963,393 @@ namespace KhiVanChiTu.Remake.Tests
             {
                 UnityEngine.Object.DestroyImmediate(inst.gameObject);
             }
+        }
+
+        [Test]
+        public void VietnameseTypography_AllSixSdfFontsLoadWithFullGlyphsAndFallback()
+        {
+            string[] resPaths =
+            {
+                "RemakeFontSDF",
+                "Fonts/RemakeFont_UiSemiBoldSDF",
+                "Fonts/RemakeFont_CormorantBoldSDF",
+                "Fonts/RemakeFont_CharmBoldSDF",
+                "Fonts/RemakeFont_BabylonicaSDF",
+                "Fonts/RemakeFont_SymbolFallbackSDF"
+            };
+
+            const string viSample =
+                "Khí Vận Chi Tử · Luyện Khí · Trúc Cơ · Kim Đan · Nguyên Anh · Hóa Thần · Luyện Hư · Hợp Thể · Đại Thừa · Độ Kiếp " +
+                "ĂÂĐÊÔƠƯăâđêôơưÁÀẢÃẠẮẰẲẴẶẤẦẨẪẬÉÈẺẼẸẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌỐỒỔỖỘỚỜỞỠỢÚÙỦŨỤỨỪỬỮỰÝỲỶỸỴ" +
+                "áàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ ←→◀▶✓▲▼";
+
+            foreach (string rp in resPaths)
+            {
+                var fa = Resources.Load<FontAsset>(rp);
+                Assert.NotNull(fa, $"Missing FontAsset in Resources: {rp}");
+                Assert.NotNull(fa.sourceFontFile, $"FontAsset {rp} must retain sourceFontFile for dynamic runtime SDF");
+                try
+                {
+                    Assert.IsTrue(fa.HasCharacters(viSample, out var missing, searchFallbacks: true, tryAddCharacter: true),
+                        $"FontAsset {rp} missing Vietnamese/UI glyphs even with fallback: {(missing != null ? string.Join(",", missing) : "")}");
+                }
+                finally
+                {
+                    fa.ClearFontAssetData(true);
+                }
+            }
+
+            var baseFont = Resources.Load<FontAsset>("RemakeFontSDF");
+            Assert.NotNull(baseFont.fontWeightTable);
+            Assert.NotNull(baseFont.fontWeightTable[7].regularTypeface, "Base Be Vietnam Pro Regular must map Bold weight to SemiBold FontAsset");
+        }
+
+        [Test]
+        public void AudioVolumeSettings_MigrateLegacyZeroesAndPersistSliderChanges()
+        {
+            // Legacy JSON missing audioVolumeInitialized / volume fields must migrate cleanly to audible defaults
+            var legacy = new RemakeSaveData
+            {
+                schemaVersion = SaveService.CurrentSchemaVersion,
+                hasCreatedCharacter = true,
+                daoName = "AmLuongTest"
+            };
+            legacy.graphics.audioVolumeInitialized = false;
+            legacy.graphics.masterVolume = 0f;
+            legacy.graphics.musicVolume = 0f;
+            legacy.graphics.sfxVolume = 0f;
+            File.WriteAllText(SaveService.GetSaveFilePath(), JsonUtility.ToJson(legacy));
+
+            var loaded = SaveService.Load();
+            Assert.IsTrue(loaded.graphics.audioVolumeInitialized);
+            Assert.That(loaded.graphics.masterVolume, Is.EqualTo(1.0f).Within(0.001f));
+            Assert.That(loaded.graphics.musicVolume, Is.EqualTo(0.70f).Within(0.001f));
+            Assert.That(loaded.graphics.sfxVolume, Is.EqualTo(0.85f).Within(0.001f));
+
+            // GraphicsSettingsService setters clamp [0..1] and persist through SaveService
+            var go = new GameObject("TestGraphicsAudioVol");
+            try
+            {
+                var svc = go.AddComponent<GraphicsSettingsService>();
+                svc.SetMasterVolume(1.5f, true);
+                svc.SetMusicVolume(0.35f, true);
+                svc.SetSfxVolume(-0.2f, true);
+
+                var reloaded = SaveService.Load();
+                Assert.That(reloaded.graphics.masterVolume, Is.EqualTo(1.0f).Within(0.001f));
+                Assert.That(reloaded.graphics.musicVolume, Is.EqualTo(0.35f).Within(0.001f));
+                Assert.That(reloaded.graphics.sfxVolume, Is.EqualTo(0.0f).Within(0.001f));
+                Assert.IsTrue(reloaded.graphics.audioVolumeInitialized);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void NotificationSystem_Categorizes3ZonesCoalescesLootAndFixesFalseRed()
+        {
+            // 1. Explicit 5-palette categories & zero false-red on stage-clear realm hint
+            var waveMeta = BootOverlayController.ResolveMeta(RemakeNotifyCategory.CombatWave, false);
+            Assert.That(waveMeta.CssClass, Is.EqualTo("toast-azure"));
+            var breakMeta = BootOverlayController.ResolveMeta(RemakeNotifyCategory.Breakthrough, false);
+            Assert.That(breakMeta.CssClass, Is.EqualTo("toast-gold"));
+            Assert.IsTrue(breakMeta.UseCalligraphy);
+            var alchMeta = BootOverlayController.ResolveMeta(RemakeNotifyCategory.Alchemy, false);
+            Assert.That(alchMeta.CssClass, Is.EqualTo("toast-violet"));
+            var lootMeta = BootOverlayController.ResolveMeta(RemakeNotifyCategory.LootDrop, false);
+            Assert.That(lootMeta.CssClass, Is.EqualTo("toast-jade"));
+            var errMeta = BootOverlayController.ResolveMeta(RemakeNotifyCategory.Alchemy, true);
+            Assert.That(errMeta.CssClass, Is.EqualTo("toast-danger"));
+            Assert.That(errMeta.BadgeLabel, Is.EqualTo("NỔ LÒ"));
+
+            // Legacy string classifier also must NOT turn "Vượt Ải ... Cần đạt ..." red!
+            var legacyCat = BootOverlayController.InferLegacyCategory("Vượt Ải 1-9! Cần đạt Trúc Cơ để mở Ải 1-10.", out bool legacyErr);
+            Assert.That(legacyCat, Is.EqualTo(RemakeNotifyCategory.CombatWave));
+            Assert.IsFalse(legacyErr);
+
+            // 2. 3-Zone spatial routing
+            Assert.That(BootOverlayController.ResolveEffectiveZone(RemakeNotifyCategory.Breakthrough, RemakeNotifyZone.Auto, false, false),
+                Is.EqualTo(RemakeNotifyZone.GrandTop));
+            Assert.That(BootOverlayController.ResolveEffectiveZone(RemakeNotifyCategory.LootDrop, RemakeNotifyZone.Auto, false, false),
+                Is.EqualTo(RemakeNotifyZone.CombatTicker));
+            Assert.That(BootOverlayController.ResolveEffectiveZone(RemakeNotifyCategory.SwordPath, RemakeNotifyZone.Auto, true, false),
+                Is.EqualTo(RemakeNotifyZone.DrawerInline));
+            Assert.That(BootOverlayController.ResolveEffectiveZone(RemakeNotifyCategory.Alchemy, RemakeNotifyZone.Auto, true, true),
+                Is.EqualTo(RemakeNotifyZone.DrawerInline));
+            Assert.That(BootOverlayController.ResolveEffectiveZone(RemakeNotifyCategory.SwordPath, RemakeNotifyZone.DrawerInline, false, false),
+                Is.EqualTo(RemakeNotifyZone.GrandTop));
+
+            // 3. Suppress routine waves 1/3, 2/3 while keeping Boss/Elite final waves
+            Assert.IsTrue(BootOverlayController.ShouldSuppressWaveToast(1, 3, "Ải 1-1 · Đợt 1/3"));
+            Assert.IsTrue(BootOverlayController.ShouldSuppressWaveToast(2, 3, "Ải 1-1 · Đợt 2/3"));
+            Assert.IsFalse(BootOverlayController.ShouldSuppressWaveToast(2, 2, "Thủ Lĩnh 1-10 xuất hiện!"));
+            Assert.IsFalse(BootOverlayController.ShouldSuppressWaveToast(3, 3, "Đợt Tinh Anh cuối cùng!"));
+
+            // 4. 3s duplicate loot coalescing
+            Assert.IsTrue(BootOverlayController.TryCoalesceMessage("Nhặt Phôi Kiếm Cấp 1!", 1.2f, 1, "Nhặt Phôi Kiếm Cấp 1!", out int c2, out string fmt2));
+            Assert.That(c2, Is.EqualTo(2));
+            Assert.That(fmt2, Is.EqualTo("Nhặt Phôi Kiếm Cấp 1! ×2"));
+            Assert.IsTrue(BootOverlayController.TryCoalesceMessage("Nhặt Phôi Kiếm Cấp 1!", 2.5f, 2, "Nhặt Phôi Kiếm Cấp 1!", out int c3, out string fmt3));
+            Assert.That(c3, Is.EqualTo(3));
+            Assert.That(fmt3, Is.EqualTo("Nhặt Phôi Kiếm Cấp 1! ×3"));
+            Assert.IsFalse(BootOverlayController.TryCoalesceMessage("Nhặt Phôi Kiếm Cấp 1!", 3.5f, 3, "Nhặt Phôi Kiếm Cấp 1!", out int cReset, out _));
+            Assert.That(cReset, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void SmartBadges_EliminateFakeSwordDotAndCountAllTenFeatures()
+        {
+            var go = new GameObject("TestEngineSmartBadges");
+            try
+            {
+                var engine = go.AddComponent<GameplayEngine>();
+                var save = SaveService.Current;
+                save.hasCreatedCharacter = true;
+                save.tutorialCompleted = true;
+                save.totalMerges = 5;
+                save.realmIndex = 0; // Luyen Khi -> max 1 sword slot
+                save.subStage = 1;
+                save.linhThach = 0; // Cannot afford merge
+                save.skillScrollCount = 0;
+                save.equippedSwordLevels.Clear();
+                save.equippedSwordLevels.Add(4);
+                save.swordInventoryLevels.Clear();
+                save.swordInventoryLevels.Add(1); // Single weak sword in bag -> MUST NOT trigger fake red dot!
+
+                var cleanSnap = InGameHudController.ComputeSmartBadges(save, engine, null);
+                Assert.IsFalse(cleanSnap.SwordPath, "Single weaker bag sword with full slots and no pair must NOT show a fake red dot");
+                Assert.That(cleanSnap.BaguaCount, Is.EqualTo(0));
+                Assert.IsFalse(cleanSnap.ImmortalGate);
+
+                // Now add a second Lv.1 sword + enough Linh Thach -> SwordPath lights up!
+                save.swordInventoryLevels.Add(1);
+                save.linhThach = 50000;
+                var pairSnap = InGameHudController.ComputeSmartBadges(save, engine, null);
+                Assert.IsTrue(pairSnap.SwordPath);
+                Assert.That(pairSnap.BaguaCount, Is.EqualTo(1));
+
+                // Unlock all features & populate actionable states across multiple modules
+                save.realmIndex = 4; // Hoa Than -> unlocks Alchemy, Gear, Formations + SubSlot, Skills, Companions, Tower, SecretRealm
+                save.subStage = 1;
+                save.herbsByTier = new[] { 50, 50, 50, 50, 50, 50 };
+                save.skillScrollCount = 2;
+                save.activeMainFormation = -1;
+                save.activeSubFormation = -1;
+                save.equipmentBag.Add(new RemakeEquipmentItem { uid = "eq-up", slot = RemakeEquipSlot.Robe, rarity = RemakeRarity.Dia, tier = 3 });
+                save.demonTowerHighestFloor = 3;
+                save.lastTowerSalaryDayUtc = 0;
+                save.secretRealmDailyRemaining = 3;
+
+                var richSnap = InGameHudController.ComputeSmartBadges(save, engine, null);
+                Assert.IsTrue(richSnap.Alchemy);
+                Assert.IsTrue(richSnap.Equipment);
+                Assert.IsTrue(richSnap.Formation);
+                Assert.IsTrue(richSnap.Skills);
+                Assert.IsTrue(richSnap.Companion);
+                Assert.IsTrue(richSnap.ImmortalGate);
+                Assert.GreaterOrEqual(richSnap.BaguaCount, 6);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void FiveBusAudio_MigratesAmbienceVoiceAutoDuckingAndGenderRoutes()
+        {
+            // 1. Save migration for new ambienceVolume & voiceVolume sliders
+            var legacy = new RemakeSaveData
+            {
+                schemaVersion = SaveService.CurrentSchemaVersion,
+                hasCreatedCharacter = true,
+                daoName = "FiveBusTest"
+            };
+            legacy.graphics.extendedAudioInitialized = false;
+            legacy.graphics.ambienceVolume = 0f;
+            legacy.graphics.voiceVolume = 0f;
+            File.WriteAllText(SaveService.GetSaveFilePath(), JsonUtility.ToJson(legacy));
+
+            var loaded = SaveService.Load();
+            Assert.IsTrue(loaded.graphics.extendedAudioInitialized);
+            Assert.That(loaded.graphics.ambienceVolume, Is.EqualTo(0.65f).Within(0.001f));
+            Assert.That(loaded.graphics.voiceVolume, Is.EqualTo(0.95f).Within(0.001f));
+
+            // 2. Auto-ducking targets: FullCinematic (Nguyen Anh quote with baked music) drops BGM to 8%
+            Assert.That(RemakeAudioService.ResolveDuckMode(RemakeVoiceLineId.RealmNguyenAnh), Is.EqualTo(RemakeVoiceDuckMode.FullCinematic));
+            Assert.That(RemakeAudioService.ResolveDuckMode(RemakeVoiceLineId.SkillVanKiem), Is.EqualTo(RemakeVoiceDuckMode.Standard));
+            RemakeAudioService.ComputeVoiceDuckTargets(true, RemakeVoiceDuckMode.FullCinematic, out float cinBgm, out float cinAmb);
+            Assert.That(cinBgm, Is.EqualTo(0.08f).Within(0.001f));
+            Assert.That(cinAmb, Is.EqualTo(0.25f).Within(0.001f));
+            RemakeAudioService.ComputeVoiceDuckTargets(true, RemakeVoiceDuckMode.Standard, out float stdBgm, out float stdAmb);
+            Assert.That(stdBgm, Is.EqualTo(0.40f).Within(0.001f));
+            Assert.That(stdAmb, Is.EqualTo(0.55f).Within(0.001f));
+            RemakeAudioService.ComputeVoiceDuckTargets(false, RemakeVoiceDuckMode.FullCinematic, out float idleBgm, out float idleAmb);
+            Assert.That(idleBgm, Is.EqualTo(1.0f).Within(0.001f));
+            Assert.That(idleAmb, Is.EqualTo(1.0f).Within(0.001f));
+
+            // 3. Priority hierarchy: Realm Breakthrough (P1) > Boss (P2) > Combat Skill (P3)
+            Assert.Less(RemakeAudioService.ResolveVoicePriority(RemakeVoiceLineId.RealmNguyenAnh),
+                RemakeAudioService.ResolveVoicePriority(RemakeVoiceLineId.BossEncounter));
+            Assert.Less(RemakeAudioService.ResolveVoicePriority(RemakeVoiceLineId.BossEncounter),
+                RemakeAudioService.ResolveVoicePriority(RemakeVoiceLineId.SkillVanKiem));
+
+            // 4. Gendered voice routing (Male vs Female)
+            Assert.That(AudioDropLoader.GetVoiceKey(RemakeVoiceLineId.RealmNguyenAnh, RemakeCharacterGender.Male),
+                Is.EqualTo("Voice/Male/vo_male_realm_nguyenanh"));
+            Assert.That(AudioDropLoader.GetVoiceKey(RemakeVoiceLineId.RealmNguyenAnh, RemakeCharacterGender.Female),
+                Is.EqualTo("Voice/Female/vo_female_realm_nguyenanh"));
+            Assert.That(AudioDropLoader.GetAmbienceKey(RemakeAmbienceZone.Act1Meadow),
+                Is.EqualTo("Ambience/amb_act1_meadow"));
+
+            // 5. All 5 monster audio families resolve cleanly from metadata
+            Assert.That(MonsterDefinitionSO.ResolveAudioFamilyFromMetadata("act1_wolf", false, RemakeMonsterArchetype.FastMelee),
+                Is.EqualTo(RemakeMonsterAudioFamily.Beast));
+            Assert.That(MonsterDefinitionSO.ResolveAudioFamilyFromMetadata("act3_jade_crane", false, RemakeMonsterArchetype.FlyingAgile),
+                Is.EqualTo(RemakeMonsterAudioFamily.Avian));
+            Assert.That(MonsterDefinitionSO.ResolveAudioFamilyFromMetadata("act2_sand_turtle", false, RemakeMonsterArchetype.ArmoredTank),
+                Is.EqualTo(RemakeMonsterAudioFamily.Armored));
+            Assert.That(MonsterDefinitionSO.ResolveAudioFamilyFromMetadata("act3_thunder_spirit", false, RemakeMonsterArchetype.FastMelee),
+                Is.EqualTo(RemakeMonsterAudioFamily.SpiritInsect));
+            Assert.That(MonsterDefinitionSO.ResolveAudioFamilyFromMetadata("act1_boss_guardian", true, RemakeMonsterArchetype.BossGuardian),
+                Is.EqualTo(RemakeMonsterAudioFamily.Boss));
+
+            // 6. GraphicsSettingsService setters persist ambience & voice volumes
+            var go = new GameObject("TestGraphicsFiveBus");
+            try
+            {
+                var svc = go.AddComponent<GraphicsSettingsService>();
+                svc.SetAmbienceVolume(0.45f, true);
+                svc.SetVoiceVolume(0.88f, true);
+                var reloaded = SaveService.Load();
+                Assert.That(reloaded.graphics.ambienceVolume, Is.EqualTo(0.45f).Within(0.001f));
+                Assert.That(reloaded.graphics.voiceVolume, Is.EqualTo(0.88f).Within(0.001f));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void AudioDropBatch1_AllTwelveGoogleFlowClipsImportAndLoadCleanly()
+        {
+            AudioDropLoader.InvalidateCache();
+
+            // 1. Signature Nguyen Anh FullCinematic Male + Female voices (stereo 44.1kHz with music bed)
+            var vMaleNa = AudioDropLoader.LoadVoice(RemakeVoiceLineId.RealmNguyenAnh, RemakeCharacterGender.Male);
+            var vFemaleNa = AudioDropLoader.LoadVoice(RemakeVoiceLineId.RealmNguyenAnh, RemakeCharacterGender.Female);
+            Assert.NotNull(vMaleNa, "Missing vo_male_realm_nguyenanh in Resources/AudioDrop/Voice/Male/");
+            Assert.NotNull(vFemaleNa, "Missing vo_female_realm_nguyenanh in Resources/AudioDrop/Voice/Female/");
+            Assert.Greater(vMaleNa.length, 1.5f);
+            Assert.Greater(vFemaleNa.length, 1.5f);
+
+            // 2. Character select & Van Kiem voices (Male + Female)
+            Assert.NotNull(AudioDropLoader.LoadVoice(RemakeVoiceLineId.SelectPreview, RemakeCharacterGender.Male));
+            Assert.NotNull(AudioDropLoader.LoadVoice(RemakeVoiceLineId.SelectPreview, RemakeCharacterGender.Female));
+            Assert.NotNull(AudioDropLoader.LoadVoice(RemakeVoiceLineId.SkillVanKiem, RemakeCharacterGender.Male));
+            Assert.NotNull(AudioDropLoader.LoadVoice(RemakeVoiceLineId.SkillVanKiem, RemakeCharacterGender.Female));
+
+            // 3. 3 Seamless Ambience zones
+            var ambMeadow = AudioDropLoader.LoadAmbience(RemakeAmbienceZone.Act1Meadow);
+            var ambWaste = AudioDropLoader.LoadAmbience(RemakeAmbienceZone.Act2Wasteland);
+            var ambStorm = AudioDropLoader.LoadAmbience(RemakeAmbienceZone.TribulationStorm);
+            Assert.NotNull(ambMeadow);
+            Assert.NotNull(ambWaste);
+            Assert.NotNull(ambStorm);
+            Assert.Greater(ambMeadow.length, 4.0f);
+
+            // 4. 3 Monster & Boss SFX packs
+            var mobBeast = AudioDropLoader.LoadMonsterCue(RemakeMonsterAudioFamily.Beast, "attack");
+            var mobArmored = AudioDropLoader.LoadMonsterCue(RemakeMonsterAudioFamily.Armored, "hurt");
+            var mobBoss = AudioDropLoader.LoadMonsterCue(RemakeMonsterAudioFamily.Boss, "roar");
+            Assert.NotNull(mobBeast);
+            Assert.NotNull(mobArmored);
+            Assert.NotNull(mobBoss);
+            Assert.LessOrEqual(mobBeast.length, 3.0f, "Normal monster SFX should be trimmed snappy (< 3s)");
+            Assert.LessOrEqual(mobArmored.length, 3.0f, "Armored monster SFX should be trimmed snappy (< 3s)");
+        }
+
+        [Test]
+        public void EquipmentEnhance_And_Skills_AlwaysIncreaseCombatPowerAndEquipScore()
+        {
+            var go = new GameObject("TestEquipEnhancePower");
+            try
+            {
+                var engine = go.AddComponent<GameplayEngine>();
+                var save = SaveService.Current;
+                save.hasCreatedCharacter = true;
+                save.realmIndex = 2; // Kim Dan -> unlocks Equipment & Skills
+                save.subStage = 1;
+                save.linhThach = 1_000_000;
+                save.ore = 500;
+                save.skillScrollCount = 5;
+                save.equippedSwordLevels.Clear();
+                save.equippedSwordLevels.Add(3);
+                save.equippedGear.Clear();
+                save.equipSlotEnhanceLevels = new int[6];
+
+                // Even with an item that ONLY has non-combat substats (TuVi / LinhThach), enhancing MUST increase Combat Power & Lực TB!
+                var utilityRobe = new RemakeEquipmentItem
+                {
+                    uid = "util-robe",
+                    slot = RemakeEquipSlot.Robe,
+                    rarity = RemakeRarity.Huyen,
+                    tier = 2,
+                    substats = new System.Collections.Generic.List<RemakeEquipSubstatEntry>
+                    {
+                        new RemakeEquipSubstatEntry { statType = RemakeEquipStatType.TuViGainPct, value = 12f }
+                    }
+                };
+                save.equippedGear.Add(utilityRobe);
+                engine.InvalidateStatCache();
+
+                double powerBefore = engine.GetPlayerCombatPowerEstimate();
+                float scoreBefore = CultivationTable.CalculateEquipItemScore(utilityRobe, save.realmIndex, save.equipSlotEnhanceLevels[(int)RemakeEquipSlot.Robe]);
+                double hpBefore = engine.PlayerMaxHp;
+
+                // 1. Enhance Defensive slot (Robe) -> increases HP, DR, Equip Score AND Combat Power!
+                Assert.IsTrue(engine.TryEnhanceEquipSlot((int)RemakeEquipSlot.Robe));
+                double powerAfterRobe = engine.GetPlayerCombatPowerEstimate();
+                float scoreAfterRobe = CultivationTable.CalculateEquipItemScore(utilityRobe, save.realmIndex, save.equipSlotEnhanceLevels[(int)RemakeEquipSlot.Robe]);
+                Assert.Greater(engine.PlayerMaxHp, hpBefore, "Enhancing defensive slot must boost Max HP");
+                Assert.Greater(scoreAfterRobe, scoreBefore, "Enhancing slot must visibly boost Lực TB score");
+                Assert.Greater(powerAfterRobe, powerBefore, "Enhancing defensive slot must visibly increase Lực Chiến");
+
+                // 2. Enhance Offensive slot (Crown, even when empty) -> increases Sword ATK AND Combat Power!
+                double atkBefore = engine.GetTotalSwordAttackPower();
+                Assert.IsTrue(engine.TryEnhanceEquipSlot((int)RemakeEquipSlot.Crown));
+                Assert.Greater(engine.GetTotalSwordAttackPower(), atkBefore, "Enhancing offensive slot must boost Sword ATK");
+                double powerAfterCrown = engine.GetPlayerCombatPowerEstimate();
+                Assert.Greater(powerAfterCrown, powerAfterRobe, "Enhancing offensive slot must visibly increase Lực Chiến");
+
+                // 3. Upgrading Combat Skill also increases Combat Power!
+                Assert.IsTrue(engine.TryUpgradeSkill(0, true));
+                Assert.Greater(engine.GetPlayerCombatPowerEstimate(), powerAfterCrown, "Upgrading unlocked skill must boost Lực Chiến");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void IdleVoiceScheduler_P4PriorityAndNonRepeatingShuffleWork()
+        {
+            Assert.Greater(RemakeAudioService.ResolveVoicePriority(RemakeVoiceLineId.IdleLine1),
+                RemakeAudioService.ResolveVoicePriority(RemakeVoiceLineId.SkillVanKiem),
+                "Ambient idle voices must have lower priority (P4) than skills (P3) and breakthroughs (P1)");
+            Assert.That(RemakeAudioService.ResolveDuckMode(RemakeVoiceLineId.IdleLine2), Is.EqualTo(RemakeVoiceDuckMode.Standard));
+            Assert.That(AudioDropLoader.GetVoiceKey(RemakeVoiceLineId.IdleLine1, RemakeCharacterGender.Male), Is.EqualTo("Voice/Male/vo_male_idle_01"));
+            Assert.That(AudioDropLoader.GetVoiceKey(RemakeVoiceLineId.IdleLine4, RemakeCharacterGender.Female), Is.EqualTo("Voice/Female/vo_female_idle_04"));
+
+            // Non-repeating shuffle check
+            int last = 2;
+            var picked = RemakeAudioService.PickNextIdleVoiceLine(last, 2, out int nextIdx);
+            Assert.AreNotEqual(last, nextIdx, "Idle voice picker must never repeat the same clip back-to-back");
+            Assert.That(picked, Is.EqualTo(RemakeVoiceLineId.IdleLine4));
         }
     }
 }

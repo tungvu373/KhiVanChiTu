@@ -112,3 +112,7 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Unity WebGL Burst generated root output & raw Google Flow video drops
+/[Dd]ata/
+Tools/AudioPipeline/RawGoogleFlowDrop/

@@ -8,17 +8,23 @@
         </ui:VisualElement>
     </ui:VisualElement>
 
-    <!-- Juicy Color-Coded Notification Banner Stack -->
-    <ui:VisualElement name="toast-container" picking-mode="Ignore" class="full-screen" style="align-items: center; justify-content: flex-start; padding-top: 84px;">
+    <!-- Zone 1: Grand Top-Center Banner Stack (Major Events: cleanly below Stage Pill, hidden over open Drawers) -->
+    <ui:VisualElement name="toast-container" picking-mode="Ignore" class="full-screen toast-container-host">
         <ui:VisualElement name="toast-stack" picking-mode="Ignore" class="toast-stack" />
+    </ui:VisualElement>
+
+    <!-- Zone 2: Compact Combat & Rare Loot Ticker above Bottom-Left Skills Bar (auto-hidden when Drawer open / Mini-Mode) -->
+    <ui:VisualElement name="combat-ticker-layer" picking-mode="Ignore" class="full-screen">
+        <ui:VisualElement name="combat-ticker-stack" picking-mode="Ignore" class="combat-ticker-stack" />
     </ui:VisualElement>
 
     <!-- Daylight Loading Overlay -->
     <ui:VisualElement name="loading-overlay" class="full-screen" style="display: none; background-color: #E7F5FF; align-items: center; justify-content: center; padding: 24px;">
         <ui:VisualElement name="loading-bg-art" class="full-screen art-slot art-slot-cover" style="opacity: 0.45;" />
-        <ui:VisualElement class="panel-light" style="width: 340px; max-width: 92%; padding: 20px; align-items: center;">
-            <ui:Label text="KHÍ VẬN CHI TỬ" class="text-title" style="font-size: 22px;" />
-            <ui:Label name="loading-status-label" text="Đang tải cảnh giới..." class="text-muted" style="margin-top: 6px; font-size: 12px;" />
+        <ui:VisualElement class="panel-light" style="width: 360px; max-width: 92%; padding: 22px; align-items: center;">
+            <ui:Label text="KHÍ VẬN CHI TỬ" class="text-title" style="font-size: 32px; letter-spacing: 0.8px;" />
+            <ui:Label text="Thiên Địa Linh Khí" class="font-ornament" style="font-size: 28px; color: #9A6814; margin-top: -1px;" />
+            <ui:Label name="loading-status-label" text="Đang tải cảnh giới..." class="text-muted" style="margin-top: 5px; font-size: 12.5px;" />
             <ui:VisualElement class="bar-track" style="width: 100%; height: 12px; margin-top: 14px; border-width: 1px; border-color: rgba(34,136,111,0.3);">
                 <ui:VisualElement name="loading-progress-fill" class="bar-fill-tuvi" style="width: 10%; background-color: #22886F;" />
             </ui:VisualElement>

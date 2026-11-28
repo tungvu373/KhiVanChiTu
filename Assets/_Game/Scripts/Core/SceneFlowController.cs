@@ -35,6 +35,36 @@ namespace KhiVanChiTu.Remake
             _ => WorldSecretOreScene
         };
 
+        public static RemakeAmbienceZone GetAmbienceForScene(string sceneName)
+        {
+            return sceneName switch
+            {
+                MainMenuScene => RemakeAmbienceZone.MenuMountain,
+                CharacterSelectScene => RemakeAmbienceZone.MenuMountain,
+                WorldAct1Scene => RemakeAmbienceZone.Act1Meadow,
+                WorldAct2Scene => RemakeAmbienceZone.Act2Wasteland,
+                WorldAct3Scene => RemakeAmbienceZone.Act3JadePeaks,
+                WorldDemonTowerScene => RemakeAmbienceZone.DemonTower,
+                WorldSecretSwordScene => RemakeAmbienceZone.SecretSword,
+                WorldSecretHerbScene => RemakeAmbienceZone.SecretHerb,
+                WorldSecretOreScene => RemakeAmbienceZone.SecretOre,
+                _ => RemakeAmbienceZone.Act1Meadow
+            };
+        }
+
+        private static void ApplyWorldAudioForScene(string sceneName)
+        {
+            var audio = RemakeAudioService.Instance;
+            if (audio == null) return;
+            audio.SetAmbienceZone(GetAmbienceForScene(sceneName));
+            bool isChallenge = sceneName == WorldDemonTowerScene ||
+                               sceneName == WorldSecretSwordScene ||
+                               sceneName == WorldSecretHerbScene ||
+                               sceneName == WorldSecretOreScene;
+            if (isChallenge) audio.PlayBossMusic();
+            else audio.PlayGameMusic();
+        }
+
         public bool IsTransitioning { get; private set; }
         public bool IsInGame { get; private set; }
         public string ActiveWorldSceneName { get; private set; }
@@ -119,7 +149,9 @@ namespace KhiVanChiTu.Remake
             }
 
             SetActiveSceneByName(MainMenuScene);
+            RemakeAudioService.Instance?.RestoreBaseAmbience();
             RemakeAudioService.Instance?.PlayMenuMusic();
+            RemakeAudioService.Instance?.SetAmbienceZone(RemakeAmbienceZone.MenuMountain);
             GraphicsSettingsService.Instance?.ApplyFromSave();
 
             OnLoadingOverlayChanged?.Invoke(false, 1f, string.Empty);
@@ -149,6 +181,7 @@ namespace KhiVanChiTu.Remake
 
             SetActiveSceneByName(CharacterSelectScene);
             RemakeAudioService.Instance?.PlayMenuMusic();
+            RemakeAudioService.Instance?.SetAmbienceZone(RemakeAmbienceZone.MenuMountain);
             GraphicsSettingsService.Instance?.ApplyFromSave();
 
             OnLoadingOverlayChanged?.Invoke(false, 1f, string.Empty);
@@ -183,7 +216,7 @@ namespace KhiVanChiTu.Remake
             IsInGame = true;
             BackgroundCatchupService.TryCatchupFromElapsed();
             BackgroundCatchupService.MarkActiveTimestamp();
-            RemakeAudioService.Instance?.PlayGameMusic();
+            ApplyWorldAudioForScene(worldSceneName);
             GraphicsSettingsService.Instance?.ApplyFromSave();
             GameplayEngine.Instance?.NotifyArenaReady();
 
@@ -211,6 +244,7 @@ namespace KhiVanChiTu.Remake
             SetActiveSceneByName(nextWorldSceneName);
 
             IsInGame = true;
+            ApplyWorldAudioForScene(nextWorldSceneName);
             GraphicsSettingsService.Instance?.ApplyFromSave();
             GameplayEngine.Instance?.NotifyArenaReady();
             OnLoadingOverlayChanged?.Invoke(false, 1f, string.Empty);
@@ -238,7 +272,9 @@ namespace KhiVanChiTu.Remake
                     OnLoadingOverlayChanged?.Invoke(true, 0.55f + p * 0.45f, "Đang trở về Sơn Môn..."));
             }
             SetActiveSceneByName(MainMenuScene);
+            RemakeAudioService.Instance?.RestoreBaseAmbience();
             RemakeAudioService.Instance?.PlayMenuMusic();
+            RemakeAudioService.Instance?.SetAmbienceZone(RemakeAmbienceZone.MenuMountain);
 
             OnLoadingOverlayChanged?.Invoke(false, 1f, string.Empty);
             IsTransitioning = false;

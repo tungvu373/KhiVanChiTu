@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: KhiVanChiTu.Remake.Runtime::KhiVanChiTu.Remake.RemakeAudioBankSO
   menuBgm: {fileID: 8300000, guid: 2ab10ea1a777b2842afb103f07df71b3, type: 3}
   gameBgm: {fileID: 8300000, guid: d1ae27456a61c13418c222d38d065358, type: 3}
+  bossBgm: {fileID: 8300000, guid: 288ec49f240beac45b4e3f1e560d550c, type: 3}
   clickSfx: {fileID: 8300000, guid: 85f6e69c073670145adcf75b5b1ad794, type: 3}
   swordHitSfx: {fileID: 8300000, guid: a8ee2ebb71a20904ebfd18cf663abb43, type: 3}
   swordMergeSfx: {fileID: 8300000, guid: b28eb7f5f4783674eba09ab0c3e2a6d9, type: 3}

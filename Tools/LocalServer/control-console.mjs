@@ -20,6 +20,7 @@ const CF_EXE = path.join(LOCAL_DATA, 'cloudflared.exe');
 const NAKAMA_EXE = path.join(LOCAL_DATA, 'nakama.exe');
 const WEBGL_INDEX = path.resolve(__dirname, '..', '..', 'Builds', 'LocalWeb', 'index.html');
 const NODE_MODULES_CHECK = path.join(__dirname, 'node_modules', '@heroiclabs', 'nakama-js');
+const ICON_PNG = path.join(__dirname, 'khivan-console.png');
 
 fs.mkdirSync(LOCAL_DATA, { recursive: true });
 
@@ -273,8 +274,10 @@ async function startNodeServer(publicTunnel) {
     cwd: __dirname,
     env,
     stdio: ['ignore', outFd, errFd],
+    detached: true,
     windowsHide: true
   });
+  child.unref();
   managedServer = child;
   child.on('exit', () => {
     if (managedServer === child) managedServer = null;
@@ -301,8 +304,10 @@ async function startCloudflareTunnel() {
   const child = spawn(CF_EXE, ['tunnel', '--url', 'http://127.0.0.1:8080', '--no-autoupdate'], {
     cwd: LOCAL_DATA,
     stdio: ['ignore', 'pipe', 'pipe'],
+    detached: true,
     windowsHide: true
   });
+  child.unref();
   managedTunnel = child;
 
   return new Promise((resolve, reject) => {
@@ -404,6 +409,7 @@ function renderHtml() {
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="/icon.png" />
 <title>Khí Vận Chi Tử — Bảng Điều Khiển Máy Chủ</title>
 <style>
   :root {
@@ -533,6 +539,39 @@ function renderHtml() {
     pointer-events: none; transition: opacity .2s; box-shadow: 0 6px 20px rgba(0,0,0,0.2);
   }
   .toast.show { opacity: 1; }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .btn-power {
+    border: 1px solid #e6b4ae; background: #fff5f4; color: var(--danger);
+    border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 12.5px;
+    cursor: pointer; transition: background .15s, color .15s, transform .1s;
+  }
+  .btn-power:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .btn-power:active { transform: scale(0.97); }
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(20, 32, 28, 0.45);
+    display: none; align-items: center; justify-content: center; padding: 16px; z-index: 99;
+  }
+  .modal-bg.open { display: flex; }
+  .modal-box {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    max-width: 460px; width: 100%; padding: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+  }
+  .modal-box h3 { margin: 0 0 8px; font-size: 17px; color: var(--ink); }
+  .modal-box p { margin: 0 0 16px; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+  .modal-actions { display: flex; flex-direction: column; gap: 8px; }
+  .modal-btn {
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px;
+    font-size: 13.5px; font-weight: 700; cursor: pointer; text-align: center; background: #faf7ee; color: var(--ink);
+  }
+  .modal-btn.danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .modal-btn.jade { background: var(--jade-soft); color: var(--jade); border-color: #b7e2cf; }
+  .modal-btn:hover { opacity: 0.92; }
+  .shutdown-screen {
+    position: fixed; inset: 0; background: var(--bg); z-index: 120;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 24px;
+  }
+  .shutdown-screen.open { display: flex; }
   .notice { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
 </style>
 </head>
@@ -541,9 +580,12 @@ function renderHtml() {
   <header>
     <div class="brand">
       <h1>Khí Vận Chi Tử — Console Điều Khiển Máy Chủ</h1>
-      <p>Tên miền nội bộ: <strong>http://khivan.localhost:${CONSOLE_PORT}/</strong> (Chỉ truy cập từ máy tính này)</p>
+      <p>App Desktop độc lập · <strong>http://khivan.localhost:${CONSOLE_PORT}/</strong> (Tự bật tắt, không chạy qua Antigravity)</p>
     </div>
-    <div id="statusBadge" class="badge stopped"><span class="dot"></span><span>Đang kiểm tra...</span></div>
+    <div class="header-right">
+      <div id="statusBadge" class="badge stopped"><span class="dot"></span><span>Đang kiểm tra...</span></div>
+      <button id="btnShutdownApp" class="btn-power" onclick="openShutdownDialog()">⏻ Tắt App Console</button>
+    </div>
   </header>
 
   <div class="controls">
@@ -654,6 +696,23 @@ function renderHtml() {
 </div>
 
 <div id="toast" class="toast"></div>
+
+<div id="shutdownModal" class="modal-bg">
+  <div class="modal-box">
+    <h3>Tắt App Console Khí Vận?</h3>
+    <p id="shutdownDesc">Bạn muốn tắt hẳn ứng dụng Console (giải phóng cổng 9090 và 100% RAM)?</p>
+    <div class="modal-actions">
+      <button id="btnShutdownAll" class="modal-btn danger" onclick="confirmShutdown(true)">⏻ Tắt Cả Máy Chủ Game &amp; Đóng App Console</button>
+      <button id="btnShutdownOnly" class="modal-btn jade" onclick="confirmShutdown(false)">Chỉ Đóng App Console (Giữ Máy Chủ Chạy Nền)</button>
+      <button class="modal-btn" onclick="closeShutdownDialog()">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<div id="shutdownDone" class="shutdown-screen">
+  <h2 style="color:var(--jade);margin:0 0 8px;">App Console Đã Tắt Hoàn Toàn</h2>
+  <p id="shutdownDoneText" style="color:var(--muted);max-width:440px;line-height:1.5;">Tiến trình Console đã dừng sạch sẽ (0 MB RAM). Bạn có thể đóng cửa sổ này và mở lại bất cứ lúc nào từ icon trên Desktop.</p>
+</div>
 
 <script>
 let state = { urls: {} };
@@ -784,10 +843,44 @@ async function doAction(action) {
   await refreshLogs();
 }
 
+let statusTimer = null;
+let logsTimer = null;
+
+function openShutdownDialog() {
+  const running = state.mode === 'public' || state.mode === 'lan';
+  document.getElementById('shutdownDesc').textContent = running
+    ? 'Máy chủ game hiện đang chạy (' + (state.mode === 'public' ? 'Public Internet' : 'Wi-Fi LAN') + '). Bạn muốn dừng luôn máy chủ hay chỉ đóng App Console?'
+    : 'Máy chủ game đang tắt. Xác nhận tắt hẳn tiến trình App Console để giải phóng cổng 9090 và toàn bộ RAM?';
+  document.getElementById('btnShutdownOnly').style.display = running ? 'block' : 'none';
+  document.getElementById('btnShutdownAll').textContent = running
+    ? '⏻ Tắt Cả Máy Chủ Game & Đóng App Console'
+    : '⏻ Tắt Hẳn App Console';
+  document.getElementById('shutdownModal').classList.add('open');
+}
+
+function closeShutdownDialog() {
+  document.getElementById('shutdownModal').classList.remove('open');
+}
+
+async function confirmShutdown(stopServer) {
+  closeShutdownDialog();
+  if (statusTimer) clearInterval(statusTimer);
+  if (logsTimer) clearInterval(logsTimer);
+  showToast(stopServer ? 'Đang tắt máy chủ & đóng App Console...' : 'Đang đóng App Console...');
+  try {
+    await fetch('/api/console/shutdown?stopServer=' + (stopServer ? '1' : '0'), { method: 'POST' });
+  } catch {}
+  document.getElementById('shutdownDoneText').textContent = stopServer
+    ? 'Đã tắt toàn bộ Máy Chủ Game, Cloudflare Tunnel và App Console (0 MB RAM). Nhấn icon "Khí Vận Server Console" trên Desktop để mở lại khi cần.'
+    : 'Đã tắt tiến trình App Console (máy chủ game vẫn đang chạy nền). Nhấn icon "Khí Vận Server Console" trên Desktop bất cứ lúc nào để quản lý lại.';
+  document.getElementById('shutdownDone').classList.add('open');
+  setTimeout(() => { try { window.close(); } catch {} }, 450);
+}
+
 refreshStatus();
 refreshLogs();
-setInterval(refreshStatus, 3000);
-setInterval(refreshLogs, 4000);
+statusTimer = setInterval(refreshStatus, 3000);
+logsTimer = setInterval(refreshLogs, 4000);
 </script>
 </body>
 </html>`;
@@ -825,6 +918,37 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && url.pathname === '/') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
     res.end(renderHtml());
+    return;
+  }
+
+  if (req.method === 'GET' && (url.pathname === '/icon.png' || url.pathname === '/favicon.ico')) {
+    if (fs.existsSync(ICON_PNG)) {
+      res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=3600' });
+      res.end(fs.readFileSync(ICON_PNG));
+    } else {
+      res.writeHead(204);
+      res.end();
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/console/shutdown') {
+    const stopServer = url.searchParams.get('stopServer') !== '0';
+    try {
+      if (stopServer) {
+        actionBusy = true;
+        actionMessage = 'Đang tắt máy chủ & đóng App Console...';
+        await stopAllGameServerProcesses();
+      }
+      sendJson(res, 200, { ok: true, stopServer, message: 'App Console đang tắt...' });
+    } catch (e) {
+      sendJson(res, 500, { error: e.message || String(e) });
+    } finally {
+      setTimeout(() => {
+        try { server.close(); } catch {}
+        process.exit(0);
+      }, 250);
+    }
     return;
   }
 

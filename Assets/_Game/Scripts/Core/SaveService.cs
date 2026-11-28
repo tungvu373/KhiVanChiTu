@@ -313,6 +313,24 @@ namespace KhiVanChiTu.Remake
                 data.pills = new System.Collections.Generic.List<RemakePillStackEntry>();
             if (data.graphics == null)
                 data.graphics = RemakeSaveData.CreateDefault(isTouch).graphics;
+            if (!data.graphics.audioVolumeInitialized)
+            {
+                data.graphics.masterVolume = 1.0f;
+                data.graphics.musicVolume = 0.70f;
+                data.graphics.sfxVolume = 0.85f;
+                data.graphics.audioVolumeInitialized = true;
+            }
+            if (!data.graphics.extendedAudioInitialized)
+            {
+                data.graphics.ambienceVolume = 0.65f;
+                data.graphics.voiceVolume = 0.95f;
+                data.graphics.extendedAudioInitialized = true;
+            }
+            data.graphics.masterVolume = Mathf.Clamp01(data.graphics.masterVolume);
+            data.graphics.musicVolume = Mathf.Clamp01(data.graphics.musicVolume);
+            data.graphics.ambienceVolume = Mathf.Clamp01(data.graphics.ambienceVolume);
+            data.graphics.voiceVolume = Mathf.Clamp01(data.graphics.voiceVolume);
+            data.graphics.sfxVolume = Mathf.Clamp01(data.graphics.sfxVolume);
             if (data.measuredKillsPerSec <= 0.01)
                 data.measuredKillsPerSec = 0.45;
             if (data.alchemistRank < 1)

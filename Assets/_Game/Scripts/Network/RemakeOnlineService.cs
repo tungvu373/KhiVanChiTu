@@ -167,7 +167,7 @@ namespace KhiVanChiTu.Remake
             if (string.IsNullOrWhiteSpace(message)) return;
             if (!IsConnected)
             {
-                BootOverlayController.Instance?.ShowToast("Chưa kết nối LAN Server (Tools/LocalServer)!");
+                BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.Social, "Chưa kết nối LAN Server (Tools/LocalServer)!", RemakeNotifyZone.Auto, true);
                 ConnectIfNeeded();
                 return;
             }
@@ -223,7 +223,7 @@ namespace KhiVanChiTu.Remake
             long todayKey = DateTime.UtcNow.Year * 1000L + DateTime.UtcNow.DayOfYear;
             if (save.lastTruyenCongDayUtc == todayKey)
             {
-                BootOverlayController.Instance?.ShowToast("Hôm nay bạn đã Truyền Công rồi! Ngày mai quay lại.");
+                BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.Social, "Hôm nay bạn đã Truyền Công rồi! Ngày mai quay lại.", RemakeNotifyZone.Auto, true);
                 return;
             }
             double req = GameplayEngine.Instance != null ? GameplayEngine.Instance.GetRequiredTuViForCurrent() : 1000;
@@ -231,7 +231,7 @@ namespace KhiVanChiTu.Remake
             save.tuVi = Math.Min(req, save.tuVi + bonusTuVi);
             save.lastTruyenCongDayUtc = todayKey;
             SaveService.Save();
-            BootOverlayController.Instance?.ShowToast($"Truyền Công cùng {friendName}: +{CultivationTable.FormatNumber(bonusTuVi)} Tu Vi (5%)!");
+            BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.Social, $"Truyền Công cùng {friendName}: +{CultivationTable.FormatNumber(bonusTuVi)} Tu Vi (5%)!");
             if (IsConnected) BroadcastThienDaoAnnouncement($"{GetSafeDaoName()} và {friendName} vừa cùng Truyền Công ngộ đạo!");
             OnOnlineStateUpdated?.Invoke();
         }
@@ -492,12 +492,12 @@ namespace KhiVanChiTu.Remake
                 yield return req.SendWebRequest();
                 if (req.result == UnityWebRequest.Result.Success)
                 {
-                    BootOverlayController.Instance?.ShowToast($"Đã gửi/chấp nhận kết bạn: {query}");
+                    BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.Social, $"Đã gửi/chấp nhận kết bạn: {query}");
                     yield return FetchFriendsRoutine();
                 }
                 else
                 {
-                    BootOverlayController.Instance?.ShowToast("Không tìm thấy Đạo Hữu! Kiểm tra Username chính xác.");
+                    BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.Social, "Không tìm thấy Đạo Hữu! Kiểm tra Username chính xác.", RemakeNotifyZone.Auto, true);
                 }
             }
         }
@@ -582,9 +582,9 @@ namespace KhiVanChiTu.Remake
             {
                 var res = JsonUtility.FromJson<HoPhapResponse>(json);
                 if (res != null && res.ok)
-                    BootOverlayController.Instance?.ShowToast($"Đã Hộ Pháp cho {friendName} (+1% Đột Phá, tổng +{res.count}%)!");
+                    BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.Social, $"Đã Hộ Pháp cho {friendName} (+1% Đột Phá, tổng +{res.count}%)!");
                 else
-                    BootOverlayController.Instance?.ShowToast("Đạo hữu này đã đủ +3% Hộ Pháp hoặc đã nhận hôm nay!");
+                    BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.Social, "Đạo hữu này đã đủ +3% Hộ Pháp hoặc đã nhận hôm nay!", RemakeNotifyZone.Auto, true);
             });
         }
 

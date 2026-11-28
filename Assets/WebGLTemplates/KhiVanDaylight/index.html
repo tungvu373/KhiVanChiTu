@@ -359,6 +359,21 @@
       })();
 
       var isMobileBrowser = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || "");
+      // Cap desktop WebGL backbuffer to <= 1920x1080 (2.07 MP) & DPR <= 1.25 so Windows 125%-200% DPI / 1440p / 4K
+      // browsers do not blow up UI Toolkit & WebGL compositor fillrate (4x-10x more pixels than iOS Safari!).
+      function computeOptimalDpr() {
+        var raw = window.devicePixelRatio || 1;
+        if (isMobileBrowser) return Math.min(raw, 1.5);
+        var capped = Math.min(raw, 1.25);
+        var cssW = Math.max(1, window.innerWidth || 1280);
+        var cssH = Math.max(1, window.innerHeight || 720);
+        var maxPixels = 1920 * 1080;
+        var scaledPixels = (cssW * capped) * (cssH * capped);
+        if (scaledPixels > maxPixels) {
+          capped = Math.max(0.85, Math.sqrt(maxPixels / (cssW * cssH)));
+        }
+        return capped;
+      }
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
       var config = {
@@ -381,9 +396,9 @@
         productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
         productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
         showBanner: unityShowBanner,
-        // Cap DPR to 1.5 on iPhone/Android (cuts mobile pixel fill by ~44% & prevents Safari VRAM pressure)
-        devicePixelRatio: Math.min(window.devicePixelRatio || 1, isMobileBrowser ? 1.5 : 2),
+        devicePixelRatio: computeOptimalDpr(),
         webglContextAttributes: {
+          antialias: false,
           preserveDrawingBuffer: false,
           powerPreference: isMobileBrowser ? "default" : "high-performance"
         },

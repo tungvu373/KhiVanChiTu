@@ -31,6 +31,55 @@ namespace KhiVanChiTu.Remake
         private static readonly List<int> _fifaFodderBagIndices = new List<int>();
         private static int _swordBagTapMode = 0; // 0 = Them Phoi, 1 = Chon Chinh, 2 = Xuat Tran
 
+        private static Label HeadingLabel(string text, float fontSize = 16.5f, Color? color = null, bool wrap = true)
+        {
+            var l = new Label(text)
+            {
+                style =
+                {
+                    fontSize = fontSize,
+                    unityFontStyleAndWeight = FontStyle.Normal,
+                    whiteSpace = wrap ? WhiteSpace.Normal : WhiteSpace.NoWrap
+                }
+            };
+            l.AddToClassList("font-heading");
+            if (color.HasValue) l.style.color = color.Value;
+            return l;
+        }
+
+        private static Label CalligraphyLabel(string text, float fontSize = 16.5f, Color? color = null, bool wrap = true)
+        {
+            var l = new Label(text)
+            {
+                style =
+                {
+                    fontSize = fontSize,
+                    unityFontStyleAndWeight = FontStyle.Normal,
+                    whiteSpace = wrap ? WhiteSpace.Normal : WhiteSpace.NoWrap
+                }
+            };
+            l.AddToClassList("font-calligraphy");
+            if (color.HasValue) l.style.color = color.Value;
+            return l;
+        }
+
+        private static Label OrnamentLabel(string text, float fontSize = 26f, Color? color = null)
+        {
+            var l = new Label(text)
+            {
+                style =
+                {
+                    fontSize = fontSize,
+                    unityFontStyleAndWeight = FontStyle.Normal,
+                    color = color ?? new Color(0.60f, 0.41f, 0.08f),
+                    unityTextAlign = TextAnchor.MiddleCenter,
+                    whiteSpace = WhiteSpace.Normal
+                }
+            };
+            l.AddToClassList("font-ornament");
+            return l;
+        }
+
         private static void ApplyEquipmentQualityGlow(VisualElement tile, RemakeRarity rarity, int tier, int enhanceLv, bool isSelected, float radius = 10f)
         {
             tile.style.overflow = Overflow.Visible;
@@ -177,11 +226,11 @@ namespace KhiVanChiTu.Remake
             topRow.Add(stageArt);
 
             var info = new VisualElement { style = { flexGrow = 1, marginLeft = 8, flexShrink = 1 } };
-            info.Add(new Label("Cổ Kiếm Trủng · Rèn Kiếm 1 Chính + 5 Phôi") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal } });
+            info.Add(HeadingLabel("Cổ Kiếm Trủng · Rèn Kiếm 1 Chính + 5 Phôi", 16.5f));
             float effMainSpd = CultivationTable.CalculateSwordSpeed(Mathf.Clamp(mainLevel, 1, 10)) * engine.GetSwordSpeedMultiplier();
             float effMainCd = CultivationTable.CalculateSwordAttackCooldown(Mathf.Clamp(mainLevel, 1, 10));
-            info.Add(new Label($"Tổng Công: {CultivationTable.FormatNumber(engine.GetTotalSwordAttackPower())} · Xuất trận: {save.equippedSwordLevels.Count}/{CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex)}") { style = { fontSize = 10, marginTop = 2 } });
-            info.Add(new Label($"Kiếm Lv.{Mathf.Clamp(mainLevel, 1, 10)}: ST {CultivationTable.FormatNumber(CultivationTable.CalculateSwordDamage(Mathf.Clamp(mainLevel, 1, 10)))} · Bay {effMainSpd:0.0} u/s · Hồi {effMainCd:0.00}s · Phù: {save.forgeTalismanCount}") { style = { fontSize = 10, color = new Color(0.24f, 0.44f, 0.36f), marginTop = 1, whiteSpace = WhiteSpace.Normal } });
+            info.Add(new Label($"Tổng Công: {CultivationTable.FormatNumber(engine.GetTotalSwordAttackPower())} · Xuất trận: {save.equippedSwordLevels.Count}/{CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex)}") { style = { fontSize = 11.5f, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
+            info.Add(new Label($"Kiếm Lv.{Mathf.Clamp(mainLevel, 1, 10)}: ST {CultivationTable.FormatNumber(CultivationTable.CalculateSwordDamage(Mathf.Clamp(mainLevel, 1, 10)))} · Bay {effMainSpd:0.0} u/s · Hồi {effMainCd:0.00}s · Phù: {save.forgeTalismanCount}") { style = { fontSize = 11.5f, color = new Color(0.24f, 0.44f, 0.36f), marginTop = 1, whiteSpace = WhiteSpace.Normal } });
             topRow.Add(info);
             hero.Add(topRow);
 
@@ -193,40 +242,40 @@ namespace KhiVanChiTu.Remake
             if (mainLevel > 0)
             {
                 ApplySwordTierBorderGlow(mainSlot, mainLevel, true, 12f);
-                mainSlot.Add(new Label("KIẾM CHÍNH") { style = { fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.44f, 0.04f), flexShrink = 0 } });
-                var mIco = new VisualElement { style = { width = 56, height = 56, minWidth = 56, minHeight = 56, flexShrink = 0, marginTop = -2, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(mainLevel)) } };
+                mainSlot.Add(new Label("KIẾM CHÍNH") { style = { fontSize = 9.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.44f, 0.04f), flexShrink = 0 } });
+                var mIco = new VisualElement { style = { width = 54, height = 54, minWidth = 54, minHeight = 54, flexShrink = 0, marginTop = -1, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(mainLevel)) } };
                 mIco.AddToClassList("icon-fixed");
                 mainSlot.Add(mIco);
-                mainSlot.Add(new Label($"Lv.{mainLevel}") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, marginTop = -4 } });
+                mainSlot.Add(new Label($"Lv.{mainLevel}") { style = { fontSize = 11.5f, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, marginTop = -3 } });
             }
             else
             {
-                mainSlot.Add(new Label("Chọn\nKiếm") { style = { fontSize = 9, unityTextAlign = TextAnchor.MiddleCenter } });
+                mainSlot.Add(new Label("Chọn\nKiếm") { style = { fontSize = 11, unityTextAlign = TextAnchor.MiddleCenter } });
             }
             mainStageRow.Add(mainSlot);
 
-            mainStageRow.Add(new Label("  + Phôi  →  ") { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.24f, 0.36f, 0.32f) } });
+            mainStageRow.Add(new Label("  + Phôi  →  ") { style = { fontSize = 12.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.24f, 0.36f, 0.32f) } });
 
             var nextSlot = new VisualElement();
             nextSlot.AddToClassList("fifa-main-slot");
             if (mainLevel > 0 && mainLevel < 10)
             {
                 ApplySwordTierBorderGlow(nextSlot, mainLevel + 1, false, 12f);
-                nextSlot.Add(new Label("MỤC TIÊU") { style = { fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.48f, 0.36f), flexShrink = 0 } });
-                var nIco = new VisualElement { style = { width = 56, height = 56, minWidth = 56, minHeight = 56, flexShrink = 0, marginTop = -2, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(mainLevel + 1)) } };
+                nextSlot.Add(new Label("MỤC TIÊU") { style = { fontSize = 9.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.48f, 0.36f), flexShrink = 0 } });
+                var nIco = new VisualElement { style = { width = 54, height = 54, minWidth = 54, minHeight = 54, flexShrink = 0, marginTop = -1, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(mainLevel + 1)) } };
                 nIco.AddToClassList("icon-fixed");
                 nextSlot.Add(nIco);
-                nextSlot.Add(new Label($"Lv.{mainLevel + 1}") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.48f, 0.36f), flexShrink = 0, marginTop = -4 } });
+                nextSlot.Add(new Label($"Lv.{mainLevel + 1}") { style = { fontSize = 11.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.48f, 0.36f), flexShrink = 0, marginTop = -3 } });
             }
             else
             {
                 SetBorderAndRadius(nextSlot, new Color(0.14f, 0.60f, 0.46f), 2f, 12f);
-                nextSlot.Add(new Label("MAX\nLv.10") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, unityTextAlign = TextAnchor.MiddleCenter } });
+                nextSlot.Add(new Label("MAX\nLv.10") { style = { fontSize = 11.5f, unityFontStyleAndWeight = FontStyle.Bold, unityTextAlign = TextAnchor.MiddleCenter } });
             }
             mainStageRow.Add(nextSlot);
             hero.Add(mainStageRow);
 
-            // 5 FODDER SLOTS (FIFA ONLINE STYLE — SNUG 40x40 FIT)
+            // 5 FODDER SLOTS (FIFA ONLINE STYLE — SNUG FIT)
             var fodderRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.Center, marginTop = 7 } };
             for (int slotIdx = 0; slotIdx < 5; slotIdx++)
             {
@@ -244,8 +293,8 @@ namespace KhiVanChiTu.Remake
                 if (!hasFodder)
                 {
                     fBtn.AddToClassList("fifa-fodder-slot-empty");
-                    fBtn.Add(new Label($"Phôi {slotIdx + 1}") { pickingMode = PickingMode.Ignore, style = { fontSize = 8, color = new Color(0.45f, 0.52f, 0.49f), flexShrink = 0 } });
-                    fBtn.Add(new Label("+") { pickingMode = PickingMode.Ignore, style = { fontSize = 14, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.45f, 0.52f, 0.49f), flexShrink = 0 } });
+                    fBtn.Add(new Label($"Phôi {slotIdx + 1}") { pickingMode = PickingMode.Ignore, style = { fontSize = 9.5f, color = new Color(0.45f, 0.52f, 0.49f), flexShrink = 0 } });
+                    fBtn.Add(new Label("+") { pickingMode = PickingMode.Ignore, style = { fontSize = 16, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.45f, 0.52f, 0.49f), flexShrink = 0 } });
                 }
                 else
                 {
@@ -255,7 +304,7 @@ namespace KhiVanChiTu.Remake
                     var fIco = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 38, height = 38, minWidth = 38, minHeight = 38, flexShrink = 0, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(flv)) } };
                     fIco.AddToClassList("icon-fixed");
                     fBtn.Add(fIco);
-                    fBtn.Add(new Label($"Lv.{flv} (+{contribPct}%)") { pickingMode = PickingMode.Ignore, style = { fontSize = 8, color = new Color(0.11f, 0.52f, 0.38f), unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, marginTop = -1 } });
+                    fBtn.Add(new Label($"Lv.{flv} (+{contribPct}%)") { pickingMode = PickingMode.Ignore, style = { fontSize = 9f, color = new Color(0.11f, 0.52f, 0.38f), unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, marginTop = -1 } });
                 }
                 fodderRow.Add(fBtn);
             }
@@ -274,7 +323,7 @@ namespace KhiVanChiTu.Remake
                 : _fifaFodderBagIndices.Count == 0
                     ? $"Chọn 1–5 phôi kiếm ở lưới Túi bên dưới (Chúc Phúc +{Mathf.RoundToInt(pity * 100)}%)"
                     : $"Tỉ lệ thành công: {Mathf.RoundToInt(chance * 100)}% (Phôi +{Mathf.RoundToInt(fSumDisp * 100)}% · Chúc Phúc/Phù +{Mathf.RoundToInt(bSumDisp * 100)}%) · Phí: {(isTutorialFree ? "Miễn Phí" : CultivationTable.FormatNumber(mergeCost) + " LT")}";
-            hero.Add(new Label(rateSummary) { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, unityTextAlign = TextAnchor.MiddleCenter, whiteSpace = WhiteSpace.Normal, marginTop = 4 } });
+            hero.Add(new Label(rateSummary) { style = { fontSize = 12, unityFontStyleAndWeight = FontStyle.Bold, unityTextAlign = TextAnchor.MiddleCenter, whiteSpace = WhiteSpace.Normal, marginTop = 4 } });
 
             // ACTION BUTTONS
             var actionRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.Center, marginTop = 7 } };
@@ -346,10 +395,7 @@ namespace KhiVanChiTu.Remake
             eqCard.style.marginBottom = 8;
 
             var eqHead = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginBottom = 6 } };
-            eqHead.Add(new Label($"Phi Kiếm Xuất Trận ({save.equippedSwordLevels.Count}/{CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex)})")
-            {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, whiteSpace = WhiteSpace.Normal }
-            });
+            eqHead.Add(HeadingLabel($"Phi Kiếm Xuất Trận ({save.equippedSwordLevels.Count}/{CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex)})", 16f));
             var unequipSwBtn = new Button(() =>
             {
                 int targetIdx = _fifaMainFromEquipped && _fifaMainIndex >= 0 && _fifaMainIndex < save.equippedSwordLevels.Count
@@ -367,15 +413,15 @@ namespace KhiVanChiTu.Remake
             };
             unequipSwBtn.AddToClassList("btn-compact");
             unequipSwBtn.SetEnabled(save.equippedSwordLevels.Count > 0);
-            unequipSwBtn.style.fontSize = 9;
-            unequipSwBtn.style.paddingLeft = 7;
-            unequipSwBtn.style.paddingRight = 7;
+            unequipSwBtn.style.fontSize = 11f;
+            unequipSwBtn.style.paddingLeft = 8;
+            unequipSwBtn.style.paddingRight = 8;
             eqHead.Add(unequipSwBtn);
             eqCard.Add(eqHead);
 
             if (save.equippedSwordLevels.Count == 0)
             {
-                eqCard.Add(new Label("Chưa có phi kiếm xuất trận. Chọn chế độ 'Xuất Trận' ở Túi Phôi Kiếm bên dưới để lắp kiếm!") { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, color = new Color(0.45f, 0.50f, 0.47f) } });
+                eqCard.Add(new Label("Chưa có phi kiếm xuất trận. Chọn chế độ 'Xuất Trận' ở Túi Phôi Kiếm bên dưới để lắp kiếm!") { style = { fontSize = 12, whiteSpace = WhiteSpace.Normal, color = new Color(0.45f, 0.50f, 0.47f) } });
             }
             else
             {
@@ -398,7 +444,7 @@ namespace KhiVanChiTu.Remake
                         Refresh();
                     })
                     {
-                        style = { width = 66, height = 78, marginRight = 6, marginBottom = 6, paddingTop = 2, paddingBottom = 2, paddingLeft = 2, paddingRight = 2 }
+                        style = { width = 78, height = 86, marginRight = 6, marginBottom = 6, paddingTop = 2, paddingBottom = 2, paddingLeft = 2, paddingRight = 2 }
                     };
                     tile.AddToClassList("grid-tile");
                     ApplySwordTierBorderGlow(tile, lv, isMain || isSelEq, 10f);
@@ -412,13 +458,13 @@ namespace KhiVanChiTu.Remake
                         tile.Add(new Label("CHÍNH")
                         {
                             pickingMode = PickingMode.Ignore,
-                            style = { position = Position.Absolute, left = 3, top = 2, fontSize = 7, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.75f, 0.44f, 0.04f) }
+                            style = { position = Position.Absolute, left = 3, top = 2, fontSize = 8.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.75f, 0.44f, 0.04f) }
                         });
                     }
                     tile.Add(new Label($"Lv.{lv} · {CultivationTable.FormatNumber(CultivationTable.CalculateSwordDamage(lv))}")
                     {
                         pickingMode = PickingMode.Ignore,
-                        style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 8, color = new Color(0.14f, 0.42f, 0.34f), flexShrink = 0, marginTop = -1 }
+                        style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 9.5f, color = new Color(0.14f, 0.42f, 0.34f), flexShrink = 0, marginTop = -1 }
                     });
                     eqGrid.Add(tile);
                 }
@@ -430,7 +476,7 @@ namespace KhiVanChiTu.Remake
             var bagCard = new VisualElement();
             bagCard.AddToClassList("card-light");
             var bagHead = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginBottom = 6 } };
-            bagHead.Add(new Label($"Túi Phôi Kiếm ({save.swordInventoryLevels.Count})") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12 } });
+            bagHead.Add(HeadingLabel($"Túi Phôi Kiếm ({save.swordInventoryLevels.Count})", 16f));
             var modeRow = new VisualElement { style = { flexDirection = FlexDirection.Row } };
             string[] modeNames = { "+Phôi", "Làm Chính", "Xuất Trận" };
             for (int m = 0; m < 3; m++)
@@ -439,7 +485,7 @@ namespace KhiVanChiTu.Remake
                 var mb = new Button(() => { _swordBagTapMode = capM; Refresh(); }) { text = modeNames[m] };
                 mb.AddToClassList("btn-compact");
                 if (_swordBagTapMode == m) mb.AddToClassList("selected");
-                mb.style.fontSize = 9; mb.style.paddingLeft = 6; mb.style.paddingRight = 6; mb.style.marginLeft = 3;
+                mb.style.fontSize = 10.5f; mb.style.paddingLeft = 7; mb.style.paddingRight = 7; mb.style.marginLeft = 3;
                 modeRow.Add(mb);
             }
             bagHead.Add(modeRow);
@@ -447,7 +493,7 @@ namespace KhiVanChiTu.Remake
 
             if (save.swordInventoryLevels.Count == 0)
             {
-                bagCard.Add(new Label("Túi phôi kiếm đang trống. Treo máy hoặc vào Kiếm Mộ Cổ để săn phôi!") { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal, color = new Color(0.45f, 0.50f, 0.47f) } });
+                bagCard.Add(new Label("Túi phôi kiếm đang trống. Treo máy hoặc vào Kiếm Mộ Cổ để săn phôi!") { style = { fontSize = 12.5f, whiteSpace = WhiteSpace.Normal, color = new Color(0.45f, 0.50f, 0.47f) } });
             }
             else
             {
@@ -476,7 +522,7 @@ namespace KhiVanChiTu.Remake
                         {
                             if (lv >= 10)
                             {
-                                BootOverlayController.Instance?.ShowToast("Kiếm Cấp 10 đã đạt đỉnh phong!");
+                                BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.SwordPath, "Kiếm Cấp 10 đã đạt đỉnh phong!", RemakeNotifyZone.DrawerInline, true);
                                 return;
                             }
                             _fifaFodderBagIndices.Remove(idx);
@@ -488,7 +534,7 @@ namespace KhiVanChiTu.Remake
                         {
                             if (isMain)
                             {
-                                BootOverlayController.Instance?.ShowToast("Thanh kiếm này đang là Kiếm Chính!");
+                                BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.SwordPath, "Thanh kiếm này đang là Kiếm Chính!", RemakeNotifyZone.DrawerInline, true);
                                 return;
                             }
                             if (isFodder)
@@ -496,12 +542,12 @@ namespace KhiVanChiTu.Remake
                             else if (_fifaFodderBagIndices.Count < 5)
                                 _fifaFodderBagIndices.Add(idx);
                             else
-                                BootOverlayController.Instance?.ShowToast("Đã đầy 5 ô Phôi Kiếm!");
+                                BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.SwordPath, "Đã đầy 5 ô Phôi Kiếm!", RemakeNotifyZone.DrawerInline, true);
                             Refresh();
                         }
                     })
                     {
-                        style = { width = 62, height = 74, marginRight = 5, marginBottom = 5, paddingTop = 2, paddingBottom = 2, paddingLeft = 2, paddingRight = 2 }
+                        style = { width = 72, height = 82, marginRight = 5, marginBottom = 5, paddingTop = 2, paddingBottom = 2, paddingLeft = 2, paddingRight = 2 }
                     };
                     tile.AddToClassList("grid-tile");
                     ApplySwordTierBorderGlow(tile, lv, isMain, 10f);
@@ -513,11 +559,11 @@ namespace KhiVanChiTu.Remake
 
                     string tagText = isMain ? "CHÍNH" : isFodder ? $"PHÔI {fodderPos + 1}" : $"+{contribPct}%";
                     Color tagColor = isMain ? new Color(0.75f, 0.44f, 0.04f) : isFodder ? new Color(0.10f, 0.48f, 0.36f) : new Color(0.36f, 0.48f, 0.44f);
-                    tile.Add(new Label(tagText) { pickingMode = PickingMode.Ignore, style = { fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold, color = tagColor, flexShrink = 0 } });
-                    var bIco = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 48, height = 48, minWidth = 48, minHeight = 48, flexShrink = 0, marginTop = -2, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(lv)) } };
+                    tile.Add(new Label(tagText) { pickingMode = PickingMode.Ignore, style = { fontSize = 9.5f, unityFontStyleAndWeight = FontStyle.Bold, color = tagColor, flexShrink = 0 } });
+                    var bIco = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 46, height = 46, minWidth = 46, minHeight = 46, flexShrink = 0, marginTop = -1, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(lv)) } };
                     bIco.AddToClassList("icon-fixed");
                     tile.Add(bIco);
-                    tile.Add(new Label($"Lv.{lv}") { pickingMode = PickingMode.Ignore, style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, marginTop = -2 } });
+                    tile.Add(new Label($"Lv.{lv}") { pickingMode = PickingMode.Ignore, style = { fontSize = 10.5f, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, marginTop = -2 } });
                     bagGrid.Add(tile);
                 }
                 bagCard.Add(bagGrid);
@@ -660,12 +706,12 @@ namespace KhiVanChiTu.Remake
             topBar.style.marginBottom = 6;
             topBar.Add(new Label($"Điểm Đạo Vận: {save.daoPoints} · Linh Thạch: {CultivationTable.FormatNumber(save.linhThach)} · Khai phá: {visibleNodes.Count}/{RemakeCatalogs.StarterDaoVanNodes.Count}")
             {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, whiteSpace = WhiteSpace.Normal }
+                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, whiteSpace = WhiteSpace.Normal }
             });
             if (!treeOpen)
-                topBar.Add(new Label($"Khóa: Cần {CultivationTable.GetFeatureUnlockRequirementText(RemakeFeatureId.DaoVanTree)} để khai mở cây Đạo Vận.") { style = { fontSize = 10, color = new Color(0.78f, 0.25f, 0.14f), marginTop = 2 } });
+                topBar.Add(new Label($"Khóa: Cần {CultivationTable.GetFeatureUnlockRequirementText(RemakeFeatureId.DaoVanTree)} để khai mở cây Đạo Vận.") { style = { fontSize = 11.5f, color = new Color(0.78f, 0.25f, 0.14f), marginTop = 2, whiteSpace = WhiteSpace.Normal } });
             else if (visibleNodes.Count < RemakeCatalogs.StarterDaoVanNodes.Count)
-                topBar.Add(new Label("Các nhánh ẩn sẽ tự động hiện ra khi bạn khai mở linh mạch tiền đề!") { style = { fontSize = 9, color = new Color(0.18f, 0.54f, 0.42f), marginTop = 2 } });
+                topBar.Add(new Label("Các nhánh ẩn sẽ tự động hiện ra khi bạn khai mở linh mạch tiền đề!") { style = { fontSize = 11f, color = new Color(0.18f, 0.54f, 0.42f), marginTop = 2, whiteSpace = WhiteSpace.Normal } });
             body.Add(topBar);
 
             // REVEALED BRANCH CHIPS (ONLY VISIBLE BRANCHES + RED DOTS FOR UPGRADEABLE)
@@ -709,7 +755,7 @@ namespace KhiVanChiTu.Remake
                 b.Add(new Label(cap.label)
                 {
                     pickingMode = PickingMode.Ignore,
-                    style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, color = chipSel ? Color.white : new Color(0.09f, 0.36f, 0.29f) }
+                    style = { fontSize = 11.5f, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, color = chipSel ? Color.white : new Color(0.09f, 0.36f, 0.29f) }
                 });
                 if (branchHasUpgrade)
                 {
@@ -724,7 +770,7 @@ namespace KhiVanChiTu.Remake
 
             // ZOOM & FIT-ALL CONTROLS
             var zoomRow = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginBottom = 6 } };
-            zoomRow.Add(new Label($"Kéo để di chuyển · Zoom {Mathf.RoundToInt(clampedZoom * 100)}%") { style = { fontSize = 10, color = new Color(0.32f, 0.42f, 0.37f) } });
+            zoomRow.Add(new Label($"Kéo để di chuyển · Zoom {Mathf.RoundToInt(clampedZoom * 100)}%") { style = { fontSize = 11.5f, color = new Color(0.32f, 0.42f, 0.37f) } });
             var zBtns = new VisualElement { style = { flexDirection = FlexDirection.Row } };
             var bOut = new Button(() => onViewportChanged?.Invoke(pan * 0.82f, Mathf.Max(0.48f, clampedZoom - 0.22f))) { text = "Thu -" };
             var bFit = new Button(() =>
@@ -736,7 +782,7 @@ namespace KhiVanChiTu.Remake
             var bIn = new Button(() => onViewportChanged?.Invoke(pan * 1.15f, Mathf.Min(1.75f, clampedZoom + 0.22f))) { text = "Phóng +" };
             bOut.AddToClassList("btn-compact"); bFit.AddToClassList("btn-compact"); bIn.AddToClassList("btn-compact");
             bOut.style.marginRight = 4; bFit.style.marginRight = 4;
-            bOut.style.fontSize = 10; bFit.style.fontSize = 10; bIn.style.fontSize = 10;
+            bOut.style.fontSize = 11.5f; bFit.style.fontSize = 11.5f; bIn.style.fontSize = 11.5f;
             zBtns.Add(bOut); zBtns.Add(bFit); zBtns.Add(bIn);
             zoomRow.Add(zBtns);
             body.Add(zoomRow);
@@ -945,14 +991,14 @@ namespace KhiVanChiTu.Remake
             dHead.Add(dIcon);
 
             var dMeta = new VisualElement { style = { flexGrow = 1, marginLeft = 8, flexShrink = 1 } };
-            dMeta.Add(new Label($"[{sel.branchName}] {sel.title} (Cấp {selLv}/{sel.maxLevel})") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal } });
-            dMeta.Add(new Label(sel.effectDesc) { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+            dMeta.Add(HeadingLabel($"[{sel.branchName}] {sel.title} (Cấp {selLv}/{sel.maxLevel})", 16.5f));
+            dMeta.Add(new Label(sel.effectDesc) { style = { fontSize = 12.5f, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
             dHead.Add(dMeta);
             detail.Add(dHead);
 
             var dAct = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginTop = 7 } };
             string costStr = selMax ? "Đã đạt Đỉnh Phong" : sel.costsDaoPoints ? $"Tiêu hao: {selCost:0} Điểm Đạo Vận" : $"Tiêu hao: {CultivationTable.FormatNumber(selCost)} Linh Thạch";
-            dAct.Add(new Label(costStr) { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold } });
+            dAct.Add(new Label(costStr) { style = { fontSize = 12.5f, unityFontStyleAndWeight = FontStyle.Bold } });
             var upBtn = new Button(() =>
             {
                 if (engine.TryUpgradeDaoVanNode(sel.id))
@@ -1041,15 +1087,15 @@ namespace KhiVanChiTu.Remake
             topRow.Add(cauldronWrap);
 
             var info = new VisualElement { style = { flexGrow = 1, marginLeft = 8, flexShrink = 1 } };
-            info.Add(new Label("Đan Các · Cửu Long Luyện Đan Lô") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12 } });
-            info.Add(new Label($"Đan Sư: {CultivationTable.GetAlchemistRankName(save.alchemistRank)} (XP {save.alchemistXp})") { style = { fontSize = 10, marginTop = 2 } });
-            info.Add(new Label($"Chân Hỏa: {CultivationTable.GetSpiritFlameName(save.spiritFlameTier)} ({save.spiritFlameXp}/{CultivationTable.GetSpiritFlameNextTierXp(save.spiritFlameTier)} XP)") { style = { fontSize = 10, color = new Color(0.72f, 0.34f, 0.10f), marginTop = 1 } });
-            info.Add(new Label($"Dược Trần: {save.herbDust} · {ActStageDatabaseSO.GetHerbName(herbTier)}: {ownedHerbs}/{reqHerbs}") { style = { fontSize = 10, color = new Color(0.16f, 0.56f, 0.44f), marginTop = 1 } });
+            info.Add(HeadingLabel("Đan Các · Cửu Long Luyện Đan Lô", 16.5f));
+            info.Add(new Label($"Đan Sư: {CultivationTable.GetAlchemistRankName(save.alchemistRank)} (XP {save.alchemistXp})") { style = { fontSize = 11.5f, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
+            info.Add(new Label($"Chân Hỏa: {CultivationTable.GetSpiritFlameName(save.spiritFlameTier)} ({save.spiritFlameXp}/{CultivationTable.GetSpiritFlameNextTierXp(save.spiritFlameTier)} XP)") { style = { fontSize = 11.5f, color = new Color(0.72f, 0.34f, 0.10f), marginTop = 1, whiteSpace = WhiteSpace.Normal } });
+            info.Add(new Label($"Dược Trần: {save.herbDust} · {ActStageDatabaseSO.GetHerbName(herbTier)}: {ownedHerbs}/{reqHerbs}") { style = { fontSize = 11.5f, color = new Color(0.16f, 0.56f, 0.44f), marginTop = 1, whiteSpace = WhiteSpace.Normal } });
             topRow.Add(info);
             hero.Add(topRow);
 
             if (!unlocked)
-                hero.Add(new Label($"Mở khóa Luyện Đan tại {CultivationTable.GetFeatureUnlockRequirementText(RemakeFeatureId.Alchemy)}.") { style = { fontSize = 10, color = new Color(0.78f, 0.25f, 0.14f), marginTop = 4 } });
+                hero.Add(new Label($"Mở khóa Luyện Đan tại {CultivationTable.GetFeatureUnlockRequirementText(RemakeFeatureId.Alchemy)}.") { style = { fontSize = 12, color = new Color(0.78f, 0.25f, 0.14f), marginTop = 4, whiteSpace = WhiteSpace.Normal } });
 
             // 4x2 RECIPE GRID
             var pillTabs = new VisualElement();
@@ -1064,9 +1110,10 @@ namespace KhiVanChiTu.Remake
                     text = CultivationTable.GetPillNameForRealmBreakthrough(p).Replace(" Đan", ""),
                     style =
                     {
-                        width = Length.Percent(23.8f),
+                        width = Length.Percent(24.0f),
                         marginLeft = 0, marginRight = 0, marginTop = 0, marginBottom = 4,
-                        fontSize = 9, paddingLeft = 3, paddingRight = 3, paddingTop = 4, paddingBottom = 4
+                        fontSize = 10f, paddingLeft = 3, paddingRight = 3, paddingTop = 5, paddingBottom = 5,
+                        overflow = Overflow.Hidden
                     }
                 };
                 b.AddToClassList("btn-compact");
@@ -1076,15 +1123,15 @@ namespace KhiVanChiTu.Remake
             hero.Add(pillTabs);
 
             // BREW SUCCESS % & QUALITY ODDS PREVIEW
-            var oddsBox = new VisualElement { style = { paddingTop = 5, paddingBottom = 5, paddingLeft = 8, paddingRight = 8, marginTop = 3, backgroundColor = new Color(0.96f, 0.98f, 0.95f) } };
+            var oddsBox = new VisualElement { style = { paddingTop = 6, paddingBottom = 6, paddingLeft = 9, paddingRight = 9, marginTop = 3, backgroundColor = new Color(0.96f, 0.98f, 0.95f) } };
             SetBorderAndRadius(oddsBox, new Color(0.18f, 0.56f, 0.44f, 0.45f), 1f, 8f);
             oddsBox.Add(new Label($"Tỉ lệ thành đan: {brewChancePct}%  ·  Cần: {reqHerbs} {ActStageDatabaseSO.GetHerbName(herbTier)} + {CultivationTable.FormatNumber(ltCost)} LT")
             {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 10, color = new Color(0.11f, 0.48f, 0.36f), whiteSpace = WhiteSpace.Normal }
+                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, color = new Color(0.11f, 0.48f, 0.36f), whiteSpace = WhiteSpace.Normal }
             });
             oddsBox.Add(new Label($"Xác suất phẩm chất: Hạ {haPct}% · Trung {trungPct}% · Thượng {thuongPct}% · Cực {cucPct}%")
             {
-                style = { fontSize = 9, color = new Color(0.35f, 0.44f, 0.40f), marginTop = 2, whiteSpace = WhiteSpace.Normal }
+                style = { fontSize = 11, color = new Color(0.35f, 0.44f, 0.40f), marginTop = 2, whiteSpace = WhiteSpace.Normal }
             });
             hero.Add(oddsBox);
 
@@ -1093,7 +1140,7 @@ namespace KhiVanChiTu.Remake
             string brewLabelTxt = engine.IsBrewingPill
                 ? $"Đang luyện {CultivationTable.GetPillNameForRealmBreakthrough(engine.BrewingTargetRealm)}... còn {engine.BrewTimeRemaining:0.0}s ({Mathf.RoundToInt(engine.BrewProgress01 * 100)}%)"
                 : $"Sẵn sàng khai lò {pillName} · Thời gian ngưng đan: {GameplayEngine.BrewDuration:0.0}s";
-            brewBox.Add(new Label(brewLabelTxt) { name = "alchemy-brew-label", style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.36f, 0.06f), marginBottom = 3 } });
+            brewBox.Add(new Label(brewLabelTxt) { name = "alchemy-brew-label", style = { fontSize = 12, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.36f, 0.06f), marginBottom = 3, whiteSpace = WhiteSpace.Normal } });
             var brewTrack = new VisualElement { style = { width = Length.Percent(100), height = 11 } };
             brewTrack.AddToClassList("bar-track");
             var brewFill = new VisualElement { name = "alchemy-brew-fill", style = { width = Length.Percent(engine.BrewProgress01 * 100f) } };
@@ -1108,7 +1155,7 @@ namespace KhiVanChiTu.Remake
             var pillIcon = new VisualElement { style = { width = 30, height = 30, marginRight = 6, flexShrink = 0 } };
             CodexArtLoader.ApplyIconOrPlaceholder(pillIcon, CultivationTable.GetPillCodexKey(_uiAlchemyPillIdx), "[Đan]");
             leftP.Add(pillIcon);
-            leftP.Add(new Label($"{pillName} ({brewChancePct}%)") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11 } });
+            leftP.Add(new Label($"{pillName} ({brewChancePct}%)") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12.5f } });
             recipeRow.Add(leftP);
 
             var brewBtn = new Button(() => { engine.TryStartBrewPill(_uiAlchemyPillIdx); Refresh(); })
@@ -1154,25 +1201,25 @@ namespace KhiVanChiTu.Remake
             invCard.AddToClassList("card-light");
 
             var invHead = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginBottom = 6 } };
-            invHead.Add(new Label($"Kho Đan Thông Minh ({totalPills} viên)") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12 } });
+            invHead.Add(HeadingLabel($"Kho Đan Thông Minh ({totalPills} viên)", 16f));
             var invBtns = new VisualElement { style = { flexDirection = FlexDirection.Row } };
             var filterBtn = new Button(() => { _uiAlchemyShowAllPills = !_uiAlchemyShowAllPills; Refresh(); })
             { text = _uiAlchemyShowAllPills ? "Đang xem: Tất Cả" : "Đang xem: Đan Chọn" };
             filterBtn.AddToClassList("btn-compact");
-            filterBtn.style.fontSize = 9; filterBtn.style.marginRight = 4;
+            filterBtn.style.fontSize = 10.5f; filterBtn.style.marginRight = 4;
             invBtns.Add(filterBtn);
 
             var mergeAllBtn = new Button(() => { engine.TryMergeAllPills(_uiAlchemyPillIdx); Refresh(); }) { text = "Hợp Nhanh 3→1" };
             mergeAllBtn.AddToClassList("btn-compact");
             mergeAllBtn.SetEnabled(unlocked);
-            mergeAllBtn.style.fontSize = 9;
+            mergeAllBtn.style.fontSize = 10.5f;
             invBtns.Add(mergeAllBtn);
             invHead.Add(invBtns);
             invCard.Add(invHead);
 
             if (ownedStacks.Count == 0)
             {
-                invCard.Add(new Label("Chưa có đan dược nào trong kho. Hãy Khai Lò Luyện Đan phía trên!") { style = { fontSize = 11, color = new Color(0.45f, 0.50f, 0.47f) } });
+                invCard.Add(new Label("Chưa có đan dược nào trong kho. Hãy Khai Lò Luyện Đan phía trên!") { style = { fontSize = 12.5f, color = new Color(0.45f, 0.50f, 0.47f), whiteSpace = WhiteSpace.Normal } });
             }
             else
             {
@@ -1189,7 +1236,7 @@ namespace KhiVanChiTu.Remake
                         Refresh();
                     })
                     {
-                        style = { width = 72, height = 78, marginRight = 5, marginBottom = 5 }
+                        style = { width = 86, height = 88, marginRight = 4, marginBottom = 5, paddingLeft = 2, paddingRight = 2 }
                     };
                     tile.AddToClassList("grid-tile");
                     if (isSel) tile.AddToClassList("grid-tile-selected");
@@ -1198,7 +1245,7 @@ namespace KhiVanChiTu.Remake
                     var cntLbl = new Label($"x{st.count}")
                     {
                         pickingMode = PickingMode.Ignore,
-                        style = { position = Position.Absolute, right = 3, top = 2, fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.14f, 0.24f, 0.20f) }
+                        style = { position = Position.Absolute, right = 3, top = 2, fontSize = 10f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.14f, 0.24f, 0.20f) }
                     };
                     tile.Add(cntLbl);
 
@@ -1206,8 +1253,8 @@ namespace KhiVanChiTu.Remake
                     pIco.AddToClassList("icon-fixed");
                     CodexArtLoader.ApplyIconOrPlaceholder(pIco, CultivationTable.GetPillCodexKey(st.realmTarget), "[Đan]");
                     tile.Add(pIco);
-                    tile.Add(new Label(CultivationTable.GetPillNameForRealmBreakthrough(st.realmTarget).Replace(" Đan", "")) { pickingMode = PickingMode.Ignore, style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0 } });
-                    tile.Add(new Label(GetShortPillQuality(st.quality)) { pickingMode = PickingMode.Ignore, style = { fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold, color = qColor, flexShrink = 0 } });
+                    tile.Add(new Label(CultivationTable.GetPillNameForRealmBreakthrough(st.realmTarget).Replace(" Đan", "")) { pickingMode = PickingMode.Ignore, style = { fontSize = 9.5f, unityFontStyleAndWeight = FontStyle.Bold, flexShrink = 0, unityTextAlign = TextAnchor.MiddleCenter } });
+                    tile.Add(new Label(GetShortPillQuality(st.quality)) { pickingMode = PickingMode.Ignore, style = { fontSize = 9f, unityFontStyleAndWeight = FontStyle.Bold, color = qColor, flexShrink = 0 } });
                     pillGrid.Add(tile);
                 }
                 invCard.Add(pillGrid);
@@ -1224,11 +1271,11 @@ namespace KhiVanChiTu.Remake
                 SetBorderAndRadius(actBox, new Color(0.84f, 0.62f, 0.16f, 0.68f), 1.5f, 10f);
                 actBox.Add(new Label($"{sName} ({sQual}) — Đang có: {selStack.count} · Đột phá +{sBonus}%")
                 {
-                    style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, whiteSpace = WhiteSpace.Normal }
+                    style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12.5f, whiteSpace = WhiteSpace.Normal }
                 });
                 actBox.Add(new Label("Dùng đan dư để Hợp Đan phẩm cao, Tế Chân Hỏa, Hấp Thu Tu Vi hoặc Luyện Hóa Linh Thạch:")
                 {
-                    style = { fontSize = 9, color = new Color(0.32f, 0.42f, 0.37f), whiteSpace = WhiteSpace.Normal, marginTop = 2 }
+                    style = { fontSize = 11, color = new Color(0.32f, 0.42f, 0.37f), whiteSpace = WhiteSpace.Normal, marginTop = 2 }
                 });
 
                 var bRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, marginTop = 6 } };
@@ -1237,7 +1284,7 @@ namespace KhiVanChiTu.Remake
                     var syn = new Button(() => { engine.TryMergePills(selStack.realmTarget, selStack.quality); Refresh(); }) { text = "Hợp 3→1" };
                     syn.AddToClassList("btn-secondary");
                     syn.SetEnabled(unlocked && selStack.count >= 3);
-                    syn.style.marginRight = 4; syn.style.marginBottom = 4; syn.style.fontSize = 10;
+                    syn.style.marginRight = 4; syn.style.marginBottom = 4; syn.style.fontSize = 11.5f;
                     bRow.Add(syn);
                 }
 
@@ -1246,33 +1293,33 @@ namespace KhiVanChiTu.Remake
                     var sac = new Button(() => { engine.TrySacrificePillToFlame(selStack.realmTarget, selStack.quality); Refresh(); }) { text = "Tế Chân Hỏa" };
                     sac.AddToClassList("btn-compact");
                     sac.SetEnabled(unlocked);
-                    sac.style.marginRight = 4; sac.style.marginBottom = 4; sac.style.fontSize = 10;
+                    sac.style.marginRight = 4; sac.style.marginBottom = 4; sac.style.fontSize = 11.5f;
                     bRow.Add(sac);
                 }
 
                 var tuVi1 = new Button(() => { engine.TryConsumePillForTuVi(selStack.realmTarget, selStack.quality, 1); Refresh(); }) { text = "Hấp Thu Tu Vi (x1)" };
                 tuVi1.AddToClassList("btn-compact");
-                tuVi1.style.marginRight = 4; tuVi1.style.marginBottom = 4; tuVi1.style.fontSize = 10;
+                tuVi1.style.marginRight = 4; tuVi1.style.marginBottom = 4; tuVi1.style.fontSize = 11.5f;
                 bRow.Add(tuVi1);
 
                 if (selStack.count >= 5)
                 {
                     var tuVi5 = new Button(() => { engine.TryConsumePillForTuVi(selStack.realmTarget, selStack.quality, 5); Refresh(); }) { text = "Hấp Thu (x5)" };
                     tuVi5.AddToClassList("btn-compact");
-                    tuVi5.style.marginRight = 4; tuVi5.style.marginBottom = 4; tuVi5.style.fontSize = 10;
+                    tuVi5.style.marginRight = 4; tuVi5.style.marginBottom = 4; tuVi5.style.fontSize = 11.5f;
                     bRow.Add(tuVi5);
                 }
 
                 var ref1 = new Button(() => { engine.TryRefinePillToLinhThach(selStack.realmTarget, selStack.quality, 1); Refresh(); }) { text = "Luyện Hóa LT (x1)" };
                 ref1.AddToClassList("btn-compact");
-                ref1.style.marginRight = 4; ref1.style.marginBottom = 4; ref1.style.fontSize = 10;
+                ref1.style.marginRight = 4; ref1.style.marginBottom = 4; ref1.style.fontSize = 11.5f;
                 bRow.Add(ref1);
 
                 if (selStack.count >= 5)
                 {
                     var ref5 = new Button(() => { engine.TryRefinePillToLinhThach(selStack.realmTarget, selStack.quality, 5); Refresh(); }) { text = "Luyện Hóa (x5)" };
                     ref5.AddToClassList("btn-compact");
-                    ref5.style.marginBottom = 4; ref5.style.fontSize = 10;
+                    ref5.style.marginBottom = 4; ref5.style.fontSize = 11.5f;
                     bRow.Add(ref5);
                 }
 
@@ -1331,16 +1378,16 @@ namespace KhiVanChiTu.Remake
             hero.style.alignItems = Align.Stretch;
 
             var hdr = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginBottom = 6 } };
-            hdr.Add(new Label($"Tướng Tinh 6 Ô ({save.equipmentBag.Count}/40 món)") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12 } });
+            hdr.Add(HeadingLabel($"Tướng Tinh 6 Ô ({save.equipmentBag.Count}/40 món)", 16.5f));
             var autoBtn = new Button(() => { engine.TryAutoEquipBestGear(); Refresh(); }) { text = "Mặc Nhanh (Tối Ưu)" };
             autoBtn.AddToClassList("btn-primary");
-            autoBtn.style.paddingTop = 4; autoBtn.style.paddingBottom = 4; autoBtn.style.paddingLeft = 8; autoBtn.style.paddingRight = 8; autoBtn.style.fontSize = 10;
+            autoBtn.style.paddingTop = 5; autoBtn.style.paddingBottom = 5; autoBtn.style.paddingLeft = 18; autoBtn.style.paddingRight = 18; autoBtn.style.fontSize = 11f; autoBtn.style.minWidth = 152;
             autoBtn.SetEnabled(unlocked && save.equipmentBag.Count > 0);
             hdr.Add(autoBtn);
             hero.Add(hdr);
 
             if (!unlocked)
-                hero.Add(new Label($"Mở khóa Trang Bị tại {CultivationTable.GetFeatureUnlockRequirementText(RemakeFeatureId.EquipmentLoot)}.") { style = { fontSize = 10, color = new Color(0.78f, 0.25f, 0.14f), marginBottom = 5 } });
+                hero.Add(new Label($"Mở khóa Trang Bị tại {CultivationTable.GetFeatureUnlockRequirementText(RemakeFeatureId.EquipmentLoot)}.") { style = { fontSize = 12, color = new Color(0.78f, 0.25f, 0.14f), marginBottom = 5, whiteSpace = WhiteSpace.Normal } });
 
             VisualElement BuildSlotTile(RemakeEquipSlot slot)
             {
@@ -1390,7 +1437,7 @@ namespace KhiVanChiTu.Remake
                         pickingMode = PickingMode.Ignore,
                         style =
                         {
-                            position = Position.Absolute, right = 1, top = 0, fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold,
+                            position = Position.Absolute, right = 1, top = 0, fontSize = 9.5f, unityFontStyleAndWeight = FontStyle.Bold,
                             color = new Color(0.78f, 0.42f, 0.04f), backgroundColor = new Color(1f, 0.97f, 0.86f, 0.92f),
                             paddingLeft = 3, paddingRight = 3, borderTopLeftRadius = 4, borderTopRightRadius = 4, borderBottomLeftRadius = 4, borderBottomRightRadius = 4
                         }
@@ -1400,21 +1447,21 @@ namespace KhiVanChiTu.Remake
 
                 tile.Add(new Label(eq != null ? $"{CultivationTable.GetRarityName(eq.rarity)}·T{eq.tier}" : $"{GetShortEquipSlot(slot)} (Trống)")
                 {
-                    style = { fontSize = 8, unityFontStyleAndWeight = eq != null ? FontStyle.Bold : FontStyle.Normal, marginTop = 1, color = eq != null ? new Color(0.14f, 0.26f, 0.22f) : new Color(0.50f, 0.54f, 0.52f) }
+                    style = { fontSize = 9.5f, unityFontStyleAndWeight = eq != null ? FontStyle.Bold : FontStyle.Normal, marginTop = 1, color = eq != null ? new Color(0.14f, 0.26f, 0.22f) : new Color(0.50f, 0.54f, 0.52f) }
                 });
 
                 var slotActRow = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.Center, marginTop = 2 } };
-                var eBtn = new Button(() => { engine.TryEnhanceEquipSlot(slotIdx); Refresh(); }) { text = $"+Cường ({CultivationTable.GetEquipSlotEnhanceCostOre(enh)}Q)" };
+                var eBtn = new Button(() => { engine.TryEnhanceEquipSlot(slotIdx); Refresh(); }) { text = $"Cường({CultivationTable.GetEquipSlotEnhanceCostOre(enh)}Q)" };
                 eBtn.AddToClassList("btn-compact");
                 eBtn.SetEnabled(unlocked);
-                eBtn.style.fontSize = 8; eBtn.style.paddingTop = 2; eBtn.style.paddingBottom = 2; eBtn.style.paddingLeft = 4; eBtn.style.paddingRight = 4;
+                eBtn.style.fontSize = 9f; eBtn.style.paddingTop = 2; eBtn.style.paddingBottom = 2; eBtn.style.paddingLeft = 3; eBtn.style.paddingRight = 3;
                 slotActRow.Add(eBtn);
 
                 if (eq != null)
                 {
                     var uBtn = new Button(() => { engine.TryUnequipGear(slot); Refresh(); }) { name = $"btn-unequip-slot-{slotIdx}", text = "Tháo" };
                     uBtn.AddToClassList("btn-compact");
-                    uBtn.style.fontSize = 8; uBtn.style.paddingTop = 2; uBtn.style.paddingBottom = 2; uBtn.style.paddingLeft = 5; uBtn.style.paddingRight = 5; uBtn.style.marginLeft = 3;
+                    uBtn.style.fontSize = 9f; uBtn.style.paddingTop = 2; uBtn.style.paddingBottom = 2; uBtn.style.paddingLeft = 4; uBtn.style.paddingRight = 4; uBtn.style.marginLeft = 2;
                     slotActRow.Add(uBtn);
                 }
                 tile.Add(slotActRow);
@@ -1422,28 +1469,41 @@ namespace KhiVanChiTu.Remake
             }
 
             var paperRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, justifyContent = Justify.SpaceBetween } };
-            var leftCol = new VisualElement { style = { width = 104 } };
+            var leftCol = new VisualElement { style = { width = 128 } };
             leftCol.Add(BuildSlotTile(RemakeEquipSlot.Crown));
             leftCol.Add(BuildSlotTile(RemakeEquipSlot.Robe));
             leftCol.Add(BuildSlotTile(RemakeEquipSlot.Amulet));
 
             var centerCol = new VisualElement { style = { flexGrow = 1, alignItems = Align.Center, justifyContent = Justify.Center, paddingLeft = 4, paddingRight = 4 } };
             var portrait = new VisualElement { style = { width = 64, height = 64, marginBottom = 4, backgroundColor = new Color(0.99f, 0.96f, 0.88f) } };
+            portrait.AddToClassList("art-slot");
             SetBorderAndRadius(portrait, new Color(0.86f, 0.62f, 0.14f), 2f, 32f);
-            CodexArtLoader.ApplyIconOrPlaceholder(portrait, "", "[Tu Sĩ]", "CharacterPortrait");
+            CodexArtLoader.ApplyIconOrPlaceholder(portrait, CultivationTable.GetPortraitCodexKey(save.gender), "[Tu Sĩ]", "CharacterPortrait");
             centerCol.Add(portrait);
 
             float totalScore = 0f;
+            int totalEnh = 0;
             for (int i = 0; i < 6; i++)
-                totalScore += CultivationTable.CalculateEquipItemScore(engine.GetEquippedItem((RemakeEquipSlot)i), save.realmIndex);
-            centerCol.Add(new Label($"Lực TB: {totalScore:0}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, color = new Color(0.11f, 0.48f, 0.36f) } });
-            centerCol.Add(new Label($"Quặng: {save.ore} · Đá Tẩy: {save.reforgeStoneCount}") { style = { fontSize = 9, color = new Color(0.32f, 0.42f, 0.37f), marginTop = 2, unityTextAlign = TextAnchor.MiddleCenter } });
+            {
+                int slotEnh = save.equipSlotEnhanceLevels != null && i < save.equipSlotEnhanceLevels.Length ? save.equipSlotEnhanceLevels[i] : 0;
+                totalEnh += slotEnh;
+                totalScore += CultivationTable.CalculateEquipItemScore(engine.GetEquippedItem((RemakeEquipSlot)i), save.realmIndex, slotEnh);
+            }
+            centerCol.Add(new Label($"Lực Chiến: {CultivationTable.FormatNumber(engine.GetPlayerCombatPowerEstimate())}")
+            {
+                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12.5f, color = new Color(0.76f, 0.42f, 0.04f), unityTextAlign = TextAnchor.MiddleCenter }
+            });
+            centerCol.Add(new Label($"Lực TB: {totalScore:0} (+{totalEnh})")
+            {
+                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11.5f, color = new Color(0.11f, 0.48f, 0.36f), marginTop = 1, unityTextAlign = TextAnchor.MiddleCenter }
+            });
+            centerCol.Add(new Label($"Quặng: {save.ore} · Đá Tẩy: {save.reforgeStoneCount}") { style = { fontSize = 10.5f, color = new Color(0.32f, 0.42f, 0.37f), marginTop = 2, unityTextAlign = TextAnchor.MiddleCenter, whiteSpace = WhiteSpace.Normal } });
             centerCol.Add(new Label($"Thanh Vân {engine.GetEquipSetCount(RemakeEquipSet.ThanhVan)}/6 · Huyền Vũ {engine.GetEquipSetCount(RemakeEquipSet.HuyenVu)}/6 · Đan Tông {engine.GetEquipSetCount(RemakeEquipSet.DanTong)}/6")
             {
-                style = { fontSize = 9, whiteSpace = WhiteSpace.Normal, unityTextAlign = TextAnchor.MiddleCenter, marginTop = 4 }
+                style = { fontSize = 10.5f, whiteSpace = WhiteSpace.Normal, unityTextAlign = TextAnchor.MiddleCenter, marginTop = 4 }
             });
 
-            var rightCol = new VisualElement { style = { width = 104 } };
+            var rightCol = new VisualElement { style = { width = 128 } };
             rightCol.Add(BuildSlotTile(RemakeEquipSlot.Bracer));
             rightCol.Add(BuildSlotTile(RemakeEquipSlot.Ring));
             rightCol.Add(BuildSlotTile(RemakeEquipSlot.Boots));
@@ -1471,35 +1531,59 @@ namespace KhiVanChiTu.Remake
             {
                 var eqSlot = (RemakeEquipSlot)_selectedEquippedGearSlot;
                 var eqItem = engine.GetEquippedItem(eqSlot);
-                if (eqItem != null)
+                int slotEnh = save.equipSlotEnhanceLevels[_selectedEquippedGearSlot];
+                if (eqItem != null || slotEnh > 0)
                 {
                     var eqInspect = new VisualElement();
                     eqInspect.AddToClassList("card-light");
                     eqInspect.style.marginBottom = 8;
-                    ApplyEquipmentQualityGlow(eqInspect, eqItem.rarity, eqItem.tier, save.equipSlotEnhanceLevels[_selectedEquippedGearSlot], false, 10f);
-                    string setTxt = eqItem.setId != RemakeEquipSet.None ? $" · {CultivationTable.GetEquipSetName(eqItem.setId)}" : "";
-                    eqInspect.Add(new Label($"Đang Mặc: {CultivationTable.GetRarityName(eqItem.rarity)} {CultivationTable.GetEquipSlotName(eqSlot)} Bậc {eqItem.tier}{setTxt}")
+                    if (eqItem != null)
+                        ApplyEquipmentQualityGlow(eqInspect, eqItem.rarity, eqItem.tier, slotEnh, false, 10f);
+
+                    string titleTxt = eqItem != null
+                        ? $"Đang Mặc: {CultivationTable.GetRarityName(eqItem.rarity)} {CultivationTable.GetEquipSlotName(eqSlot)} Bậc {eqItem.tier}{(eqItem.setId != RemakeEquipSet.None ? $" · {CultivationTable.GetEquipSetName(eqItem.setId)}" : "")}"
+                        : $"Ô {CultivationTable.GetEquipSlotName(eqSlot)} (Chưa mặc trang bị)";
+                    eqInspect.Add(new Label(titleTxt)
                     {
-                        style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, whiteSpace = WhiteSpace.Normal }
+                        style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, whiteSpace = WhiteSpace.Normal }
                     });
-                    for (int s = 0; s < eqItem.substats.Count; s++)
+
+                    if (slotEnh > 0)
                     {
-                        var st = eqItem.substats[s];
-                        eqInspect.Add(new Label($"• {CultivationTable.GetEquipStatLabel(st.statType, st.value)}") { style = { fontSize = 10, color = new Color(0.11f, 0.48f, 0.36f), marginTop = 2 } });
-                    }
-                    var uRow = new VisualElement { style = { flexDirection = FlexDirection.Row, marginTop = 7 } };
-                    var unequipMainBtn = new Button(() =>
-                    {
-                        if (engine.TryUnequipGear(eqSlot))
+                        CultivationTable.GetEquipSlotEnhanceBonus(eqSlot, slotEnh, out float eAtk, out float eDmg, out double eHp, out float eHpPct, out float eDr);
+                        string enhDesc = CultivationTable.IsOffensiveEquipSlot(eqSlot)
+                            ? $"★ Cường hóa +{slotEnh}: +{Mathf.RoundToInt(eAtk)} Công Kiếm · +{eDmg:0.#}% ST Kiếm · +{slotEnh * 8}% Dòng Phụ"
+                            : $"★ Cường hóa +{slotEnh}: +{CultivationTable.FormatNumber(eHp)} Khí Huyết · +{eHpPct:0.#}% HP · +{eDr:0.#}% Giảm ST · +{slotEnh * 8}% Dòng Phụ";
+                        eqInspect.Add(new Label(enhDesc)
                         {
-                            _selectedEquippedGearSlot = -1;
-                            Refresh();
+                            style = { fontSize = 11.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.76f, 0.42f, 0.04f), marginTop = 3, whiteSpace = WhiteSpace.Normal }
+                        });
+                    }
+
+                    if (eqItem != null)
+                    {
+                        float enhMult = 1f + slotEnh * 0.08f;
+                        for (int s = 0; s < eqItem.substats.Count; s++)
+                        {
+                            var st = eqItem.substats[s];
+                            float effVal = st.value * enhMult;
+                            string suffix = slotEnh > 0 ? $" (gốc {st.value:0.#})" : "";
+                            eqInspect.Add(new Label($"• {CultivationTable.GetEquipStatLabel(st.statType, effVal)}{suffix}") { style = { fontSize = 12, color = new Color(0.11f, 0.48f, 0.36f), marginTop = 2, whiteSpace = WhiteSpace.Normal } });
                         }
-                    })
-                    { name = "btn-unequip-inspected-gear", text = "Tháo Trang Bị Về Túi" };
-                    unequipMainBtn.AddToClassList("btn-secondary");
-                    uRow.Add(unequipMainBtn);
-                    eqInspect.Add(uRow);
+                        var uRow = new VisualElement { style = { flexDirection = FlexDirection.Row, marginTop = 7 } };
+                        var unequipMainBtn = new Button(() =>
+                        {
+                            if (engine.TryUnequipGear(eqSlot))
+                            {
+                                _selectedEquippedGearSlot = -1;
+                                Refresh();
+                            }
+                        })
+                        { name = "btn-unequip-inspected-gear", text = "Tháo Trang Bị Về Túi" };
+                        unequipMainBtn.AddToClassList("btn-secondary");
+                        uRow.Add(unequipMainBtn);
+                        eqInspect.Add(uRow);
+                    }
                     eqRight.Add(eqInspect);
                 }
             }
@@ -1529,9 +1613,9 @@ namespace KhiVanChiTu.Remake
                 string setStr = selectedItem.setId != RemakeEquipSet.None ? $" · {CultivationTable.GetEquipSetName(selectedItem.setId)}" : "";
                 cHead.Add(new Label($"{CultivationTable.GetRarityName(selectedItem.rarity)} {CultivationTable.GetEquipSlotName(selectedItem.slot)} Bậc {selectedItem.tier}{setStr}")
                 {
-                    style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, whiteSpace = WhiteSpace.Normal, flexShrink = 1 }
+                    style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, whiteSpace = WhiteSpace.Normal, flexShrink = 1 }
                 });
-                var deltaLbl = new Label(diff >= 0 ? $"▲ +{diff:0}" : $"▼ {diff:0}") { style = { fontSize = 12, flexShrink = 0, marginLeft = 6 } };
+                var deltaLbl = new Label(diff >= 0 ? $"▲ +{diff:0}" : $"▼ {diff:0}") { style = { fontSize = 13.5f, flexShrink = 0, marginLeft = 6 } };
                 deltaLbl.AddToClassList(diff >= 0 ? "stat-up" : "stat-down");
                 cHead.Add(deltaLbl);
                 cmp.Add(cHead);
@@ -1540,7 +1624,7 @@ namespace KhiVanChiTu.Remake
                     ? $"Đang mặc: {CultivationTable.GetRarityName(equippedInSlot.rarity)} T{equippedInSlot.tier} ({eqScore:0}) vs Chọn ({selScore:0})"
                     : $"Ô {CultivationTable.GetEquipSlotName(selectedItem.slot)} đang trống (Điểm {selScore:0})")
                 {
-                    style = { fontSize = 10, color = new Color(0.32f, 0.42f, 0.37f), marginTop = 2 }
+                    style = { fontSize = 11.5f, color = new Color(0.32f, 0.42f, 0.37f), marginTop = 2, whiteSpace = WhiteSpace.Normal }
                 });
 
                 for (int s = 0; s < selectedItem.substats.Count; s++)
@@ -1551,7 +1635,7 @@ namespace KhiVanChiTu.Remake
                         for (int k = 0; k < equippedInSlot.substats.Count; k++)
                             if (equippedInSlot.substats[k].statType == st.statType) eqVal += equippedInSlot.substats[k].value;
                     float sd = st.value - eqVal;
-                    var sLbl = new Label($"• {CultivationTable.GetEquipStatLabel(st.statType, st.value)} ({(sd >= 0 ? "+" : "")}{sd:0.#})") { style = { fontSize = 10, marginTop = 2 } };
+                    var sLbl = new Label($"• {CultivationTable.GetEquipStatLabel(st.statType, st.value)} ({(sd >= 0 ? "+" : "")}{sd:0.#})") { style = { fontSize = 11.5f, marginTop = 2, whiteSpace = WhiteSpace.Normal } };
                     sLbl.AddToClassList(sd >= 0 ? "stat-up" : "stat-down");
                     cmp.Add(sLbl);
                 }
@@ -1588,11 +1672,13 @@ namespace KhiVanChiTu.Remake
             // EQUIPMENT BAG AS COMPACT MULTI-COLUMN GRID
             var bagCard = new VisualElement();
             bagCard.AddToClassList("card-light");
-            bagCard.Add(new Label($"Kho Đồ Trang Bị ({save.equipmentBag.Count}/40) — Chạm ô lưới để So Sánh") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, marginBottom = 6 } });
+            var bagTitle = HeadingLabel($"Kho Đồ Trang Bị ({save.equipmentBag.Count}/40) — Chạm ô lưới để So Sánh", 16f);
+            bagTitle.style.marginBottom = 6;
+            bagCard.Add(bagTitle);
 
             if (save.equipmentBag.Count == 0)
             {
-                bagCard.Add(new Label("Kho trang bị đang trống. Đánh quái hoặc Boss để nhặt pháp khí!") { style = { fontSize = 11, color = new Color(0.45f, 0.50f, 0.47f) } });
+                bagCard.Add(new Label("Kho trang bị đang trống. Đánh quái hoặc Boss để nhặt pháp khí!") { style = { fontSize = 12.5f, color = new Color(0.45f, 0.50f, 0.47f), whiteSpace = WhiteSpace.Normal } });
             }
             else
             {
@@ -1607,7 +1693,7 @@ namespace KhiVanChiTu.Remake
 
                     var tile = new Button(() => { _selectedEquippedGearSlot = -1; _selectedGearUid = item.uid; Refresh(); })
                     {
-                        style = { width = 66, height = 78, marginRight = 6, marginBottom = 6, paddingTop = 2, paddingBottom = 2, paddingLeft = 2, paddingRight = 2 }
+                        style = { width = 74, height = 84, marginRight = 6, marginBottom = 6, paddingTop = 2, paddingBottom = 2, paddingLeft = 2, paddingRight = 2 }
                     };
                     tile.AddToClassList("grid-tile");
                     ApplyEquipmentQualityGlow(tile, item.rarity, item.tier, 0, isSel, 10f);
@@ -1617,13 +1703,13 @@ namespace KhiVanChiTu.Remake
                         tile.Add(new Label("K")
                         {
                             pickingMode = PickingMode.Ignore,
-                            style = { position = Position.Absolute, left = 3, top = 2, fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.78f, 0.48f, 0.06f) }
+                            style = { position = Position.Absolute, left = 3, top = 2, fontSize = 9.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.78f, 0.48f, 0.06f) }
                         });
                     }
                     var arrow = new Label(diff > 0.1f ? "▲" : diff < -0.1f ? "▼" : "=")
                     {
                         pickingMode = PickingMode.Ignore,
-                        style = { position = Position.Absolute, right = 3, top = 2, fontSize = 9 }
+                        style = { position = Position.Absolute, right = 3, top = 2, fontSize = 10.5f }
                     };
                     arrow.AddToClassList(diff >= 0 ? "stat-up" : "stat-down");
                     tile.Add(arrow);
@@ -1638,7 +1724,7 @@ namespace KhiVanChiTu.Remake
                     iconWrap.Add(innerIcon);
                     tile.Add(iconWrap);
 
-                    tile.Add(new Label($"T{item.tier}·{GetShortEquipSlot(item.slot)}") { pickingMode = PickingMode.Ignore, style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, marginTop = 0, flexShrink = 0 } });
+                    tile.Add(new Label($"T{item.tier}·{GetShortEquipSlot(item.slot)}") { pickingMode = PickingMode.Ignore, style = { fontSize = 10.5f, unityFontStyleAndWeight = FontStyle.Bold, marginTop = 0, flexShrink = 0 } });
                     bagGrid.Add(tile);
                 }
                 bagCard.Add(bagGrid);
@@ -1680,8 +1766,8 @@ namespace KhiVanChiTu.Remake
             top.style.marginBottom = 8;
             string mainName = save.activeMainFormation >= 0 ? RemakeCatalogs.Formations[save.activeMainFormation].name : "Chưa khai trận";
             string subName = save.activeSubFormation >= 0 ? RemakeCatalogs.Formations[save.activeSubFormation].name : (subOpen ? "Chưa chọn" : "Mở ở Hóa Thần (50% hiệu lực)");
-            top.Add(new Label($"Trận Chính: {mainName}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, whiteSpace = WhiteSpace.Normal } });
-            top.Add(new Label($"Ô Trận Phụ: {subName}") { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+            top.Add(new Label($"Trận Chính: {mainName}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, whiteSpace = WhiteSpace.Normal } });
+            top.Add(new Label($"Ô Trận Phụ: {subName}") { style = { fontSize = 12, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
             body.Add(top);
 
             // 2-COLUMN GRID OF ALL 6 FORMATIONS
@@ -1703,7 +1789,7 @@ namespace KhiVanChiTu.Remake
                     style =
                     {
                         width = Length.Percent(48.5f),
-                        minHeight = 96,
+                        minHeight = 106,
                         marginLeft = 0, marginRight = 0, marginTop = 0, marginBottom = 6,
                         paddingTop = 7, paddingBottom = 7, paddingLeft = 6, paddingRight = 6,
                         alignItems = Align.Center,
@@ -1732,22 +1818,21 @@ namespace KhiVanChiTu.Remake
                     pickingMode = PickingMode.Ignore,
                     style =
                     {
-                        fontSize = 8, unityFontStyleAndWeight = FontStyle.Bold, color = Color.white,
-                        backgroundColor = tagBg, paddingLeft = 5, paddingRight = 5, paddingTop = 2, paddingBottom = 2,
+                        fontSize = 9.5f, unityFontStyleAndWeight = FontStyle.Bold, color = Color.white,
+                        backgroundColor = tagBg, paddingLeft = 6, paddingRight = 6, paddingTop = 2, paddingBottom = 2,
                         borderTopLeftRadius = 5, borderTopRightRadius = 5, borderBottomLeftRadius = 5, borderBottomRightRadius = 5
                     }
                 });
                 tile.Add(headRow);
 
-                tile.Add(new Label(f.name)
-                {
-                    pickingMode = PickingMode.Ignore,
-                    style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 10, whiteSpace = WhiteSpace.Normal, unityTextAlign = TextAnchor.MiddleCenter }
-                });
+                var fNameLbl = CalligraphyLabel(f.name, 14.5f);
+                fNameLbl.pickingMode = PickingMode.Ignore;
+                fNameLbl.style.unityTextAlign = TextAnchor.MiddleCenter;
+                tile.Add(fNameLbl);
                 tile.Add(new Label(fUnlocked ? f.effectDesc : $"Mở: {f.realmReqText}")
                 {
                     pickingMode = PickingMode.Ignore,
-                    style = { fontSize = 9, whiteSpace = WhiteSpace.Normal, unityTextAlign = TextAnchor.MiddleCenter, color = fUnlocked ? new Color(0.24f, 0.36f, 0.32f) : new Color(0.72f, 0.28f, 0.18f), marginTop = 2 }
+                    style = { fontSize = 10.5f, whiteSpace = WhiteSpace.Normal, unityTextAlign = TextAnchor.MiddleCenter, color = fUnlocked ? new Color(0.24f, 0.36f, 0.32f) : new Color(0.72f, 0.28f, 0.18f), marginTop = 2 }
                 });
                 grid.Add(tile);
             }
@@ -1768,8 +1853,8 @@ namespace KhiVanChiTu.Remake
             CodexArtLoader.ApplyIconOrPlaceholder(dIco, sel.codexIconKey, "[Trận]", sel.reusedIconKey);
             dRow.Add(dIco);
             var dCol = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
-            dCol.Add(new Label(sel.name) { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal } });
-            dCol.Add(new Label($"{sel.effectDesc} · Yêu cầu: {sel.realmReqText}") { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+            dCol.Add(CalligraphyLabel(sel.name, 17.5f));
+            dCol.Add(new Label($"{sel.effectDesc} · Yêu cầu: {sel.realmReqText}") { style = { fontSize = 12, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
             dRow.Add(dCol);
             detail.Add(dRow);
 
@@ -1819,7 +1904,7 @@ namespace KhiVanChiTu.Remake
             scrollBar.Add(scIcon);
             scrollBar.Add(new Label($"Tàn Quyển Công Pháp: {save.skillScrollCount} (ưu tiên dùng khi nâng · Thức tỉnh Lv.10 / 20 / 30)")
             {
-                style = { fontSize = 11, whiteSpace = WhiteSpace.Normal, flexGrow = 1, flexShrink = 1 }
+                style = { fontSize = 12.5f, whiteSpace = WhiteSpace.Normal, flexGrow = 1, flexShrink = 1 }
             });
             body.Add(scrollBar);
 
@@ -1831,7 +1916,7 @@ namespace KhiVanChiTu.Remake
                 ("4. Ấn Chưởng", "Hóa Thần Sơ Kỳ", "SkillPalm", "Đại Thủ Ấn giáng sát thương cực hạn + đẩy lùi.")
             };
 
-            // 2x2 GRID
+            // SYMMETRIC 2x2 SKILL MEDALLION GRID
             var grid = new VisualElement();
             grid.AddToClassList("grid-wrap");
             grid.style.justifyContent = Justify.SpaceBetween;
@@ -1849,57 +1934,96 @@ namespace KhiVanChiTu.Remake
                 {
                     style =
                     {
-                        width = Length.Percent(48.5f),
-                        minHeight = 88,
-                        marginLeft = 0, marginRight = 0, marginTop = 0, marginBottom = 6,
-                        paddingTop = 7, paddingBottom = 7, paddingLeft = 6, paddingRight = 6,
+                        width = Length.Percent(48.8f),
+                        height = 122,
+                        marginLeft = 0, marginRight = 0, marginTop = 0, marginBottom = 7,
+                        paddingTop = 8, paddingBottom = 8, paddingLeft = 8, paddingRight = 8,
                         alignItems = Align.Center,
+                        justifyContent = Justify.Center,
                         overflow = Overflow.Hidden
                     }
                 };
                 tile.AddToClassList("grid-tile");
                 if (isSel) tile.AddToClassList("grid-tile-selected");
 
-                var ico = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 36, height = 36, minWidth = 36, minHeight = 36, flexShrink = 0, marginBottom = 4 } };
+                var medallion = new VisualElement { pickingMode = PickingMode.Ignore };
+                medallion.AddToClassList("skill-drawer-medallion");
+                var ico = new VisualElement { pickingMode = PickingMode.Ignore, style = { width = 32, height = 32, minWidth = 32, minHeight = 32, flexShrink = 0 } };
                 ico.AddToClassList("icon-fixed");
                 CodexArtLoader.ApplyIconOrPlaceholder(ico, "", "[Skill]", skills[s].reused);
-                tile.Add(ico);
+                if (!unlocked) ico.style.opacity = 0.45f;
+                medallion.Add(ico);
+                tile.Add(medallion);
 
-                tile.Add(new Label($"{skills[s].name}") { pickingMode = PickingMode.Ignore, style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 10, whiteSpace = WhiteSpace.Normal, unityTextAlign = TextAnchor.MiddleCenter } });
-                tile.Add(new Label(unlocked ? $"Cấp {lv} · Auto {(autoOn ? "Bật" : "Tắt")}" : $"Mở: {skills[s].req}")
+                var sNameLbl = CalligraphyLabel(skills[s].name, 15.5f);
+                sNameLbl.pickingMode = PickingMode.Ignore;
+                sNameLbl.style.unityTextAlign = TextAnchor.MiddleCenter;
+                tile.Add(sNameLbl);
+
+                var statusLbl = new Label(unlocked ? $"Cấp {lv} · Auto {(autoOn ? "Bật" : "Tắt")}" : $"Mở: {skills[s].req}")
                 {
                     pickingMode = PickingMode.Ignore,
-                    style = { fontSize = 9, color = unlocked ? new Color(0.14f, 0.52f, 0.40f) : new Color(0.72f, 0.28f, 0.18f), marginTop = 2 }
-                });
+                    style =
+                    {
+                        fontSize = 11f,
+                        color = unlocked ? new Color(0.12f, 0.50f, 0.38f) : new Color(0.72f, 0.28f, 0.18f),
+                        marginTop = 3,
+                        unityTextAlign = TextAnchor.MiddleCenter
+                    }
+                };
+                statusLbl.AddToClassList("font-ui-semibold");
+                tile.Add(statusLbl);
                 grid.Add(tile);
             }
             body.Add(grid);
 
-            // SELECTED SKILL DETAIL CARD
+            // SELECTED SKILL DETAIL CARD (SYMMETRIC STAT SUMMARY + EQUAL-WIDTH ACTION BUTTONS)
             int selSlot = _selectedSkillSlot;
             bool selUnlocked = engine.IsSkillUnlocked(selSlot);
             int selLv = engine.GetSkillLevel(selSlot);
             bool selAuto = engine.GetSkillAuto(selSlot);
             double ltCost = Math.Round((180 + selSlot * 320) * Math.Pow(1.22, selLv - 1));
+            double awakenMult = selLv >= 30 ? 2.2 : selLv >= 20 ? 1.65 : selLv >= 10 ? 1.3 : 1.0;
+            double baseCoef = selSlot switch
+            {
+                0 => 3.2 + selLv * 0.25,
+                1 => 2.4 + selLv * 0.22,
+                2 => 4.2 + selLv * 0.32,
+                _ => 5.6 + selLv * 0.42
+            };
+            float cdSec = engine.GetSkillCooldownTotal(selSlot);
 
             var detail = new VisualElement();
             detail.AddToClassList("stage-hero-box");
             detail.style.alignItems = Align.Stretch;
-            detail.Add(new Label($"{skills[selSlot].name} (Cấp {selLv}) — {(selUnlocked ? "Đã khai mở" : "Yêu cầu: " + skills[selSlot].req)}")
+            detail.style.paddingTop = 12;
+            detail.style.paddingBottom = 12;
+            detail.style.paddingLeft = 14;
+            detail.style.paddingRight = 14;
+            detail.Add(CalligraphyLabel($"{skills[selSlot].name} (Cấp {selLv}) — {(selUnlocked ? "Đã khai mở" : "Yêu cầu: " + skills[selSlot].req)}", 17.5f));
+            detail.Add(new Label(skills[selSlot].desc) { style = { fontSize = 12.5f, whiteSpace = WhiteSpace.Normal, marginTop = 3 } });
+            detail.Add(new Label($"Hệ số ST: {Math.Round(baseCoef * awakenMult * 100.0):0}% Công Kiếm · Hồi: {cdSec:0}s · Thức tỉnh: ×{awakenMult:0.##} · Chiến Lực: {CultivationTable.FormatNumber(engine.GetPlayerCombatPowerEstimate())}")
             {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal }
+                style = { fontSize = 11.5f, color = new Color(0.14f, 0.48f, 0.36f), marginTop = 4, whiteSpace = WhiteSpace.Normal }
             });
-            detail.Add(new Label(skills[selSlot].desc) { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal, marginTop = 3 } });
 
-            var acts = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginTop = 8 } };
-            var btnAuto = new Button(() => { engine.SetSkillAuto(selSlot, !selAuto); Refresh(); }) { text = selAuto ? "Tự Động: BẬT" : "Tự Động: TẮT" };
+            var acts = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, alignItems = Align.Stretch, marginTop = 10 } };
+            var btnAuto = new Button(() => { engine.SetSkillAuto(selSlot, !selAuto); Refresh(); })
+            {
+                text = selAuto ? "Tự Động: BẬT" : "Tự Động: TẮT",
+                style = { width = Length.Percent(48.5f), height = 38, marginLeft = 0, marginRight = 0, marginTop = 0, marginBottom = 0, fontSize = 12.5f }
+            };
             btnAuto.AddToClassList("btn-compact");
             btnAuto.EnableInClassList("selected", selAuto);
             btnAuto.SetEnabled(selUnlocked);
             acts.Add(btnAuto);
 
             string upLbl = save.skillScrollCount > 0 ? "Nâng (1 Tàn Quyển)" : $"Nâng ({CultivationTable.FormatNumber(ltCost)} LT)";
-            var btnUp = new Button(() => { engine.TryUpgradeSkill(selSlot, true); Refresh(); }) { text = upLbl };
+            var btnUp = new Button(() => { engine.TryUpgradeSkill(selSlot, true); Refresh(); })
+            {
+                text = upLbl,
+                style = { width = Length.Percent(48.5f), height = 38, minWidth = 100, marginLeft = 0, marginRight = 0, marginTop = 0, marginBottom = 0, paddingLeft = 10, paddingRight = 10, fontSize = 12.5f }
+            };
             btnUp.AddToClassList("btn-primary");
             btnUp.SetEnabled(selUnlocked && (save.skillScrollCount > 0 || save.linhThach >= ltCost));
             acts.Add(btnUp);
@@ -1921,14 +2045,14 @@ namespace KhiVanChiTu.Remake
             var preview = new VisualElement();
             preview.AddToClassList("card-light");
             preview.style.marginBottom = 8;
-            preview.Add(new Label($"Ải Đang Treo: {ActStageDatabaseSO.GetDifficultyLabel(curStage.difficulty)} · {curStage.stageName}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal } });
+            preview.Add(HeadingLabel($"Ải Đang Treo: {ActStageDatabaseSO.GetDifficultyLabel(curStage.difficulty)} · {curStage.stageName}", 16.5f));
             preview.Add(new Label($"Cơ chế treo máy: Vượt Ải 1–9 không tử vong sẽ tự động sang ải kế tiếp (khi đủ Cảnh Giới). Tử vong sẽ hồi sinh 5s & đánh lại đúng ải hiện tại. Tại Boss X-10 luôn đánh đi đánh lại dù thắng hay thua!")
             {
-                style = { fontSize = 10, color = new Color(0.18f, 0.44f, 0.36f), whiteSpace = WhiteSpace.Normal, marginTop = 2 }
+                style = { fontSize = 11.5f, color = new Color(0.18f, 0.44f, 0.36f), whiteSpace = WhiteSpace.Normal, marginTop = 2 }
             });
             preview.Add(new Label($"Thấu Thị Rơi Đồ: Tu Vi {CultivationTable.FormatNumber(curStage.tuViPerKill)} · LT {CultivationTable.FormatNumber(curStage.linhThachPerKill)} · Kiếm Lv.{curStage.swordDropMinLevel}-{curStage.swordDropMaxLevel} ({curStage.swordDropRate * 100f:0.0}%) · {ActStageDatabaseSO.GetHerbName(curStage.herbTier)}")
             {
-                style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 3 }
+                style = { fontSize = 11.5f, whiteSpace = WhiteSpace.Normal, marginTop = 3 }
             });
             var bossCtrlRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, alignItems = Align.Center, justifyContent = Justify.SpaceBetween, marginTop = 6 } };
             var autoBossBtn = new Button(() =>
@@ -1942,14 +2066,15 @@ namespace KhiVanChiTu.Remake
             };
             autoBossBtn.AddToClassList("btn-compact");
             if (save.autoChallengeBoss) autoBossBtn.AddToClassList("selected");
-            autoBossBtn.style.fontSize = 10;
+            autoBossBtn.style.fontSize = 11.5f;
             bossCtrlRow.Add(autoBossBtn);
             if (engine.CanChallengeActBossNow())
             {
                 var chalBtn = new Button(() => engine.TryChallengeCurrentActBoss()) { text = "Khiêu Chiến Boss!" };
                 chalBtn.AddToClassList("btn-primary");
-                chalBtn.style.paddingTop = 3; chalBtn.style.paddingBottom = 3; chalBtn.style.paddingLeft = 8; chalBtn.style.paddingRight = 8;
-                chalBtn.style.fontSize = 10;
+                chalBtn.style.paddingTop = 5; chalBtn.style.paddingBottom = 5; chalBtn.style.paddingLeft = 18; chalBtn.style.paddingRight = 18;
+                chalBtn.style.minWidth = 140;
+                chalBtn.style.fontSize = 11.5f;
                 bossCtrlRow.Add(chalBtn);
             }
             preview.Add(bossCtrlRow);
@@ -1968,7 +2093,7 @@ namespace KhiVanChiTu.Remake
                 { text = dLabel };
                 b.AddToClassList("btn-compact");
                 if (d == _uiStageTabDiff) b.AddToClassList("selected");
-                b.style.flexGrow = 1; b.style.marginRight = d < 3 ? 4 : 0; b.style.fontSize = 9;
+                b.style.flexGrow = 1; b.style.marginRight = d < 3 ? 4 : 0; b.style.fontSize = 10.5f; b.style.paddingLeft = 4; b.style.paddingRight = 4; b.style.whiteSpace = WhiteSpace.Normal;
                 diffRow.Add(b);
             }
             body.Add(diffRow);
@@ -1987,7 +2112,7 @@ namespace KhiVanChiTu.Remake
                 { text = aLabel };
                 b.AddToClassList("btn-compact");
                 if (a == _uiStageTabAct) b.AddToClassList("selected");
-                b.style.flexGrow = 1; b.style.marginRight = a < 2 ? 4 : 0; b.style.fontSize = 9;
+                b.style.flexGrow = 1; b.style.marginRight = a < 2 ? 4 : 0; b.style.fontSize = 10.5f; b.style.paddingLeft = 4; b.style.paddingRight = 4; b.style.whiteSpace = WhiteSpace.Normal;
                 actRow.Add(b);
             }
             body.Add(actRow);
@@ -2022,11 +2147,15 @@ namespace KhiVanChiTu.Remake
                 btn.AddToClassList("btn-secondary");
                 if (active) btn.AddToClassList("selected");
                 btn.SetEnabled(unlocked);
-                btn.style.width = 92;
-                btn.style.height = 50;
+                btn.style.width = 108;
+                btn.style.minWidth = 96;
+                btn.style.height = 58;
                 btn.style.marginRight = 5;
                 btn.style.marginBottom = 5;
-                btn.style.fontSize = 9;
+                btn.style.paddingLeft = 4;
+                btn.style.paddingRight = 4;
+                btn.style.fontSize = 10.5f;
+                btn.style.whiteSpace = WhiteSpace.Normal;
                 stageGrid.Add(btn);
             }
             body.Add(stageGrid);
@@ -2055,6 +2184,12 @@ namespace KhiVanChiTu.Remake
             var hero = new VisualElement();
             hero.AddToClassList("stage-hero-box");
             hero.style.alignItems = Align.Stretch;
+            if (atGate)
+            {
+                var orn = OrnamentLabel("Thiên Kiếp Giáng Lâm", 28f, new Color(0.68f, 0.42f, 0.06f));
+                orn.style.marginBottom = 2;
+                hero.Add(orn);
+            }
             var topRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center } };
             var altar = new VisualElement { style = { width = 84, height = 84, flexShrink = 0 } };
             SetBorderAndRadius(altar, new Color(0.84f, 0.60f, 0.16f), 1.5f, 12f);
@@ -2062,17 +2197,26 @@ namespace KhiVanChiTu.Remake
             topRow.Add(altar);
 
             var info = new VisualElement { style = { flexGrow = 1, marginLeft = 10, flexShrink = 1 } };
-            info.Add(new Label($"{CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)} → {CultivationTable.GetRealmDisplayName(nextRealm, nextSub)}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal } });
-            info.Add(new Label($"Tu Vi: {CultivationTable.FormatNumber(save.tuVi)} / {CultivationTable.FormatNumber(reqTuVi)} ({Mathf.RoundToInt(Mathf.Clamp01((float)(save.tuVi / Math.Max(1, reqTuVi))) * 100)}%)") { style = { fontSize = 11, marginTop = 3 } });
+            info.Add(HeadingLabel($"{CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)} → {CultivationTable.GetRealmDisplayName(nextRealm, nextSub)}", 16.5f));
+            info.Add(new Label($"Tu Vi: {CultivationTable.FormatNumber(save.tuVi)} / {CultivationTable.FormatNumber(reqTuVi)} ({Mathf.RoundToInt(Mathf.Clamp01((float)(save.tuVi / Math.Max(1, reqTuVi))) * 100)}%)") { style = { fontSize = 12.5f, marginTop = 3, whiteSpace = WhiteSpace.Normal } });
             string gateNote = atGate
                 ? $"Bình cảnh: {CultivationTable.GetBreakthroughGateTitle(save.realmIndex, save.subStage)} — Bế quan đón 9 đạo Thiên Lôi (15s)!"
                 : "Các tầng thường tự động thăng cấp khi đủ 100% Tu Vi! Chỉ cần Đột Phá tại mốc Sơ Kỳ (T3) → Trung Kỳ (T6) → Đỉnh Phong (T10).";
-            info.Add(new Label(gateNote) { style = { fontSize = 10, color = atGate ? new Color(0.68f, 0.34f, 0.08f) : new Color(0.14f, 0.50f, 0.38f), whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+            if (atGate)
+            {
+                var gLbl = CalligraphyLabel(gateNote, 14f, new Color(0.68f, 0.34f, 0.08f));
+                gLbl.style.marginTop = 2;
+                info.Add(gLbl);
+            }
+            else
+            {
+                info.Add(new Label(gateNote) { style = { fontSize = 11.5f, color = new Color(0.14f, 0.50f, 0.38f), whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+            }
             topRow.Add(info);
             hero.Add(topRow);
 
             var helperRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, justifyContent = Justify.SpaceBetween, marginTop = 7 } };
-            helperRow.Add(new Label($"Thất bại liên tiếp: {save.consecutiveBreakthroughFails} · Hộ Pháp: +{save.hoPhapBonusSteps}%") { style = { fontSize = 10, color = new Color(0.32f, 0.42f, 0.37f) } });
+            helperRow.Add(new Label($"Thất bại liên tiếp: {save.consecutiveBreakthroughFails} · Hộ Pháp: +{save.hoPhapBonusSteps}%") { style = { fontSize = 11.5f, color = new Color(0.32f, 0.42f, 0.37f) } });
             var incBtn = new Button(() => { if (engine.TryUseCalmIncense()) Refresh(); })
             { text = $"Tĩnh Tâm Hương ({save.calmIncenseCount})" };
             incBtn.AddToClassList("btn-compact");
@@ -2097,7 +2241,7 @@ namespace KhiVanChiTu.Remake
                 var gridCard = new VisualElement();
                 gridCard.AddToClassList("card-light");
                 gridCard.style.marginBottom = 8;
-                gridCard.Add(new Label($"Chọn {pillName} Trợ Lực Độ Kiếp:") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, marginBottom = 6 } });
+                gridCard.Add(new Label($"Chọn {pillName} Trợ Lực Độ Kiếp:") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, marginBottom = 6 } });
 
                 var optGrid = new VisualElement();
                 optGrid.AddToClassList("grid-wrap");
@@ -2122,7 +2266,7 @@ namespace KhiVanChiTu.Remake
                         style =
                         {
                             width = Length.Percent(31.5f),
-                            minHeight = 82,
+                            minHeight = 90,
                             marginLeft = 0, marginRight = (i % 3 < 2) ? Length.Percent(2.5f) : 0, marginTop = 0, marginBottom = 6,
                             paddingTop = 5, paddingBottom = 5, alignItems = Align.Center
                         }
@@ -2135,8 +2279,8 @@ namespace KhiVanChiTu.Remake
                     pIco.AddToClassList("icon-fixed");
                     CodexArtLoader.ApplyIconOrPlaceholder(pIco, opt.HasValue ? pillCodex : "HUD/nav_breakthrough", "[Đan]");
                     tile.Add(pIco);
-                    tile.Add(new Label(opt.HasValue ? $"{GetShortPillQuality(opt.Value)} (x{cnt})" : "Vượt Chay") { pickingMode = PickingMode.Ignore, style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, marginTop = 2, flexShrink = 0 } });
-                    tile.Add(new Label($"Tỉ lệ {chPct}%") { pickingMode = PickingMode.Ignore, style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.48f, 0.36f), flexShrink = 0 } });
+                    tile.Add(new Label(opt.HasValue ? $"{GetShortPillQuality(opt.Value)} (x{cnt})" : "Vượt Chay") { pickingMode = PickingMode.Ignore, style = { fontSize = 10.5f, unityFontStyleAndWeight = FontStyle.Bold, marginTop = 2, flexShrink = 0 } });
+                    tile.Add(new Label($"Tỉ lệ {chPct}%") { pickingMode = PickingMode.Ignore, style = { fontSize = 11.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.48f, 0.36f), flexShrink = 0 } });
                     optGrid.Add(tile);
                 }
                 gridCard.Add(optGrid);
@@ -2147,12 +2291,12 @@ namespace KhiVanChiTu.Remake
             var ctaCard = new VisualElement();
             ctaCard.AddToClassList("card-light");
             ctaCard.style.alignItems = Align.Center;
-            ctaCard.Add(new Label(atGate
-                ? $"Tổng xác suất Độ Kiếp: {Mathf.RoundToInt(finalChance * 100)}%"
-                : "Chưa chạm bình cảnh — Tầng hiện tại sẽ tự động thăng cấp khi đủ Tu Vi!")
-            {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, color = new Color(0.11f, 0.48f, 0.36f), marginBottom = 6, whiteSpace = WhiteSpace.Normal, unityTextAlign = TextAnchor.MiddleCenter }
-            });
+            var ctaLbl = atGate
+                ? CalligraphyLabel($"Tổng xác suất Độ Kiếp: {Mathf.RoundToInt(finalChance * 100)}%", 17.5f, new Color(0.11f, 0.48f, 0.36f))
+                : HeadingLabel("Chưa chạm bình cảnh — Tầng hiện tại sẽ tự động thăng cấp khi đủ Tu Vi!", 15f, new Color(0.11f, 0.48f, 0.36f));
+            ctaLbl.style.marginBottom = 6;
+            ctaLbl.style.unityTextAlign = TextAnchor.MiddleCenter;
+            ctaCard.Add(ctaLbl);
 
             var startBtn = new Button(() =>
             {
@@ -2196,7 +2340,7 @@ namespace KhiVanChiTu.Remake
             ico.AddToClassList("icon-fixed");
             CodexArtLoader.ApplyIconOrPlaceholder(ico, codexKey, "", reusedKey);
             chip.Add(ico);
-            chip.Add(new Label(amountText) { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = accentText, marginTop = 0, marginBottom = 0, marginLeft = 0, marginRight = 0, paddingTop = 0, paddingBottom = 0 } });
+            chip.Add(new Label(amountText) { style = { fontSize = 11.5f, unityFontStyleAndWeight = FontStyle.Bold, color = accentText, marginTop = 0, marginBottom = 0, marginLeft = 0, marginRight = 0, paddingTop = 0, paddingBottom = 0 } });
             return chip;
         }
 
@@ -2257,13 +2401,12 @@ namespace KhiVanChiTu.Remake
             heroTop.Add(emblem);
 
             var heroText = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
-            heroText.Add(new Label("Hành Trình Chứng Đạo — 30 Ngày Vấn Đỉnh Đại Thừa")
-            {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 14, color = new Color(0.11f, 0.36f, 0.28f), whiteSpace = WhiteSpace.Normal, marginTop = 0, marginBottom = 2 }
-            });
+            var diaryHeroTitle = HeadingLabel("Hành Trình Chứng Đạo — 30 Ngày Vấn Đỉnh Đại Thừa", 18f, new Color(0.11f, 0.36f, 0.28f));
+            diaryHeroTitle.style.marginTop = 0; diaryHeroTitle.style.marginBottom = 2;
+            heroText.Add(diaryHeroTitle);
             heroText.Add(new Label($"Hiện tại: {CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)}  ·  Ải mở: {save.highestUnlockedLinearStage + 1}/120  ·  Hoàn thành: {claimedCount}/{all.Count} mốc")
             {
-                style = { fontSize = 11, color = new Color(0.30f, 0.40f, 0.36f), whiteSpace = WhiteSpace.Normal }
+                style = { fontSize = 12f, color = new Color(0.30f, 0.40f, 0.36f), whiteSpace = WhiteSpace.Normal }
             });
 
             var overallTrack = new VisualElement { style = { width = Length.Percent(100), height = 8, marginTop = 6 } };
@@ -2298,15 +2441,16 @@ namespace KhiVanChiTu.Remake
 
                 string sym = isClaimed ? "✓" : isReady ? "!" : $"{i + 1}";
                 Color symColor = (isClaimed || isReady) ? Color.white : isCurrent ? new Color(0.72f, 0.44f, 0.04f) : new Color(0.45f, 0.50f, 0.48f);
-                dot.Add(new Label(sym) { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = symColor, marginTop = 0, marginBottom = 0, paddingTop = 0, paddingBottom = 0 } });
+                dot.Add(new Label(sym) { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, color = symColor, marginTop = 0, marginBottom = 0, paddingTop = 0, paddingBottom = 0 } });
                 node.Add(dot);
 
                 node.Add(new Label(art.shortRealm)
                 {
                     style =
                     {
-                        fontSize = 8,
+                        fontSize = 9.5f,
                         marginTop = 3,
+                        whiteSpace = WhiteSpace.Normal,
                         unityFontStyleAndWeight = (isCurrent || isReady) ? FontStyle.Bold : FontStyle.Normal,
                         color = isClaimed ? new Color(0.12f, 0.52f, 0.38f) : isReady ? new Color(0.76f, 0.46f, 0.04f) : new Color(0.40f, 0.47f, 0.44f),
                         unityTextAlign = TextAnchor.MiddleCenter
@@ -2331,7 +2475,7 @@ namespace KhiVanChiTu.Remake
                 var spotHeader = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginBottom = 6 } };
                 spotHeader.Add(new Label(ready ? $"MỐC SẴN SÀNG NHẬN THƯỞNG ({readyCount} mốc)" : "MỤC TIÊU TIẾP THEO TRÊN TIÊN LỘ")
                 {
-                    style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.42f, 0.02f) }
+                    style = { fontSize = 11.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.42f, 0.02f) }
                 });
                 var tagLbl = new Label(art.tag);
                 tagLbl.AddToClassList("diary-status-badge");
@@ -2346,15 +2490,15 @@ namespace KhiVanChiTu.Remake
                 spotBody.Add(thumb);
 
                 var sInfo = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
-                sInfo.Add(new Label(m.title) { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, color = new Color(0.11f, 0.20f, 0.18f), whiteSpace = WhiteSpace.Normal } });
-                sInfo.Add(new Label($"Mục tiêu: {m.targetHint}") { style = { fontSize = 11, color = new Color(0.14f, 0.50f, 0.38f), unityFontStyleAndWeight = FontStyle.Bold, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
+                sInfo.Add(HeadingLabel(m.title, 17f, new Color(0.11f, 0.20f, 0.18f)));
+                sInfo.Add(new Label($"Mục tiêu: {m.targetHint}") { style = { fontSize = 12f, color = new Color(0.14f, 0.50f, 0.38f), unityFontStyleAndWeight = FontStyle.Bold, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
 
                 var pRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, marginTop = 5 } };
                 var pTrack = new VisualElement { style = { flexGrow = 1, height = 8, marginRight = 8 } };
                 pTrack.AddToClassList("bar-track");
                 pTrack.Add(new VisualElement { style = { width = Length.Percent(prog01 * 100f), height = Length.Percent(100), backgroundColor = ready ? new Color(0.88f, 0.60f, 0.10f) : new Color(0.18f, 0.66f, 0.50f) } });
                 pRow.Add(pTrack);
-                pRow.Add(new Label($"{Mathf.RoundToInt(prog01 * 100)}%") { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.45f, 0.34f, 0.10f) } });
+                pRow.Add(new Label($"{Mathf.RoundToInt(prog01 * 100)}%") { style = { fontSize = 11.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.45f, 0.34f, 0.10f) } });
                 sInfo.Add(pRow);
 
                 sInfo.Add(BuildDiaryRewardRow(m));
@@ -2374,10 +2518,9 @@ namespace KhiVanChiTu.Remake
             }
 
             // 3. ILLUSTRATED CHAPTER CARDS (1-COL FULL WIDTH ON MOBILE / 2-COL WIDE ON PC)
-            body.Add(new Label("Toàn Bộ 8 Chương Tiên Lộ")
-            {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, color = new Color(0.14f, 0.44f, 0.35f), marginBottom = 6 }
-            });
+            var chHdr = HeadingLabel("Toàn Bộ 8 Chương Tiên Lộ", 16.5f, new Color(0.14f, 0.44f, 0.35f));
+            chHdr.style.marginBottom = 6;
+            body.Add(chHdr);
 
             var grid = new VisualElement();
             grid.AddToClassList("grid-wrap");
@@ -2400,7 +2543,7 @@ namespace KhiVanChiTu.Remake
                 var topRow = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, alignItems = Align.Center, marginBottom = 6 } };
                 topRow.Add(new Label($"CHƯƠNG {i + 1} · {art.tag}")
                 {
-                    style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.56f, 0.42f, 0.14f) }
+                    style = { fontSize = 10.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.56f, 0.42f, 0.14f) }
                 });
                 var badge = new Label(claimed ? "Đã Hoàn Thành" : ready ? "Có Thể Nhận!" : isNext ? "Đang Chinh Phục" : "Chưa Mở");
                 badge.AddToClassList("diary-status-badge");
@@ -2417,8 +2560,8 @@ namespace KhiVanChiTu.Remake
                 var cInfo = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
                 int colonIdx = capM.title.IndexOf(':');
                 string cleanTitle = colonIdx >= 0 && colonIdx + 1 < capM.title.Length ? capM.title.Substring(colonIdx + 1).Trim() : capM.title;
-                cInfo.Add(new Label(cleanTitle) { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, color = new Color(0.12f, 0.21f, 0.19f), whiteSpace = WhiteSpace.Normal } });
-                cInfo.Add(new Label(capM.targetHint) { style = { fontSize = 10, color = new Color(0.18f, 0.48f, 0.39f), whiteSpace = WhiteSpace.Normal, marginTop = 1 } });
+                cInfo.Add(HeadingLabel(cleanTitle, 16f, new Color(0.12f, 0.21f, 0.19f)));
+                cInfo.Add(new Label(capM.targetHint) { style = { fontSize = 11.5f, color = new Color(0.18f, 0.48f, 0.39f), whiteSpace = WhiteSpace.Normal, marginTop = 1 } });
 
                 var miniTrack = new VisualElement { style = { width = Length.Percent(100), height = 5, marginTop = 4 } };
                 miniTrack.AddToClassList("bar-track");
@@ -2436,10 +2579,10 @@ namespace KhiVanChiTu.Remake
                 var btn = new Button(() => { engine.TryClaimPioneerMilestone(capM.index); Refresh(); })
                 { text = claimed ? "Đã Nhận" : ready ? "Nhận Quà" : $"{Mathf.RoundToInt(prog01 * 100)}%" };
                 btn.AddToClassList(ready ? "btn-primary" : "btn-compact");
-                btn.style.fontSize = 10;
-                btn.style.paddingTop = 4; btn.style.paddingBottom = 4;
-                btn.style.paddingLeft = 10; btn.style.paddingRight = 10;
-                btn.style.minWidth = 76;
+                btn.style.fontSize = 11f;
+                btn.style.paddingTop = 5; btn.style.paddingBottom = 5;
+                btn.style.paddingLeft = ready ? 18 : 10; btn.style.paddingRight = ready ? 18 : 10;
+                btn.style.minWidth = ready ? 108 : 76;
                 btn.SetEnabled(ready);
                 footRow.Add(btn);
                 card.Add(footRow);
@@ -2457,10 +2600,36 @@ namespace KhiVanChiTu.Remake
             var g = SaveService.Current.graphics;
             var svc = GraphicsSettingsService.Instance;
 
+            // 1. AUDIO & LIVE VOLUME SLIDERS CARD
+            var cardAudio = new VisualElement();
+            cardAudio.AddToClassList("card-light");
+            cardAudio.style.marginBottom = 8;
+            var audioHeading = HeadingLabel("Âm Thanh & Điều Chỉnh Âm Lượng", 16f, new Color(0.11f, 0.44f, 0.34f));
+            audioHeading.style.marginBottom = 6;
+            cardAudio.Add(audioHeading);
+
+            AddChoiceRow(cardAudio, "Âm thanh SFX:", new[] { "Tắt", "Bật" }, g.soundEnabled ? 1 : 0, idx => svc?.SetAudioEnabled(idx == 1, g.musicEnabled));
+            AddChoiceRow(cardAudio, "Nhạc nền:", new[] { "Tắt", "Bật" }, g.musicEnabled ? 1 : 0, idx => svc?.SetAudioEnabled(g.soundEnabled, idx == 1));
+            AddVolumeSliderRow(cardAudio, "slider-vol-master", "Âm lượng tổng:", g.masterVolume, (v, save) => svc?.SetMasterVolume(v, save), true);
+            AddVolumeSliderRow(cardAudio, "slider-vol-music", "Nhạc nền (BGM):", g.musicVolume, (v, save) => svc?.SetMusicVolume(v, save), false);
+            AddVolumeSliderRow(cardAudio, "slider-vol-ambience", "Môi trường:", g.ambienceVolume, (v, save) => svc?.SetAmbienceVolume(v, save), false);
+            AddVolumeSliderRow(cardAudio, "slider-vol-voice", "Lồng tiếng:", g.voiceVolume, (v, save) => svc?.SetVoiceVolume(v, save), true, () =>
+            {
+                var audio = RemakeAudioService.Instance;
+                if (audio == null) return;
+                if (!audio.TryPlayVoice(RemakeVoiceLineId.SelectPreview, SaveService.Current.gender, true))
+                    audio.PlayClick();
+            });
+            AddVolumeSliderRow(cardAudio, "slider-vol-sfx", "Hiệu ứng (SFX):", g.sfxVolume, (v, save) => svc?.SetSfxVolume(v, save), true);
+            body.Add(cardAudio);
+
+            // 2. 3D GRAPHICS & FPS CARD
             var cardGfx = new VisualElement();
             cardGfx.AddToClassList("card-light");
             cardGfx.style.marginBottom = 8;
-            cardGfx.Add(new Label("Cài Đặt Đồ Họa 3D & Tối Ưu Pin (WebGL / iPhone):") { style = { unityFontStyleAndWeight = FontStyle.Bold, marginBottom = 6 } });
+            var gfxHeading = HeadingLabel("Đồ Họa 3D & Tối Ưu FPS (PC WebGL / Mobile)", 16f, new Color(0.11f, 0.44f, 0.34f));
+            gfxHeading.style.marginBottom = 6;
+            cardGfx.Add(gfxHeading);
 
             AddChoiceRow(cardGfx, "Mức tổng thể:", new[] { "Thấp", "Trung", "Cao" }, (int)g.preset, idx => svc?.ApplyPreset((RemakeGraphicsPreset)idx));
             AddChoiceRow(cardGfx, "Render Scale:", new[] { "70%", "85%", "100%" }, g.renderScaleIndex, idx => svc?.SetRenderScaleIndex(idx));
@@ -2468,20 +2637,42 @@ namespace KhiVanChiTu.Remake
             AddChoiceRow(cardGfx, "Mật độ VFX:", new[] { "Tối giản", "Đầy đủ" }, (int)g.vfxDensity, idx => svc?.SetVfxDensity((RemakeVfxDensity)idx));
             AddChoiceRow(cardGfx, "Giới hạn FPS:", new[] { "30 FPS", "60 FPS" }, g.targetFps <= 35 ? 0 : 1, idx => svc?.SetTargetFps(idx == 0 ? 30 : 60));
             AddChoiceRow(cardGfx, "Hiện bộ đếm FPS:", new[] { "Tắt", "Bật" }, g.showFpsCounter ? 1 : 0, idx => svc?.SetShowFpsCounter(idx == 1));
-            AddChoiceRow(cardGfx, "Âm thanh SFX:", new[] { "Tắt", "Bật" }, g.soundEnabled ? 1 : 0, idx => svc?.SetAudioEnabled(idx == 1, g.musicEnabled));
-            AddChoiceRow(cardGfx, "Nhạc nền:", new[] { "Tắt", "Bật" }, g.musicEnabled ? 1 : 0, idx => svc?.SetAudioEnabled(g.soundEnabled, idx == 1));
+
+            string gpuName = string.IsNullOrEmpty(SystemInfo.graphicsDeviceName) ? "Không rõ" : SystemInfo.graphicsDeviceName;
+            cardGfx.Add(new Label($"Trình kết xuất GPU: {gpuName}")
+            {
+                style = { fontSize = 11.5f, color = new Color(0.28f, 0.40f, 0.36f), marginTop = 4, whiteSpace = WhiteSpace.Normal }
+            });
+            if (GraphicsSettingsService.IsSoftwareWebGlRenderer())
+            {
+                var warnBox = new VisualElement
+                {
+                    style =
+                    {
+                        marginTop = 6, paddingTop = 7, paddingBottom = 7, paddingLeft = 9, paddingRight = 9,
+                        backgroundColor = new Color(1.00f, 0.93f, 0.92f)
+                    }
+                };
+                SetBorderAndRadius(warnBox, new Color(0.82f, 0.24f, 0.18f), 1.5f, 9f);
+                warnBox.Add(new Label("Cảnh báo hiệu năng PC: Trình duyệt đang chạy kết xuất phần mềm (CPU/SwiftShader) nên FPS thấp ở mọi mức đồ họa! Hãy bật 'Tăng tốc đồ họa / Hardware Acceleration' trong Cài đặt Chrome/Edge rồi mở lại trình duyệt.")
+                {
+                    style = { fontSize = 11.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.68f, 0.14f, 0.10f), whiteSpace = WhiteSpace.Normal }
+                });
+                cardGfx.Add(warnBox);
+            }
             body.Add(cardGfx);
 
+            // 3. CODEX ASSET PROGRESS CARD
             CodexArtLoader.GetCodexProgress(out int ready, out int total);
             var codexCard = new VisualElement();
             codexCard.AddToClassList("card-light");
             codexCard.Add(new Label($"Tiến Độ Hình Ảnh Codex: {ready}/{total} ảnh đã nhận (Thư mục: Assets/_Game/Resources/CodexDrop/)")
             {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, whiteSpace = WhiteSpace.Normal }
+                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12.5f, whiteSpace = WhiteSpace.Normal }
             });
             codexCard.Add(new Label("Đã tích hợp bản bake seamless & 9-slice trong BakedMaps/ cùng 47 ảnh GameIcons tái sử dụng.")
             {
-                style = { fontSize = 11, marginTop = 3, whiteSpace = WhiteSpace.Normal }
+                style = { fontSize = 11.5f, marginTop = 3, whiteSpace = WhiteSpace.Normal }
             });
             body.Add(codexCard);
         }
@@ -2495,7 +2686,7 @@ namespace KhiVanChiTu.Remake
             statusCard.style.flexDirection = FlexDirection.Row;
             statusCard.style.justifyContent = Justify.SpaceBetween;
             statusCard.style.alignItems = Align.Center;
-            statusCard.Add(new Label($"Trạng thái: {(svc != null ? svc.StatusText : "Ngoại tuyến")}") { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, flexGrow = 1 } });
+            statusCard.Add(new Label($"Trạng thái: {(svc != null ? svc.StatusText : "Ngoại tuyến")}") { style = { fontSize = 12.5f, unityFontStyleAndWeight = FontStyle.Bold, flexGrow = 1, whiteSpace = WhiteSpace.Normal } });
             var btnRefresh = new Button(() => svc?.SyncAllOnlineData()) { text = svc != null && svc.IsConnected ? "Làm Mới" : "Kết Nối LAN" };
             btnRefresh.AddToClassList("btn-compact");
             statusCard.Add(btnRefresh);
@@ -2510,7 +2701,7 @@ namespace KhiVanChiTu.Remake
                 var b = new Button(() => { _uiLbTab = cap; svc?.RefreshLeaderboard(ids[cap]); body.Clear(); BuildLeaderboard(body); }) { text = names[i] };
                 b.AddToClassList("btn-compact");
                 b.EnableInClassList("selected", i == _uiLbTab);
-                b.style.flexGrow = 1; b.style.marginRight = i < 2 ? 4 : 0; b.style.fontSize = 10;
+                b.style.flexGrow = 1; b.style.marginRight = i < 2 ? 4 : 0; b.style.fontSize = 11f; b.style.whiteSpace = WhiteSpace.Normal;
                 tabs.Add(b);
             }
             body.Add(tabs);
@@ -2522,7 +2713,7 @@ namespace KhiVanChiTu.Remake
             {
                 listCard.Add(new Label(svc != null && svc.IsConnected ? "Chưa có thông tin hạng — bấm Làm Mới để đồng bộ." : "Hãy chạy Tools/LocalServer/server.mjs để đồng bộ BXH LAN Nakama.")
                 {
-                    style = { fontSize = 11, whiteSpace = WhiteSpace.Normal }
+                    style = { fontSize = 12.5f, whiteSpace = WhiteSpace.Normal }
                 });
             }
             else
@@ -2533,10 +2724,10 @@ namespace KhiVanChiTu.Remake
                     var row = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, marginBottom = 4, paddingBottom = 4, borderBottomWidth = 1, borderBottomColor = new Color(0.86f, 0.89f, 0.86f) } };
                     row.Add(new Label($"#{r.rank} · {r.displayName}{(isMe ? " (Bạn)" : "")} [{r.realmMeta}]")
                     {
-                        style = { fontSize = 11, unityFontStyleAndWeight = isMe ? FontStyle.Bold : FontStyle.Normal, color = isMe ? new Color(0.10f, 0.48f, 0.36f) : new Color(0.18f, 0.24f, 0.22f) }
+                        style = { fontSize = 12.5f, unityFontStyleAndWeight = isMe ? FontStyle.Bold : FontStyle.Normal, color = isMe ? new Color(0.10f, 0.48f, 0.36f) : new Color(0.18f, 0.24f, 0.22f) }
                     });
                     string val = _uiLbTab == 0 ? $"Lực: {CultivationTable.FormatNumber(r.subscore)}" : _uiLbTab == 1 ? $"Đan XP: {r.score % 100000}" : $"Ải {(r.score / 1000000)} · {r.subscore} Quái";
-                    row.Add(new Label(val) { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold } });
+                    row.Add(new Label(val) { style = { fontSize = 12.5f, unityFontStyleAndWeight = FontStyle.Bold } });
                     listCard.Add(row);
                 }
             }
@@ -2552,7 +2743,7 @@ namespace KhiVanChiTu.Remake
             statusCard.style.flexDirection = FlexDirection.Row;
             statusCard.style.justifyContent = Justify.SpaceBetween;
             statusCard.style.alignItems = Align.Center;
-            statusCard.Add(new Label($"Kênh Thế Giới · {(svc != null ? svc.StatusText : "Ngoại tuyến")}") { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, flexGrow = 1 } });
+            statusCard.Add(new Label($"Kênh Thế Giới · {(svc != null ? svc.StatusText : "Ngoại tuyến")}") { style = { fontSize = 12.5f, unityFontStyleAndWeight = FontStyle.Bold, flexGrow = 1, whiteSpace = WhiteSpace.Normal } });
             var btnConn = new Button(() => svc?.SyncAllOnlineData()) { text = "Đồng Bộ" };
             btnConn.AddToClassList("btn-compact");
             statusCard.Add(btnConn);
@@ -2566,7 +2757,7 @@ namespace KhiVanChiTu.Remake
             {
                 feed.Add(new Label("Chưa có tin nhắn thế giới. Mọi tin Đột Phá Đại Thừa, Cực Phẩm Đan Văn & Kiếm Lv.9–10 sẽ tự động thông báo tại đây!")
                 {
-                    style = { fontSize = 11, whiteSpace = WhiteSpace.Normal }
+                    style = { fontSize = 12.5f, whiteSpace = WhiteSpace.Normal }
                 });
             }
             else
@@ -2580,7 +2771,7 @@ namespace KhiVanChiTu.Remake
                     {
                         style =
                         {
-                            fontSize = 11, whiteSpace = WhiteSpace.Normal, marginBottom = 4,
+                            fontSize = 12.5f, whiteSpace = WhiteSpace.Normal, marginBottom = 4,
                             color = isAnnounce ? new Color(0.68f, 0.40f, 0.04f) : new Color(0.16f, 0.24f, 0.22f),
                             unityFontStyleAndWeight = isAnnounce ? FontStyle.Bold : FontStyle.Normal
                         }
@@ -2621,8 +2812,8 @@ namespace KhiVanChiTu.Remake
             var meCard = new VisualElement();
             meCard.AddToClassList("card-light");
             meCard.style.marginBottom = 8;
-            meCard.Add(new Label($"Mã Tài Khoản LAN: {(svc != null && !string.IsNullOrEmpty(svc.MyUsername) ? svc.MyUsername : "(Chưa kết nối)")}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11 } });
-            meCard.Add(new Label($"Hộ Pháp đang chờ hỗ trợ đột phá: +{save.hoPhapBonusSteps}/3% · Dùng Truyền Công +5% Tu Vi 1 lần/ngày.") { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+            meCard.Add(new Label($"Mã Tài Khoản LAN: {(svc != null && !string.IsNullOrEmpty(svc.MyUsername) ? svc.MyUsername : "(Chưa kết nối)")}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12.5f, whiteSpace = WhiteSpace.Normal } });
+            meCard.Add(new Label($"Hộ Pháp đang chờ hỗ trợ đột phá: +{save.hoPhapBonusSteps}/3% · Dùng Truyền Công +5% Tu Vi 1 lần/ngày.") { style = { fontSize = 11.5f, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
             var addRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, marginTop = 6 } };
             var tfFriend = new TextField { value = "" };
             tfFriend.style.flexGrow = 1; tfFriend.style.height = 30; tfFriend.style.marginRight = 6; tfFriend.style.backgroundColor = Color.white;
@@ -2636,13 +2827,13 @@ namespace KhiVanChiTu.Remake
             var listCard = new VisualElement();
             listCard.AddToClassList("card-light");
             listCard.style.marginBottom = 8;
-            listCard.Add(new Label($"Danh Sách Đạo Hữu ({(svc != null ? svc.Friends.Count : 0)}):") { style = { unityFontStyleAndWeight = FontStyle.Bold, marginBottom = 4 } });
+            listCard.Add(new Label($"Danh Sách Đạo Hữu ({(svc != null ? svc.Friends.Count : 0)}):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, marginBottom = 4 } });
 
             if (svc == null || svc.Friends.Count == 0)
             {
                 listCard.Add(new Label("Chưa có bạn bè nào. Nhập Username bạn cùng mạng LAN để kết bạn, Truyền Công, Hộ Pháp hoặc Nhắn Riêng!")
                 {
-                    style = { fontSize = 11, whiteSpace = WhiteSpace.Normal }
+                    style = { fontSize = 12.5f, whiteSpace = WhiteSpace.Normal }
                 });
             }
             else
@@ -2651,7 +2842,7 @@ namespace KhiVanChiTu.Remake
                 {
                     var row = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, justifyContent = Justify.SpaceBetween, marginBottom = 6, paddingBottom = 5, borderBottomWidth = 1, borderBottomColor = new Color(0.86f, 0.89f, 0.86f) } };
                     string stLbl = f.state == 0 ? (f.online ? "Online" : "Offline") : f.state == 2 ? "Chờ chấp nhận" : "Đã gửi lời mời";
-                    row.Add(new Label($"{f.displayName} ({stLbl})") { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, flexGrow = 1 } });
+                    row.Add(new Label($"{f.displayName} ({stLbl})") { style = { fontSize = 12.5f, unityFontStyleAndWeight = FontStyle.Bold, flexGrow = 1 } });
 
                     var acts = new VisualElement { style = { flexDirection = FlexDirection.Row } };
                     if (f.state == 2)
@@ -2665,7 +2856,7 @@ namespace KhiVanChiTu.Remake
                         var bTc = new Button(() => svc.TryTruyenCongWithFriend(f.displayName)) { text = "Truyền Công" };
                         var bHp = new Button(() => svc.SendHoPhapAssist(f.userId, f.displayName)) { text = "Hộ Pháp" };
                         var bDm = new Button(() => svc.OpenDmConversation(f.userId)) { text = "Nhắn" };
-                        foreach (var b in new[] { bTc, bHp, bDm }) { b.AddToClassList("btn-compact"); b.style.marginLeft = 3; b.style.fontSize = 9; acts.Add(b); }
+                        foreach (var b in new[] { bTc, bHp, bDm }) { b.AddToClassList("btn-compact"); b.style.marginLeft = 3; b.style.fontSize = 10.5f; acts.Add(b); }
                     }
                     row.Add(acts);
                     listCard.Add(row);
@@ -2718,12 +2909,12 @@ namespace KhiVanChiTu.Remake
             CodexArtLoader.ApplyIconOrPlaceholder(tArt, "Stages/mode_demon_tower", "[Vạn Yêu Tháp]");
             tTop.Add(tArt);
             var tMeta = new VisualElement { style = { flexGrow = 1, marginLeft = 10, flexShrink = 1 } };
-            tMeta.Add(new Label($"Vạn Yêu Tháp · Tầng {save.demonTowerHighestFloor}/100") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13 } });
+            tMeta.Add(CalligraphyLabel($"Vạn Yêu Tháp · Tầng {save.demonTowerHighestFloor}/100", 17.5f, new Color(0.11f, 0.32f, 0.26f)));
             tMeta.Add(new Label(towerOpen
                 ? $"Thử thách Tầng {nextFloor} ({GameplayEngine.DemonTowerTimeLimit:0}s) · Thưởng +{CultivationTable.FormatNumber(tSpec.rewardLt)} LT & Đá Tẩy Luyện"
                 : $"Mở khóa tại {CultivationTable.GetFeatureUnlockRequirementText(RemakeFeatureId.ImmortalTower)}")
             {
-                style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 2, color = towerOpen ? new Color(0.20f, 0.28f, 0.24f) : new Color(0.78f, 0.25f, 0.14f) }
+                style = { fontSize = 11.5f, whiteSpace = WhiteSpace.Normal, marginTop = 2, color = towerOpen ? new Color(0.20f, 0.28f, 0.24f) : new Color(0.78f, 0.25f, 0.14f) }
             });
             tTop.Add(tMeta);
             towerCard.Add(tTop);
@@ -2764,12 +2955,12 @@ namespace KhiVanChiTu.Remake
             CodexArtLoader.ApplyIconOrPlaceholder(rArt, "Stages/mode_secret_realm", "[Thái Hư Bí Cảnh]");
             rTop.Add(rArt);
             var rMeta = new VisualElement { style = { flexGrow = 1, marginLeft = 10, flexShrink = 1 } };
-            rMeta.Add(new Label($"Thái Hư Bí Cảnh · Lượt hôm nay: {save.secretRealmDailyRemaining}/3") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13 } });
+            rMeta.Add(CalligraphyLabel($"Thái Hư Bí Cảnh · Lượt hôm nay: {save.secretRealmDailyRemaining}/3", 17.5f, new Color(0.11f, 0.32f, 0.26f)));
             rMeta.Add(new Label(realmOpen
                 ? $"{rSpec.title} · Chọn Cổng & Độ Khó T1–T5 (Càn Quét khi đã vượt)"
                 : $"Mở khóa tại {CultivationTable.GetFeatureUnlockRequirementText(RemakeFeatureId.SecretRealm)}")
             {
-                style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 2, color = realmOpen ? new Color(0.20f, 0.28f, 0.24f) : new Color(0.78f, 0.25f, 0.14f) }
+                style = { fontSize = 11.5f, whiteSpace = WhiteSpace.Normal, marginTop = 2, color = realmOpen ? new Color(0.20f, 0.28f, 0.24f) : new Color(0.78f, 0.25f, 0.14f) }
             });
             rTop.Add(rMeta);
             realmCard.Add(rTop);
@@ -2782,7 +2973,7 @@ namespace KhiVanChiTu.Remake
                 var gb = new Button(() => { _uiSecretRealmKind = capG; Refresh(); }) { text = gateNames[g] };
                 gb.AddToClassList("btn-compact");
                 if (_uiSecretRealmKind == g) gb.AddToClassList("selected");
-                gb.style.flexGrow = 1; gb.style.marginRight = g < 2 ? 4 : 0; gb.style.fontSize = 10;
+                gb.style.flexGrow = 1; gb.style.marginRight = g < 2 ? 4 : 0; gb.style.fontSize = 11f; gb.style.paddingLeft = 4; gb.style.paddingRight = 4;
                 gateRow.Add(gb);
             }
             realmCard.Add(gateRow);
@@ -2794,7 +2985,7 @@ namespace KhiVanChiTu.Remake
                 var tb = new Button(() => { _uiSecretRealmTier = capT; Refresh(); }) { text = t <= clearedTier ? $"T{t}*" : $"T{t}" };
                 tb.AddToClassList("btn-compact");
                 if (_uiSecretRealmTier == t) tb.AddToClassList("selected");
-                tb.style.flexGrow = 1; tb.style.marginRight = t < 5 ? 4 : 0; tb.style.fontSize = 10;
+                tb.style.flexGrow = 1; tb.style.marginRight = t < 5 ? 4 : 0; tb.style.fontSize = 11.5f;
                 tierRow.Add(tb);
             }
             realmCard.Add(tierRow);
@@ -2825,7 +3016,9 @@ namespace KhiVanChiTu.Remake
 
             var pMeta = new VisualElement { style = { flexGrow = 1, marginLeft = 10, flexShrink = 1 } };
             var pTitleRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, alignItems = Align.Center } };
-            pTitleRow.Add(new Label("Luận Kiếm Đài · Liên Đấu") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, marginRight = 6 } });
+            var pvpLbl = CalligraphyLabel("Luận Kiếm Đài · Liên Đấu", 16.5f, new Color(0.11f, 0.32f, 0.26f));
+            pvpLbl.style.marginRight = 6;
+            pTitleRow.Add(pvpLbl);
             var stBadge = new Label(pvpOpen ? $"LƯỢT: {save.pvpDailyRemaining}/5" : "NGUYÊN ANH T5");
             stBadge.AddToClassList("diary-status-badge");
             stBadge.AddToClassList(pvpOpen ? "ready" : "locked");
@@ -2834,7 +3027,7 @@ namespace KhiVanChiTu.Remake
             pMeta.Add(new Label(pvpOpen
                 ? $"Kiếm Vọng: {save.swordPrestigePoints} · Chiến thắng: {save.pvpWins} · Đổi Khung Avatar & Nguyên Liệu!"
                 : "Mở ở Nguyên Anh T5 · So tài Phi Kiếm Bất Đồng Bộ qua Nakama.")
-            { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+            { style = { fontSize = 11.5f, whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
             pvpCard.Add(pMeta);
 
             var pvBtn = new Button(() => onOpenPvpPreview?.Invoke()) { text = pvpOpen ? "Vào Đài" : "Xem Trước" };
@@ -2851,18 +3044,21 @@ namespace KhiVanChiTu.Remake
 
             var hero = new VisualElement();
             hero.AddToClassList("stage-hero-box");
+            hero.Add(OrnamentLabel("Cơ Duyên Thiên Định", 28f));
             var orb = new VisualElement { style = { width = 82, height = 82 } };
             CodexArtLoader.ApplyIconOrPlaceholder(orb, "Stages/event_fortuitous_orb", "[Kỳ Ngộ]");
             hero.Add(orb);
-            hero.Add(new Label($"Cơ Duyên Linh Cơ Xuất Hiện ({Mathf.CeilToInt(engine.KyNgoTimeRemaining)}s)") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, marginTop = 6 } });
-            hero.Add(new Label("Chọn một trong hai cơ duyên trước khi Linh Cơ tiêu tán:") { style = { fontSize = 11, marginTop = 2 } });
+            var kyTitle = CalligraphyLabel($"Cơ Duyên Linh Cơ Xuất Hiện ({Mathf.CeilToInt(engine.KyNgoTimeRemaining)}s)", 18f, new Color(0.62f, 0.38f, 0.04f));
+            kyTitle.style.marginTop = 6; kyTitle.style.unityTextAlign = TextAnchor.MiddleCenter;
+            hero.Add(kyTitle);
+            hero.Add(new Label("Chọn một trong hai cơ duyên trước khi Linh Cơ tiêu tán:") { style = { fontSize = 12f, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
             body.Add(hero);
 
             var c0 = new VisualElement();
             c0.AddToClassList("card-light");
             c0.style.marginBottom = 8;
-            c0.Add(new Label("1. Linh Tuyền Khai Ngộ") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12 } });
-            c0.Add(new Label($"Nhân Đôi Tu Vi (x2 Tu Vi) trong 90 giây + {CultivationTable.FormatNumber(ltReward)} Linh Thạch.") { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal, marginTop = 3, marginBottom = 6 } });
+            c0.Add(HeadingLabel("1. Linh Tuyền Khai Ngộ", 16.5f));
+            c0.Add(new Label($"Nhân Đôi Tu Vi (x2 Tu Vi) trong 90 giây + {CultivationTable.FormatNumber(ltReward)} Linh Thạch.") { style = { fontSize = 12f, whiteSpace = WhiteSpace.Normal, marginTop = 3, marginBottom = 6 } });
             var b0 = new Button(() => { engine.TryClaimKyNgoChoice(0); onClose?.Invoke(); }) { text = "Hấp Thu Linh Tuyền" };
             b0.AddToClassList("btn-primary");
             c0.Add(b0);
@@ -2870,8 +3066,8 @@ namespace KhiVanChiTu.Remake
 
             var c1 = new VisualElement();
             c1.AddToClassList("card-light");
-            c1.Add(new Label("2. Tàng Bảo Động Phủ") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12 } });
-            c1.Add(new Label($"Nhận +4 {ActStageDatabaseSO.GetHerbName(herbTier)} + 1 Phù Rèn Kiếm + {CultivationTable.FormatNumber(ltReward)} Linh Thạch.") { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal, marginTop = 3, marginBottom = 6 } });
+            c1.Add(HeadingLabel("2. Tàng Bảo Động Phủ", 16.5f));
+            c1.Add(new Label($"Nhận +4 {ActStageDatabaseSO.GetHerbName(herbTier)} + 1 Phù Rèn Kiếm + {CultivationTable.FormatNumber(ltReward)} Linh Thạch.") { style = { fontSize = 12f, whiteSpace = WhiteSpace.Normal, marginTop = 3, marginBottom = 6 } });
             var b1 = new Button(() => { engine.TryClaimKyNgoChoice(1); onClose?.Invoke(); }) { text = "Thu Nhận Cơ Duyên" };
             b1.AddToClassList("btn-secondary");
             c1.Add(b1);
@@ -2903,11 +3099,11 @@ namespace KhiVanChiTu.Remake
             CodexArtLoader.ApplyIconOrPlaceholder(art, "Stages/mode_pvp_arena", "[Luận Kiếm]");
             hRow.Add(art);
             var hMeta = new VisualElement { style = { flexGrow = 1, marginLeft = 10, flexShrink = 1 } };
-            hMeta.Add(new Label($"Luận Kiếm Đài · Chiến Lực: {CultivationTable.FormatNumber(myPower)}") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13 } });
+            hMeta.Add(CalligraphyLabel($"Luận Kiếm Đài · Chiến Lực: {CultivationTable.FormatNumber(myPower)}", 17.5f));
             hMeta.Add(new Label($"Lượt hôm nay: {save.pvpDailyRemaining}/5 · Thắng: {save.pvpWins} · Điểm Kiếm Vọng: {save.swordPrestigePoints}")
-            { style = { fontSize = 11, color = new Color(0.14f, 0.48f, 0.36f), unityFontStyleAndWeight = FontStyle.Bold, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
+            { style = { fontSize = 12.5f, color = new Color(0.14f, 0.48f, 0.36f), unityFontStyleAndWeight = FontStyle.Bold, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
             if (!unlocked)
-                hMeta.Add(new Label("Mở khóa khiêu chiến tại Nguyên Anh Tầng 5!") { style = { fontSize = 10, color = new Color(0.78f, 0.24f, 0.16f), marginTop = 2 } });
+                hMeta.Add(new Label("Mở khóa khiêu chiến tại Nguyên Anh Tầng 5!") { style = { fontSize = 12, color = new Color(0.78f, 0.24f, 0.16f), marginTop = 2, whiteSpace = WhiteSpace.Normal } });
             hRow.Add(hMeta);
             hero.Add(hRow);
             body.Add(hero);
@@ -2916,7 +3112,7 @@ namespace KhiVanChiTu.Remake
             var rivalCard = new VisualElement();
             rivalCard.AddToClassList("card-light");
             rivalCard.style.marginBottom = 8;
-            rivalCard.Add(new Label("Đối Thủ Luận Kiếm Hôm Nay (Bất Đồng Bộ):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, marginBottom = 6 } });
+            rivalCard.Add(new Label("Đối Thủ Luận Kiếm Hôm Nay (Bất Đồng Bộ):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13.5f, marginBottom = 6 } });
 
             var rivals = new List<(string name, string realm, double power)>();
             var online = RemakeOnlineService.Instance;
@@ -2941,12 +3137,12 @@ namespace KhiVanChiTu.Remake
             {
                 var row = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, justifyContent = Justify.SpaceBetween, marginBottom = 6, paddingBottom = 5, borderBottomWidth = 1, borderBottomColor = new Color(0.86f, 0.89f, 0.86f) } };
                 var left = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
-                left.Add(new Label($"{rv.name} [{rv.realm}]") { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold } });
-                left.Add(new Label($"Lực chiến ước tính: {CultivationTable.FormatNumber(rv.power)}") { style = { fontSize = 10, color = new Color(0.36f, 0.44f, 0.40f) } });
+                left.Add(new Label($"{rv.name} [{rv.realm}]") { style = { fontSize = 12.5f, unityFontStyleAndWeight = FontStyle.Bold } });
+                left.Add(new Label($"Lực chiến ước tính: {CultivationTable.FormatNumber(rv.power)}") { style = { fontSize = 11.5f, color = new Color(0.36f, 0.44f, 0.40f) } });
                 row.Add(left);
                 var fightBtn = new Button(() => { engine.TryChallengePvpOpponent(rv.name, rv.power); Refresh(); }) { text = "Tỷ Thí" };
                 fightBtn.AddToClassList("btn-primary");
-                fightBtn.style.paddingLeft = 12; fightBtn.style.paddingRight = 12; fightBtn.style.paddingTop = 4; fightBtn.style.paddingBottom = 4;
+                fightBtn.style.paddingLeft = 16; fightBtn.style.paddingRight = 16; fightBtn.style.paddingTop = 5; fightBtn.style.paddingBottom = 5;
                 fightBtn.SetEnabled(unlocked && save.pvpDailyRemaining > 0);
                 row.Add(fightBtn);
                 rivalCard.Add(row);
@@ -2956,7 +3152,7 @@ namespace KhiVanChiTu.Remake
             // Prestige Exchange Shop (including Terra 6.1 Avatar Frames!)
             var shopCard = new VisualElement();
             shopCard.AddToClassList("card-light");
-            shopCard.Add(new Label($"Tiệm Kiếm Vọng (Hiện có: {save.swordPrestigePoints} điểm):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, marginBottom = 6 } });
+            shopCard.Add(new Label($"Tiệm Kiếm Vọng (Hiện có: {save.swordPrestigePoints} điểm):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13.5f, marginBottom = 6 } });
             var items = new (string title, string codex, string reused, int cost, int idx, int frameId)[]
             {
                 ("+2 Phù Rèn Kiếm (+10%)", "Equipment/mat_forge_talisman", "RouteMerge", 120, 0, -1),
@@ -2973,7 +3169,7 @@ namespace KhiVanChiTu.Remake
                 var ico = new VisualElement { style = { width = 28, height = 28, marginRight = 8, flexShrink = 0 } };
                 CodexArtLoader.ApplyIconOrPlaceholder(ico, it.codex, "", it.reused);
                 row.Add(ico);
-                row.Add(new Label(it.title) { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, flexGrow = 1 } });
+                row.Add(new Label(it.title) { style = { fontSize = 12.5f, unityFontStyleAndWeight = FontStyle.Bold, flexGrow = 1, whiteSpace = WhiteSpace.Normal } });
                 var btn = new Button(() => { engine.TryBuyPvpReward(it.idx); Refresh(); })
                 {
                     text = equippedFrame ? "Đang Đeo" : ownedFrame ? "Trang Bị" : $"{it.cost} ĐKV"
@@ -3000,29 +3196,34 @@ namespace KhiVanChiTu.Remake
 
             var hero = new VisualElement();
             hero.AddToClassList("stage-hero-box");
+            hero.Add(OrnamentLabel("Bế Quan Quy Lai", 28f));
             var art = new VisualElement { style = { width = 96, height = 96 } };
             SetBorderAndRadius(art, new Color(0.84f, 0.60f, 0.16f), 2f, 14f);
             CodexArtLoader.ApplyIconOrPlaceholder(art, "Stages/stage_seclusion_summary", "", "RouteMilestones");
             hero.Add(art);
             if (sum == null)
             {
-                hero.Add(new Label("Chưa có phiên Bế Quan mới") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, marginTop = 8 } });
+                var emptyOff = HeadingLabel("Chưa có phiên Bế Quan mới", 15f);
+                emptyOff.style.marginTop = 8;
+                hero.Add(emptyOff);
                 body.Add(hero);
                 return;
             }
             int mins = Mathf.Max(1, Mathf.FloorToInt((float)(sum.elapsedSeconds / 60.0)));
             string dur = mins >= 60 ? $"{mins / 60} giờ {mins % 60} phút" : $"{mins} phút";
-            hero.Add(new Label($"Tổng Kết Bế Quan ({dur})") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 14, marginTop = 6, color = new Color(0.11f, 0.42f, 0.32f) } });
-            hero.Add(new Label($"Hiệu suất: {Mathf.RoundToInt((float)(sum.efficiency * 100))}% · Đã trảm {sum.killsSimulated} Yêu Thú") { style = { fontSize = 11, marginTop = 2 } });
+            var offTitle = HeadingLabel($"Tổng Kết Bế Quan ({dur})", 18f, new Color(0.11f, 0.42f, 0.32f));
+            offTitle.style.marginTop = 6;
+            hero.Add(offTitle);
+            hero.Add(new Label($"Hiệu suất: {Mathf.RoundToInt((float)(sum.efficiency * 100))}% · Đã trảm {sum.killsSimulated} Yêu Thú") { style = { fontSize = 12f, marginTop = 2 } });
             body.Add(hero);
 
             var lootCard = new VisualElement();
             lootCard.AddToClassList("card-light");
             lootCard.style.marginBottom = 10;
-            lootCard.Add(new Label($"• Tu Vi thu hoạch: +{CultivationTable.FormatNumber(sum.tuViGained)}") { style = { fontSize = 12, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.44f, 0.04f), marginBottom = 4 } });
-            lootCard.Add(new Label($"• Linh Thạch: +{CultivationTable.FormatNumber(sum.linhThachGained)}") { style = { fontSize = 12, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.50f, 0.38f), marginBottom = 4 } });
-            lootCard.Add(new Label($"• Thảo Dược ({ActStageDatabaseSO.GetHerbName(sum.herbTier)}): +{sum.herbsGained}") { style = { fontSize = 11, marginBottom = 3 } });
-            lootCard.Add(new Label($"• Phôi Kiếm nhặt được: +{sum.swordsGained}") { style = { fontSize = 11 } });
+            lootCard.Add(new Label($"• Tu Vi thu hoạch: +{CultivationTable.FormatNumber(sum.tuViGained)}") { style = { fontSize = 13.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.44f, 0.04f), marginBottom = 4 } });
+            lootCard.Add(new Label($"• Linh Thạch: +{CultivationTable.FormatNumber(sum.linhThachGained)}") { style = { fontSize = 13.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.11f, 0.50f, 0.38f), marginBottom = 4 } });
+            lootCard.Add(new Label($"• Thảo Dược ({ActStageDatabaseSO.GetHerbName(sum.herbTier)}): +{sum.herbsGained}") { style = { fontSize = 12.5f, marginBottom = 3 } });
+            lootCard.Add(new Label($"• Phôi Kiếm nhặt được: +{sum.swordsGained}") { style = { fontSize = 12.5f } });
             body.Add(lootCard);
 
             var btns = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween } };
@@ -3059,16 +3260,16 @@ namespace KhiVanChiTu.Remake
             var hero = new VisualElement();
             hero.AddToClassList("stage-hero-box");
             hero.style.alignItems = Align.Stretch;
-            hero.Add(new Label($"Đồ Giám Vạn Giới · Đã Sưu Tầm {totalUnlocked}/21 Mục") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, color = new Color(0.11f, 0.42f, 0.32f) } });
-            hero.Add(new Label($"Hiệu ứng bị động vĩnh viễn: +{buffPct:0.#}% Sát Thương Phi Kiếm & +{buffPct:0.#}% Tu Vi") { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.44f, 0.04f), marginTop = 2 } });
-            hero.Add(new Label($"Phi Kiếm: {swCnt}/10 · Thủ Lĩnh Vực: {bsCnt}/3 · Đan Đột Phá: {plCnt}/8 · Cơ Duyên: {save.coDuyen}") { style = { fontSize = 10, marginTop = 3 } });
+            hero.Add(HeadingLabel($"Đồ Giám Vạn Giới · Đã Sưu Tầm {totalUnlocked}/21 Mục", 17f, new Color(0.11f, 0.42f, 0.32f)));
+            hero.Add(new Label($"Hiệu ứng bị động vĩnh viễn: +{buffPct:0.#}% Sát Thương Phi Kiếm & +{buffPct:0.#}% Tu Vi") { style = { fontSize = 12f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.44f, 0.04f), marginTop = 2, whiteSpace = WhiteSpace.Normal } });
+            hero.Add(new Label($"Phi Kiếm: {swCnt}/10 · Thủ Lĩnh Vực: {bsCnt}/3 · Đan Đột Phá: {plCnt}/8 · Cơ Duyên: {save.coDuyen}") { style = { fontSize = 11.5f, marginTop = 3, whiteSpace = WhiteSpace.Normal } });
             body.Add(hero);
 
             // Milestone Reward Strip
             var msCard = new VisualElement();
             msCard.AddToClassList("card-light");
             msCard.style.marginBottom = 8;
-            msCard.Add(new Label("Mốc Thưởng Sưu Tầm (Cơ Duyên + Linh Thạch + Phù Rèn):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, marginBottom = 5 } });
+            msCard.Add(new Label("Mốc Thưởng Sưu Tầm (Cơ Duyên + Linh Thạch + Phù Rèn):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12.5f, marginBottom = 5, whiteSpace = WhiteSpace.Normal } });
             var msRow = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap } };
             for (int i = 0; i < GameplayEngine.CodexMilestoneThresholds.Length; i++)
             {
@@ -3082,7 +3283,7 @@ namespace KhiVanChiTu.Remake
                 };
                 b.AddToClassList(ready ? "btn-primary" : "btn-compact");
                 b.SetEnabled(ready);
-                b.style.marginRight = 4; b.style.marginBottom = 4; b.style.fontSize = 10;
+                b.style.marginRight = 4; b.style.marginBottom = 4; b.style.fontSize = 11.5f;
                 msRow.Add(b);
             }
             msCard.Add(msRow);
@@ -3092,18 +3293,18 @@ namespace KhiVanChiTu.Remake
             var swCard = new VisualElement();
             swCard.AddToClassList("card-light");
             swCard.style.marginBottom = 8;
-            swCard.Add(new Label($"Phi Kiếm Đồ Giám ({swCnt}/10):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, marginBottom = 6 } });
+            swCard.Add(new Label($"Phi Kiếm Đồ Giám ({swCnt}/10):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, marginBottom = 6 } });
             var swGrid = new VisualElement();
             swGrid.AddToClassList("grid-wrap");
             for (int lv = 1; lv <= 10; lv++)
             {
                 bool has = (save.codexSwordsMask & (1 << (lv - 1))) != 0;
-                var tile = new VisualElement { style = { width = 56, height = 66, alignItems = Align.Center, justifyContent = Justify.Center, marginRight = 5, marginBottom = 5, opacity = has ? 1f : 0.35f } };
+                var tile = new VisualElement { style = { width = 64, height = 72, alignItems = Align.Center, justifyContent = Justify.Center, marginRight = 5, marginBottom = 5, opacity = has ? 1f : 0.35f } };
                 ApplySwordTierBorderGlow(tile, lv, false, 8f);
                 var ico = new VisualElement { style = { width = 42, height = 42, backgroundImage = new StyleBackground(CodexArtLoader.LoadReusedSwordTexture(lv)) } };
                 ico.AddToClassList("icon-fixed");
                 tile.Add(ico);
-                tile.Add(new Label($"Lv.{lv}") { style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold } });
+                tile.Add(new Label($"Lv.{lv}") { style = { fontSize = 10.5f, unityFontStyleAndWeight = FontStyle.Bold } });
                 swGrid.Add(tile);
             }
             swCard.Add(swGrid);
@@ -3112,7 +3313,7 @@ namespace KhiVanChiTu.Remake
             // 3 Act Bosses & 8 Pills
             var bpCard = new VisualElement();
             bpCard.AddToClassList("card-light");
-            bpCard.Add(new Label($"Thủ Lĩnh 3 Vực ({bsCnt}/3) & Đan Đột Phá ({plCnt}/8):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, marginBottom = 6 } });
+            bpCard.Add(new Label($"Thủ Lĩnh 3 Vực ({bsCnt}/3) & Đan Đột Phá ({plCnt}/8):") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, marginBottom = 6 } });
             var bpGrid = new VisualElement();
             bpGrid.AddToClassList("grid-wrap");
             string[] bossKeys = { "Monsters/act1_boss_guardian", "Monsters/act2_boss_overlord", "Monsters/act3_boss_archon" };
@@ -3120,23 +3321,23 @@ namespace KhiVanChiTu.Remake
             for (int b = 0; b < 3; b++)
             {
                 bool has = (save.codexBossesMask & (1 << b)) != 0;
-                var tile = new VisualElement { style = { width = 62, height = 68, alignItems = Align.Center, justifyContent = Justify.Center, marginRight = 5, marginBottom = 5, opacity = has ? 1f : 0.35f } };
+                var tile = new VisualElement { style = { width = 70, height = 74, alignItems = Align.Center, justifyContent = Justify.Center, marginRight = 5, marginBottom = 5, opacity = has ? 1f : 0.35f } };
                 SetBorderAndRadius(tile, has ? new Color(0.84f, 0.56f, 0.14f) : new Color(0.75f, 0.75f, 0.72f), 1.5f, 8f);
                 var ico = new VisualElement { style = { width = 40, height = 40 } };
                 CodexArtLoader.ApplyIconOrPlaceholder(ico, bossKeys[b], "[Boss]");
                 tile.Add(ico);
-                tile.Add(new Label(bossNames[b]) { style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold } });
+                tile.Add(new Label(bossNames[b]) { style = { fontSize = 10.5f, unityFontStyleAndWeight = FontStyle.Bold } });
                 bpGrid.Add(tile);
             }
             for (int r = 0; r < 8; r++)
             {
                 bool has = (save.codexPillsMask & (1 << r)) != 0;
-                var tile = new VisualElement { style = { width = 56, height = 64, alignItems = Align.Center, justifyContent = Justify.Center, marginRight = 5, marginBottom = 5, opacity = has ? 1f : 0.35f } };
+                var tile = new VisualElement { style = { width = 64, height = 70, alignItems = Align.Center, justifyContent = Justify.Center, marginRight = 5, marginBottom = 5, opacity = has ? 1f : 0.35f } };
                 SetBorderAndRadius(tile, has ? new Color(0.16f, 0.62f, 0.46f) : new Color(0.75f, 0.75f, 0.72f), 1.5f, 8f);
                 var ico = new VisualElement { style = { width = 34, height = 34 } };
                 CodexArtLoader.ApplyIconOrPlaceholder(ico, CultivationTable.GetPillCodexKey(r), "[Đan]");
                 tile.Add(ico);
-                tile.Add(new Label($"Bậc {r + 1}") { style = { fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold } });
+                tile.Add(new Label($"Bậc {r + 1}") { style = { fontSize = 10.5f, unityFontStyleAndWeight = FontStyle.Bold } });
                 bpGrid.Add(tile);
             }
             bpCard.Add(bpGrid);
@@ -3157,11 +3358,11 @@ namespace KhiVanChiTu.Remake
 
             var hero = new VisualElement();
             hero.AddToClassList("stage-hero-box");
-            hero.Add(new Label("Linh Thú Hộ Đạo (Đồng Hành Tu Luyện)") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 13, color = new Color(0.11f, 0.42f, 0.32f) } });
+            hero.Add(HeadingLabel("Linh Thú Hộ Đạo (Đồng Hành Tu Luyện)", 17f, new Color(0.11f, 0.42f, 0.32f)));
             hero.Add(new Label(unlocked
                 ? "Thu phục Linh Thú để kích hoạt hiệu ứng hỗ trợ vĩnh viễn khi xuất chiến!"
                 : "Mở khóa tại Trúc Cơ Tầng 7!")
-            { style = { fontSize = 11, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
+            { style = { fontSize = 12f, marginTop = 2, whiteSpace = WhiteSpace.Normal } });
             body.Add(hero);
 
             RemakeCompanionId[] ids = { RemakeCompanionId.AzureCrane, RemakeCompanionId.WhiteFox, RemakeCompanionId.JadeTurtle, RemakeCompanionId.ThunderSpirit };
@@ -3186,9 +3387,9 @@ namespace KhiVanChiTu.Remake
                 card.Add(ico);
 
                 var info = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
-                info.Add(new Label(spec.name) { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12 } });
-                info.Add(new Label(spec.desc) { style = { fontSize = 10, color = new Color(0.14f, 0.48f, 0.36f), whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
-                info.Add(new Label($"Yêu cầu: {CultivationTable.RealmNames[spec.reqRealmIndex]} · {(owned ? "Đã thu phục" : $"Khế ước: {CultivationTable.FormatNumber(cost)} LT")}") { style = { fontSize = 9, color = new Color(0.42f, 0.46f, 0.44f), marginTop = 2 } });
+                info.Add(HeadingLabel(spec.name, 16f));
+                info.Add(new Label(spec.desc) { style = { fontSize = 11.5f, color = new Color(0.14f, 0.48f, 0.36f), whiteSpace = WhiteSpace.Normal, marginTop = 2 } });
+                info.Add(new Label($"Yêu cầu: {CultivationTable.RealmNames[spec.reqRealmIndex]} · {(owned ? "Đã thu phục" : $"Khế ước: {CultivationTable.FormatNumber(cost)} LT")}") { style = { fontSize = 11f, color = new Color(0.42f, 0.46f, 0.44f), marginTop = 2, whiteSpace = WhiteSpace.Normal } });
                 card.Add(info);
 
                 var btn = new Button(() => { engine.TryUnlockOrSelectCompanion(active ? RemakeCompanionId.None : cid); Refresh(); })
@@ -3237,31 +3438,30 @@ namespace KhiVanChiTu.Remake
 
             var metaCol = new VisualElement { style = { flexGrow = 1, flexShrink = 1 } };
             var nameRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, flexWrap = Wrap.Wrap } };
-            nameRow.Add(new Label(string.IsNullOrEmpty(save.daoName) ? "Thanh Vân Tử" : save.daoName)
-            {
-                style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 15, color = new Color(0.11f, 0.24f, 0.20f), marginRight = 6 }
-            });
+            var charNameLbl = HeadingLabel(string.IsNullOrEmpty(save.daoName) ? "Thanh Vân Tử" : save.daoName, 19f, new Color(0.11f, 0.24f, 0.20f));
+            charNameLbl.style.marginRight = 6;
+            nameRow.Add(charNameLbl);
             var gBadge = new Label(genderLbl)
             {
                 style =
                 {
-                    fontSize = 9, unityFontStyleAndWeight = FontStyle.Bold,
+                    fontSize = 10f,
                     color = save.gender == RemakeCharacterGender.Male ? new Color(0.12f, 0.36f, 0.68f) : new Color(0.68f, 0.24f, 0.42f),
                     backgroundColor = save.gender == RemakeCharacterGender.Male ? new Color(0.86f, 0.93f, 1.00f) : new Color(1.00f, 0.90f, 0.94f),
                     paddingLeft = 6, paddingRight = 6, paddingTop = 2, paddingBottom = 2,
                     borderTopLeftRadius = 6, borderTopRightRadius = 6, borderBottomLeftRadius = 6, borderBottomRightRadius = 6
                 }
             };
+            gBadge.AddToClassList("font-ui-semibold");
             nameRow.Add(gBadge);
             metaCol.Add(nameRow);
 
-            metaCol.Add(new Label(realmFull)
-            {
-                style = { fontSize = 12, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.72f, 0.46f, 0.04f), marginTop = 2 }
-            });
+            var charRealmLbl = HeadingLabel(realmFull, 16f, new Color(0.72f, 0.46f, 0.04f));
+            charRealmLbl.style.marginTop = 2;
+            metaCol.Add(charRealmLbl);
             metaCol.Add(new Label($"Chiến Lực Ước Tính: {CultivationTable.FormatNumber(power)} · Ải {save.activeAct + 1}-{save.activeStage}")
             {
-                style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.14f, 0.48f, 0.36f), marginTop = 2 }
+                style = { fontSize = 12.5f, unityFontStyleAndWeight = FontStyle.Bold, color = new Color(0.14f, 0.48f, 0.36f), marginTop = 2, whiteSpace = WhiteSpace.Normal }
             });
 
             var tvTrack = new VisualElement { style = { height = 7, marginTop = 5, width = Length.Percent(100) } };
@@ -3270,7 +3470,7 @@ namespace KhiVanChiTu.Remake
             metaCol.Add(tvTrack);
             metaCol.Add(new Label($"Tu Vi: {CultivationTable.FormatNumber(save.tuVi)} / {CultivationTable.FormatNumber(reqTuVi)} ({Mathf.RoundToInt(tvPct * 100)}%)")
             {
-                style = { fontSize = 10, color = new Color(0.36f, 0.42f, 0.40f), marginTop = 2 }
+                style = { fontSize = 11.5f, color = new Color(0.36f, 0.42f, 0.40f), marginTop = 2 }
             });
 
             topRow.Add(metaCol);
@@ -3281,7 +3481,9 @@ namespace KhiVanChiTu.Remake
             var statCard = new VisualElement();
             statCard.AddToClassList("card-light");
             statCard.style.marginBottom = 8;
-            statCard.Add(new Label("Chỉ Số Chiến Đấu & Tu Luyện:") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, marginBottom = 6 } });
+            var statTitle = HeadingLabel("Chỉ Số Chiến Đấu & Tu Luyện:", 16f);
+            statTitle.style.marginBottom = 6;
+            statCard.Add(statTitle);
 
             var statGrid = new VisualElement();
             statGrid.AddToClassList("grid-wrap");
@@ -3293,11 +3495,11 @@ namespace KhiVanChiTu.Remake
                 {
                     style =
                     {
-                        width = Length.Percent(48.5f),
+                        width = Length.Percent(48.8f),
                         flexDirection = FlexDirection.Row,
                         justifyContent = Justify.SpaceBetween,
                         alignItems = Align.Center,
-                        paddingTop = 4, paddingBottom = 4, paddingLeft = 8, paddingRight = 8,
+                        paddingTop = 5, paddingBottom = 5, paddingLeft = 7, paddingRight = 7,
                         marginBottom = 5,
                         backgroundColor = new Color(0.96f, 0.98f, 0.96f),
                         borderTopLeftRadius = 8, borderTopRightRadius = 8, borderBottomLeftRadius = 8, borderBottomRightRadius = 8,
@@ -3306,14 +3508,16 @@ namespace KhiVanChiTu.Remake
                         borderLeftColor = new Color(0.84f, 0.89f, 0.85f), borderRightColor = new Color(0.84f, 0.89f, 0.85f)
                     }
                 };
-                cell.Add(new Label(label) { style = { fontSize = 10, color = new Color(0.32f, 0.40f, 0.38f) } });
-                cell.Add(new Label(value) { style = { fontSize = 10, unityFontStyleAndWeight = FontStyle.Bold, color = accent ?? new Color(0.11f, 0.24f, 0.20f) } });
+                cell.Add(new Label(label) { style = { fontSize = 11f, color = new Color(0.32f, 0.40f, 0.38f), flexShrink = 1, overflow = Overflow.Hidden, textOverflow = TextOverflow.Ellipsis, whiteSpace = WhiteSpace.NoWrap, marginRight = 4 } });
+                var valLbl = new Label(value) { style = { fontSize = 11f, color = accent ?? new Color(0.11f, 0.24f, 0.20f), flexShrink = 0 } };
+                valLbl.AddToClassList("font-ui-semibold");
+                cell.Add(valLbl);
                 statGrid.Add(cell);
             }
 
             AddStatRow("Công Phi Kiếm", CultivationTable.FormatNumber(engine.GetTotalSwordAttackPower()), new Color(0.76f, 0.36f, 0.10f));
             AddStatRow("Phi Kiếm Ra Trận", $"{save.equippedSwordLevels.Count}/{maxSwords} thanh");
-            AddStatRow("Khí Huyết (HP)", $"{CultivationTable.FormatNumber(engine.PlayerCurrentHp)}/{CultivationTable.FormatNumber(engine.PlayerMaxHp)}", new Color(0.14f, 0.56f, 0.36f));
+            AddStatRow("Khí Huyết", $"{CultivationTable.FormatNumber(engine.PlayerCurrentHp)}/{CultivationTable.FormatNumber(engine.PlayerMaxHp)}", new Color(0.14f, 0.56f, 0.36f));
             AddStatRow("Linh Lực (MP)", $"{Mathf.RoundToInt(engine.PlayerCurrentMp)}/{Mathf.RoundToInt(engine.PlayerMaxMp)}", new Color(0.16f, 0.46f, 0.78f));
             AddStatRow("Tốc Độ Kiếm", $"{Mathf.RoundToInt(engine.GetSwordSpeedMultiplier() * 100f)}%");
             AddStatRow("Bội Số ST Kiếm", $"{Mathf.RoundToInt(engine.GetSwordDamageMultiplier() * 100f)}%");
@@ -3324,7 +3528,7 @@ namespace KhiVanChiTu.Remake
             AddStatRow("Sát Thương Boss", $"{Mathf.RoundToInt(engine.GetBossBonusMultiplier() * 100f)}%");
             AddStatRow("Hiệu Suất Tu Vi", $"{Mathf.RoundToInt(engine.GetTuViMultiplier() * 100f)}%", new Color(0.72f, 0.46f, 0.04f));
             AddStatRow("Linh Thạch Rơi", $"{Mathf.RoundToInt(engine.GetLinhThachMultiplier() * 100f)}%");
-            AddStatRow("Đạo Vận / Đan Sư", $"ĐV {save.daoPoints} · Đan Bậc {save.alchemistRank}");
+            AddStatRow("Đạo Vận · Đan", $"ĐV {save.daoPoints} · Bậc {save.alchemistRank}");
             statCard.Add(statGrid);
             body.Add(statCard);
 
@@ -3332,7 +3536,9 @@ namespace KhiVanChiTu.Remake
             var sysCard = new VisualElement();
             sysCard.AddToClassList("card-light");
             sysCard.style.marginBottom = 8;
-            sysCard.Add(new Label("Trang Bị, Trận Pháp & Đồng Hành Đang Kích Hoạt:") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 12, marginBottom = 5 } });
+            var sysTitle = HeadingLabel("Trang Bị, Trận Pháp & Đồng Hành Đang Kích Hoạt:", 16f);
+            sysTitle.style.marginBottom = 5;
+            sysCard.Add(sysTitle);
 
             string mainForm = save.activeMainFormation >= 0 && save.activeMainFormation < RemakeCatalogs.Formations.Count
                 ? RemakeCatalogs.Formations[save.activeMainFormation].name : "Chưa khai trận";
@@ -3342,14 +3548,14 @@ namespace KhiVanChiTu.Remake
                 ? CultivationTable.GetCompanionSpec((RemakeCompanionId)save.activeCompanionId).name : "Chưa xuất chiến";
             int codexCount = engine.GetCodexUnlockedCount(out _, out _, out _);
 
-            sysCard.Add(new Label($"• Trang Bị: {save.equippedGear.Count}/6 món · Bộ Thanh Vân ({engine.GetEquipSetCount(RemakeEquipSet.ThanhVan)}) · Đan Tông ({engine.GetEquipSetCount(RemakeEquipSet.DanTong)}) · Huyền Vũ ({engine.GetEquipSetCount(RemakeEquipSet.HuyenVu)})")
-            { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginBottom = 3 } });
+            sysCard.Add(new Label($"• Trang Bị: {save.equippedGear.Count}/6 món · Cường hóa +{engine.GetTotalEquipEnhanceLevel()} · Thanh Vân ({engine.GetEquipSetCount(RemakeEquipSet.ThanhVan)}) · Đan Tông ({engine.GetEquipSetCount(RemakeEquipSet.DanTong)}) · Huyền Vũ ({engine.GetEquipSetCount(RemakeEquipSet.HuyenVu)})")
+            { style = { fontSize = 12, whiteSpace = WhiteSpace.Normal, marginBottom = 3 } });
             sysCard.Add(new Label($"• Trận Pháp: Chính [{mainForm}] · Phụ [{subForm}]")
-            { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginBottom = 3 } });
+            { style = { fontSize = 12, whiteSpace = WhiteSpace.Normal, marginBottom = 3 } });
             sysCard.Add(new Label($"• Linh Thú Hộ Đạo: {petName} · Đồ Giám: {codexCount}/21 (+{codexCount * 0.8f:0.#}% ST & Tu Vi)")
-            { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginBottom = 3 } });
+            { style = { fontSize = 12, whiteSpace = WhiteSpace.Normal, marginBottom = 3 } });
             sysCard.Add(new Label($"• Chiến Tích: Đã trảm {save.totalKills} Yêu Thú · Ghép {save.totalMerges} Phi Kiếm · Vạn Yêu Tháp T{save.demonTowerHighestFloor} · Thắng PvP {save.pvpWins}")
-            { style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, color = new Color(0.32f, 0.42f, 0.38f) } });
+            { style = { fontSize = 12, whiteSpace = WhiteSpace.Normal, color = new Color(0.32f, 0.42f, 0.38f) } });
             body.Add(sysCard);
 
             // 4. QUICK NAVIGATION BUTTONS
@@ -3361,7 +3567,7 @@ namespace KhiVanChiTu.Remake
                 b.style.marginBottom = 6;
                 b.style.marginRight = 4;
                 b.style.flexGrow = 1;
-                b.style.fontSize = 11;
+                b.style.fontSize = 12.5f;
                 navRow.Add(b);
             }
             AddNavBtn("Kiếm Lộ", "swordpath");
@@ -3381,10 +3587,83 @@ namespace KhiVanChiTu.Remake
             ve.style.borderBottomLeftRadius = r; ve.style.borderBottomRightRadius = r;
         }
 
+        private static void AddVolumeSliderRow(
+            VisualElement parent,
+            string sliderName,
+            string title,
+            float initial01,
+            Action<float, bool> onChanged,
+            bool playPreviewClick,
+            Action customPreviewAudio = null)
+        {
+            int initPct = Mathf.RoundToInt(Mathf.Clamp01(initial01) * 100f);
+            var row = new VisualElement();
+            row.AddToClassList("volume-slider-row");
+
+            var lbl = new Label(title) { style = { fontSize = 12f, width = 130, flexShrink = 0 } };
+            lbl.AddToClassList("font-ui-semibold");
+            row.Add(lbl);
+
+            var pctLbl = new Label($"{initPct}%");
+            pctLbl.AddToClassList("volume-pct-label");
+
+            void TriggerPreview(int pctVal)
+            {
+                if (!playPreviewClick || pctVal <= 0) return;
+                if (customPreviewAudio != null) customPreviewAudio();
+                else RemakeAudioService.Instance?.PlayClick();
+            }
+
+            var slider = new Slider(0f, 100f) { name = sliderName, value = initPct };
+            slider.AddToClassList("volume-slider");
+            slider.RegisterValueChangedCallback(evt =>
+            {
+                int p = Mathf.RoundToInt(Mathf.Clamp(evt.newValue, 0f, 100f));
+                pctLbl.text = $"{p}%";
+                onChanged?.Invoke(p / 100f, false);
+            });
+            slider.RegisterCallback<PointerUpEvent>(_ =>
+            {
+                int p = Mathf.RoundToInt(Mathf.Clamp(slider.value, 0f, 100f));
+                onChanged?.Invoke(p / 100f, true);
+                TriggerPreview(p);
+            }, TrickleDown.TrickleDown);
+
+            var btnMinus = new Button(() =>
+            {
+                int next = Mathf.Clamp(Mathf.RoundToInt(slider.value) - 10, 0, 100);
+                slider.SetValueWithoutNotify(next);
+                pctLbl.text = $"{next}%";
+                onChanged?.Invoke(next / 100f, true);
+                TriggerPreview(next);
+            }) { text = "−" };
+            btnMinus.AddToClassList("btn-compact");
+            btnMinus.AddToClassList("volume-step-btn");
+
+            var btnPlus = new Button(() =>
+            {
+                int next = Mathf.Clamp(Mathf.RoundToInt(slider.value) + 10, 0, 100);
+                slider.SetValueWithoutNotify(next);
+                pctLbl.text = $"{next}%";
+                onChanged?.Invoke(next / 100f, true);
+                TriggerPreview(next);
+            }) { text = "+" };
+            btnPlus.AddToClassList("btn-compact");
+            btnPlus.AddToClassList("volume-step-btn");
+
+            row.Add(btnMinus);
+            row.Add(slider);
+            row.Add(btnPlus);
+            row.Add(pctLbl);
+            parent.Add(row);
+        }
+
         private static void AddChoiceRow(VisualElement parent, string title, string[] labels, int selectedIdx, Action<int> onPick)
         {
             var row = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center, justifyContent = Justify.SpaceBetween, marginBottom = 6 } };
-            row.Add(new Label(title) { style = { fontSize = 11, unityFontStyleAndWeight = FontStyle.Bold, width = 104 } });
+            var lbl = new Label(title) { style = { fontSize = 12f, width = 130, flexShrink = 0 } };
+            lbl.AddToClassList("font-ui-semibold");
+            row.Add(lbl);
             var btnGroup = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap, flexGrow = 1, justifyContent = Justify.FlexEnd } };
             for (int i = 0; i < labels.Length; i++)
             {
@@ -3393,7 +3672,7 @@ namespace KhiVanChiTu.Remake
                 b.AddToClassList("btn-compact");
                 if (i == selectedIdx) b.AddToClassList("selected");
                 b.style.marginLeft = 4; b.style.marginBottom = 2;
-                b.style.fontSize = 10;
+                b.style.fontSize = 11f;
                 btnGroup.Add(b);
             }
             row.Add(btnGroup);

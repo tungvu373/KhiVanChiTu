@@ -16,9 +16,7 @@ namespace KhiVanChiTu.Remake
 
         private VisualElement _safeRoot;
         private VisualElement _clusterCultivationDrawer;
-        private VisualElement _clusterUtilityDrawer;
         private bool _cultivationExpanded;
-        private bool _utilityExpanded;
         private DrawerKind _activeDrawer = DrawerKind.None;
 
         // Top-Left & Radial TuVi
@@ -33,10 +31,38 @@ namespace KhiVanChiTu.Remake
         private VisualElement _wrapBreakthrough;
         private Label _badgeBreakthroughBang;
 
+        public readonly struct SmartBadgeSnapshot
+        {
+            public readonly bool SwordPath;
+            public readonly bool DaoVan;
+            public readonly bool Alchemy;
+            public readonly bool Equipment;
+            public readonly bool Formation;
+            public readonly bool Skills;
+            public readonly bool Diary;
+            public readonly bool Codex;
+            public readonly bool Companion;
+            public readonly bool Friends;
+            public readonly bool ImmortalGate;
+
+            public int BaguaCount =>
+                (SwordPath ? 1 : 0) + (DaoVan ? 1 : 0) + (Alchemy ? 1 : 0) + (Equipment ? 1 : 0) +
+                (Formation ? 1 : 0) + (Skills ? 1 : 0) + (Diary ? 1 : 0) + (Codex ? 1 : 0) +
+                (Companion ? 1 : 0) + (Friends ? 1 : 0);
+
+            public SmartBadgeSnapshot(
+                bool swordPath, bool daoVan, bool alchemy, bool equipment, bool formation,
+                bool skills, bool diary, bool codex, bool companion, bool friends, bool immortalGate)
+            {
+                SwordPath = swordPath; DaoVan = daoVan; Alchemy = alchemy; Equipment = equipment; Formation = formation;
+                Skills = skills; Diary = diary; Codex = codex; Companion = companion; Friends = friends; ImmortalGate = immortalGate;
+            }
+        }
+
         // Left Collapsible Utility Stack & 15s Tribulation Banner
         private Button _btnToggleLeftHud;
         private VisualElement _leftHudCollapsible;
-        private VisualElement _badgeLeftHudCollapsed;
+        private Label _badgeLeftHudCollapsed;
         private bool _leftHudExpanded = true;
         private VisualElement _tribulationPanel;
         private Label _tribulationTimerLabel;
@@ -105,20 +131,33 @@ namespace KhiVanChiTu.Remake
         private Button _btnNavEquipment;
         private Button _btnNavFormation;
         private Button _btnNavSkills;
-        private VisualElement _badgeClusterBagua;
+        private Label _badgeClusterBagua;
         private VisualElement _badgeSwordPath;
         private VisualElement _badgeDaoVan;
+        private VisualElement _badgeAlchemy;
+        private VisualElement _badgeEquipment;
+        private VisualElement _badgeFormation;
+        private VisualElement _badgeSkills;
         private VisualElement _badgeMainQuest;
+        private VisualElement _badgeImmortalGate;
         private VisualElement _badgePioneerDiary;
+        private VisualElement _badgeCodex;
+        private VisualElement _badgeCompanion;
+        private VisualElement _badgeFriends;
         private VisualElement _badgeUtilityCluster;
         private bool _mainQuestRewardReady;
-        private bool _pioneerRewardReady;
+        private SmartBadgeSnapshot _cachedBadges;
 
-        // Lazy Modal
+        // Lazy Modal & Zone 3 Inline Feedback Bar
         private VisualElement _modalBackdrop;
         private VisualElement _modalSheet;
         private Label _modalTitle;
         private VisualElement _modalBody;
+        private VisualElement _drawerToastRoot;
+        private VisualElement _drawerToastIcon;
+        private Label _drawerToastTag;
+        private Label _drawerToastMsg;
+        private float _drawerToastRemaining;
 
         // Tutorial Pointer Overlay
         private VisualElement _tutorialOverlay;
@@ -139,12 +178,40 @@ namespace KhiVanChiTu.Remake
         private Vector2 _daoVanPan = Vector2.zero;
         private float _daoVanZoom = 0.72f;
 
-        // Coalesced HUD dirty flags (max 1 HUD update per frame -> zero AoE event storms!)
+        // Coalesced HUD dirty flags & per-frame UI style caches (zero per-frame style/GC thrash for WebGL 60 FPS)
+        private static readonly Color[] SkillCdColors =
+        {
+            new Color(0.18f, 0.56f, 0.85f, 0.92f),
+            new Color(0.16f, 0.68f, 0.54f, 0.92f),
+            new Color(0.86f, 0.62f, 0.14f, 0.92f),
+            new Color(0.84f, 0.34f, 0.22f, 0.92f)
+        };
+        private static readonly Color SkillCdTrackColor = new Color(0.80f, 0.85f, 0.82f, 0.5f);
+
         private bool _hudDirty = true;
         private bool _drawerDirty;
         private float _badgeCheckCooldown;
-        private bool _cachedHasDaoReady;
         private bool _desktopDockInitialized;
+        private Camera _cachedMainCam;
+        private int _activePopupCount;
+        private float _lastHpPct = -1f;
+        private float _lastMpPct = -1f;
+        private float _nextSkillRingUpdateTime;
+        private float _nextBreakthroughPulseTime;
+        private int _lastBossTimerDeci = -1;
+        private int _lastBossShieldMode = -1; // 0 = hidden, 1 = shield, 2 = broken
+        private int _lastBossShieldPct = -1;
+        private int _lastBossShieldDeci = -1;
+        private int _lastKyNgoSec = -1;
+        private int _lastBuffSec = -1;
+        private int _lastChallengeSec = -1;
+        private int _lastChallengeWave = -1;
+        private int _lastTribDeci = -1;
+        private int _lastTribStrikes = -1;
+        private int _lastRespawnDeci = -1;
+        private int _lastBrewDeci = -1;
+        private VisualElement _cachedAlchemyBrewFill;
+        private Label _cachedAlchemyBrewLabel;
 
         private void OnEnable()
         {
@@ -162,6 +229,7 @@ namespace KhiVanChiTu.Remake
         {
             HandlePcKeyboardHotkeys();
             UpdateRealtimeBars();
+            UpdateDrawerInlineToast(Time.unscaledDeltaTime);
             UpdateDamagePopups();
             UpdateTutorialPointerPosition();
         }
@@ -244,7 +312,7 @@ namespace KhiVanChiTu.Remake
 
             _btnToggleLeftHud = root.Q<Button>("btn-toggle-left-hud");
             _leftHudCollapsible = root.Q("left-hud-collapsible");
-            _badgeLeftHudCollapsed = root.Q("badge-left-hud-collapsed");
+            _badgeLeftHudCollapsed = root.Q<Label>("badge-left-hud-collapsed");
             _tribulationPanel = root.Q("tribulation-hud-panel");
             _tribulationTimerLabel = root.Q<Label>("tribulation-timer-label");
             _tribulationTargetLabel = root.Q<Label>("tribulation-target-label");
@@ -297,23 +365,36 @@ namespace KhiVanChiTu.Remake
             }
 
             _clusterCultivationDrawer = root.Q("cluster-cultivation-drawer");
-            _clusterUtilityDrawer = root.Q("cluster-utility-drawer");
             _btnNavDaoVan = root.Q<Button>("btn-nav-daovan");
             _btnNavAlchemy = root.Q<Button>("btn-nav-alchemy");
             _btnNavEquipment = root.Q<Button>("btn-nav-equipment");
             _btnNavFormation = root.Q<Button>("btn-nav-formation");
             _btnNavSkills = root.Q<Button>("btn-nav-skills");
-            _badgeClusterBagua = root.Q("badge-cluster-bagua");
+            _badgeClusterBagua = root.Q<Label>("badge-cluster-bagua");
             _badgeSwordPath = root.Q("badge-swordpath");
             _badgeDaoVan = root.Q("badge-daovan");
+            _badgeAlchemy = root.Q("badge-alchemy");
+            _badgeEquipment = root.Q("badge-equipment");
+            _badgeFormation = root.Q("badge-formation");
+            _badgeSkills = root.Q("badge-skills");
             _badgeMainQuest = root.Q("badge-main-quest");
+            _badgeImmortalGate = root.Q("badge-immortal-gate");
             _badgePioneerDiary = root.Q("badge-pioneer-diary");
+            _badgeCodex = root.Q("badge-codex");
+            _badgeCompanion = root.Q("badge-companion");
+            _badgeFriends = root.Q("badge-friends");
             _badgeUtilityCluster = root.Q("badge-cluster-utility");
+            SetBadgeVisible(_badgeUtilityCluster, false);
 
             _modalBackdrop = root.Q("modal-backdrop");
             _modalSheet = root.Q("modal-sheet");
             _modalTitle = root.Q<Label>("modal-title");
             _modalBody = root.Q("modal-body");
+            _drawerToastRoot = root.Q("drawer-inline-toast");
+            _drawerToastIcon = root.Q("drawer-inline-toast-icon");
+            _drawerToastTag = root.Q<Label>("drawer-inline-toast-tag");
+            _drawerToastMsg = root.Q<Label>("drawer-inline-toast-msg");
+            HideDrawerInlineToast();
 
             _tutorialOverlay = root.Q("tutorial-overlay");
             _tutorialRing = root.Q("tutorial-highlight-ring");
@@ -332,10 +413,9 @@ namespace KhiVanChiTu.Remake
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("boss-portrait-slot"), "Monsters/act1_boss_guardian", "[F11: Boss]");
             CodexArtLoader.ApplyIconOrPlaceholder(_bossShieldIcon, "HUD/icon_boss_shield", "", "GoldenBell");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-linhthach"), "", "[LT]", "SpiritStone");
-            CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-cluster-utility"), "", "[Tiện Ích]", "RouteSettings");
+            CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-cluster-utility"), "", "[Cài Đặt]", "RouteSettings");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-codex"), "HUD/nav_codex", "", "RouteAchievements");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-companion"), "Companions/pet_azure_crane", "", "SpiritLotus");
-            CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-settings"), "", "[Cài Đặt]", "RouteSettings");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-leaderboard"), "HUD/nav_leaderboard", "[G1: BXH]");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-friends"), "HUD/nav_friends", "[G3: Đạo Hữu]");
             CodexArtLoader.ApplyIconOrPlaceholder(root.Q("icon-nav-mainmenu"), "", "[Menu]", "CharacterPortrait");
@@ -374,7 +454,12 @@ namespace KhiVanChiTu.Remake
             root.Q<Button>("btn-ky-ngo")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.KyNgo));
             _btnToggleLeftHud?.RegisterCallback<ClickEvent>(_ => ToggleLeftHud());
             root.Q<Button>("btn-cluster-cultivation")?.RegisterCallback<ClickEvent>(_ => ToggleCultivationCluster());
-            root.Q<Button>("btn-cluster-utility")?.RegisterCallback<ClickEvent>(_ => ToggleUtilityCluster());
+            var btnSettingsTop = root.Q<Button>("btn-cluster-utility");
+            if (btnSettingsTop != null)
+            {
+                btnSettingsTop.tooltip = "Cài Đặt";
+                btnSettingsTop.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Settings));
+            }
             root.Q<Button>("btn-afk-dim")?.RegisterCallback<ClickEvent>(_ =>
             {
                 RemakeAudioService.Instance?.PlayClick();
@@ -417,7 +502,6 @@ namespace KhiVanChiTu.Remake
             root.Q<Button>("btn-nav-diary")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Diary));
             root.Q<Button>("btn-nav-codex")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Codex));
             root.Q<Button>("btn-nav-companion")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Companions));
-            root.Q<Button>("btn-nav-settings")?.RegisterCallback<ClickEvent>(_ => OpenDrawer(DrawerKind.Settings));
             root.Q<Button>("btn-nav-leaderboard")?.RegisterCallback<ClickEvent>(_ =>
             {
                 RemakeOnlineService.Instance?.SyncAllOnlineData();
@@ -459,6 +543,8 @@ namespace KhiVanChiTu.Remake
                 RemakeVfxPool.Instance.OnDamagePopupRequested += SpawnDamagePopup;
             if (RemakeOnlineService.Instance != null)
                 RemakeOnlineService.Instance.OnOnlineStateUpdated += HandleOnlineUpdated;
+            if (BootOverlayController.Instance != null)
+                BootOverlayController.Instance.OnDrawerInlineRequested += ShowDrawerInlineToast;
         }
 
         private void UnsubscribeEvents()
@@ -480,6 +566,7 @@ namespace KhiVanChiTu.Remake
             }
             if (BootOverlayController.Instance != null)
             {
+                BootOverlayController.Instance.OnDrawerInlineRequested -= ShowDrawerInlineToast;
                 BootOverlayController.Instance.SuppressAmbientToasts = false;
                 BootOverlayController.Instance.IsMiniModeActive = false;
             }
@@ -520,6 +607,8 @@ namespace KhiVanChiTu.Remake
         {
             if (_chatTickerLabel != null && RemakeOnlineService.Instance != null)
                 _chatTickerLabel.text = RemakeOnlineService.Instance.LatestChatTicker;
+            _badgeCheckCooldown = 0f;
+            _hudDirty = true;
             if (_activeDrawer == DrawerKind.Leaderboard || _activeDrawer == DrawerKind.Friends || _activeDrawer == DrawerKind.WorldChat)
                 _drawerDirty = true;
         }
@@ -577,7 +666,8 @@ namespace KhiVanChiTu.Remake
 
         private void RefreshLeftHudCollapsedBadge()
         {
-            SetBadgeVisible(_badgeLeftHudCollapsed, !_leftHudExpanded && _mainQuestRewardReady);
+            int leftCount = (_mainQuestRewardReady ? 1 : 0) + (_cachedBadges.ImmortalGate ? 1 : 0);
+            SetCountBadge(_badgeLeftHudCollapsed, !_leftHudExpanded ? leftCount : 0);
         }
 
         private static void SetBadgeVisible(VisualElement badge, bool visible)
@@ -586,18 +676,88 @@ namespace KhiVanChiTu.Remake
                 badge.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
-        private void RefreshPioneerRewardBadges(GameplayEngine engine)
+        private static void SetCountBadge(Label badge, int count)
         {
-            _pioneerRewardReady = false;
-            foreach (var milestone in RemakeCatalogs.PioneerMilestones)
+            if (badge == null) return;
+            if (count <= 0)
             {
-                if (!engine.IsPioneerMilestoneReady(milestone)) continue;
-                _pioneerRewardReady = true;
-                break;
+                badge.style.display = DisplayStyle.None;
+                badge.text = "";
+            }
+            else
+            {
+                badge.text = count > 9 ? "9+" : count.ToString();
+                badge.style.display = DisplayStyle.Flex;
+            }
+        }
+
+        private void ApplySmartBadges(GameplayEngine engine, bool forceImmediate)
+        {
+            if (forceImmediate || Time.unscaledTime >= _badgeCheckCooldown)
+            {
+                _badgeCheckCooldown = Time.unscaledTime + 0.35f;
+                _cachedBadges = ComputeSmartBadges(SaveService.Current, engine, RemakeOnlineService.Instance);
             }
 
-            SetBadgeVisible(_badgePioneerDiary, _pioneerRewardReady);
-            SetBadgeVisible(_badgeUtilityCluster, _pioneerRewardReady && !_utilityExpanded);
+            SetBadgeVisible(_badgeSwordPath, _cachedBadges.SwordPath);
+            SetBadgeVisible(_badgeDaoVan, _cachedBadges.DaoVan);
+            SetBadgeVisible(_badgeAlchemy, _cachedBadges.Alchemy);
+            SetBadgeVisible(_badgeEquipment, _cachedBadges.Equipment);
+            SetBadgeVisible(_badgeFormation, _cachedBadges.Formation);
+            SetBadgeVisible(_badgeSkills, _cachedBadges.Skills);
+            SetBadgeVisible(_badgePioneerDiary, _cachedBadges.Diary);
+            SetBadgeVisible(_badgeCodex, _cachedBadges.Codex);
+            SetBadgeVisible(_badgeCompanion, _cachedBadges.Companion);
+            SetBadgeVisible(_badgeFriends, _cachedBadges.Friends);
+            SetBadgeVisible(_badgeImmortalGate, _cachedBadges.ImmortalGate);
+            SetBadgeVisible(_badgeUtilityCluster, false);
+            SetCountBadge(_badgeClusterBagua, _cachedBadges.BaguaCount);
+        }
+
+        private void ShowDrawerInlineToast(
+            RemakeNotifyCategory category,
+            string cssClass,
+            string badgeLabel,
+            string message,
+            string codexIconKey,
+            string reusedIconKey)
+        {
+            if (_drawerToastRoot == null || _activeDrawer == DrawerKind.None) return;
+
+            _drawerToastRoot.RemoveFromClassList("toast-gold");
+            _drawerToastRoot.RemoveFromClassList("toast-jade");
+            _drawerToastRoot.RemoveFromClassList("toast-azure");
+            _drawerToastRoot.RemoveFromClassList("toast-violet");
+            _drawerToastRoot.RemoveFromClassList("toast-danger");
+            _drawerToastRoot.AddToClassList(string.IsNullOrEmpty(cssClass) ? "toast-jade" : cssClass);
+
+            BootOverlayController.ApplyToastIcon(_drawerToastIcon, codexIconKey, reusedIconKey);
+            if (_drawerToastTag != null) _drawerToastTag.text = string.IsNullOrEmpty(badgeLabel) ? "THÔNG BÁO" : badgeLabel;
+            if (_drawerToastMsg != null) _drawerToastMsg.text = message ?? "";
+
+            _drawerToastRemaining = 2.8f;
+            _drawerToastRoot.style.opacity = 1f;
+            _drawerToastRoot.style.display = DisplayStyle.Flex;
+        }
+
+        private void HideDrawerInlineToast()
+        {
+            _drawerToastRemaining = 0f;
+            if (_drawerToastRoot != null)
+                _drawerToastRoot.style.display = DisplayStyle.None;
+        }
+
+        private void UpdateDrawerInlineToast(float dt)
+        {
+            if (_drawerToastRemaining <= 0f || _drawerToastRoot == null) return;
+            _drawerToastRemaining -= dt;
+            if (_drawerToastRemaining <= 0f)
+            {
+                HideDrawerInlineToast();
+                return;
+            }
+            if (_drawerToastRemaining < 0.40f)
+                _drawerToastRoot.style.opacity = Mathf.Clamp01(_drawerToastRemaining / 0.40f);
         }
 
         private void ToggleCombatCamera()
@@ -607,7 +767,7 @@ namespace KhiVanChiTu.Remake
             RemakeAudioService.Instance?.PlayClick();
             RefreshCameraButtons();
             if (MeadowEnvironmentController.IsRearCombatView)
-                BootOverlayController.Instance?.ShowToast("Góc nhìn sau lưng — Kéo màn hình để xoay nhẹ góc quan sát");
+                BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.CombatWave, "Góc nhìn sau lưng — Kéo màn hình để xoay nhẹ góc quan sát", RemakeNotifyZone.GrandTop);
         }
 
         private void BindCameraDragSurface()
@@ -692,15 +852,6 @@ namespace KhiVanChiTu.Remake
         {
             RemakeAudioService.Instance?.PlayClick();
             _cultivationExpanded = !_cultivationExpanded;
-            if (_cultivationExpanded) _utilityExpanded = false;
-            ApplyClusterVisibility();
-        }
-
-        private void ToggleUtilityCluster()
-        {
-            RemakeAudioService.Instance?.PlayClick();
-            _utilityExpanded = !_utilityExpanded;
-            if (_utilityExpanded) _cultivationExpanded = false;
             ApplyClusterVisibility();
         }
 
@@ -708,9 +859,7 @@ namespace KhiVanChiTu.Remake
         {
             if (_clusterCultivationDrawer != null)
                 _clusterCultivationDrawer.style.display = _cultivationExpanded ? DisplayStyle.Flex : DisplayStyle.None;
-            if (_clusterUtilityDrawer != null)
-                _clusterUtilityDrawer.style.display = _utilityExpanded ? DisplayStyle.Flex : DisplayStyle.None;
-            SetBadgeVisible(_badgeUtilityCluster, _pioneerRewardReady && !_utilityExpanded);
+            SetBadgeVisible(_badgeUtilityCluster, false);
         }
 
         private void OpenDrawer(DrawerKind kind)
@@ -719,13 +868,15 @@ namespace KhiVanChiTu.Remake
             _activeDrawer = kind;
             // Auto-complete progressive feature unlock tutorial when player visits the newly unlocked feature!
             CompleteFeatureTutorialForDrawer(kind);
-            if (_utilityExpanded)
+            bool isDesktop = uiDocument != null && uiDocument.rootVisualElement != null && uiDocument.rootVisualElement.ClassListContains("desktop-wide");
+            if (_cultivationExpanded && !isDesktop)
             {
-                _utilityExpanded = false;
+                _cultivationExpanded = false;
                 ApplyClusterVisibility();
             }
             bool useWide = kind == DrawerKind.Diary || kind == DrawerKind.Stages || kind == DrawerKind.Codex || kind == DrawerKind.CharacterDetail;
             _modalSheet?.EnableInClassList("drawer-sheet-wide", useWide);
+            HideDrawerInlineToast();
             if (_modalBackdrop != null) _modalBackdrop.style.display = DisplayStyle.Flex;
             if (BootOverlayController.Instance != null) BootOverlayController.Instance.SuppressAmbientToasts = true;
             RefreshCameraButtons();
@@ -784,6 +935,7 @@ namespace KhiVanChiTu.Remake
         {
             RemakeAudioService.Instance?.PlayClick();
             _activeDrawer = DrawerKind.None;
+            HideDrawerInlineToast();
             _modalSheet?.EnableInClassList("drawer-sheet-wide", false);
             if (_modalBackdrop != null) _modalBackdrop.style.display = DisplayStyle.None;
             if (BootOverlayController.Instance != null) BootOverlayController.Instance.SuppressAmbientToasts = false;
@@ -814,7 +966,7 @@ namespace KhiVanChiTu.Remake
                 case "stage": OpenDrawer(DrawerKind.Stages); break;
                 case "breakthrough": OpenDrawer(DrawerKind.Breakthrough); break;
                 default:
-                    BootOverlayController.Instance?.ShowToast("Phi kiếm đang tự động chiến đấu trên đồng cỏ!");
+                    BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.CombatWave, "Phi kiếm đang tự động chiến đấu trên đồng cỏ!", RemakeNotifyZone.CombatTicker);
                     break;
             }
         }
@@ -878,6 +1030,8 @@ namespace KhiVanChiTu.Remake
             var stage = engine.GetCurrentStageSpec();
             if (_hudStageLabel != null)
             {
+                bool isSpecialRealm = engine.ActiveArenaMode == RemakeArenaMode.DemonTower || engine.ActiveArenaMode == RemakeArenaMode.SecretRealm;
+                _hudStageLabel.EnableInClassList("font-calligraphy", isSpecialRealm);
                 string waveTxt = $"Đợt {engine.CurrentWaveIndex}/{engine.TotalWavesInStage}";
                 if (engine.ActiveArenaMode == RemakeArenaMode.DemonTower)
                     _hudStageLabel.text = $"Vạn Yêu Tháp T{engine.ActiveChallengeFloor} · {waveTxt}";
@@ -930,21 +1084,9 @@ namespace KhiVanChiTu.Remake
                     _skillAutoBtns[s].EnableInClassList("selected", engine.GetSkillAuto(s));
             }
 
-            // Notification badges (throttled DaoVan scan so combat kills stay ultra-cheap!)
-            bool hasMergeReady = HasMergeableSwordPair();
-            if (Time.unscaledTime >= _badgeCheckCooldown)
-            {
-                _badgeCheckCooldown = Time.unscaledTime + 0.35f;
-                _cachedHasDaoReady = daoVanOpen && HasAnyUpgradeableDaoVanNode(engine);
-            }
-            bool hasDaoReady = daoVanOpen && _cachedHasDaoReady;
-            if (_badgeSwordPath != null) _badgeSwordPath.style.display = hasMergeReady ? DisplayStyle.Flex : DisplayStyle.None;
-            if (_badgeDaoVan != null) _badgeDaoVan.style.display = hasDaoReady ? DisplayStyle.Flex : DisplayStyle.None;
-            if (_badgeClusterBagua != null) _badgeClusterBagua.style.display = (hasMergeReady || hasDaoReady) ? DisplayStyle.Flex : DisplayStyle.None;
-
-            // Main Quest 1-Line Tracker & Collapsible Left HUD (NO modal rebuild on combat kills!)
+            // Main Quest 1-Line Tracker & 10 Smart Anti-Fake-Dot Badges + Numeric Counters
             RefreshQuestTracker();
-            RefreshPioneerRewardBadges(engine);
+            ApplySmartBadges(engine, false);
             ApplyLeftHudVisibility();
             RefreshFpsHud();
             HandleBossStatus(engine.HasActiveBoss ? engine.ActiveBossName : null, engine.ActiveBossHp, engine.ActiveBossMaxHp);
@@ -1032,91 +1174,160 @@ namespace KhiVanChiTu.Remake
         {
             var engine = GameplayEngine.Instance;
             if (engine == null) return;
+
             if (_hpFill != null)
-                _hpFill.style.width = Length.Percent(Mathf.Clamp01((float)(engine.PlayerCurrentHp / System.Math.Max(1, engine.PlayerMaxHp))) * 100f);
+            {
+                float hpPct = Mathf.Clamp01((float)(engine.PlayerCurrentHp / System.Math.Max(1, engine.PlayerMaxHp))) * 100f;
+                if (Mathf.Abs(hpPct - _lastHpPct) >= 0.35f || (hpPct <= 0f && _lastHpPct > 0f) || (hpPct >= 100f && _lastHpPct < 100f))
+                {
+                    _lastHpPct = hpPct;
+                    _hpFill.style.width = Length.Percent(hpPct);
+                }
+            }
             if (_mpFill != null)
-                _mpFill.style.width = Length.Percent(Mathf.Clamp01(engine.PlayerCurrentMp / Mathf.Max(1f, engine.PlayerMaxMp)) * 100f);
-            Color[] cdColors =
             {
-                new Color(0.18f, 0.56f, 0.85f, 0.92f),
-                new Color(0.16f, 0.68f, 0.54f, 0.92f),
-                new Color(0.86f, 0.62f, 0.14f, 0.92f),
-                new Color(0.84f, 0.34f, 0.22f, 0.92f)
-            };
-            for (int s = 0; s < 4; s++)
+                float mpPct = Mathf.Clamp01(engine.PlayerCurrentMp / Mathf.Max(1f, engine.PlayerMaxMp)) * 100f;
+                if (Mathf.Abs(mpPct - _lastMpPct) >= 0.35f || (mpPct <= 0f && _lastMpPct > 0f) || (mpPct >= 100f && _lastMpPct < 100f))
+                {
+                    _lastMpPct = mpPct;
+                    _mpFill.style.width = Length.Percent(mpPct);
+                }
+            }
+
+            float now = Time.unscaledTime;
+            if (now >= _nextSkillRingUpdateTime)
             {
-                if (_skillCdRings[s] == null || !engine.IsSkillUnlocked(s)) continue;
-                float rem = engine.GetSkillCooldownRemaining(s);
-                float tot = engine.GetSkillCooldownTotal(s);
-                float readyFrac = 1f - Mathf.Clamp01(rem / Mathf.Max(0.1f, tot));
-                _skillCdRings[s].SetProgress(readyFrac, cdColors[s], new Color(0.80f, 0.85f, 0.82f, 0.5f), 3.0f);
+                _nextSkillRingUpdateTime = now + 0.05f;
+                for (int s = 0; s < 4; s++)
+                {
+                    if (_skillCdRings[s] == null || !engine.IsSkillUnlocked(s)) continue;
+                    float rem = engine.GetSkillCooldownRemaining(s);
+                    float tot = engine.GetSkillCooldownTotal(s);
+                    float readyFrac = 1f - Mathf.Clamp01(rem / Mathf.Max(0.1f, tot));
+                    _skillCdRings[s].SetProgress(readyFrac, SkillCdColors[s], SkillCdTrackColor, 3.0f);
+                }
             }
 
             if (_bossTimerLabel != null && engine.HasActiveBoss)
-                _bossTimerLabel.text = $"{Mathf.Max(0f, engine.ActiveBossTimeRemaining):0.0}s";
+            {
+                int deci = Mathf.RoundToInt(Mathf.Max(0f, engine.ActiveBossTimeRemaining) * 10f);
+                if (deci != _lastBossTimerDeci)
+                {
+                    _lastBossTimerDeci = deci;
+                    _bossTimerLabel.text = $"{deci * 0.1f:0.0}s";
+                }
+            }
 
             if (_bossShieldRow != null)
             {
                 bool showShield = engine.HasActiveBoss && !_isMiniMode && (engine.BossShieldActive || engine.BossBrokenRemaining > 0f);
-                _bossShieldRow.style.display = showShield ? DisplayStyle.Flex : DisplayStyle.None;
-                if (showShield)
+                int mode = !showShield ? 0 : (engine.BossShieldActive ? 1 : 2);
+                if (mode != _lastBossShieldMode)
                 {
-                    if (engine.BossShieldActive)
+                    _lastBossShieldMode = mode;
+                    _lastBossShieldPct = -1;
+                    _lastBossShieldDeci = -1;
+                    _bossShieldRow.style.display = showShield ? DisplayStyle.Flex : DisplayStyle.None;
+                    if (mode == 1)
                     {
-                        float shieldPct = Mathf.Clamp01((float)(engine.BossShieldHp / System.Math.Max(1.0, engine.BossShieldMaxHp))) * 100f;
                         if (_bossShieldIcon != null)
                             CodexArtLoader.ApplyIconOrPlaceholder(_bossShieldIcon, "HUD/icon_boss_shield", "Khiên");
-                        if (_bossShieldLabel != null)
-                            _bossShieldLabel.text = $"Hộ Thể {Mathf.RoundToInt(shieldPct)}% · {engine.BossShieldTimeRemaining:0.0}s (Dùng Chiêu Phá!)";
                         if (_bossShieldFill != null)
-                        {
-                            _bossShieldFill.style.width = Length.Percent(shieldPct);
                             _bossShieldFill.style.backgroundColor = new Color(0.92f, 0.72f, 0.16f, 0.96f);
-                        }
                     }
-                    else
+                    else if (mode == 2)
                     {
-                        float breakPct = Mathf.Clamp01(engine.BossBrokenRemaining / 5f) * 100f;
                         if (_bossShieldIcon != null)
                             CodexArtLoader.ApplyIconOrPlaceholder(_bossShieldIcon, "HUD/icon_boss_break", "Phá");
-                        if (_bossShieldLabel != null)
-                            _bossShieldLabel.text = $"PHÁ HỘ THỂ! Choáng {engine.BossBrokenRemaining:0.0}s (+35% ST)";
                         if (_bossShieldFill != null)
-                        {
-                            _bossShieldFill.style.width = Length.Percent(breakPct);
                             _bossShieldFill.style.backgroundColor = new Color(0.20f, 0.78f, 0.56f, 0.96f);
-                        }
+                    }
+                }
+                if (mode == 1)
+                {
+                    float shieldPct = Mathf.Clamp01((float)(engine.BossShieldHp / System.Math.Max(1.0, engine.BossShieldMaxHp))) * 100f;
+                    int pctInt = Mathf.RoundToInt(shieldPct);
+                    int deci = Mathf.RoundToInt(Mathf.Max(0f, engine.BossShieldTimeRemaining) * 10f);
+                    if (pctInt != _lastBossShieldPct || deci != _lastBossShieldDeci)
+                    {
+                        _lastBossShieldPct = pctInt;
+                        _lastBossShieldDeci = deci;
+                        if (_bossShieldLabel != null)
+                            _bossShieldLabel.text = $"Hộ Thể {pctInt}% · {deci * 0.1f:0.0}s (Dùng Chiêu Phá!)";
+                        if (_bossShieldFill != null)
+                            _bossShieldFill.style.width = Length.Percent(shieldPct);
+                    }
+                }
+                else if (mode == 2)
+                {
+                    int deci = Mathf.RoundToInt(Mathf.Max(0f, engine.BossBrokenRemaining) * 10f);
+                    if (deci != _lastBossShieldDeci)
+                    {
+                        _lastBossShieldDeci = deci;
+                        float breakPct = Mathf.Clamp01(engine.BossBrokenRemaining / 5f) * 100f;
+                        if (_bossShieldLabel != null)
+                            _bossShieldLabel.text = $"PHÁ HỘ THỂ! Choáng {deci * 0.1f:0.0}s (+35% ST)";
+                        if (_bossShieldFill != null)
+                            _bossShieldFill.style.width = Length.Percent(breakPct);
                     }
                 }
             }
 
             if (_wrapKyNgo != null)
             {
-                _wrapKyNgo.style.display = engine.HasKyNgoAvailable ? DisplayStyle.Flex : DisplayStyle.None;
-                if (_kyNgoTimerLabel != null && engine.HasKyNgoAvailable)
-                    _kyNgoTimerLabel.text = $"Kỳ Ngộ · {Mathf.CeilToInt(engine.KyNgoTimeRemaining)}s";
+                bool hasKyNgo = engine.HasKyNgoAvailable;
+                DisplayStyle targetDisp = hasKyNgo ? DisplayStyle.Flex : DisplayStyle.None;
+                if (_wrapKyNgo.style.display != targetDisp)
+                    _wrapKyNgo.style.display = targetDisp;
+                if (_kyNgoTimerLabel != null && hasKyNgo)
+                {
+                    int sec = Mathf.CeilToInt(engine.KyNgoTimeRemaining);
+                    if (sec != _lastKyNgoSec)
+                    {
+                        _lastKyNgoSec = sec;
+                        _kyNgoTimerLabel.text = $"Kỳ Ngộ · {sec}s";
+                    }
+                }
             }
 
             if (_buffDoubleTuViPill != null)
             {
-                _buffDoubleTuViPill.style.display = engine.IsTuViDoubleBuffActive ? DisplayStyle.Flex : DisplayStyle.None;
-                if (_buffDoubleTuViLabel != null && engine.IsTuViDoubleBuffActive)
-                    _buffDoubleTuViLabel.text = $"x2 Tu Vi · {Mathf.CeilToInt(engine.TuViDoubleBuffRemainingSec)}s";
+                bool hasBuff = engine.IsTuViDoubleBuffActive;
+                DisplayStyle targetDisp = hasBuff ? DisplayStyle.Flex : DisplayStyle.None;
+                if (_buffDoubleTuViPill.style.display != targetDisp)
+                    _buffDoubleTuViPill.style.display = targetDisp;
+                if (_buffDoubleTuViLabel != null && hasBuff)
+                {
+                    int sec = Mathf.CeilToInt(engine.TuViDoubleBuffRemainingSec);
+                    if (sec != _lastBuffSec)
+                    {
+                        _lastBuffSec = sec;
+                        _buffDoubleTuViLabel.text = $"x2 Tu Vi · {sec}s";
+                    }
+                }
             }
 
             if (_challengeBanner != null && _challengeBannerLabel != null && engine.ActiveArenaMode != RemakeArenaMode.Campaign)
             {
-                _challengeBanner.style.display = DisplayStyle.Flex;
-                string rem = $"{Mathf.Max(0f, engine.ChallengeModeTimeRemaining):0}s";
-                _challengeBannerLabel.text = engine.ActiveArenaMode == RemakeArenaMode.DemonTower
-                    ? $"Tháp T{engine.ActiveChallengeFloor} · Đợt {engine.CurrentWaveIndex}/{engine.TotalWavesInStage} · {rem}"
-                    : $"Bí Cảnh T{engine.ActiveSecretRealmTier} · Đợt {engine.CurrentWaveIndex}/{engine.TotalWavesInStage} · {rem}";
+                if (_challengeBanner.style.display != DisplayStyle.Flex)
+                    _challengeBanner.style.display = DisplayStyle.Flex;
+                int sec = Mathf.RoundToInt(Mathf.Max(0f, engine.ChallengeModeTimeRemaining));
+                int wave = engine.CurrentWaveIndex;
+                if (sec != _lastChallengeSec || wave != _lastChallengeWave)
+                {
+                    _lastChallengeSec = sec;
+                    _lastChallengeWave = wave;
+                    _challengeBannerLabel.text = engine.ActiveArenaMode == RemakeArenaMode.DemonTower
+                        ? $"Tháp T{engine.ActiveChallengeFloor} · Đợt {wave}/{engine.TotalWavesInStage} · {sec}s"
+                        : $"Bí Cảnh T{engine.ActiveSecretRealmTier} · Đợt {wave}/{engine.TotalWavesInStage} · {sec}s";
+                }
             }
 
-            // Pulse Breakthrough Red '!' Badge when ready
-            if (_badgeBreakthroughBang != null && engine.IsBreakthroughReady)
+            // Pulse Breakthrough Red '!' Badge when ready (throttled to ~20 Hz so UI Toolkit stays cheap!)
+            if (_badgeBreakthroughBang != null && engine.IsBreakthroughReady && _activeDrawer == DrawerKind.None && now >= _nextBreakthroughPulseTime)
             {
-                float s = 1.0f + 0.14f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 5.2f));
+                _nextBreakthroughPulseTime = now + 0.05f;
+                float s = 1.0f + 0.14f * Mathf.Abs(Mathf.Sin(now * 5.2f));
                 _badgeBreakthroughBang.style.scale = new Scale(new Vector3(s, s, 1f));
             }
 
@@ -1124,25 +1335,38 @@ namespace KhiVanChiTu.Remake
             if (_tribulationPanel != null)
             {
                 bool inTrib = engine.IsInTribulation;
-                _tribulationPanel.style.display = inTrib ? DisplayStyle.Flex : DisplayStyle.None;
+                DisplayStyle targetDisp = inTrib ? DisplayStyle.Flex : DisplayStyle.None;
+                if (_tribulationPanel.style.display != targetDisp)
+                {
+                    _tribulationPanel.style.display = targetDisp;
+                    _lastTribDeci = -1;
+                    _lastTribStrikes = -1;
+                }
                 if (inTrib)
                 {
-                    float frac = 1f - Mathf.Clamp01(engine.TribulationTimeRemaining / GameplayEngine.TribulationDuration);
-                    if (_tribulationTimerLabel != null)
-                        _tribulationTimerLabel.text = $"{engine.TribulationTimeRemaining:0.0}s";
-                    if (_tribulationTargetLabel != null)
-                        _tribulationTargetLabel.text = $"Hướng tới {engine.TribulationTargetLabel} · Tỉ lệ {Mathf.RoundToInt(engine.TribulationTargetChance * 100)}%";
-                    if (_tribulationProgressFill != null)
-                        _tribulationProgressFill.style.width = Length.Percent(frac * 100f);
-                    if (_tribulationStrikeLabel != null)
-                        _tribulationStrikeLabel.text = $"Thiên Lôi giáng xuống: Đạo {engine.TribulationStrikesDone}/{GameplayEngine.TribulationStrikesTotal}";
+                    int deci = Mathf.RoundToInt(Mathf.Max(0f, engine.TribulationTimeRemaining) * 10f);
+                    int strikes = engine.TribulationStrikesDone;
+                    if (deci != _lastTribDeci || strikes != _lastTribStrikes)
+                    {
+                        _lastTribDeci = deci;
+                        _lastTribStrikes = strikes;
+                        float frac = 1f - Mathf.Clamp01(engine.TribulationTimeRemaining / GameplayEngine.TribulationDuration);
+                        if (_tribulationTimerLabel != null)
+                            _tribulationTimerLabel.text = $"{deci * 0.1f:0.0}s";
+                        if (_tribulationTargetLabel != null)
+                            _tribulationTargetLabel.text = $"Hướng tới {engine.TribulationTargetLabel} · Tỉ lệ {Mathf.RoundToInt(engine.TribulationTargetChance * 100)}%";
+                        if (_tribulationProgressFill != null)
+                            _tribulationProgressFill.style.width = Length.Percent(frac * 100f);
+                        if (_tribulationStrikeLabel != null)
+                            _tribulationStrikeLabel.text = $"Thiên Lôi giáng xuống: Đạo {strikes}/{GameplayEngine.TribulationStrikesTotal}";
+                    }
                     if (_tribulationPulseTimer > 0f)
                     {
                         _tribulationPulseTimer = Mathf.Max(0f, _tribulationPulseTimer - Time.unscaledDeltaTime);
                         float ps = 1f + 0.045f * (_tribulationPulseTimer / 0.25f);
                         _tribulationPanel.style.scale = new Scale(new Vector3(ps, ps, 1f));
                     }
-                    else
+                    else if (_tribulationPanel.style.scale.value.value != Vector3.one)
                     {
                         _tribulationPanel.style.scale = new Scale(Vector3.one);
                     }
@@ -1153,33 +1377,47 @@ namespace KhiVanChiTu.Remake
             if (_respawnPanel != null)
             {
                 bool respawning = engine.IsRespawning;
-                _respawnPanel.style.display = respawning ? DisplayStyle.Flex : DisplayStyle.None;
+                DisplayStyle targetDisp = respawning ? DisplayStyle.Flex : DisplayStyle.None;
+                if (_respawnPanel.style.display != targetDisp)
+                {
+                    _respawnPanel.style.display = targetDisp;
+                    _lastRespawnDeci = -1;
+                }
                 if (respawning)
                 {
-                    if (_respawnTimerLabel != null)
-                        _respawnTimerLabel.text = $"{engine.RespawnTimeRemaining:0.0}s";
-                    if (_respawnReasonLabel != null)
-                        _respawnReasonLabel.text = string.IsNullOrEmpty(engine.RespawnReasonText)
-                            ? "Yêu thú đã tạm rút · Tái chiến sau khi hồi sinh"
-                            : engine.RespawnReasonText;
-                    if (_respawnProgressFill != null)
-                        _respawnProgressFill.style.width = Length.Percent(engine.RespawnProgress01 * 100f);
+                    int deci = Mathf.RoundToInt(Mathf.Max(0f, engine.RespawnTimeRemaining) * 10f);
+                    if (deci != _lastRespawnDeci)
+                    {
+                        _lastRespawnDeci = deci;
+                        if (_respawnTimerLabel != null)
+                            _respawnTimerLabel.text = $"{deci * 0.1f:0.0}s";
+                        if (_respawnReasonLabel != null)
+                            _respawnReasonLabel.text = string.IsNullOrEmpty(engine.RespawnReasonText)
+                                ? "Yêu thú đã tạm rút · Tái chiến sau khi hồi sinh"
+                                : engine.RespawnReasonText;
+                        if (_respawnProgressFill != null)
+                            _respawnProgressFill.style.width = Length.Percent(engine.RespawnProgress01 * 100f);
+                    }
                 }
             }
 
-            // Live Alchemy 3.5s Countdown Slide Bar (zero rebuild per frame)
-            if (_activeDrawer == DrawerKind.Alchemy && _modalBody != null)
+            // Live Alchemy 3.5s Countdown Slide Bar (cached element refs, zero Q() per frame)
+            if (_activeDrawer == DrawerKind.Alchemy && engine.IsBrewingPill)
             {
-                var brewFill = _modalBody.Q("alchemy-brew-fill");
-                var brewLbl = _modalBody.Q<Label>("alchemy-brew-label");
-                if (engine.IsBrewingPill)
+                int deci = Mathf.RoundToInt(Mathf.Max(0f, engine.BrewTimeRemaining) * 10f);
+                if (deci != _lastBrewDeci)
                 {
+                    _lastBrewDeci = deci;
+                    if (_cachedAlchemyBrewFill == null && _modalBody != null)
+                        _cachedAlchemyBrewFill = _modalBody.Q("alchemy-brew-fill");
+                    if (_cachedAlchemyBrewLabel == null && _modalBody != null)
+                        _cachedAlchemyBrewLabel = _modalBody.Q<Label>("alchemy-brew-label");
                     float p = engine.BrewProgress01;
-                    if (brewFill != null) brewFill.style.width = Length.Percent(p * 100f);
-                    if (brewLbl != null)
+                    if (_cachedAlchemyBrewFill != null) _cachedAlchemyBrewFill.style.width = Length.Percent(p * 100f);
+                    if (_cachedAlchemyBrewLabel != null)
                     {
                         string pillName = CultivationTable.GetPillNameForRealmBreakthrough(engine.BrewingTargetRealm);
-                        brewLbl.text = $"Đang luyện {pillName}... còn {engine.BrewTimeRemaining:0.0}s ({Mathf.RoundToInt(p * 100)}%)";
+                        _cachedAlchemyBrewLabel.text = $"Đang luyện {pillName}... còn {deci * 0.1f:0.0}s ({Mathf.RoundToInt(p * 100)}%)";
                     }
                 }
             }
@@ -1188,6 +1426,9 @@ namespace KhiVanChiTu.Remake
         private void RefreshActiveDrawerIfOpen()
         {
             if (_activeDrawer == DrawerKind.None || _modalBody == null || _modalTitle == null) return;
+            _cachedAlchemyBrewFill = null;
+            _cachedAlchemyBrewLabel = null;
+            _lastBrewDeci = -1;
             _modalBody.Clear();
 
             switch (_activeDrawer)
@@ -1218,7 +1459,7 @@ namespace KhiVanChiTu.Remake
                     RemakeDrawerViews.BuildBreakthrough(_modalBody, CloseDrawer);
                     break;
                 case DrawerKind.Settings:
-                    _modalTitle.text = "Cài Đặt Đồ Họa 3D, FPS & Tiến Độ Codex";
+                    _modalTitle.text = "Cài Đặt Đồ Họa 3D, Âm Lượng & FPS";
                     RemakeDrawerViews.BuildSettings(_modalBody);
                     break;
                 case DrawerKind.Equipment:
@@ -1441,7 +1682,7 @@ namespace KhiVanChiTu.Remake
                 (RemakeFeatureId.EquipmentLoot, 1, "btn-nav-equipment",       "Trang Bị đã mở! Mở Cụm Tu Luyện",     "Mở Trang Bị để mặc & cường hóa bảo giáp!"),
                 (RemakeFeatureId.Formation1,    1, "btn-nav-formation",       "Trận Pháp đã mở! Mở Cụm Tu Luyện",    "Mở Trận Pháp để khai mở Lục Đại Trận!"),
                 (RemakeFeatureId.ImmortalTower, 3, "btn-immortal-gate-quick", "Mở Tiện Ích để vào Vạn Yêu Tháp!",    "Vạn Yêu Tháp đã mở! Chạm Tiên Môn để leo tháp!"),
-                (RemakeFeatureId.Companions,    2, "btn-nav-companion",       "Linh Thú đã mở! Mở Cụm Tiện Ích",     "Mở Linh Thú để thu phục đồng hành hộ đạo!"),
+                (RemakeFeatureId.Companions,    1, "btn-nav-companion",       "Linh Thú đã mở! Mở Cụm Bát Quái",     "Mở Linh Thú để thu phục đồng hành hộ đạo!"),
                 (RemakeFeatureId.SecretRealm,   3, "btn-immortal-gate-quick", "Mở Tiện Ích để vào Bí Cảnh!",         "Bí Cảnh đã mở! Vào Tiên Môn càn quét nguyên liệu!"),
                 (RemakeFeatureId.PvpArena,      3, "btn-immortal-gate-quick", "Mở Tiện Ích để vào Luận Kiếm Đài!",   "Luận Kiếm Đài đã mở! Vào Tiên Môn tỷ thí!")
             };
@@ -1456,11 +1697,6 @@ namespace KhiVanChiTu.Remake
                 {
                     if (_cultivationExpanded) { target = root.Q(st.btnName); tipText = st.navTip; }
                     else { target = root.Q("btn-cluster-cultivation"); tipText = st.clusterTip; }
-                }
-                else if (st.hostGroup == 2)
-                {
-                    if (_utilityExpanded) { target = root.Q(st.btnName); tipText = st.navTip; }
-                    else { target = root.Q("btn-cluster-utility"); tipText = st.clusterTip; }
                 }
                 else
                 {
@@ -1497,8 +1733,10 @@ namespace KhiVanChiTu.Remake
                 if (_popupPool[i].timer <= 0f) { chosen = _popupPool[i]; break; }
             }
 
+            bool wasInactive = chosen.timer <= 0f;
             chosen.worldPos = worldPos + new Vector3(Random.Range(-0.35f, 0.35f), 0f, 0f);
             chosen.timer = 0.68f;
+            if (wasInactive) _activePopupCount++;
             chosen.label.text = isCrit ? $"{CultivationTable.FormatNumber(amount)}!" : CultivationTable.FormatNumber(amount);
             chosen.label.EnableInClassList("damage-popup-crit", isCrit);
             chosen.label.style.display = DisplayStyle.Flex;
@@ -1506,8 +1744,11 @@ namespace KhiVanChiTu.Remake
 
         private void UpdateDamagePopups()
         {
-            Camera cam = Camera.main;
-            if (cam == null || uiDocument == null) return;
+            if (_activePopupCount <= 0 || uiDocument == null) return;
+            if (_cachedMainCam == null || !_cachedMainCam.isActiveAndEnabled)
+                _cachedMainCam = Camera.main;
+            Camera cam = _cachedMainCam;
+            if (cam == null) return;
             float pw = uiDocument.rootVisualElement.resolvedStyle.width;
             float ph = uiDocument.rootVisualElement.resolvedStyle.height;
             if (pw <= 0 || ph <= 0) return;
@@ -1521,6 +1762,7 @@ namespace KhiVanChiTu.Remake
                 if (slot.timer <= 0f)
                 {
                     slot.label.style.display = DisplayStyle.None;
+                    _activePopupCount = Mathf.Max(0, _activePopupCount - 1);
                     continue;
                 }
 
@@ -1541,10 +1783,175 @@ namespace KhiVanChiTu.Remake
             }
         }
 
-        private static bool HasMergeableSwordPair()
+        public static SmartBadgeSnapshot ComputeSmartBadges(
+            RemakeSaveData save,
+            GameplayEngine engine,
+            RemakeOnlineService online = null)
         {
-            var save = SaveService.Current;
-            return save.swordInventoryLevels.Count > 0 && (save.equippedSwordLevels.Count > 0 || save.swordInventoryLevels.Count >= 2);
+            if (save == null) return default;
+
+            bool swordPath = HasActionableSwordPath(save);
+            bool daoVanOpen = CultivationTable.IsFeatureUnlocked(RemakeFeatureId.DaoVanTree, save.realmIndex, save.subStage);
+            bool daoVan = daoVanOpen && engine != null && HasAnyUpgradeableDaoVanNode(engine);
+
+            bool alchemy = false;
+            if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Alchemy, save.realmIndex, save.subStage) &&
+                (engine == null || !engine.IsBrewingPill) && save.herbsByTier != null && save.herbsByTier.Length > 0)
+            {
+                int targetRealm = Mathf.Clamp(save.realmIndex, 0, 7);
+                int herbTierIdx = Mathf.Clamp(CultivationTable.GetPillRequiredHerbTier(targetRealm) - 1, 0, save.herbsByTier.Length - 1);
+                int herbNeed = CultivationTable.GetPillRequiredHerbCount(targetRealm);
+                double ltCost = CultivationTable.GetPillBrewLinhThachCost(targetRealm);
+                alchemy = save.herbsByTier[herbTierIdx] >= herbNeed && save.linhThach >= ltCost;
+            }
+
+            bool equipment = false;
+            if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.EquipmentLoot, save.realmIndex, save.subStage) &&
+                save.equipmentBag != null && save.equipmentBag.Count > 0)
+            {
+                for (int i = 0; i < save.equipmentBag.Count; i++)
+                {
+                    var cand = save.equipmentBag[i];
+                    if (cand == null) continue;
+                    RemakeEquipmentItem equipped = null;
+                    if (save.equippedGear != null)
+                    {
+                        for (int j = 0; j < save.equippedGear.Count; j++)
+                        {
+                            if (save.equippedGear[j] != null && save.equippedGear[j].slot == cand.slot)
+                            {
+                                equipped = save.equippedGear[j];
+                                break;
+                            }
+                        }
+                    }
+                    if (equipped == null ||
+                        CultivationTable.CalculateEquipItemScore(cand, save.realmIndex) >
+                        CultivationTable.CalculateEquipItemScore(equipped, save.realmIndex) + 0.1f)
+                    {
+                        equipment = true;
+                        break;
+                    }
+                }
+            }
+
+            bool formation = false;
+            if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Formation1, save.realmIndex, save.subStage))
+            {
+                int unlockedFormations = 0;
+                for (int i = 0; i < RemakeCatalogs.Formations.Count; i++)
+                    if (save.realmIndex >= RemakeCatalogs.Formations[i].minRealmIndex) unlockedFormations++;
+                bool needMain = unlockedFormations >= 1 && save.activeMainFormation < 0;
+                bool needSub = CultivationTable.IsFeatureUnlocked(RemakeFeatureId.FormationSubSlot, save.realmIndex, save.subStage) &&
+                               unlockedFormations >= 2 && save.activeSubFormation < 0;
+                formation = needMain || needSub;
+            }
+
+            bool skills = CultivationTable.IsFeatureUnlocked(RemakeFeatureId.SkillLoiPhat, save.realmIndex, save.subStage) &&
+                          save.skillScrollCount > 0;
+
+            bool diary = false;
+            if (engine != null)
+            {
+                for (int i = 0; i < RemakeCatalogs.PioneerMilestones.Count; i++)
+                {
+                    if (engine.IsPioneerMilestoneReady(RemakeCatalogs.PioneerMilestones[i])) { diary = true; break; }
+                }
+            }
+
+            bool codex = false;
+            if (engine != null)
+            {
+                for (int i = 0; i < GameplayEngine.CodexMilestoneThresholds.Length; i++)
+                {
+                    if (engine.IsCodexMilestoneReady(i)) { codex = true; break; }
+                }
+            }
+
+            bool companion = false;
+            if (CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Companions, save.realmIndex, save.subStage))
+            {
+                if (save.unlockedCompanionsMask != 0 && save.activeCompanionId == 0)
+                {
+                    companion = true;
+                }
+                else
+                {
+                    for (int id = 1; id <= 4; id++)
+                    {
+                        if ((save.unlockedCompanionsMask & (1 << id)) != 0) continue;
+                        var spec = CultivationTable.GetCompanionSpec((RemakeCompanionId)id);
+                        double cost = System.Math.Round(1200 * System.Math.Pow(3.2, id - 1));
+                        if (save.realmIndex >= spec.reqRealmIndex && save.linhThach >= cost)
+                        {
+                            companion = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            bool friends = false;
+            if (online != null && online.Friends != null)
+            {
+                for (int i = 0; i < online.Friends.Count; i++)
+                {
+                    if (online.Friends[i] != null && online.Friends[i].state == 2)
+                    {
+                        friends = true;
+                        break;
+                    }
+                }
+            }
+
+            long todayKey = System.DateTime.UtcNow.Year * 1000L + System.DateTime.UtcNow.DayOfYear;
+            bool towerSalaryReady = save.demonTowerHighestFloor > 0 && save.lastTowerSalaryDayUtc != todayKey;
+            bool secretRealmReady = CultivationTable.IsFeatureUnlocked(RemakeFeatureId.SecretRealm, save.realmIndex, save.subStage) &&
+                                    (save.lastSecretRealmResetDayUtc != todayKey || save.secretRealmDailyRemaining > 0);
+            bool immortalGate = towerSalaryReady || secretRealmReady;
+
+            return new SmartBadgeSnapshot(
+                swordPath, daoVan, alchemy, equipment, formation,
+                skills, diary, codex, companion, friends, immortalGate);
+        }
+
+        private static bool HasActionableSwordPath(RemakeSaveData save)
+        {
+            if (save == null || save.swordInventoryLevels == null || save.equippedSwordLevels == null) return false;
+
+            int[] counts = new int[11];
+            for (int i = 0; i < save.swordInventoryLevels.Count; i++)
+            {
+                int lv = save.swordInventoryLevels[i];
+                if (lv >= 1 && lv <= 10) counts[lv]++;
+            }
+            for (int i = 0; i < save.equippedSwordLevels.Count; i++)
+            {
+                int lv = save.equippedSwordLevels[i];
+                if (lv >= 1 && lv <= 10) counts[lv]++;
+            }
+            for (int lv = 1; lv <= 9; lv++)
+            {
+                if (counts[lv] < 2) continue;
+                bool freeTut = !save.tutorialCompleted && save.totalMerges == 0 && lv == 1;
+                if (freeTut || save.linhThach >= CultivationTable.GetSwordMergeCost(lv))
+                    return true;
+            }
+
+            if (save.swordInventoryLevels.Count > 0)
+            {
+                int maxSlots = CultivationTable.GetMaxSwordSlotsForRealm(save.realmIndex);
+                if (save.equippedSwordLevels.Count < maxSlots) return true;
+
+                int minEquipped = int.MaxValue;
+                for (int i = 0; i < save.equippedSwordLevels.Count; i++)
+                    if (save.equippedSwordLevels[i] < minEquipped) minEquipped = save.equippedSwordLevels[i];
+
+                for (int i = 0; i < save.swordInventoryLevels.Count; i++)
+                    if (save.swordInventoryLevels[i] > minEquipped) return true;
+            }
+
+            return false;
         }
 
         private static bool HasAnyUpgradeableDaoVanNode(GameplayEngine engine)

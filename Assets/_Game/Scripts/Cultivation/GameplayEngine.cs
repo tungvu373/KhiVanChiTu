@@ -14,6 +14,18 @@ namespace KhiVanChiTu.Remake
         public event Action OnStageChanged;
         public event Action OnQuestOrTutorialChanged;
         public event Action<string> OnToastMessage;
+        public event Action<RemakeNotifyCategory, string, RemakeNotifyZone, bool> OnCategoryNotification;
+
+        private void Notify(
+            RemakeNotifyCategory category,
+            string message,
+            bool isError = false,
+            RemakeNotifyZone zone = RemakeNotifyZone.Auto)
+        {
+            if (string.IsNullOrEmpty(message)) return;
+            OnCategoryNotification?.Invoke(category, message, zone, isError);
+            OnToastMessage?.Invoke(message);
+        }
         public event Action<bool, string> OnBreakthroughResolved;
         public event Action<bool, int, float> OnSwordMergeResolved;
         public event Action<Vector3, double, bool> OnLoiPhatCast;
@@ -448,7 +460,7 @@ namespace KhiVanChiTu.Remake
                     PlayerCurrentHp = PlayerMaxHp;
                     SyncArenaOrReturnToCampaignScene();
                     OnStageChanged?.Invoke();
-                    OnToastMessage?.Invoke("Hết giờ thử thách! Quay về Đấu Trường chính.");
+                    Notify(RemakeNotifyCategory.ImmortalGate, "Hết giờ thử thách! Quay về Đấu Trường chính.", true, RemakeNotifyZone.GrandTop);
                 }
             }
 
@@ -561,31 +573,31 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.DaoVanTree, save.realmIndex, save.subStage))
             {
-                OnToastMessage?.Invoke("Cây Đạo Vận mở khóa tại Luyện Khí Tầng 4!");
+                Notify(RemakeNotifyCategory.DaoVan, "Cây Đạo Vận mở khóa tại Luyện Khí Tầng 4!", true);
                 return false;
             }
             var spec = FindNodeSpec(nodeId);
             if (spec == null) return false;
             if (!string.IsNullOrEmpty(spec.parentId) && GetDaoVanLevel(spec.parentId) <= 0)
             {
-                OnToastMessage?.Invoke("Cần mở node gốc trước!");
+                Notify(RemakeNotifyCategory.DaoVan, "Cần mở node gốc trước!", true);
                 return false;
             }
             int lv = GetDaoVanLevel(nodeId);
             if (lv >= spec.maxLevel)
             {
-                OnToastMessage?.Invoke($"{spec.title} đã đạt cấp tối đa!");
+                Notify(RemakeNotifyCategory.DaoVan, $"{spec.title} đã đạt cấp tối đa!", true);
                 return false;
             }
             double cost = GetDaoVanUpgradeCost(spec, lv);
             if (spec.costsDaoPoints)
             {
-                if (save.daoPoints < cost) { OnToastMessage?.Invoke("Không đủ Điểm Đạo Vận!"); return false; }
+                if (save.daoPoints < cost) { Notify(RemakeNotifyCategory.DaoVan, "Không đủ Điểm Đạo Vận!", true); return false; }
                 save.daoPoints -= (int)cost;
             }
             else
             {
-                if (save.linhThach < cost) { OnToastMessage?.Invoke($"Thiếu {CultivationTable.FormatNumber(cost)} Linh Thạch!"); return false; }
+                if (save.linhThach < cost) { Notify(RemakeNotifyCategory.DaoVan, $"Thiếu {CultivationTable.FormatNumber(cost)} Linh Thạch!", true); return false; }
                 save.linhThach -= cost;
             }
 
@@ -596,7 +608,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Save();
             OnStatsChanged?.Invoke();
             OnQuestOrTutorialChanged?.Invoke();
-            OnToastMessage?.Invoke($"Nâng {spec.title} lên Cấp {lv + 1}/{spec.maxLevel}!");
+            Notify(RemakeNotifyCategory.DaoVan, $"Nâng {spec.title} lên Cấp {lv + 1}/{spec.maxLevel}!");
             return true;
         }
 
@@ -673,9 +685,12 @@ namespace KhiVanChiTu.Remake
             int codexEntries = GetCodexUnlockedCount(out _, out _, out _);
             float codexBonus = codexEntries * 0.008f; // +0.8% Sword Dmg & Tu Vi per unlocked Codex entry
 
+            // Guaranteed Equipment Slot Enhancement Base Stats (all 6 slots)
+            GetTotalEquipSlotEnhanceBonuses(out float enhFlatAtk, out float enhSwordDmgPct, out _, out _, out float enhDmgRedPct);
+
             // Sword Damage Mult
             float daoSwordMult = 1f + coreLv * 0.10f + branchSwordLv * 0.15f + bodyLeechLv * 0.10f + swordMasteryLv * 0.28f;
-            float eqSwordPct = GetEquipmentStatSum(RemakeEquipStatType.SwordDamagePct) / 100f;
+            float eqSwordPct = (GetEquipmentStatSum(RemakeEquipStatType.SwordDamagePct) + enhSwordDmgPct) / 100f;
             if (thanhVan >= 2) eqSwordPct += 0.15f;
             if (thanhVan >= 4) eqSwordPct += 0.30f;
             if (thanhVan >= 6) eqSwordPct += 0.60f;
@@ -700,7 +715,7 @@ namespace KhiVanChiTu.Remake
             _cachedBossMult = bossB;
 
             // Damage Reduction
-            float dr = bodyArmorLv * 0.03f;
+            float dr = bodyArmorLv * 0.03f + enhDmgRedPct / 100f;
             if (huyenVu >= 2) dr += 0.06f;
             if (huyenVu >= 4) dr += 0.12f;
             if (huyenVu >= 6) dr += 0.20f;
@@ -736,7 +751,7 @@ namespace KhiVanChiTu.Remake
             double total = 0;
             for (int i = 0; i < save.equippedSwordLevels.Count && i < maxSlots; i++)
                 total += CultivationTable.CalculateSwordDamage(save.equippedSwordLevels[i]);
-            total += GetEquipmentStatSum(RemakeEquipStatType.FlatSwordAtk);
+            total += GetEquipmentStatSum(RemakeEquipStatType.FlatSwordAtk) + enhFlatAtk;
             _cachedTotalSwordAtk = total <= 0 ? 0.0 : Math.Max(1.0, Math.Round(total * _cachedSwordDmgMult));
 
             // Drop, Leech, CD & MP Regen multipliers
@@ -798,7 +813,7 @@ namespace KhiVanChiTu.Remake
                 RemakeAudioService.Instance?.PlayMerge();
                 RemakeVfxPool.Instance?.SpawnBreakthroughFlash(
                     RemakeArenaController.Instance != null ? RemakeArenaController.Instance.PlayerWorldPosition : Vector3.zero, true);
-                OnToastMessage?.Invoke($"Tu vi tinh tiến! Tự động lên {CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)}!");
+                Notify(RemakeNotifyCategory.Breakthrough, $"Tu vi tinh tiến! Tự động lên {CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)}!", false, RemakeNotifyZone.GrandTop);
             }
 
             double cap = GetRequiredTuViForCurrent();
@@ -808,7 +823,7 @@ namespace KhiVanChiTu.Remake
                 if (CultivationTable.RequiresBreakthroughAt(save.subStage) && !_gateCapToastSentForStage)
                 {
                     _gateCapToastSentForStage = true;
-                    OnToastMessage?.Invoke($"Tu Vi viên mãn! Đã chạm bình cảnh {CultivationTable.GetBreakthroughGateTitle(save.realmIndex, save.subStage)} — bấm Đột Phá!");
+                    Notify(RemakeNotifyCategory.Breakthrough, $"Tu Vi viên mãn! Đã chạm bình cảnh {CultivationTable.GetBreakthroughGateTitle(save.realmIndex, save.subStage)} — bấm Đột Phá!", false, RemakeNotifyZone.GrandTop);
                 }
             }
             return leveledUp;
@@ -899,7 +914,8 @@ namespace KhiVanChiTu.Remake
             {
                 save.swordInventoryLevels.Add(dropLevel);
                 save.codexSwordsMask |= (1 << Mathf.Clamp(dropLevel - 1, 0, 9));
-                OnToastMessage?.Invoke($"Nhặt Phôi Kiếm Cấp {dropLevel}!");
+                RemakeAudioService.Instance?.PlayLootRare();
+                Notify(RemakeNotifyCategory.LootDrop, $"Nhặt Phôi Kiếm Cấp {dropLevel}!", false, RemakeNotifyZone.CombatTicker);
             }
 
             if (deathPos.HasValue)
@@ -921,11 +937,11 @@ namespace KhiVanChiTu.Remake
                     string reqTxt = IsStageRealmUnlocked(nextSpec)
                         ? "Có thể chuyển Vực mới trong Bản Đồ!"
                         : $"Cần {CultivationTable.GetRealmDisplayName(nextSpec.requiredRealmIndex, nextSpec.requiredSubStage)} để tiến vào.";
-                    OnToastMessage?.Invoke($"Hạ Thủ Lĩnh {stage.stageCode}! Mở {nextSpec.stageCode} ({reqTxt}) — Tiếp tục cày Thủ Lĩnh!");
+                    Notify(RemakeNotifyCategory.BossCombat, $"Hạ Thủ Lĩnh {stage.stageCode}! Mở {nextSpec.stageCode} ({reqTxt}) — Tiếp tục cày Thủ Lĩnh!", false, RemakeNotifyZone.GrandTop);
                 }
                 else
                 {
-                    OnToastMessage?.Invoke($"Hạ gục Thủ Lĩnh {stage.stageCode}! Chuẩn bị tái chiến Thủ Lĩnh...");
+                    Notify(RemakeNotifyCategory.BossCombat, $"Hạ gục Thủ Lĩnh {stage.stageCode}! Chuẩn bị tái chiến Thủ Lĩnh...", false, RemakeNotifyZone.CombatTicker);
                 }
 
                 if (save.mainQuestIndex == 5 && stage.actIndex == 0 && stage.stageNumber == 10) save.mainQuestProgress = 1;
@@ -952,16 +968,16 @@ namespace KhiVanChiTu.Remake
                         if (realmOk && bossAllowed)
                         {
                             save.activeStage = stage.stageNumber + 1;
-                            OnToastMessage?.Invoke(stage.stageNumber == 9
+                            Notify(RemakeNotifyCategory.CombatWave, stage.stageNumber == 9
                                 ? $"Vượt Ải {stage.stageCode}! Tự động tiến vào Thủ Lĩnh {nextSpec.stageCode}!"
-                                : $"Vượt Ải {stage.stageCode}! Tự động tiến sang Ải {nextSpec.stageCode}!");
+                                : $"Vượt Ải {stage.stageCode}! Tự động tiến sang Ải {nextSpec.stageCode}!", false, RemakeNotifyZone.CombatTicker);
                             if (_aoeBatchDepth > 0) _batchPendingArenaReset = true;
                             else RemakeArenaController.Instance?.ResetForStageChange();
                         }
                         else if (!realmOk && _realmLockToastCooldown <= 0f)
                         {
                             _realmLockToastCooldown = 40f;
-                            OnToastMessage?.Invoke($"Vượt Ải {stage.stageCode}! Cần đạt {CultivationTable.GetRealmDisplayName(nextSpec.requiredRealmIndex, nextSpec.requiredSubStage)} để mở Ải {nextSpec.stageCode}.");
+                            Notify(RemakeNotifyCategory.CombatWave, $"Vượt Ải {stage.stageCode}! Cần đạt {CultivationTable.GetRealmDisplayName(nextSpec.requiredRealmIndex, nextSpec.requiredSubStage)} để mở Ải {nextSpec.stageCode}.", false, RemakeNotifyZone.CombatTicker);
                         }
                     }
                 }
@@ -996,10 +1012,14 @@ namespace KhiVanChiTu.Remake
                 ActiveBossTimeRemaining = BossTimeLimit;
                 ResetBossShieldState();
                 _bossShieldCooldown = 10f;
+                RemakeAudioService.Instance?.PlayBossMusic();
+                RemakeAudioService.Instance?.TryPlayVoice(RemakeVoiceLineId.BossEncounter, SaveService.Current.gender);
             }
             else if (!active && HasActiveBoss)
             {
                 ResetBossShieldState();
+                if (ActiveArenaMode == RemakeArenaMode.Campaign)
+                    RemakeAudioService.Instance?.PlayGameMusic();
             }
             HasActiveBoss = active;
             ActiveBossName = bossName;
@@ -1039,7 +1059,7 @@ namespace KhiVanChiTu.Remake
                     // Boss completes charge: heavy slam!
                     var stage = GetCurrentStageSpec();
                     OnPlayerDamaged(stage.enemyDamage * 1.45);
-                    OnToastMessage?.Invoke("Thủ Lĩnh bùng phát Yêu Lực! Hãy dùng Kỹ Năng hoặc Phá Giáp khi Khiên xuất hiện!");
+                    Notify(RemakeNotifyCategory.BossCombat, "Thủ Lĩnh bùng phát Yêu Lực! Hãy dùng Kỹ Năng hoặc Phá Giáp khi Khiên xuất hiện!", true, RemakeNotifyZone.CombatTicker);
                     OnBossShieldStateChanged?.Invoke();
                 }
                 return;
@@ -1051,7 +1071,8 @@ namespace KhiVanChiTu.Remake
                 BossShieldMaxHp = Math.Max(20, Math.Round(ActiveBossMaxHp * 0.11));
                 BossShieldHp = BossShieldMaxHp;
                 BossShieldTimeRemaining = 4.0f;
-                OnToastMessage?.Invoke("Thủ Lĩnh mở Khiên Yêu Lực (4s)! Tung Kỹ Năng để Phá Phòng!");
+                RemakeAudioService.Instance?.PlayBossShieldActivate();
+                Notify(RemakeNotifyCategory.BossCombat, "Thủ Lĩnh mở Khiên Yêu Lực (4s)! Tung Kỹ Năng để Phá Phòng!", false, RemakeNotifyZone.CombatTicker);
                 OnBossShieldStateChanged?.Invoke();
             }
         }
@@ -1069,10 +1090,10 @@ namespace KhiVanChiTu.Remake
                 BossShieldTimeRemaining = 0f;
                 BossBrokenRemaining = 5.0f; // 3.5s stun + 5s +35% damage taken!
                 _bossShieldCooldown = 15f;
-                RemakeAudioService.Instance?.PlayBreakthrough();
+                RemakeAudioService.Instance?.PlayBossShieldBreak();
                 if (RemakeArenaController.Instance != null && RemakeArenaController.Instance.TryFindPriorityTargetPos(out var bPos))
                     RemakeVfxPool.Instance?.SpawnBreakthroughFlash(bPos, true);
-                OnToastMessage?.Invoke("PHÁ HỘ THỂ! Thủ Lĩnh choáng 3.5s & nhận +35% sát thương!");
+                Notify(RemakeNotifyCategory.BossCombat, "PHÁ HỘ THỂ! Thủ Lĩnh choáng 3.5s & nhận +35% sát thương!", false, RemakeNotifyZone.CombatTicker);
             }
             OnBossShieldStateChanged?.Invoke();
         }
@@ -1091,10 +1112,11 @@ namespace KhiVanChiTu.Remake
                 : reasonToast;
 
             SaveService.Save();
+            RemakeAudioService.Instance?.TryPlayVoice(RemakeVoiceLineId.PlayerRespawn, SaveService.Current.gender);
             OnRespawnStateChanged?.Invoke(true);
             OnStageChanged?.Invoke();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke(RespawnReasonText);
+            Notify(RemakeNotifyCategory.CombatWave, RespawnReasonText, true, RemakeNotifyZone.GrandTop);
         }
 
         public void AdvanceRespawnTimer(float dt)
@@ -1111,7 +1133,7 @@ namespace KhiVanChiTu.Remake
                 OnRespawnStateChanged?.Invoke(false);
                 OnStageChanged?.Invoke();
                 OnStatsChanged?.Invoke();
-                OnToastMessage?.Invoke($"Đã hồi sinh! Tiếp tục chiến đấu tại Ải {GetCurrentStageSpec().stageCode}.");
+                Notify(RemakeNotifyCategory.CombatWave, $"Đã hồi sinh! Tiếp tục chiến đấu tại Ải {GetCurrentStageSpec().stageCode}.", false, RemakeNotifyZone.CombatTicker);
             }
         }
 
@@ -1129,7 +1151,7 @@ namespace KhiVanChiTu.Remake
                     SetActiveBoss(false, "", 0, 0);
                     SyncArenaOrReturnToCampaignScene();
                     OnStageChanged?.Invoke();
-                    OnToastMessage?.Invoke("Thất bại trong thử thách! Quay về Đấu Trường chính.");
+                    Notify(RemakeNotifyCategory.ImmortalGate, "Thất bại trong thử thách! Quay về Đấu Trường chính.", true, RemakeNotifyZone.GrandTop);
                 }
                 else if (HasActiveBoss || GetCurrentStageSpec().isBossStage)
                 {
@@ -1152,12 +1174,12 @@ namespace KhiVanChiTu.Remake
             var spec = GetStageSpec(diff, act, stageNumber);
             if (spec.LinearIndex > SaveService.Current.highestUnlockedLinearStage)
             {
-                OnToastMessage?.Invoke($"Cần vượt qua ải trước để mở {ActStageDatabaseSO.GetDifficultyLabel(diff)} {spec.stageCode}!");
+                Notify(RemakeNotifyCategory.CombatWave, $"Cần vượt qua ải trước để mở {ActStageDatabaseSO.GetDifficultyLabel(diff)} {spec.stageCode}!", true, RemakeNotifyZone.DrawerInline);
                 return false;
             }
             if (!IsStageRealmUnlocked(spec))
             {
-                OnToastMessage?.Invoke($"Cần đạt {CultivationTable.GetRealmDisplayName(spec.requiredRealmIndex, spec.requiredSubStage)} để tiến vào {ActStageDatabaseSO.GetDifficultyLabel(diff)} {spec.stageCode}!");
+                Notify(RemakeNotifyCategory.CombatWave, $"Cần đạt {CultivationTable.GetRealmDisplayName(spec.requiredRealmIndex, spec.requiredSubStage)} để tiến vào {ActStageDatabaseSO.GetDifficultyLabel(diff)} {spec.stageCode}!", true, RemakeNotifyZone.DrawerInline);
                 return false;
             }
 
@@ -1198,7 +1220,7 @@ namespace KhiVanChiTu.Remake
             InvalidateStatCache();
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke(style == RemakeSwordStyle.KiemXuyen
+            Notify(RemakeNotifyCategory.SwordPath, style == RemakeSwordStyle.KiemXuyen
                 ? "Chuyển Kiếm Pháp: Kiếm Xuyên (+Tốc Độ & Bạo Kích)"
                 : "Chuyển Kiếm Pháp: Phá Giáp (+Xuyên Giáp & Công Boss)");
         }
@@ -1246,7 +1268,7 @@ namespace KhiVanChiTu.Remake
             {
                 if (mainIndex < 0 || mainIndex >= save.equippedSwordLevels.Count)
                 {
-                    OnToastMessage?.Invoke("Vui lòng chọn 1 Kiếm Chính hợp lệ!");
+                    Notify(RemakeNotifyCategory.SwordPath, "Vui lòng chọn 1 Kiếm Chính hợp lệ!", true);
                     return false;
                 }
                 mainLevel = save.equippedSwordLevels[mainIndex];
@@ -1255,7 +1277,7 @@ namespace KhiVanChiTu.Remake
             {
                 if (mainIndex < 0 || mainIndex >= save.swordInventoryLevels.Count)
                 {
-                    OnToastMessage?.Invoke("Vui lòng chọn 1 Kiếm Chính hợp lệ!");
+                    Notify(RemakeNotifyCategory.SwordPath, "Vui lòng chọn 1 Kiếm Chính hợp lệ!", true);
                     return false;
                 }
                 mainLevel = save.swordInventoryLevels[mainIndex];
@@ -1263,7 +1285,7 @@ namespace KhiVanChiTu.Remake
 
             if (mainLevel < 1 || mainLevel >= 10)
             {
-                OnToastMessage?.Invoke("Kiếm đã đạt cấp tối đa (Cấp 10)!");
+                Notify(RemakeNotifyCategory.SwordPath, "Kiếm đã đạt cấp tối đa (Cấp 10)!", true);
                 return false;
             }
 
@@ -1281,7 +1303,7 @@ namespace KhiVanChiTu.Remake
 
             if (validFodders.Count == 0)
             {
-                OnToastMessage?.Invoke("Hãy thêm ít nhất 1 phôi kiếm (tối đa 5 phôi) vào ô ghép!");
+                Notify(RemakeNotifyCategory.SwordPath, "Hãy thêm ít nhất 1 phôi kiếm (tối đa 5 phôi) vào ô ghép!", true);
                 return false;
             }
 
@@ -1289,7 +1311,7 @@ namespace KhiVanChiTu.Remake
             bool isTutorialMerge = !save.tutorialCompleted && save.totalMerges == 0 && mainLevel == 1;
             if (!isTutorialMerge && save.linhThach < cost)
             {
-                OnToastMessage?.Invoke($"Thiếu {CultivationTable.FormatNumber(cost)} Linh Thạch để rèn hợp nhất!");
+                Notify(RemakeNotifyCategory.SwordPath, $"Thiếu {CultivationTable.FormatNumber(cost)} Linh Thạch để rèn hợp nhất!", true);
                 return false;
             }
             if (useForgeTalisman && save.forgeTalismanCount <= 0)
@@ -1332,10 +1354,10 @@ namespace KhiVanChiTu.Remake
                 }
                 if (save.mainQuestIndex == 1) save.mainQuestProgress = 1;
 
-                RemakeAudioService.Instance?.PlayMerge();
+                RemakeAudioService.Instance?.PlayMergeResult(true);
                 RemakeArenaController.Instance?.SyncPlayerSwordsVisual();
                 OnSwordMergeResolved?.Invoke(true, newLevel, 0f);
-                OnToastMessage?.Invoke($"Rèn thành công! Phi Kiếm thăng cấp Lv.{newLevel} ({Mathf.RoundToInt(chance * 100)}%)!");
+                Notify(RemakeNotifyCategory.SwordPath, $"Rèn thành công! Phi Kiếm thăng cấp Lv.{newLevel} ({Mathf.RoundToInt(chance * 100)}%)!");
                 if (newLevel >= 9)
                     RemakeOnlineService.Instance?.BroadcastThienDaoAnnouncement($"{save.daoName} vừa rèn thành công Phi Kiếm Cấp {newLevel}!");
             }
@@ -1344,8 +1366,9 @@ namespace KhiVanChiTu.Remake
                 float basePity = CultivationTable.SwordMergePityStep[mainLevel - 1];
                 float pityGain = basePity * (0.55f + 0.15f * validFodders.Count);
                 save.swordPityByLevel[mainLevel - 1] = Mathf.Clamp01(save.swordPityByLevel[mainLevel - 1] + pityGain);
+                RemakeAudioService.Instance?.PlayMergeResult(false);
                 OnSwordMergeResolved?.Invoke(false, mainLevel, save.swordPityByLevel[mainLevel - 1]);
-                OnToastMessage?.Invoke($"Rèn thất bại ({Mathf.RoundToInt(chance * 100)}%)! Giữ nguyên Kiếm Lv.{mainLevel} (+{Mathf.RoundToInt(pityGain * 100)}% Chúc Phúc)");
+                Notify(RemakeNotifyCategory.SwordPath, $"Rèn thất bại ({Mathf.RoundToInt(chance * 100)}%)! Giữ nguyên Kiếm Lv.{mainLevel} (+{Mathf.RoundToInt(pityGain * 100)}% Chúc Phúc)", true);
             }
 
             SaveService.Save();
@@ -1361,7 +1384,7 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (fromLevel < 1 || fromLevel >= 10)
             {
-                OnToastMessage?.Invoke("Kiếm đã đạt cấp tối đa (Cấp 10)!");
+                Notify(RemakeNotifyCategory.SwordPath, "Kiếm đã đạt cấp tối đa (Cấp 10)!", true);
                 return false;
             }
 
@@ -1382,7 +1405,7 @@ namespace KhiVanChiTu.Remake
 
             if (bagMatches + equippedMatches < 2)
             {
-                OnToastMessage?.Invoke($"Cần đủ 2 thanh Kiếm Cấp {fromLevel} để ghép!");
+                Notify(RemakeNotifyCategory.SwordPath, $"Cần đủ 2 thanh Kiếm Cấp {fromLevel} để ghép!", true);
                 return false;
             }
 
@@ -1390,7 +1413,7 @@ namespace KhiVanChiTu.Remake
             bool isTutorialMerge = !save.tutorialCompleted && save.totalMerges == 0 && fromLevel == 1;
             if (!isTutorialMerge && save.linhThach < cost)
             {
-                OnToastMessage?.Invoke($"Thiếu {CultivationTable.FormatNumber(cost)} Linh Thạch!");
+                Notify(RemakeNotifyCategory.SwordPath, $"Thiếu {CultivationTable.FormatNumber(cost)} Linh Thạch!", true);
                 return false;
             }
             if (useForgeTalisman && save.forgeTalismanCount <= 0)
@@ -1440,10 +1463,10 @@ namespace KhiVanChiTu.Remake
                 }
                 if (save.mainQuestIndex == 1) save.mainQuestProgress = 1;
 
-                RemakeAudioService.Instance?.PlayMerge();
+                RemakeAudioService.Instance?.PlayMergeResult(true);
                 RemakeArenaController.Instance?.SyncPlayerSwordsVisual();
                 OnSwordMergeResolved?.Invoke(true, newLevel, 0f);
-                OnToastMessage?.Invoke($"Ghép thành công Kiếm Cấp {newLevel}!");
+                Notify(RemakeNotifyCategory.SwordPath, $"Ghép thành công Kiếm Cấp {newLevel}!");
                 if (newLevel >= 9)
                     RemakeOnlineService.Instance?.BroadcastThienDaoAnnouncement($"{save.daoName} vừa rèn thành công Phi Kiếm Cấp {newLevel}!");
             }
@@ -1451,8 +1474,9 @@ namespace KhiVanChiTu.Remake
             {
                 float pityGain = CultivationTable.SwordMergePityStep[fromLevel - 1];
                 save.swordPityByLevel[fromLevel - 1] = Mathf.Clamp01(pity + pityGain);
+                RemakeAudioService.Instance?.PlayMergeResult(false);
                 OnSwordMergeResolved?.Invoke(false, fromLevel, save.swordPityByLevel[fromLevel - 1]);
-                OnToastMessage?.Invoke($"Ghép thất bại! Giữ nguyên Kiếm gốc (+{Mathf.RoundToInt(pityGain * 100)}% Chúc Phúc)");
+                Notify(RemakeNotifyCategory.SwordPath, $"Ghép thất bại! Giữ nguyên Kiếm gốc (+{Mathf.RoundToInt(pityGain * 100)}% Chúc Phúc)", true);
             }
 
             SaveService.Save();
@@ -1487,7 +1511,7 @@ namespace KhiVanChiTu.Remake
             RemakeArenaController.Instance?.SyncPlayerSwordsVisual();
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Đã xuất trận Phi Kiếm Cấp {lv}!");
+            Notify(RemakeNotifyCategory.SwordPath, $"Đã xuất trận Phi Kiếm Cấp {lv}!");
             return true;
         }
 
@@ -1503,7 +1527,7 @@ namespace KhiVanChiTu.Remake
             RemakeArenaController.Instance?.SyncPlayerSwordsVisual();
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Đã tháo Phi Kiếm Cấp {lv} về Túi Phôi Kiếm!");
+            Notify(RemakeNotifyCategory.SwordPath, $"Đã tháo Phi Kiếm Cấp {lv} về Túi Phôi Kiếm!");
             return true;
         }
 
@@ -1541,12 +1565,12 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Alchemy, save.realmIndex, save.subStage))
             {
-                OnToastMessage?.Invoke("Luyện Đan mở ở Luyện Khí Tầng 7!");
+                Notify(RemakeNotifyCategory.Alchemy, "Luyện Đan mở ở Luyện Khí Tầng 7!", true);
                 return false;
             }
             if (IsBrewingPill)
             {
-                OnToastMessage?.Invoke($"Đan Lô đang luyện đan ({BrewTimeRemaining:0.0}s), vui lòng chờ xuất lò!");
+                Notify(RemakeNotifyCategory.Alchemy, $"Đan Lô đang luyện đan ({BrewTimeRemaining:0.0}s), vui lòng chờ xuất lò!", true);
                 return false;
             }
 
@@ -1557,12 +1581,12 @@ namespace KhiVanChiTu.Remake
 
             if (save.herbsByTier[herbTierIdx] < herbNeed)
             {
-                OnToastMessage?.Invoke($"Cần {herbNeed} {ActStageDatabaseSO.GetHerbName(herbTierIdx + 1)}!");
+                Notify(RemakeNotifyCategory.Alchemy, $"Cần {herbNeed} {ActStageDatabaseSO.GetHerbName(herbTierIdx + 1)}!", true);
                 return false;
             }
             if (save.linhThach < ltCost)
             {
-                OnToastMessage?.Invoke($"Thiếu {CultivationTable.FormatNumber(ltCost)} Linh Thạch!");
+                Notify(RemakeNotifyCategory.Alchemy, $"Thiếu {CultivationTable.FormatNumber(ltCost)} Linh Thạch!", true);
                 return false;
             }
 
@@ -1576,10 +1600,10 @@ namespace KhiVanChiTu.Remake
 
             string pillName = CultivationTable.GetPillNameForRealmBreakthrough(targetRealm);
             int pct = Mathf.RoundToInt(GetAlchemyBrewSuccessChance(targetRealm) * 100f);
-            RemakeAudioService.Instance?.PlayClick();
+            RemakeAudioService.Instance?.PlayAlchemyStart();
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Khai lò luyện {pillName} ({pct}%) — Đang ngưng đan {BrewDuration:0.0}s...");
+            Notify(RemakeNotifyCategory.Alchemy, $"Khai lò luyện {pillName} ({pct}%) — Đang ngưng đan {BrewDuration:0.0}s...");
             return true;
         }
 
@@ -1600,7 +1624,7 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Alchemy, save.realmIndex, save.subStage))
             {
-                OnToastMessage?.Invoke("Luyện Đan mở ở Luyện Khí Tầng 7!");
+                Notify(RemakeNotifyCategory.Alchemy, "Luyện Đan mở ở Luyện Khí Tầng 7!", true);
                 return false;
             }
 
@@ -1611,12 +1635,12 @@ namespace KhiVanChiTu.Remake
 
             if (save.herbsByTier[herbTierIdx] < herbNeed)
             {
-                OnToastMessage?.Invoke($"Cần {herbNeed} {ActStageDatabaseSO.GetHerbName(herbTierIdx + 1)}!");
+                Notify(RemakeNotifyCategory.Alchemy, $"Cần {herbNeed} {ActStageDatabaseSO.GetHerbName(herbTierIdx + 1)}!", true);
                 return false;
             }
             if (save.linhThach < ltCost)
             {
-                OnToastMessage?.Invoke($"Thiếu {CultivationTable.FormatNumber(ltCost)} Linh Thạch!");
+                Notify(RemakeNotifyCategory.Alchemy, $"Thiếu {CultivationTable.FormatNumber(ltCost)} Linh Thạch!", true);
                 return false;
             }
 
@@ -1645,17 +1669,17 @@ namespace KhiVanChiTu.Remake
                 if (save.mainQuestIndex == 4) save.mainQuestProgress = 1;
                 if (quality == RemakePillQuality.CucPham)
                     RemakeOnlineService.Instance?.BroadcastThienDaoAnnouncement($"{save.daoName} vừa xuất lò {pillName} CỰC PHẨM (Đan Văn)!");
-                OnToastMessage?.Invoke($"Xuất lò thành công: +1 {pillName} ({CultivationTable.GetPillQualityName(quality)})!");
+                Notify(RemakeNotifyCategory.Alchemy, $"Xuất lò thành công: +1 {pillName} ({CultivationTable.GetPillQualityName(quality)})!");
             }
             else
             {
                 save.herbDust++;
                 AddPill(targetRealm, RemakePillQuality.PheDan, 1);
                 GrantAlchemistXp((targetRealm + 1) * 6);
-                OnToastMessage?.Invoke($"Nổ lò thất bại! Thu được 1 {pillName} (Phế Đan — Tế Hỏa/Luyện Hóa) & +1 Dược Trần");
+                Notify(RemakeNotifyCategory.Alchemy, $"Nổ lò thất bại! Thu được 1 {pillName} (Phế Đan — Tế Hỏa/Luyện Hóa) & +1 Dược Trần", true);
             }
 
-            RemakeAudioService.Instance?.PlayMerge();
+            RemakeAudioService.Instance?.PlayAlchemyOutcome(success);
             SaveService.Save();
             OnStatsChanged?.Invoke();
             OnQuestOrTutorialChanged?.Invoke();
@@ -1684,11 +1708,11 @@ namespace KhiVanChiTu.Remake
                 RemakeAudioService.Instance?.PlayMerge();
                 SaveService.Save();
                 OnStatsChanged?.Invoke();
-                OnToastMessage?.Invoke($"Hợp Nhanh thành công {totalMerged} lượt {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)}!");
+                Notify(RemakeNotifyCategory.Alchemy, $"Hợp Nhanh thành công {totalMerged} lượt {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)}!");
             }
             else
             {
-                OnToastMessage?.Invoke("Cần ít nhất 3 viên Hạ Phẩm hoặc Trung Phẩm để Hợp Nhanh!");
+                Notify(RemakeNotifyCategory.Alchemy, "Cần ít nhất 3 viên Hạ Phẩm hoặc Trung Phẩm để Hợp Nhanh!", true);
             }
             return totalMerged;
         }
@@ -1699,7 +1723,7 @@ namespace KhiVanChiTu.Remake
             int actual = Mathf.Clamp(count, 1, owned);
             if (owned <= 0)
             {
-                OnToastMessage?.Invoke("Không có đan dược để hấp thu!");
+                Notify(RemakeNotifyCategory.Alchemy, "Không có đan dược để hấp thu!", true);
                 return false;
             }
             for (int i = 0; i < actual; i++) ConsumePill(realmTarget, quality);
@@ -1713,7 +1737,7 @@ namespace KhiVanChiTu.Remake
             RemakeAudioService.Instance?.PlayMerge();
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Hấp thu {actual} {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)}: +{CultivationTable.FormatNumber(gainTuVi)} Tu Vi & +{dustGain} Dược Trần!");
+            Notify(RemakeNotifyCategory.Alchemy, $"Hấp thu {actual} {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)}: +{CultivationTable.FormatNumber(gainTuVi)} Tu Vi & +{dustGain} Dược Trần!");
             return true;
         }
 
@@ -1723,7 +1747,7 @@ namespace KhiVanChiTu.Remake
             int actual = Mathf.Clamp(count, 1, owned);
             if (owned <= 0)
             {
-                OnToastMessage?.Invoke("Không có đan dược để luyện hóa!");
+                Notify(RemakeNotifyCategory.Alchemy, "Không có đan dược để luyện hóa!", true);
                 return false;
             }
             for (int i = 0; i < actual; i++) ConsumePill(realmTarget, quality);
@@ -1735,7 +1759,7 @@ namespace KhiVanChiTu.Remake
             RemakeAudioService.Instance?.PlayMerge();
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Luyện hóa {actual} {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)}: +{CultivationTable.FormatNumber(gainLt)} Linh Thạch!");
+            Notify(RemakeNotifyCategory.Alchemy, $"Luyện hóa {actual} {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)}: +{CultivationTable.FormatNumber(gainLt)} Linh Thạch!");
             return true;
         }
 
@@ -1745,7 +1769,7 @@ namespace KhiVanChiTu.Remake
                 return false;
             if (GetPillCount(realmTarget, fromQuality) < 3)
             {
-                OnToastMessage?.Invoke("Cần 3 viên cùng phẩm chất để Hợp Đan!");
+                Notify(RemakeNotifyCategory.Alchemy, "Cần 3 viên cùng phẩm chất để Hợp Đan!", true);
                 return false;
             }
             for (int i = 0; i < 3; i++) ConsumePill(realmTarget, fromQuality);
@@ -1755,7 +1779,7 @@ namespace KhiVanChiTu.Remake
             RemakeAudioService.Instance?.PlayMerge();
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Hợp Đan thành công: +1 {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)} ({CultivationTable.GetPillQualityName(next)})!");
+            Notify(RemakeNotifyCategory.Alchemy, $"Hợp Đan thành công: +1 {CultivationTable.GetPillNameForRealmBreakthrough(realmTarget)} ({CultivationTable.GetPillQualityName(next)})!");
             return true;
         }
 
@@ -1764,7 +1788,7 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (save.spiritFlameTier >= 4)
             {
-                OnToastMessage?.Invoke("Linh Hỏa đã đạt đỉnh Tiên Thiên Hỏa!");
+                Notify(RemakeNotifyCategory.Alchemy, "Linh Hỏa đã đạt đỉnh Tiên Thiên Hỏa!", true);
                 return false;
             }
 
@@ -1786,7 +1810,7 @@ namespace KhiVanChiTu.Remake
             }
             else
             {
-                OnToastMessage?.Invoke("Không có Phế Đan / Dược Trần / Đan phẩm phù hợp để Tế Hỏa!");
+                Notify(RemakeNotifyCategory.Alchemy, "Không có Phế Đan / Dược Trần / Đan phẩm phù hợp để Tế Hỏa!", true);
                 return false;
             }
 
@@ -1797,10 +1821,10 @@ namespace KhiVanChiTu.Remake
                 save.spiritFlameXp -= CultivationTable.GetSpiritFlameNextTierXp(save.spiritFlameTier);
                 save.spiritFlameTier++;
                 leveledUp = true;
-                OnToastMessage?.Invoke($"Linh Hỏa thăng cấp: {CultivationTable.GetSpiritFlameName(save.spiritFlameTier)}!");
+                Notify(RemakeNotifyCategory.Alchemy, $"Linh Hỏa thăng cấp: {CultivationTable.GetSpiritFlameName(save.spiritFlameTier)}!");
             }
             if (!leveledUp)
-                OnToastMessage?.Invoke($"Tế Chân Hỏa thành công: +{xpGain} XP Hỏa Linh!");
+                Notify(RemakeNotifyCategory.Alchemy, $"Tế Chân Hỏa thành công: +{xpGain} XP Hỏa Linh!");
 
             RemakeAudioService.Instance?.PlayMerge();
             SaveService.Save();
@@ -1816,7 +1840,7 @@ namespace KhiVanChiTu.Remake
             while (save.alchemistRank < 8 && save.alchemistXp >= CultivationTable.AlchemistRankXpReq[save.alchemistRank])
             {
                 save.alchemistRank++;
-                OnToastMessage?.Invoke($"Thăng cấp Đan Sư {CultivationTable.GetAlchemistRankName(save.alchemistRank)}!");
+                Notify(RemakeNotifyCategory.Alchemy, $"Thăng cấp Đan Sư {CultivationTable.GetAlchemistRankName(save.alchemistRank)}!");
             }
         }
 
@@ -1866,7 +1890,10 @@ namespace KhiVanChiTu.Remake
             }
             save.equipmentBag.Add(item);
             if (wasBoss || rarity >= RemakeRarity.Linh)
-                OnToastMessage?.Invoke($"Nhặt {CultivationTable.GetEquipSlotName(item.slot)} [{CultivationTable.GetRarityName(rarity)}]!");
+            {
+                RemakeAudioService.Instance?.PlayLootRare();
+                Notify(RemakeNotifyCategory.LootDrop, $"Nhặt {CultivationTable.GetEquipSlotName(item.slot)} [{CultivationTable.GetRarityName(rarity)}]!", false, RemakeNotifyZone.CombatTicker);
+            }
             return rarity;
         }
 
@@ -1927,7 +1954,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Save();
             OnStatsChanged?.Invoke();
             OnQuestOrTutorialChanged?.Invoke();
-            OnToastMessage?.Invoke($"Đã trang bị {CultivationTable.GetRarityName(nextItem.rarity)} {CultivationTable.GetEquipSlotName(nextItem.slot)} Bậc {nextItem.tier}!");
+            Notify(RemakeNotifyCategory.Equipment, $"Đã trang bị {CultivationTable.GetRarityName(nextItem.rarity)} {CultivationTable.GetEquipSlotName(nextItem.slot)} Bậc {nextItem.tier}!");
             return true;
         }
 
@@ -1940,7 +1967,7 @@ namespace KhiVanChiTu.Remake
                 {
                     if (save.equipmentBag.Count >= 40)
                     {
-                        OnToastMessage?.Invoke("Kho Trang Bị đã đầy (40/40)! Hãy phân rã bớt trước khi tháo.");
+                        Notify(RemakeNotifyCategory.Equipment, "Kho Trang Bị đã đầy (40/40)! Hãy phân rã bớt trước khi tháo.", true);
                         return false;
                     }
                     var item = save.equippedGear[i];
@@ -1950,7 +1977,7 @@ namespace KhiVanChiTu.Remake
                     RemakeAudioService.Instance?.PlayClick();
                     SaveService.Save();
                     OnStatsChanged?.Invoke();
-                    OnToastMessage?.Invoke($"Đã tháo {CultivationTable.GetRarityName(item.rarity)} {CultivationTable.GetEquipSlotName(slot)} về Kho!");
+                    Notify(RemakeNotifyCategory.Equipment, $"Đã tháo {CultivationTable.GetRarityName(item.rarity)} {CultivationTable.GetEquipSlotName(slot)} về Kho!");
                     return true;
                 }
             }
@@ -1966,7 +1993,7 @@ namespace KhiVanChiTu.Remake
             int oreCost = CultivationTable.GetEquipSlotEnhanceCostOre(lv);
             if (save.linhThach < ltCost || save.ore < oreCost)
             {
-                OnToastMessage?.Invoke($"Cần {CultivationTable.FormatNumber(ltCost)} LT & {oreCost} Quặng!");
+                Notify(RemakeNotifyCategory.Equipment, $"Cần {CultivationTable.FormatNumber(ltCost)} LT & {oreCost} Quặng!", true);
                 return false;
             }
             save.linhThach -= ltCost;
@@ -1976,7 +2003,7 @@ namespace KhiVanChiTu.Remake
             RemakeAudioService.Instance?.PlayMerge();
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Cường hóa ô {CultivationTable.GetEquipSlotName((RemakeEquipSlot)slotIdx)} lên +{lv + 1}!");
+            Notify(RemakeNotifyCategory.Equipment, $"Cường hóa ô {CultivationTable.GetEquipSlotName((RemakeEquipSlot)slotIdx)} lên +{lv + 1}!");
             return true;
         }
 
@@ -1987,7 +2014,7 @@ namespace KhiVanChiTu.Remake
             if (item == null) return false;
             if (save.reforgeStoneCount <= 0 || save.ore < 3)
             {
-                OnToastMessage?.Invoke("Cần 1 Đá Tẩy Luyện & 3 Quặng!");
+                Notify(RemakeNotifyCategory.Equipment, "Cần 1 Đá Tẩy Luyện & 3 Quặng!", true);
                 return false;
             }
             save.reforgeStoneCount--;
@@ -1997,7 +2024,7 @@ namespace KhiVanChiTu.Remake
             RemakeAudioService.Instance?.PlayMerge();
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Tẩy luyện thành công dòng phụ {CultivationTable.GetEquipSlotName(item.slot)}!");
+            Notify(RemakeNotifyCategory.Equipment, $"Tẩy luyện thành công dòng phụ {CultivationTable.GetEquipSlotName(item.slot)}!");
             return true;
         }
 
@@ -2010,7 +2037,7 @@ namespace KhiVanChiTu.Remake
                 {
                     if (save.equipmentBag[i].isLocked)
                     {
-                        OnToastMessage?.Invoke("Trang bị đang khóa! Bỏ khóa trước khi phân rã.");
+                        Notify(RemakeNotifyCategory.Equipment, "Trang bị đang khóa! Bỏ khóa trước khi phân rã.", true);
                         return false;
                     }
                     int rar = (int)save.equipmentBag[i].rarity;
@@ -2021,7 +2048,7 @@ namespace KhiVanChiTu.Remake
                     save.linhThach += ltGain;
                     SaveService.Save();
                     OnStatsChanged?.Invoke();
-                    OnToastMessage?.Invoke($"Phân rã thành công: +{oreGain} Quặng & +{CultivationTable.FormatNumber(ltGain)} LT!");
+                    Notify(RemakeNotifyCategory.Equipment, $"Phân rã thành công: +{oreGain} Quặng & +{CultivationTable.FormatNumber(ltGain)} LT!");
                     return true;
                 }
             }
@@ -2035,7 +2062,7 @@ namespace KhiVanChiTu.Remake
             item.isLocked = !item.isLocked;
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke(item.isLocked
+            Notify(RemakeNotifyCategory.Equipment, item.isLocked
                 ? $"Đã khóa bảo vệ {CultivationTable.GetEquipSlotName(item.slot)}!"
                 : $"Đã mở khóa {CultivationTable.GetEquipSlotName(item.slot)}!");
             return true;
@@ -2064,7 +2091,7 @@ namespace KhiVanChiTu.Remake
                 if (best != null && TryEquipGear(best.uid))
                     changed++;
             }
-            OnToastMessage?.Invoke(changed > 0
+            Notify(RemakeNotifyCategory.Equipment, changed > 0
                 ? $"Đã mặc nhanh {changed} Pháp Khí mạnh hơn!"
                 : "Toàn bộ trang bị đang mặc đều đang tối ưu!");
             return changed;
@@ -2079,9 +2106,9 @@ namespace KhiVanChiTu.Remake
                 while (guard++ < 15 && TryMergeSwords(lv, false))
                     merged++;
             }
-            OnToastMessage?.Invoke(merged > 0
+            Notify(RemakeNotifyCategory.SwordPath, merged > 0
                 ? $"Ghép nhanh thành công {merged} lượt Kiếm!"
-                : "Chưa đủ cặp Phôi Kiếm Cấp 1–3 hoặc thiếu Linh Thạch!");
+                : "Chưa đủ cặp Phôi Kiếm Cấp 1–3 hoặc thiếu Linh Thạch!", merged <= 0);
             return merged;
         }
 
@@ -2115,19 +2142,19 @@ namespace KhiVanChiTu.Remake
             var spec = RemakeCatalogs.Formations[formIdx];
             if (save.realmIndex < spec.minRealmIndex)
             {
-                OnToastMessage?.Invoke($"Cần đạt {spec.realmReqText} để mở {spec.name}!");
+                Notify(RemakeNotifyCategory.Formation, $"Cần đạt {spec.realmReqText} để mở {spec.name}!", true);
                 return false;
             }
             if (asSubSlot)
             {
                 if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.FormationSubSlot, save.realmIndex, save.subStage))
                 {
-                    OnToastMessage?.Invoke("Ô Trận Phụ (50%) mở ở Hóa Thần Sơ Kỳ!");
+                    Notify(RemakeNotifyCategory.Formation, "Ô Trận Phụ (50%) mở ở Hóa Thần Sơ Kỳ!", true);
                     return false;
                 }
                 if (save.activeMainFormation == formIdx)
                 {
-                    OnToastMessage?.Invoke("Không thể đặt trùng Trận Chính và Trận Phụ!");
+                    Notify(RemakeNotifyCategory.Formation, "Không thể đặt trùng Trận Chính và Trận Phụ!", true);
                     return false;
                 }
                 save.activeSubFormation = save.activeSubFormation == formIdx ? -1 : formIdx;
@@ -2147,7 +2174,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Save();
             OnStatsChanged?.Invoke();
             OnQuestOrTutorialChanged?.Invoke();
-            OnToastMessage?.Invoke(asSubSlot ? $"Đã đặt Trận Phụ: {spec.name}" : $"Đã khai trận: {spec.name}");
+            Notify(RemakeNotifyCategory.Formation, asSubSlot ? $"Đã đặt Trận Phụ: {spec.name}" : $"Đã khai trận: {spec.name}");
             return true;
         }
 
@@ -2169,12 +2196,12 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (save.consecutiveBreakthroughFails <= 0)
             {
-                OnToastMessage?.Invoke("Đạo tâm đang bình ổn, chưa cần dùng Tĩnh Tâm Hương!");
+                Notify(RemakeNotifyCategory.Breakthrough, "Đạo tâm đang bình ổn, chưa cần dùng Tĩnh Tâm Hương!", true);
                 return false;
             }
             if (save.calmIncenseCount <= 0)
             {
-                OnToastMessage?.Invoke("Không đủ Tĩnh Tâm Hương!");
+                Notify(RemakeNotifyCategory.Breakthrough, "Không đủ Tĩnh Tâm Hương!", true);
                 return false;
             }
             save.calmIncenseCount--;
@@ -2182,7 +2209,7 @@ namespace KhiVanChiTu.Remake
             save.mindCalmResetUtcTicks = 0;
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke("Đã thắp Tĩnh Tâm Hương: Xóa bỏ chuỗi phạt Tâm Ma!");
+            Notify(RemakeNotifyCategory.Breakthrough, "Đã thắp Tĩnh Tâm Hương: Xóa bỏ chuỗi phạt Tâm Ma!", false, RemakeNotifyZone.DrawerInline);
             return true;
         }
 
@@ -2191,23 +2218,23 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (IsInTribulation)
             {
-                OnToastMessage?.Invoke($"Đang bế quan đón Thiên Kiếp ({TribulationTimeRemaining:0.0}s)!");
+                Notify(RemakeNotifyCategory.Tribulation, $"Đang bế quan đón Thiên Kiếp ({TribulationTimeRemaining:0.0}s)!", true);
                 return false;
             }
             if (IsRespawning)
             {
-                OnToastMessage?.Invoke("Đang hồi sinh, vui lòng chờ hoàn tất trước khi Đột Phá!");
+                Notify(RemakeNotifyCategory.Tribulation, "Đang hồi sinh, vui lòng chờ hoàn tất trước khi Đột Phá!", true);
                 return false;
             }
             if (!CultivationTable.RequiresBreakthroughAt(save.subStage))
             {
-                OnToastMessage?.Invoke("Tầng thường tự động thăng cấp khi đủ 100% Tu Vi! Chỉ cần Đột Phá ở mốc Sơ Kỳ (T3) → Trung Kỳ (T6) → Đỉnh Phong (T10).");
+                Notify(RemakeNotifyCategory.Breakthrough, "Tầng thường tự động thăng cấp khi đủ 100% Tu Vi! Chỉ cần Đột Phá ở mốc Sơ Kỳ (T3) → Trung Kỳ (T6) → Đỉnh Phong (T10).", true);
                 return false;
             }
             double req = GetRequiredTuViForCurrent();
             if (save.tuVi < req)
             {
-                OnToastMessage?.Invoke("Tu Vi chưa đạt 100%, hãy tiếp tục tu luyện!");
+                Notify(RemakeNotifyCategory.Breakthrough, "Tu Vi chưa đạt 100%, hãy tiếp tục tu luyện!", true);
                 return false;
             }
 
@@ -2220,7 +2247,7 @@ namespace KhiVanChiTu.Remake
             {
                 if (!ConsumePill(save.realmIndex, selectedPillQuality.Value))
                 {
-                    OnToastMessage?.Invoke("Không đủ Đan Đột Phá đã chọn!");
+                    Notify(RemakeNotifyCategory.Breakthrough, "Không đủ Đan Đột Phá đã chọn!", true);
                     return false;
                 }
                 effectivePill = selectedPillQuality.Value;
@@ -2248,9 +2275,11 @@ namespace KhiVanChiTu.Remake
             SetActiveBoss(false, "", 0, 0);
             SaveService.Save();
 
+            RemakeAudioService.Instance?.PushTemporaryAmbience(RemakeAmbienceZone.TribulationStorm);
+            RemakeAudioService.Instance?.TryPlayVoice(RemakeVoiceLineId.TribulationStart, save.gender, true);
             OnTribulationStateChanged?.Invoke(true);
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Tiến vào Bế Quan Đón Thiên Kiếp (15s) hướng tới {TribulationTargetLabel}!");
+            Notify(RemakeNotifyCategory.Tribulation, $"Tiến vào Bế Quan Đón Thiên Kiếp (15s) hướng tới {TribulationTargetLabel}!", false, RemakeNotifyZone.GrandTop);
             return true;
         }
 
@@ -2295,6 +2324,7 @@ namespace KhiVanChiTu.Remake
                 TribulationStrikesDone++;
                 _tribulationNextStrikeTime -= TribulationStrikeInterval;
                 ApplyTribulationStrikeHpDrain(TribulationStrikesDone, TribulationStrikesTotal);
+                RemakeAudioService.Instance?.PlayTribulationStrike(TribulationStrikesDone, TribulationStrikesTotal);
                 OnTribulationStrike?.Invoke(TribulationStrikesDone, TribulationStrikesTotal);
             }
 
@@ -2304,6 +2334,7 @@ namespace KhiVanChiTu.Remake
                 {
                     TribulationStrikesDone++;
                     ApplyTribulationStrikeHpDrain(TribulationStrikesDone, TribulationStrikesTotal);
+                    RemakeAudioService.Instance?.PlayTribulationStrike(TribulationStrikesDone, TribulationStrikesTotal);
                     OnTribulationStrike?.Invoke(TribulationStrikesDone, TribulationStrikesTotal);
                 }
                 var pill = _tribulationSelectedPill;
@@ -2318,6 +2349,7 @@ namespace KhiVanChiTu.Remake
                 var save = SaveService.Current;
                 save.pendingTribulationSeconds = 0f;
                 save.pendingTribulationPillQuality = -1;
+                RemakeAudioService.Instance?.RestoreBaseAmbience();
                 ResolveBreakthroughInternal(pill, consumed, preRolled);
                 OnTribulationStateChanged?.Invoke(false);
             }
@@ -2334,13 +2366,13 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (!CultivationTable.RequiresBreakthroughAt(save.subStage))
             {
-                OnToastMessage?.Invoke("Tầng thường sẽ tự động tăng cấp khi đủ 100% Tu Vi!");
+                Notify(RemakeNotifyCategory.Breakthrough, "Tầng thường sẽ tự động tăng cấp khi đủ 100% Tu Vi!", true);
                 return false;
             }
             double req = GetRequiredTuViForCurrent();
             if (save.tuVi < req)
             {
-                OnToastMessage?.Invoke("Tu Vi chưa đạt 100%, hãy tiếp tục tu luyện!");
+                Notify(RemakeNotifyCategory.Breakthrough, "Tu Vi chưa đạt 100%, hãy tiếp tục tu luyện!", true);
                 return false;
             }
 
@@ -2356,14 +2388,14 @@ namespace KhiVanChiTu.Remake
                 if (save.mainQuestIndex == 2) save.mainQuestProgress = save.subStage;
 
                 RecomputePlayerVitals(true);
-                RemakeAudioService.Instance?.PlayBreakthrough();
+                RemakeAudioService.Instance?.PlayBreakthrough(false);
                 RemakeVfxPool.Instance?.SpawnBreakthroughFlash(RemakeArenaController.Instance != null ? RemakeArenaController.Instance.PlayerWorldPosition : Vector3.zero, true);
                 SaveService.Save();
                 OnStatsChanged?.Invoke();
                 OnQuestOrTutorialChanged?.Invoke();
                 string msg = $"Đột phá thành công lên {CultivationTable.GetRealmDisplayName(save.realmIndex, save.subStage)}! (+1 Điểm Đạo Vận)";
                 OnBreakthroughResolved?.Invoke(true, msg);
-                OnToastMessage?.Invoke(msg);
+                Notify(RemakeNotifyCategory.Breakthrough, msg, false, RemakeNotifyZone.GrandTop);
                 return true;
             }
 
@@ -2372,7 +2404,7 @@ namespace KhiVanChiTu.Remake
             {
                 if (!pillAlreadyConsumed && !ConsumePill(save.realmIndex, selectedPillQuality.Value))
                 {
-                    OnToastMessage?.Invoke("Không đủ Đan Đột Phá đã chọn!");
+                    Notify(RemakeNotifyCategory.Breakthrough, "Không đủ Đan Đột Phá đã chọn!", true);
                     return false;
                 }
                 pillUsed = selectedPillQuality.Value;
@@ -2400,11 +2432,14 @@ namespace KhiVanChiTu.Remake
                 RecomputePlayerVitals(true);
                 RemakeArenaController.Instance?.SyncPlayerSwordsVisual();
                 RemakeArenaController.Instance?.SyncPlayerRealmAura();
-                RemakeAudioService.Instance?.PlayBreakthrough();
+                RemakeAudioService.Instance?.PlayBreakthrough(true);
+                RemakeVoiceLineId? realmVoice = RemakeAudioService.ResolveMajorRealmVoiceLine(save.realmIndex);
+                if (realmVoice.HasValue)
+                    RemakeAudioService.Instance?.TryPlayVoice(realmVoice.Value, save.gender, true);
                 RemakeVfxPool.Instance?.SpawnBreakthroughFlash(RemakeArenaController.Instance != null ? RemakeArenaController.Instance.PlayerWorldPosition : Vector3.zero, true);
                 string msg = $"ĐỘ KIẾP THÀNH CÔNG! Bước vào {CultivationTable.GetRealmDisplayName(save.realmIndex, 1)}!";
                 OnBreakthroughResolved?.Invoke(true, msg);
-                OnToastMessage?.Invoke(msg);
+                Notify(RemakeNotifyCategory.Breakthrough, msg, false, RemakeNotifyZone.GrandTop);
             }
             else
             {
@@ -2417,10 +2452,11 @@ namespace KhiVanChiTu.Remake
                 save.mindCalmResetUtcTicks = DateTime.UtcNow.AddHours(24).Ticks;
                 PlayerCurrentHp = Math.Max(1.0, Math.Round(PlayerMaxHp * 0.06));
 
+                RemakeAudioService.Instance?.TryPlayVoice(RemakeVoiceLineId.BreakthroughFail, save.gender, true);
                 RemakeVfxPool.Instance?.SpawnBreakthroughFlash(RemakeArenaController.Instance != null ? RemakeArenaController.Instance.PlayerWorldPosition : Vector3.zero, false);
                 string msg = $"Độ kiếp thất bại (-{Mathf.RoundToInt(penaltyPct * 100)}% Tu Vi Tầng 10)! Cần Đan phẩm cao hơn hoặc Tĩnh Tâm.";
                 OnBreakthroughResolved?.Invoke(false, msg);
-                OnToastMessage?.Invoke(msg);
+                Notify(RemakeNotifyCategory.Breakthrough, msg, true, RemakeNotifyZone.GrandTop);
             }
 
             SaveService.Save();
@@ -2509,7 +2545,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Current.autoChallengeBoss = enabled;
             SaveService.Save();
             OnStageChanged?.Invoke();
-            OnToastMessage?.Invoke(enabled ? "Đã bật Tự Tiến Đánh Thủ Lĩnh X-10!" : "Đã tắt Tự Tiến Thủ Lĩnh (Giữ treo tại X-9).");
+            Notify(RemakeNotifyCategory.BossCombat, enabled ? "Đã bật Tự Tiến Đánh Thủ Lĩnh X-10!" : "Đã tắt Tự Tiến Thủ Lĩnh (Giữ treo tại X-9).", false, RemakeNotifyZone.DrawerInline);
         }
 
         public bool TryClaimKyNgoChoice(int choiceIndex)
@@ -2524,7 +2560,7 @@ namespace KhiVanChiTu.Remake
             {
                 save.tuViDoubleBuffEndUtcTicks = DateTime.UtcNow.AddSeconds(90).Ticks;
                 save.linhThach += ltReward;
-                OnToastMessage?.Invoke($"Kỳ Ngộ Linh Tuyền: x2 Tu Vi trong 90s & +{CultivationTable.FormatNumber(ltReward)} LT!");
+                Notify(RemakeNotifyCategory.KyNgo, $"Kỳ Ngộ Linh Tuyền: x2 Tu Vi trong 90s & +{CultivationTable.FormatNumber(ltReward)} LT!", false, RemakeNotifyZone.GrandTop);
             }
             else
             {
@@ -2532,7 +2568,7 @@ namespace KhiVanChiTu.Remake
                 save.herbsByTier[tierIdx] += 4;
                 save.forgeTalismanCount += 1;
                 save.linhThach += ltReward;
-                OnToastMessage?.Invoke($"Kỳ Ngộ Tàng Bảo: +4 Thảo Dược, +1 Phù Rèn & +{CultivationTable.FormatNumber(ltReward)} LT!");
+                Notify(RemakeNotifyCategory.KyNgo, $"Kỳ Ngộ Tàng Bảo: +4 Thảo Dược, +1 Phù Rèn & +{CultivationTable.FormatNumber(ltReward)} LT!", false, RemakeNotifyZone.GrandTop);
             }
 
             RemakeAudioService.Instance?.PlayBreakthrough();
@@ -2559,7 +2595,7 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.ImmortalTower, save.realmIndex, save.subStage))
             {
-                OnToastMessage?.Invoke("Mở khóa Vạn Yêu Tháp tại Trúc Cơ Tầng 5!");
+                Notify(RemakeNotifyCategory.ImmortalGate, "Mở khóa Vạn Yêu Tháp tại Trúc Cơ Tầng 5!", true);
                 return false;
             }
             int nextFloor = Mathf.Clamp(floor, 1, save.demonTowerHighestFloor + 1);
@@ -2582,7 +2618,7 @@ namespace KhiVanChiTu.Remake
             else
                 RemakeArenaController.Instance?.ResetForStageChange();
             OnStageChanged?.Invoke();
-            OnToastMessage?.Invoke($"Vào Vạn Yêu Tháp Tầng {nextFloor} ({totalWaves} Đợt · 55s)!");
+            Notify(RemakeNotifyCategory.ImmortalGate, $"Vào Vạn Yêu Tháp Tầng {nextFloor} ({totalWaves} Đợt · 55s)!", false, RemakeNotifyZone.GrandTop);
             return true;
         }
 
@@ -2591,13 +2627,13 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (save.demonTowerHighestFloor <= 0)
             {
-                OnToastMessage?.Invoke("Hãy vượt ít nhất Tầng 1 Vạn Yêu Tháp để nhận Bổng Lộc!");
+                Notify(RemakeNotifyCategory.ImmortalGate, "Hãy vượt ít nhất Tầng 1 Vạn Yêu Tháp để nhận Bổng Lộc!", true);
                 return false;
             }
             long todayKey = DateTime.UtcNow.Year * 1000L + DateTime.UtcNow.DayOfYear;
             if (save.lastTowerSalaryDayUtc == todayKey)
             {
-                OnToastMessage?.Invoke("Hôm nay đã nhận Bổng Lộc Tháp rồi!");
+                Notify(RemakeNotifyCategory.ImmortalGate, "Hôm nay đã nhận Bổng Lộc Tháp rồi!", true);
                 return false;
             }
             save.lastTowerSalaryDayUtc = todayKey;
@@ -2608,7 +2644,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Save();
             RemakeAudioService.Instance?.PlayBreakthrough();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Bổng Lộc Tháp Tầng {save.demonTowerHighestFloor}: +{CultivationTable.FormatNumber(lt)} LT & +{dust} Dược Trần!");
+            Notify(RemakeNotifyCategory.ImmortalGate, $"Bổng Lộc Tháp Tầng {save.demonTowerHighestFloor}: +{CultivationTable.FormatNumber(lt)} LT & +{dust} Dược Trần!");
             return true;
         }
 
@@ -2618,13 +2654,13 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.SecretRealm, save.realmIndex, save.subStage))
             {
-                OnToastMessage?.Invoke("Mở khóa Thái Hư Bí Cảnh tại Kim Đan Sơ Kỳ!");
+                Notify(RemakeNotifyCategory.ImmortalGate, "Mở khóa Thái Hư Bí Cảnh tại Kim Đan Sơ Kỳ!", true);
                 return false;
             }
             EnsureDailyChallengeReset();
             if (save.secretRealmDailyRemaining <= 0)
             {
-                OnToastMessage?.Invoke("Hết 3 lượt Bí Cảnh hôm nay! Quay lại ngày mai.");
+                Notify(RemakeNotifyCategory.ImmortalGate, "Hết 3 lượt Bí Cảnh hôm nay! Quay lại ngày mai.", true);
                 return false;
             }
             tier = Mathf.Clamp(tier, 1, 5);
@@ -2649,7 +2685,7 @@ namespace KhiVanChiTu.Remake
             else
                 RemakeArenaController.Instance?.ResetForStageChange();
             OnStageChanged?.Invoke();
-            OnToastMessage?.Invoke($"Tiến vào {title} ({totalWaves} Đợt · 60s)!");
+            Notify(RemakeNotifyCategory.ImmortalGate, $"Tiến vào {title} ({totalWaves} Đợt · 60s)!", false, RemakeNotifyZone.GrandTop);
             return true;
         }
 
@@ -2659,13 +2695,13 @@ namespace KhiVanChiTu.Remake
             EnsureDailyChallengeReset();
             if (save.secretRealmDailyRemaining <= 0)
             {
-                OnToastMessage?.Invoke("Hết lượt Bí Cảnh hôm nay!");
+                Notify(RemakeNotifyCategory.ImmortalGate, "Hết lượt Bí Cảnh hôm nay!", true);
                 return false;
             }
             int kIdx = (int)kind;
             if (save.secretRealmClearedTier[kIdx] < tier)
             {
-                OnToastMessage?.Invoke($"Cần vượt qua Tầng {tier} ít nhất 1 lần trước khi Càn Quét!");
+                Notify(RemakeNotifyCategory.ImmortalGate, $"Cần vượt qua Tầng {tier} ít nhất 1 lần trước khi Càn Quét!", true);
                 return false;
             }
             save.secretRealmDailyRemaining--;
@@ -2728,13 +2764,13 @@ namespace KhiVanChiTu.Remake
                     PlayerCurrentHp = PlayerMaxHp;
                     SetActiveBoss(false, "", 0, 0);
                     SaveService.Save();
-                    OnToastMessage?.Invoke($"Vượt Tháp T{nextF - 1}! Tự động tiến lên Tầng {nextF} (+{CultivationTable.FormatNumber(spec.rewardLt)} LT)!");
+                    Notify(RemakeNotifyCategory.ImmortalGate, $"Vượt Tháp T{nextF - 1}! Tự động tiến lên Tầng {nextF} (+{CultivationTable.FormatNumber(spec.rewardLt)} LT)!", false, RemakeNotifyZone.CombatTicker);
                     if (_aoeBatchDepth > 0) _batchPendingArenaReset = true;
                     else RemakeArenaController.Instance?.ResetForStageChange();
                 }
                 else
                 {
-                    OnToastMessage?.Invoke($"Vượt Tháp Tầng {ActiveChallengeFloor}: +{CultivationTable.FormatNumber(spec.rewardLt)} LT & Đá Tẩy Luyện!");
+                    Notify(RemakeNotifyCategory.ImmortalGate, $"Vượt Tháp Tầng {ActiveChallengeFloor}: +{CultivationTable.FormatNumber(spec.rewardLt)} LT & Đá Tẩy Luyện!", false, RemakeNotifyZone.GrandTop);
                     ActiveArenaMode = RemakeArenaMode.Campaign;
                     SetActiveBoss(false, "", 0, 0);
                     PlayerCurrentHp = PlayerMaxHp;
@@ -2770,19 +2806,19 @@ namespace KhiVanChiTu.Remake
                     save.swordInventoryLevels.Add(swordLv);
                     save.swordInventoryLevels.Add(Mathf.Max(1, swordLv - 1));
                     save.forgeTalismanCount += 1;
-                    OnToastMessage?.Invoke($"Càn Kiếm Mộ T{tier}: +2 Phôi Kiếm & +1 Phù Rèn Kiếm!");
+                    Notify(RemakeNotifyCategory.ImmortalGate, $"Càn Kiếm Mộ T{tier}: +2 Phôi Kiếm & +1 Phù Rèn Kiếm!");
                     break;
                 case RemakeSecretRealmKind.HerbGarden:
                     int hTier = Mathf.Clamp(tier - 1, 0, 5);
                     save.herbsByTier[hTier] += 5 + tier;
                     save.calmIncenseCount += 1;
-                    OnToastMessage?.Invoke($"Thu Bách Thảo T{tier}: +{5 + tier} {ActStageDatabaseSO.GetHerbName(hTier + 1)} & +1 Tĩnh Tâm Hương!");
+                    Notify(RemakeNotifyCategory.ImmortalGate, $"Thu Bách Thảo T{tier}: +{5 + tier} {ActStageDatabaseSO.GetHerbName(hTier + 1)} & +1 Tĩnh Tâm Hương!");
                     break;
                 default:
                     int ore = 12 * tier;
                     save.ore += ore;
                     save.reforgeStoneCount += 1 + tier / 2;
-                    OnToastMessage?.Invoke($"Khai Tinh Thiết T{tier}: +{ore} Quặng & +{1 + tier / 2} Đá Tẩy Luyện!");
+                    Notify(RemakeNotifyCategory.ImmortalGate, $"Khai Tinh Thiết T{tier}: +{ore} Quặng & +{1 + tier / 2} Đá Tẩy Luyện!");
                     break;
             }
             RemakeAudioService.Instance?.PlayBreakthrough();
@@ -2819,7 +2855,8 @@ namespace KhiVanChiTu.Remake
             };
             double dmg = Math.Round(GetTotalSwordAttackPower() * coef * awakenMult);
 
-            RemakeAudioService.Instance?.PlayLoiPhat();
+            RemakeAudioService.Instance?.PlaySkill(slot);
+            RemakeAudioService.Instance?.TryPlaySkillVoice(slot, SaveService.Current.gender);
             BeginAoEDamageBatch();
             try
             {
@@ -2844,7 +2881,7 @@ namespace KhiVanChiTu.Remake
             slot = Mathf.Clamp(slot, 0, 3);
             if (!IsSkillUnlocked(slot))
             {
-                OnToastMessage?.Invoke("Chưa đủ cảnh giới mở khóa kỹ năng này!");
+                Notify(RemakeNotifyCategory.Skill, "Chưa đủ cảnh giới mở khóa kỹ năng này!", true);
                 return false;
             }
             var save = SaveService.Current;
@@ -2858,7 +2895,7 @@ namespace KhiVanChiTu.Remake
                 double cost = Math.Round((180 + slot * 320) * Math.Pow(1.22, lv - 1));
                 if (save.linhThach < cost)
                 {
-                    OnToastMessage?.Invoke($"Thiếu {CultivationTable.FormatNumber(cost)} Linh Thạch (hoặc Tàn Quyển Công Pháp)!");
+                    Notify(RemakeNotifyCategory.Skill, $"Thiếu {CultivationTable.FormatNumber(cost)} Linh Thạch (hoặc Tàn Quyển Công Pháp)!", true);
                     return false;
                 }
                 save.linhThach -= cost;
@@ -2872,11 +2909,12 @@ namespace KhiVanChiTu.Remake
                 case 2: save.swordRainLevel = nextLv; break;
                 default: save.palmLevel = nextLv; break;
             }
+            InvalidateStatCache();
             SaveService.Save();
             RemakeAudioService.Instance?.PlayMerge();
             OnStatsChanged?.Invoke();
             string wakeMsg = (nextLv == 10 || nextLv == 20 || nextLv == 30) ? " (THỨC TỈNH ĐỘT BIẾN!)" : "";
-            OnToastMessage?.Invoke($"Nâng Kỹ Năng #{slot + 1} lên Cấp {nextLv}{wakeMsg}!");
+            Notify(RemakeNotifyCategory.Skill, $"Nâng Kỹ Năng #{slot + 1} lên Cấp {nextLv}{wakeMsg}!");
             return true;
         }
 
@@ -2900,7 +2938,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Save();
             OnStatsChanged?.Invoke();
             OnQuestOrTutorialChanged?.Invoke();
-            OnToastMessage?.Invoke($"Hoàn thành nhiệm vụ! +{CultivationTable.FormatNumber(q.rewardLinhThach)} Linh Thạch");
+            Notify(RemakeNotifyCategory.QuestDiary, $"Hoàn thành nhiệm vụ! +{CultivationTable.FormatNumber(q.rewardLinhThach)} Linh Thạch", false, RemakeNotifyZone.GrandTop);
             return true;
         }
 
@@ -2926,7 +2964,7 @@ namespace KhiVanChiTu.Remake
             RemakeAudioService.Instance?.PlayBreakthrough();
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Nhận {m.title}: +{CultivationTable.FormatNumber(m.rewardLinhThach)} LT & +{m.rewardDaoPoints} Đạo Vận!");
+            Notify(RemakeNotifyCategory.QuestDiary, $"Nhận {m.title}: +{CultivationTable.FormatNumber(m.rewardLinhThach)} LT & +{m.rewardDaoPoints} Đạo Vận!");
             return true;
         }
 
@@ -2975,7 +3013,7 @@ namespace KhiVanChiTu.Remake
             else if (seconds >= 60.0)
             {
                 string durationLabel = $"{Mathf.FloorToInt((float)(seconds / 60))}p";
-                OnToastMessage?.Invoke($"Bế Quan ({durationLabel}): +{CultivationTable.FormatNumber(totalTuVi)} Tu Vi · +{CultivationTable.FormatNumber(totalLt)} LT");
+                Notify(RemakeNotifyCategory.QuestDiary, $"Bế Quan ({durationLabel}): +{CultivationTable.FormatNumber(totalTuVi)} Tu Vi · +{CultivationTable.FormatNumber(totalLt)} LT", false, RemakeNotifyZone.GrandTop);
             }
         }
 
@@ -2986,7 +3024,7 @@ namespace KhiVanChiTu.Remake
             const int cost = 10;
             if (save.coDuyen < cost)
             {
-                OnToastMessage?.Invoke($"Cần {cost} Cơ Duyên để nhận thêm +50% thưởng Bế Quan!");
+                Notify(RemakeNotifyCategory.QuestDiary, $"Cần {cost} Cơ Duyên để nhận thêm +50% thưởng Bế Quan!", true);
                 return false;
             }
             save.coDuyen -= cost;
@@ -2998,7 +3036,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Save();
             RemakeAudioService.Instance?.PlayBreakthrough();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Nhận thêm +50% Bế Quan: +{CultivationTable.FormatNumber(extraTv)} Tu Vi & +{CultivationTable.FormatNumber(extraLt)} LT!");
+            Notify(RemakeNotifyCategory.QuestDiary, $"Nhận thêm +50% Bế Quan: +{CultivationTable.FormatNumber(extraTv)} Tu Vi & +{CultivationTable.FormatNumber(extraLt)} LT!");
             return true;
         }
 
@@ -3007,7 +3045,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Current.autoClimbDemonTower = enabled;
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke(enabled ? "Vạn Yêu Tháp: Đã bật Tự Leo Tầng Kế!" : "Vạn Yêu Tháp: Đã tắt Tự Leo Tầng.");
+            Notify(RemakeNotifyCategory.ImmortalGate, enabled ? "Vạn Yêu Tháp: Đã bật Tự Leo Tầng Kế!" : "Vạn Yêu Tháp: Đã tắt Tự Leo Tầng.");
         }
 
         // =========================================================
@@ -3054,7 +3092,7 @@ namespace KhiVanChiTu.Remake
             SaveService.Save();
             RemakeAudioService.Instance?.PlayBreakthrough();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke($"Đồ Giám Mốc {tierIdx + 1}: +{coDuyenGain} Cơ Duyên, +{CultivationTable.FormatNumber(ltGain)} LT & +1 Phù Rèn!");
+            Notify(RemakeNotifyCategory.Codex, $"Đồ Giám Mốc {tierIdx + 1}: +{coDuyenGain} Cơ Duyên, +{CultivationTable.FormatNumber(ltGain)} LT & +1 Phù Rèn!");
             return true;
         }
 
@@ -3071,7 +3109,7 @@ namespace KhiVanChiTu.Remake
             }
             if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.Companions, save.realmIndex, save.subStage))
             {
-                OnToastMessage?.Invoke("Linh Thú Hộ Đạo mở ở Trúc Cơ Tầng 7!");
+                Notify(RemakeNotifyCategory.Companion, "Linh Thú Hộ Đạo mở ở Trúc Cơ Tầng 7!", true);
                 return false;
             }
             var spec = CultivationTable.GetCompanionSpec(id);
@@ -3080,22 +3118,22 @@ namespace KhiVanChiTu.Remake
             {
                 if (save.realmIndex < spec.reqRealmIndex)
                 {
-                    OnToastMessage?.Invoke($"Cần đạt {CultivationTable.RealmNames[spec.reqRealmIndex]} để thu phục {spec.name}!");
+                    Notify(RemakeNotifyCategory.Companion, $"Cần đạt {CultivationTable.RealmNames[spec.reqRealmIndex]} để thu phục {spec.name}!", true);
                     return false;
                 }
                 double cost = Math.Round(1200 * Math.Pow(3.2, (int)id - 1));
                 if (save.linhThach < cost)
                 {
-                    OnToastMessage?.Invoke($"Cần {CultivationTable.FormatNumber(cost)} Linh Thạch để kết khế ước {spec.name}!");
+                    Notify(RemakeNotifyCategory.Companion, $"Cần {CultivationTable.FormatNumber(cost)} Linh Thạch để kết khế ước {spec.name}!", true);
                     return false;
                 }
                 save.linhThach -= cost;
                 save.unlockedCompanionsMask |= bit;
-                OnToastMessage?.Invoke($"Thu phục thành công Linh Thú: {spec.name}!");
+                Notify(RemakeNotifyCategory.Companion, $"Thu phục thành công Linh Thú: {spec.name}!");
             }
             else
             {
-                OnToastMessage?.Invoke($"Đã xuất chiến Linh Thú: {spec.name}!");
+                Notify(RemakeNotifyCategory.Companion, $"Đã xuất chiến Linh Thú: {spec.name}!");
             }
             save.activeCompanionId = (int)id;
             RecomputePlayerVitals(false);
@@ -3105,11 +3143,70 @@ namespace KhiVanChiTu.Remake
             return true;
         }
 
+        public void GetTotalEquipSlotEnhanceBonuses(
+            out float totalFlatAtk,
+            out float totalSwordDmgPct,
+            out double totalFlatHp,
+            out float totalMaxHpPct,
+            out float totalDmgRedPct)
+        {
+            totalFlatAtk = 0f;
+            totalSwordDmgPct = 0f;
+            totalFlatHp = 0.0;
+            totalMaxHpPct = 0f;
+            totalDmgRedPct = 0f;
+
+            var save = SaveService.Current;
+            if (save == null || save.equipSlotEnhanceLevels == null) return;
+            int len = Mathf.Min(6, save.equipSlotEnhanceLevels.Length);
+            for (int i = 0; i < len; i++)
+            {
+                int lv = save.equipSlotEnhanceLevels[i];
+                if (lv <= 0) continue;
+                CultivationTable.GetEquipSlotEnhanceBonus(
+                    (RemakeEquipSlot)i, lv,
+                    out float atk, out float dmgPct, out double hp, out float hpPct, out float drPct);
+                totalFlatAtk += atk;
+                totalSwordDmgPct += dmgPct;
+                totalFlatHp += hp;
+                totalMaxHpPct += hpPct;
+                totalDmgRedPct += drPct;
+            }
+        }
+
+        public int GetTotalEquipEnhanceLevel()
+        {
+            var save = SaveService.Current;
+            if (save == null || save.equipSlotEnhanceLevels == null) return 0;
+            int sum = 0;
+            for (int i = 0; i < save.equipSlotEnhanceLevels.Length; i++)
+                sum += Mathf.Max(0, save.equipSlotEnhanceLevels[i]);
+            return sum;
+        }
+
+        public double GetSkillCombatPowerFactor()
+        {
+            double bonus = 0.0;
+            for (int s = 0; s < 4; s++)
+            {
+                if (!IsSkillUnlocked(s)) continue;
+                int lv = Mathf.Max(1, GetSkillLevel(s));
+                double slotWeight = 0.012 + s * 0.004;
+                double wakeBonus = lv >= 30 ? 0.14 : lv >= 20 ? 0.08 : lv >= 10 ? 0.04 : 0.0;
+                bonus += lv * slotWeight + wakeBonus;
+            }
+            return 1.0 + bonus;
+        }
+
         public double GetPlayerCombatPowerEstimate()
         {
             EnsureStatCache();
-            double dps = GetTotalSwordAttackPower() * _cachedSwordSpeedMult * (1.0 + _cachedCritChance * (_cachedCritDmgMult - 1.0));
-            return Math.Max(10.0, Math.Round(dps * 4.5 + PlayerMaxHp * 0.45));
+            double critMult = 1.0 + _cachedCritChance * (_cachedCritDmgMult - 1.0);
+            double penBossMult = 1.0 + _cachedArmorPen * 0.25 + Math.Max(0.0, _cachedBossMult - 1.0) * 0.20;
+            double skillMult = GetSkillCombatPowerFactor();
+            double dps = GetTotalSwordAttackPower() * _cachedSwordSpeedMult * critMult * penBossMult * skillMult;
+            double effectiveHp = PlayerMaxHp / Math.Max(0.28, 1.0 - _cachedDamageReduction);
+            return Math.Max(10.0, Math.Round(dps * 4.5 + effectiveHp * 0.45));
         }
 
         public bool IsFeatureTutorialCompleted(RemakeFeatureId fid)
@@ -3144,13 +3241,13 @@ namespace KhiVanChiTu.Remake
             var save = SaveService.Current;
             if (!CultivationTable.IsFeatureUnlocked(RemakeFeatureId.PvpArena, save.realmIndex, save.subStage))
             {
-                OnToastMessage?.Invoke("Luận Kiếm Đài mở ở Nguyên Anh Tầng 5!");
+                Notify(RemakeNotifyCategory.ImmortalGate, "Luận Kiếm Đài mở ở Nguyên Anh Tầng 5!", true);
                 return false;
             }
             EnsureDailyPvpReset();
             if (save.pvpDailyRemaining <= 0)
             {
-                OnToastMessage?.Invoke("Đã hết 5 lượt Luận Kiếm hôm nay! Quay lại ngày mai.");
+                Notify(RemakeNotifyCategory.ImmortalGate, "Đã hết 5 lượt Luận Kiếm hôm nay! Quay lại ngày mai.", true);
                 return false;
             }
             save.pvpDailyRemaining--;
@@ -3166,7 +3263,7 @@ namespace KhiVanChiTu.Remake
                 save.swordPrestigePoints += prestige;
                 save.linhThach += lt;
                 RemakeAudioService.Instance?.PlayBreakthrough();
-                OnToastMessage?.Invoke($"Chiến thắng {opponentName}! +{prestige} Kiếm Vọng & +{CultivationTable.FormatNumber(lt)} LT!");
+                Notify(RemakeNotifyCategory.ImmortalGate, $"Chiến thắng {opponentName}! +{prestige} Kiếm Vọng & +{CultivationTable.FormatNumber(lt)} LT!");
                 RemakeOnlineService.Instance?.BroadcastThienDaoAnnouncement($"{save.daoName} vừa đánh bại {opponentName} tại Luận Kiếm Đài!");
             }
             else
@@ -3174,7 +3271,7 @@ namespace KhiVanChiTu.Remake
                 int prestige = 30;
                 save.swordPrestigePoints += prestige;
                 RemakeAudioService.Instance?.PlayClick();
-                OnToastMessage?.Invoke($"Thất bại trước {opponentName}! Nhận +{prestige} Kiếm Vọng an ủi.");
+                Notify(RemakeNotifyCategory.ImmortalGate, $"Thất bại trước {opponentName}! Nhận +{prestige} Kiếm Vọng an ủi.", true);
             }
             SaveService.Save();
             OnStatsChanged?.Invoke();
@@ -3187,7 +3284,7 @@ namespace KhiVanChiTu.Remake
             int cost = rewardIdx switch { 0 => 120, 1 => 140, 2 => 180, 3 => 350, _ => 600 };
             if (save.swordPrestigePoints < cost)
             {
-                OnToastMessage?.Invoke($"Thiếu {cost} Điểm Kiếm Vọng!");
+                Notify(RemakeNotifyCategory.ImmortalGate, $"Thiếu {cost} Điểm Kiếm Vọng!", true);
                 return false;
             }
             if (rewardIdx == 3 && (save.unlockedFramesMask & (1 << 1)) != 0)
@@ -3201,18 +3298,18 @@ namespace KhiVanChiTu.Remake
             save.swordPrestigePoints -= cost;
             switch (rewardIdx)
             {
-                case 0: save.forgeTalismanCount += 2; OnToastMessage?.Invoke("Đổi thành công +2 Phù Rèn Kiếm!"); break;
-                case 1: save.reforgeStoneCount += 3; OnToastMessage?.Invoke("Đổi thành công +3 Đá Tẩy Luyện!"); break;
-                case 2: save.calmIncenseCount += 1; OnToastMessage?.Invoke("Đổi thành công +1 Tĩnh Tâm Hương!"); break;
+                case 0: save.forgeTalismanCount += 2; Notify(RemakeNotifyCategory.ImmortalGate, "Đổi thành công +2 Phù Rèn Kiếm!"); break;
+                case 1: save.reforgeStoneCount += 3; Notify(RemakeNotifyCategory.ImmortalGate, "Đổi thành công +3 Đá Tẩy Luyện!"); break;
+                case 2: save.calmIncenseCount += 1; Notify(RemakeNotifyCategory.ImmortalGate, "Đổi thành công +1 Tĩnh Tâm Hương!"); break;
                 case 3:
                     save.unlockedFramesMask |= (1 << 1);
                     save.equippedAvatarFrame = 1;
-                    OnToastMessage?.Invoke("Mở khóa & đeo Khung Avatar Kiếm Thánh!");
+                    Notify(RemakeNotifyCategory.ImmortalGate, "Mở khóa & đeo Khung Avatar Kiếm Thánh!");
                     break;
                 default:
                     save.unlockedFramesMask |= (1 << 2);
                     save.equippedAvatarFrame = 2;
-                    OnToastMessage?.Invoke("Mở khóa & đeo Khung Avatar Thiên Đạo Chí Tôn!");
+                    Notify(RemakeNotifyCategory.ImmortalGate, "Mở khóa & đeo Khung Avatar Thiên Đạo Chí Tôn!");
                     break;
             }
             SaveService.Save();
@@ -3229,7 +3326,7 @@ namespace KhiVanChiTu.Remake
             save.equippedAvatarFrame = Mathf.Clamp(frameId, 0, 2);
             SaveService.Save();
             OnStatsChanged?.Invoke();
-            OnToastMessage?.Invoke("Đã đổi Khung Avatar!");
+            Notify(RemakeNotifyCategory.QuestDiary, "Đã đổi Khung Avatar!");
             return true;
         }
 
@@ -3240,7 +3337,7 @@ namespace KhiVanChiTu.Remake
             {
                 save.consecutiveBreakthroughFails = 0;
                 save.mindCalmResetUtcTicks = 0;
-                OnToastMessage?.Invoke("Trấn Tâm 24h hoàn tất: Đạo tâm đã khôi phục bình ổn!");
+                Notify(RemakeNotifyCategory.Breakthrough, "Trấn Tâm 24h hoàn tất: Đạo tâm đã khôi phục bình ổn!", false, RemakeNotifyZone.GrandTop);
             }
         }
 
@@ -3249,11 +3346,12 @@ namespace KhiVanChiTu.Remake
             InvalidateStatCache();
             var save = SaveService.Current;
             int realm = save.realmIndex;
+            GetTotalEquipSlotEnhanceBonuses(out _, out _, out double enhFlatHp, out float enhMaxHpPct, out _);
             double baseHp = 220.0 * Math.Pow(2.3, realm) + save.subStage * 28.0 * Math.Pow(1.8, realm);
-            double flatBody = GetDaoVanLevel("branch_body") * 140.0 * Math.Pow(1.6, realm);
+            double flatBody = GetDaoVanLevel("branch_body") * 140.0 * Math.Pow(1.6, realm) + enhFlatHp;
             float pctMult = 1f + GetDaoVanLevel("branch_body") * 0.06f
                 + ((RemakeCompanionId)save.activeCompanionId == RemakeCompanionId.JadeTurtle ? 0.15f : 0f)
-                + GetEquipmentStatSum(RemakeEquipStatType.MaxHpPct) / 100f
+                + (GetEquipmentStatSum(RemakeEquipStatType.MaxHpPct) + enhMaxHpPct) / 100f
                 + GetFormationBonus(f => f.maxHpPct) / 100f;
             int huyenVu = GetEquipSetCount(RemakeEquipSet.HuyenVu);
             if (huyenVu >= 2) pctMult += 0.12f;

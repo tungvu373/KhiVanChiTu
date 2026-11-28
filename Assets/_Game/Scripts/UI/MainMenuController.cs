@@ -129,7 +129,7 @@ namespace KhiVanChiTu.Remake
                 if (SaveService.IsTestAllProfileActive)
                 {
                     SaveService.SeedOrSelectTestAllAccount(true);
-                    BootOverlayController.Instance?.ShowToast("Đã đặt lại Tài Khoản Test Full!");
+                    BootOverlayController.Instance?.ShowNotification(RemakeNotifyCategory.QuestDiary, "Đã đặt lại Tài Khoản Test Full!", RemakeNotifyZone.GrandTop);
                     GameplayEngine.Instance?.ReloadFromActiveProfile();
                     RemakeOnlineService.Instance?.SwitchAccountProfile();
                     RefreshUi();

@@ -23,7 +23,14 @@ namespace KhiVanChiTu.Remake
 
         public void SetProgress(float progress01, Color fillColor, Color trackColor, float width = 4.5f)
         {
-            _progress = Mathf.Clamp01(progress01);
+            float clamped = Mathf.Clamp01(progress01);
+            if (Mathf.Abs(_progress - clamped) < 0.005f &&
+                _fillColor == fillColor &&
+                _trackColor == trackColor &&
+                Mathf.Approximately(_lineWidth, width))
+                return;
+
+            _progress = clamped;
             _fillColor = fillColor;
             _trackColor = trackColor;
             _lineWidth = width;

@@ -16,6 +16,13 @@ namespace KhiVanChiTu.Remake
         public bool afkDimMode = false;
         public bool soundEnabled = true;
         public bool musicEnabled = true;
+        [Range(0f, 1f)] public float masterVolume = 1.0f;
+        [Range(0f, 1f)] public float musicVolume = 0.70f;
+        [Range(0f, 1f)] public float ambienceVolume = 0.65f;
+        [Range(0f, 1f)] public float voiceVolume = 0.95f;
+        [Range(0f, 1f)] public float sfxVolume = 0.85f;
+        public bool audioVolumeInitialized = true;
+        public bool extendedAudioInitialized = true;
     }
 
     [Serializable]

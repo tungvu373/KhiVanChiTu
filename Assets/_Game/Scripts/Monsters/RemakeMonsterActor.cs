@@ -44,6 +44,14 @@ namespace KhiVanChiTu.Remake
         private Action<RemakeMonsterActor> _onDeathCallback;
 
         private static readonly int ColorPropId = Shader.PropertyToID("_BaseColor");
+        private static Camera _cachedMainCamera;
+
+        private static Camera GetMainCamera()
+        {
+            if (_cachedMainCamera == null || !_cachedMainCamera.isActiveAndEnabled)
+                _cachedMainCamera = Camera.main;
+            return _cachedMainCamera;
+        }
 
         private void Awake()
         {
@@ -93,9 +101,11 @@ namespace KhiVanChiTu.Remake
                 transform.localScale = _baseScale;
             }
 
-            if (_hpBarRoot != null && _hpBarRoot.gameObject.activeSelf && Camera.main != null)
+            if (_hpBarRoot != null && _hpBarRoot.gameObject.activeSelf)
             {
-                _hpBarRoot.rotation = Camera.main.transform.rotation;
+                Camera cam = GetMainCamera();
+                if (cam != null)
+                    _hpBarRoot.rotation = cam.transform.rotation;
                 if (_hpBarTrail != null && _trailHpRatio > _displayedHpRatio)
                 {
                     _trailHpRatio = Mathf.MoveTowards(_trailHpRatio, _displayedHpRatio, dt * 1.6f);
@@ -160,6 +170,8 @@ namespace KhiVanChiTu.Remake
                     _attackTimer = baseInterval * 1.60f;
                     _lungeTimer = 0.22f;
                     if (_hasAttackParam && _animator != null) _animator.SetTrigger(_hashAttack);
+                    if (Definition != null)
+                        RemakeAudioService.Instance?.PlayMonsterAttack(Definition.ResolveAudioFamily());
                     engine?.OnPlayerDamaged(_attackDamage);
                 }
             }
@@ -220,6 +232,8 @@ namespace KhiVanChiTu.Remake
                 _animator.Update(0f);
             }
             SetMovingParam(true);
+            if (def != null)
+                RemakeAudioService.Instance?.PlayMonsterSpawn(def.ResolveAudioFamily(), def.monsterId);
         }
 
         public void DespawnImmediate()
@@ -274,6 +288,10 @@ namespace KhiVanChiTu.Remake
             {
                 Die();
             }
+            else if (Definition != null)
+            {
+                RemakeAudioService.Instance?.PlayMonsterHurt(Definition.ResolveAudioFamily());
+            }
         }
 
         private void Die()
@@ -288,6 +306,8 @@ namespace KhiVanChiTu.Remake
             if (_hasDieParam && _animator != null) _animator.SetTrigger(_hashDie);
             RemakeVfxPool.Instance?.SpawnDeathDissolve(transform.position + Vector3.up * 0.8f);
             bool wasBoss = Definition != null && Definition.isBoss;
+            if (Definition != null)
+                RemakeAudioService.Instance?.PlayMonsterDeath(Definition.ResolveAudioFamily());
             if (wasBoss) RemakeVfxPool.Instance?.TriggerBossHitStop(0.045f);
             GameplayEngine.Instance?.OnMonsterKilled(Definition, wasBoss, transform.position);
         }

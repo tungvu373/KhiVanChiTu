@@ -568,9 +568,54 @@ namespace KhiVanChiTu.Remake
         public static double GetEquipSlotEnhanceCostLt(int currentLv) => Math.Round(80 * Math.Pow(1.42, currentLv));
         public static int GetEquipSlotEnhanceCostOre(int currentLv) => 2 + currentLv * 2;
 
-        public static float CalculateEquipItemScore(RemakeEquipmentItem item, int realmIndex = 2)
+        public static bool IsOffensiveEquipSlot(RemakeEquipSlot slot) =>
+            slot == RemakeEquipSlot.Crown || slot == RemakeEquipSlot.Bracer || slot == RemakeEquipSlot.Ring;
+
+        /// <summary>
+        /// Guaranteed slot enhancement stats applied whenever a slot is enhanced (+1..+N),
+        /// ensuring enhancing ANY slot ALWAYS boosts real combat stats & Combat Power (even before rolling ATK/HP substats).
+        /// Offensive slots (Crown/Bracer/Ring): Flat Sword ATK + Sword Damage%.
+        /// Defensive slots (Robe/Boots/Amulet): Flat Max HP + Max HP% + Damage Reduction%.
+        /// </summary>
+        public static void GetEquipSlotEnhanceBonus(
+            RemakeEquipSlot slot,
+            int enhanceLevel,
+            out float flatSwordAtk,
+            out float swordDamagePct,
+            out double flatMaxHp,
+            out float maxHpPct,
+            out float damageReductionPct)
         {
-            if (item == null) return 0f;
+            flatSwordAtk = 0f;
+            swordDamagePct = 0f;
+            flatMaxHp = 0.0;
+            maxHpPct = 0f;
+            damageReductionPct = 0f;
+
+            int lv = Mathf.Max(0, enhanceLevel);
+            if (lv <= 0) return;
+
+            if (IsOffensiveEquipSlot(slot))
+            {
+                flatSwordAtk = lv * (24f + lv * 4f);
+                swordDamagePct = lv * 1.5f;
+            }
+            else
+            {
+                flatMaxHp = Math.Round(lv * (180.0 + lv * 35.0));
+                maxHpPct = lv * 2.0f;
+                damageReductionPct = Mathf.Min(12f, lv * 0.6f);
+            }
+        }
+
+        public static float CalculateEquipItemScore(RemakeEquipmentItem item, int realmIndex = 2, int slotEnhanceLevel = 0)
+        {
+            int enh = Mathf.Max(0, slotEnhanceLevel);
+            float enhSubMult = 1f + enh * 0.08f;
+            float enhBaseScore = enh * (28f + enh * 3.5f);
+
+            if (item == null) return Mathf.Round(enhBaseScore);
+
             float score = (1f + (int)item.rarity * 1.4f) * (1f + item.tier * 0.45f) * 20f;
             if (item.setId != RemakeEquipSet.None) score += 18f;
             if (item.substats != null)
@@ -578,18 +623,19 @@ namespace KhiVanChiTu.Remake
                 for (int i = 0; i < item.substats.Count; i++)
                 {
                     var st = item.substats[i];
+                    float val = st.value * enhSubMult;
                     score += st.statType switch
                     {
-                        RemakeEquipStatType.FlatSwordAtk => st.value * 0.85f,
-                        RemakeEquipStatType.SwordDamagePct => st.value * 3.8f,
-                        RemakeEquipStatType.CritChancePct => st.value * 7.5f,
-                        RemakeEquipStatType.MaxHpPct => st.value * 2.2f,
-                        RemakeEquipStatType.TuViGainPct => st.value * 2.6f,
-                        _ => st.value * 1.5f
+                        RemakeEquipStatType.FlatSwordAtk => val * 0.85f,
+                        RemakeEquipStatType.SwordDamagePct => val * 3.8f,
+                        RemakeEquipStatType.CritChancePct => val * 7.5f,
+                        RemakeEquipStatType.MaxHpPct => val * 2.2f,
+                        RemakeEquipStatType.TuViGainPct => val * 2.6f,
+                        _ => val * 1.5f
                     };
                 }
             }
-            return Mathf.Round(score);
+            return Mathf.Round(score + enhBaseScore);
         }
 
         public static (double hp, double dmg, double rewardLt, int enemyCount) GetDemonTowerFloorSpec(int floor)
